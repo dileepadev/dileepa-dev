@@ -17,7 +17,11 @@ Changes are organized into the following categories:
 
 ### Added
 
--
+- Initial production release of the personal website (`v1.0.0`).
+- Core layout components: Navigation Bar, Main Body layout, Footer, and Theme Switcher (light/dark mode).
+- Primary website sections: Home, About, Education, Experience, Media, and Connect.
+- Responsive design across devices and browsers.
+- Optimizations for performance, accessibility, and loading speed.
 
 <!-- e.g., -->
 <!-- Unreleased -->
