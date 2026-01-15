@@ -13,6 +13,40 @@ Changes are organized into the following categories:
 
 - Changes for the next release are available in development branches.
 
+## [v1.2.0] - 2026-01-15
+
+### Added
+
+- Initialized base project using **Next.js 15**.
+- Implemented core layout sections: `Navbar`, `Hero`, `About`, `Experience`, `Education`, `Community`, `Connect`, and `Footer`.
+- Added API data fetching for dynamic section content.
+- Integrated contact form with **email configuration** via Resend.
+- Added SEO metadata for improved search visibility.
+- Introduced analytics and performance tools:
+  - **Vercel Web Analytics**
+  - **Vercel Speed Insights**
+  - **Microsoft Clarity**
+  - **Google Analytics**
+
+### Changed
+
+- Refactored routing logic to use a **single-page scrollable layout**.
+- Updated the **navbar** to support in-page scroll instead of navigation between routes.
+- Redesigned **header** and **footer** for improved aesthetics and accessibility.
+- Standardized and refined **theme styling** for consistency across components.
+- Applied accessibility improvements and layout responsiveness across screen sizes.
+
+### Fixed
+
+- Resolved layout issues related to **padding and margins** in multiple sections.
+- Ensured compatibility and readability in both **dark** and **light** modes.
+- chore: Upgrade to 1.1.1 - package.json
+- Add Experience Page - Career Break & RSL
+- Add Education Page - Postgraduate Education
+- Add Media Page - Missing event details
+- Add missing achievements
+- Add MLSC - NIBM
+
 ## [v1.1.0] - 2026-01-15
 
 ### Added
@@ -85,3 +119,4 @@ Changes are organized into the following categories:
 [Unreleased]: https://github.com/dileepadev/dileepa-dev/branches
 [v1.0.0]: https://github.com/dileepadev/dileepa-dev/releases/tag/v1.0.0
 [v1.1.0]: https://github.com/dileepadev/dileepa-dev/releases/tag/v1.1.0
+[v1.2.0]: https://github.com/dileepadev/dileepa-dev/releases/tag/v1.2.0
