@@ -24,7 +24,7 @@ Welcome to my personal website project, hosted at [dileepa.dev](https://dileepa.
 
 ## 📸 Captured Media
 
-![Screenshot of dileepa.dev](https://dileepadev.github.io/images/dileepa-dev/preview-1.0.0.png)
+![Screenshot of dileepa.dev](./public/screenshot.png)
 
 ## 🌟 Features
 
