@@ -29,6 +29,7 @@ export function Navbar() {
     const sectionIds = NAV_LINKS.filter((l) => l.href.startsWith('#')).map((l) => l.href.slice(1));
     if (sectionIds.length === 0) return;
 
+    // IntersectionObserver to handle most cases
     const observer = new IntersectionObserver(
       (entries) => {
         const visible = entries.filter((e) => e.isIntersecting);
@@ -41,12 +42,59 @@ export function Navbar() {
       { root: null, rootMargin: '0px 0px -40% 0px', threshold: [0.25, 0.5, 0.75] }
     );
 
+    // Observe existing elements
     sectionIds.forEach((id) => {
       const el = document.getElementById(id);
       if (el) observer.observe(el);
     });
 
-    return () => observer.disconnect();
+    // Scroll-based fallback & initial check (handles cases where IntersectionObserver may miss)
+    let rafId: number | null = null;
+    const checkActiveOnScroll = () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        let closestId: string | null = null;
+        let closestDistance = Infinity;
+
+        sectionIds.forEach((id) => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          const rect = el.getBoundingClientRect();
+
+          // reference point slightly below the top to account for the fixed header
+          const referencePoint = 80; // px from top
+
+          // Prefer sections that contain the reference point (distance = 0)
+          let distance: number;
+          if (rect.top <= referencePoint && rect.bottom >= referencePoint) {
+            distance = 0;
+          } else {
+            distance = Math.min(Math.abs(rect.top - referencePoint), Math.abs(rect.bottom - referencePoint));
+          }
+
+          if (distance < closestDistance) {
+            closestDistance = distance;
+            closestId = id;
+          }
+        });
+
+        if (closestId) {
+          setActiveSection((prev) => (prev === closestId ? prev : closestId));
+        }
+      });
+    };
+
+    // Run an initial check and attach listeners
+    checkActiveOnScroll();
+    window.addEventListener('scroll', checkActiveOnScroll, { passive: true });
+    window.addEventListener('resize', checkActiveOnScroll);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('scroll', checkActiveOnScroll);
+      window.removeEventListener('resize', checkActiveOnScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, []);
 
   const handleNavClick = (href: string) => {
