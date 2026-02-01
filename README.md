@@ -40,7 +40,7 @@ Welcome to my personal website project, hosted at [dileepa.dev](https://dileepa.
 
 ## Captured Media
 
-![Dileepa Bandara](./public/dileepa-dev-1-2-0.webp)
+![Dileepa Bandara](https://dileepadev.github.io/images/dileepa-dev/preview-1.2.0.webp)
 
 ## Sections
 
