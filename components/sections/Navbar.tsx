@@ -32,14 +32,23 @@ export function Navbar() {
     // IntersectionObserver to handle most cases
     const observer = new IntersectionObserver(
       (entries) => {
-        const visible = entries.filter((e) => e.isIntersecting);
-        if (visible.length) {
-          visible.sort((a, b) => (b.intersectionRatio ?? 0) - (a.intersectionRatio ?? 0));
-          const id = visible[0].target.id;
-          setActiveSection(id);
+        // Find the section that is most prominent in the top part of the viewport
+        const intersecting = entries.filter((entry) => entry.isIntersecting);
+        if (intersecting.length > 0) {
+          // If multiple are intersecting, prefer the one whose top is closest to our reference point
+          const closest = intersecting.reduce((prev, curr) => {
+            const prevDist = Math.abs(prev.boundingClientRect.top - 100);
+            const currDist = Math.abs(curr.boundingClientRect.top - 100);
+            return prevDist < currDist ? prev : curr;
+          });
+          setActiveSection(closest.target.id);
         }
       },
-      { root: null, rootMargin: '0px 0px -40% 0px', threshold: [0.25, 0.5, 0.75] }
+      { 
+        root: null, 
+        rootMargin: '-100px 0px -70% 0px', // Focus on the top-third of the viewport
+        threshold: 0 
+      }
     );
 
     // Observe existing elements
@@ -62,7 +71,8 @@ export function Navbar() {
           const rect = el.getBoundingClientRect();
 
           // reference point slightly below the top to account for the fixed header
-          const referencePoint = 80; // px from top
+          // This should match or be slightly larger than the scroll-padding-top in globals.css (6rem = 96px)
+          const referencePoint = 120; // px from top
 
           // Prefer sections that contain the reference point (distance = 0)
           let distance: number;
@@ -101,6 +111,7 @@ export function Navbar() {
     setIsMobileMenuOpen(false);
     if (href.startsWith('#')) {
       const id = href.slice(1);
+      setActiveSection(id); // Set active immediately for better UX
       const el = document.getElementById(id);
       if (el) {
         el.scrollIntoView({ behavior: 'smooth', block: 'start' });
