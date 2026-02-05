@@ -137,6 +137,13 @@ export function Navbar() {
           {/* Logo - Minimal */}
           <Link 
             href="/" 
+            onClick={(e) => {
+              if (window.location.pathname === '/') {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                setActiveSection(null);
+              }
+            }}
             className="text-lg font-bold text-text-primary hover:text-accent-blue transition-colors tracking-tight"
           >
             /<span className="text-accent-blue">.</span>
