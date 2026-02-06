@@ -29,9 +29,9 @@ export interface Experience {
   company: string;
   companyUrl?: string;
   location: string;
-  type: 'full-time' | 'part-time' | 'contract' | 'freelance' | 'internship';
+  type: "full-time" | "part-time" | "contract" | "freelance" | "internship";
   startDate: string;
-  endDate: string | 'Present';
+  endDate: string | "Present";
   description: string;
   achievements?: string[];
   technologies?: string[];
@@ -47,7 +47,7 @@ export interface Education {
   institutionUrl?: string;
   location: string;
   startDate: string;
-  endDate: string | 'Present';
+  endDate: string | "Present";
   description?: string;
   achievements?: string[];
   logo?: string;
@@ -61,16 +61,22 @@ export interface Community {
   description: string;
   url?: string;
   logo?: string;
-  type: 'speaking' | 'organizing' | 'mentoring' | 'contributing' | 'membership';
+  type: "speaking" | "organizing" | "mentoring" | "contributing" | "membership";
   startDate?: string;
-  endDate?: string | 'Present';
+  endDate?: string | "Present";
 }
 
 // Skill Types
 export interface Skill {
   name: string;
-  category: 'language' | 'framework' | 'tool' | 'platform' | 'database' | 'other';
-  level?: 'beginner' | 'intermediate' | 'advanced' | 'expert';
+  category:
+    | "language"
+    | "framework"
+    | "tool"
+    | "platform"
+    | "database"
+    | "other";
+  level?: "beginner" | "intermediate" | "advanced" | "expert";
   icon?: string;
 }
 
@@ -121,7 +127,7 @@ export interface MediaItem {
   id: string;
   title: string;
   description: string;
-  type: 'video' | 'podcast' | 'article' | 'presentation';
+  type: "video" | "podcast" | "article" | "presentation";
   url: string;
   thumbnailUrl?: string;
   date: string;
@@ -136,21 +142,21 @@ export interface VideoItem {
   url: string;
   thumbnailUrl?: string;
   date: string;
-  platform: 'YouTube' | 'Vimeo' | 'Other';
+  platform: "YouTube" | "Vimeo" | "Other";
   duration?: string;
   views?: string;
   category?: string;
 }
 
-// Speaking Engagement Types
-export interface SpeakingEngagement {
+// Event Types
+export interface EventItem {
   id: string;
   title: string;
   event: string;
   description: string;
   date: string;
   location: string;
-  type: 'conference' | 'workshop' | 'meetup' | 'webinar' | 'podcast';
+  type: "conference" | "workshop" | "meetup" | "webinar" | "podcast";
   url?: string;
   slides?: string;
   recording?: string;
@@ -167,7 +173,7 @@ export interface ContactFormData {
 }
 
 // Theme Types
-export type Theme = 'light' | 'dark' | 'system';
+export type Theme = "light" | "dark" | "system";
 
 // Section Props
 export interface SectionProps {
@@ -177,11 +183,16 @@ export interface SectionProps {
 }
 
 // Button Variants
-export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'link';
-export type ButtonSize = 'sm' | 'md' | 'lg';
+export type ButtonVariant =
+  | "primary"
+  | "secondary"
+  | "outline"
+  | "ghost"
+  | "link";
+export type ButtonSize = "sm" | "md" | "lg";
 
 // Card Variants
-export type CardVariant = 'default' | 'elevated' | 'outlined' | 'ghost';
+export type CardVariant = "default" | "elevated" | "outlined" | "ghost";
 
 // SEO Types
 export interface SEOData {

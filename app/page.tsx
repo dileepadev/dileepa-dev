@@ -8,20 +8,30 @@ import {
   Connect,
   Footer,
 } from "@/components/sections";
+import { getPortfolioData } from "@/lib/api";
 
-export default function Home() {
+export const revalidate = 3600;
+
+export default async function Home() {
+  const data = await getPortfolioData();
+
   return (
     <>
       <Navbar />
       <main>
-        <Hero />
-        <About />
-        <Experience />
-        <Education />
-        <Community />
-        <Connect />
+        <Hero about={data.about} />
+        <About about={data.about} tools={data.tools} />
+        <Experience experiences={data.experiences} />
+        <Education educations={data.educations} />
+        <Community
+          communities={data.communities}
+          events={data.events}
+          videos={data.videos}
+          blogs={data.blogs}
+        />
+        <Connect about={data.about} />
       </main>
-      <Footer />
+      <Footer about={data.about} />
     </>
   );
 }

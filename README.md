@@ -46,7 +46,7 @@ Welcome to my personal website project, hosted at [dileepa.dev](https://dileepa.
 - **About** – Provides general profile information about me.
 - **Experience** – Includes my work experience, skills, and technologies I've worked with.
 - **Education** – Displays my educational background and qualifications.
-- **Community** – Highlights my contributions to tech communities, speaking engagements, and video content.
+- **Community** – Highlights my contributions to tech communities, events, and video content.
 - **Connect** – Lists ways to reach me via social media and other platforms.
 
 ## Getting Started

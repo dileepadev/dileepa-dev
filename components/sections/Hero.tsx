@@ -1,24 +1,30 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import { Container, IconButton } from '@/components/ui';
-import { ABOUT_INFO, SOCIAL_LINKS } from '@/lib/constants';
-import { FaGithub, FaLinkedin, FaYoutube, FaInstagram, FaArrowDown } from 'react-icons/fa';
-import { FaXTwitter } from 'react-icons/fa6';
-import { motion } from 'framer-motion';
-
-const iconMap: Record<string, React.ElementType> = {
+import Image from "next/image";
+import { Container, IconButton } from "@/components/ui";
+import { AboutDto } from "@/lib/api-types";
+import {
   FaGithub,
   FaLinkedin,
-  FaXTwitter,
   FaYoutube,
   FaInstagram,
+  FaArrowDown,
+} from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
+import { motion } from "framer-motion";
+
+const iconMap: Record<string, React.ElementType> = {
+  github: FaGithub,
+  linkedin: FaLinkedin,
+  xtwitter: FaXTwitter,
+  youtube: FaYoutube,
+  instagram: FaInstagram,
 };
 
-export function Hero() {
+export function Hero({ about }: { about?: AboutDto | null }) {
   const handleScrollDown = () => {
-    const aboutSection = document.getElementById('about');
-    if (aboutSection) aboutSection.scrollIntoView({ behavior: 'smooth' });
+    const aboutSection = document.getElementById("about");
+    if (aboutSection) aboutSection.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -28,11 +34,14 @@ export function Hero() {
         className="absolute inset-0 opacity-[0.4] dark:opacity-30 pointer-events-none"
         style={{
           backgroundImage: `radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)`,
-          backgroundSize: '32px 32px',
+          backgroundSize: "32px 32px",
         }}
         aria-hidden
       />
-      <div className="absolute inset-0 bg-linear-to-b from-transparent via-bg-primary/50 to-bg-primary pointer-events-none" aria-hidden />
+      <div
+        className="absolute inset-0 bg-linear-to-b from-transparent via-bg-primary/50 to-bg-primary pointer-events-none"
+        aria-hidden
+      />
 
       <Container className="relative z-10 flex flex-col items-center text-center">
         {/* Profile photo */}
@@ -42,14 +51,16 @@ export function Hero() {
           transition={{ duration: 0.4 }}
           className="relative mb-8 size-28 sm:size-32 md:size-36 rounded-full overflow-hidden ring-2 ring-border-light dark:ring-white/10 shadow-xl"
         >
-          <Image
-            src={ABOUT_INFO.profileImage}
-            alt={ABOUT_INFO.name}
-            fill
-            sizes="(max-width: 640px) 128px, (max-width: 768px) 144px, 160px"
-            className="object-cover"
-            priority
-          />
+          {about?.images.profileWebp && (
+            <Image
+              src={about.images.profileWebp}
+              alt={about.name}
+              fill
+              sizes="(max-width: 640px) 128px, (max-width: 768px) 144px, 160px"
+              className="object-cover"
+              priority
+            />
+          )}
         </motion.div>
 
         {/* Terminal-style prompt line */}
@@ -57,11 +68,14 @@ export function Hero() {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="flex flex-wrap items-center justify-center gap-2 font-mono text-sm sm:text-base text-text-muted mb-6"
+          className="flex flex-wrap items-center justify-center gap-2 font-mono text-base sm:text-lg text-text-muted mb-6"
         >
           <span className="text-accent-blue select-none">@</span>
           <span className="text-text-tertiary">dileepadev</span>
-          <span className="inline-flex h-4 w-0.5 bg-accent-blue ml-0.5 animate-pulse" aria-hidden />
+          <span
+            className="inline-flex h-4 w-0.5 bg-accent-blue ml-0.5 animate-pulse"
+            aria-hidden
+          />
         </motion.div>
 
         {/* Name: single bold line */}
@@ -71,7 +85,7 @@ export function Hero() {
           transition={{ duration: 0.5, delay: 0.15 }}
           className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight text-text-primary mb-4"
         >
-          {ABOUT_INFO.name}
+          {about?.name}
         </motion.h1>
 
         {/* Tagline with monospace accent */}
@@ -79,9 +93,9 @@ export function Hero() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.3 }}
-          className="font-mono text-sm sm:text-base text-text-muted tracking-wide mb-2"
+          className="font-mono text-base sm:text-lg text-text-muted tracking-wide mb-4"
         >
-          {ABOUT_INFO.tagline}
+          {about?.title}
         </motion.p>
         <motion.p
           initial={{ opacity: 0 }}
@@ -89,7 +103,7 @@ export function Hero() {
           transition={{ duration: 0.4, delay: 0.35 }}
           className="text-text-tertiary text-base md:text-lg max-w-md mb-10"
         >
-          {ABOUT_INFO.shortBio}
+          {about?.tagline}
         </motion.p>
 
         {/* Availability chip */}
@@ -100,7 +114,7 @@ export function Hero() {
         >
           <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-bg-elevated border border-border-light text-text-secondary text-xs font-medium uppercase tracking-wider">
             <span className="size-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400" />
-            {ABOUT_INFO.availability}
+            OPEN FOR OPPORTUNITIES
           </span>
         </motion.div>
 
@@ -111,21 +125,29 @@ export function Hero() {
           transition={{ duration: 0.4, delay: 0.65 }}
           className="flex items-center gap-5 text-text-muted mt-8"
         >
-          {SOCIAL_LINKS.slice(0, 5).map((social) => {
-            const IconComponent = iconMap[social.icon];
-            return (
-              <IconButton
-                key={social.name}
-                href={social.href}
-                external
-                variant="ghost"
-                className="hover:text-accent-blue hover:bg-transparent"
-                aria-label={social.name}
-              >
-                {IconComponent && <IconComponent className="size-5" />}
-              </IconButton>
-            );
-          })}
+          {about?.links &&
+            Object.entries(about.links).map(([key, url]) => {
+              if (key === "website" || key === "email") return null;
+              if (!url) return null;
+
+              const platformKey = key.toLowerCase();
+              const IconComponent = iconMap[platformKey];
+
+              if (!IconComponent) return null;
+
+              return (
+                <IconButton
+                  key={key}
+                  href={url}
+                  external
+                  variant="ghost"
+                  className="hover:text-accent-blue hover:bg-transparent"
+                  aria-label={key}
+                >
+                  <IconComponent className="size-5" />
+                </IconButton>
+              );
+            })}
         </motion.div>
       </Container>
 

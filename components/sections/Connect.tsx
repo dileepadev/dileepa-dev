@@ -8,7 +8,7 @@ import {
   Button,
   CardButton,
 } from "@/components/ui";
-import { SOCIAL_LINKS, SITE_CONFIG } from "@/lib/constants";
+import { AboutDto } from "@/lib/api-types";
 import { motion } from "framer-motion";
 import {
   FaGithub,
@@ -22,15 +22,15 @@ import { FaXTwitter } from "react-icons/fa6";
 import React, { useState } from "react";
 
 const iconMap: Record<string, React.ElementType> = {
-  FaGithub,
-  FaLinkedin,
-  FaXTwitter,
-  FaYoutube,
-  FaInstagram,
-  FaEnvelope,
+  github: FaGithub,
+  linkedin: FaLinkedin,
+  xtwitter: FaXTwitter,
+  youtube: FaYoutube,
+  instagram: FaInstagram,
+  email: FaEnvelope,
 };
 
-export function Connect() {
+export function Connect({ about }: { about?: AboutDto | null }) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -48,6 +48,17 @@ export function Connect() {
     setFormData({ name: "", email: "", message: "" });
     setIsSubmitting(false);
     alert("Message sent! I'll get back to you soon.");
+  };
+
+  const email = about?.links?.email;
+
+  // Map platform keys to branded display names
+  const socialNameMap: Record<string, string> = {
+    github: "GitHub",
+    linkedin: "LinkedIn",
+    xtwitter: "X (Twitter)",
+    youtube: "YouTube",
+    instagram: "Instagram",
   };
 
   return (
@@ -154,21 +165,23 @@ export function Connect() {
             className="space-y-6"
           >
             {/* Direct Contact */}
-            <Card variant="elevated">
-              <h3 className="text-xl font-bold text-text-primary mb-4">
-                Direct Contact
-              </h3>
-              <p className="text-text-secondary mb-6">
-                Prefer email? You can reach me directly at:
-              </p>
-              <CardButton
-                variant="secondary"
-                href={`mailto:${SITE_CONFIG.email}`}
-                leftIcon={<FaEnvelope className="h-5 w-5" />}
-              >
-                {SITE_CONFIG.email}
-              </CardButton>
-            </Card>
+            {email && (
+              <Card variant="elevated">
+                <h3 className="text-xl font-bold text-text-primary mb-4">
+                  Direct Contact
+                </h3>
+                <p className="text-text-secondary mb-6">
+                  Prefer email? You can reach me directly at:
+                </p>
+                <CardButton
+                  variant="secondary"
+                  href={`mailto:${email}`}
+                  leftIcon={<FaEnvelope className="h-5 w-5" />}
+                >
+                  {email}
+                </CardButton>
+              </Card>
+            )}
 
             {/* Social Links */}
             <Card variant="elevated">
@@ -179,28 +192,37 @@ export function Connect() {
                 Connect with me on social media for updates and more.
               </p>
               <div className="grid grid-cols-2 gap-3">
-                {SOCIAL_LINKS.map((social) => {
-                  const IconComponent = iconMap[social.icon];
-                  return (
-                    <CardButton
-                      key={social.name}
-                      variant="social"
-                      href={social.href}
-                      external={true}
-                      leftIcon={IconComponent && <IconComponent className="h-5 w-5 shrink-0" />}
-                      className="justify-start"
-                    >
-                      <div className="min-w-0">
-                        <p className="font-medium truncate">{social.name}</p>
-                        {social.username && (
+                {about?.links &&
+                  Object.entries(about.links).map(([key, url]) => {
+                    if (key === "website" || key === "email" || !url)
+                      return null;
+                    const IconComponent = iconMap[key.toLowerCase()];
+                    const name =
+                      socialNameMap[key.toLowerCase()] ||
+                      key.charAt(0).toUpperCase() + key.slice(1);
+
+                    return (
+                      <CardButton
+                        key={key}
+                        variant="social"
+                        href={url}
+                        external={true}
+                        leftIcon={
+                          IconComponent && (
+                            <IconComponent className="h-5 w-5 shrink-0" />
+                          )
+                        }
+                        className="justify-start"
+                      >
+                        <div className="min-w-0">
+                          <p className="font-medium truncate">{name}</p>
                           <p className="text-xs hover:text-on-accent/80 truncate">
-                            {social.username}
+                            {url.replace(/^https?:\/\/(www\.)?/, "")}
                           </p>
-                        )}
-                      </div>
-                    </CardButton>
-                  );
-                })}
+                        </div>
+                      </CardButton>
+                    );
+                  })}
               </div>
             </Card>
           </motion.div>

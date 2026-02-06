@@ -1,11 +1,12 @@
-'use client';
+"use client";
 
-import { Container, Section, SectionHeader, Card, Badge } from '@/components/ui';
-import { EDUCATION } from '@/lib/constants';
-import { motion } from 'framer-motion';
-import { FaGraduationCap, FaExternalLinkAlt, FaTrophy } from 'react-icons/fa';
+import { Container, Section, SectionHeader, Card } from "@/components/ui";
+import { EducationDto } from "@/lib/api-types";
+import { motion } from "framer-motion";
+import { FaGraduationCap, FaExternalLinkAlt } from "react-icons/fa";
+import Image from "next/image";
 
-export function Education() {
+export function Education({ educations }: { educations?: EducationDto[] }) {
   return (
     <Section id="education" background="secondary">
       <Container>
@@ -16,9 +17,9 @@ export function Education() {
         />
 
         <div className="grid gap-8 md:grid-cols-2">
-          {EDUCATION.map((edu, index) => (
+          {educations?.map((edu, index) => (
             <motion.div
-              key={edu.id}
+              key={edu._id || index}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -27,26 +28,44 @@ export function Education() {
               <Card variant="elevated" hover className="h-full">
                 <div className="flex items-start gap-4">
                   {/* Icon */}
-                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-accent-blue/10 text-accent-blue">
-                    <FaGraduationCap className="h-6 w-6" />
+                  <div className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-accent-blue/10 text-accent-blue overflow-hidden">
+                    {edu.logo ? (
+                      <>
+                        <div className="dark:hidden w-full h-full relative">
+                          <Image
+                            src={edu.logo.light}
+                            alt={edu.institution}
+                            fill
+                            className="object-contain p-2"
+                          />
+                        </div>
+                        <div className="hidden dark:block w-full h-full relative">
+                          <Image
+                            src={edu.logo.dark}
+                            alt={edu.institution}
+                            fill
+                            className="object-contain p-2"
+                          />
+                        </div>
+                      </>
+                    ) : (
+                      <FaGraduationCap className="h-6 w-6" />
+                    )}
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    {/* Degree */}
+                    {/* Degree/Course */}
                     <h3 className="text-xl font-bold text-text-primary mb-1">
-                      {edu.degree}
+                      {edu.course}
                     </h3>
-                    
-                    {/* Field */}
-                    <p className="text-lg text-accent-blue font-medium mb-2">
-                      {edu.field}
-                    </p>
+
+                    {/* Field removed as not available separately */}
 
                     {/* Institution */}
                     <div className="flex items-center gap-2 mb-2">
-                      {edu.institutionUrl ? (
+                      {edu.url ? (
                         <a
-                          href={edu.institutionUrl}
+                          href={edu.url}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-text-primary hover:text-accent-blue transition-colors inline-flex items-center gap-1"
@@ -55,42 +74,25 @@ export function Education() {
                           <FaExternalLinkAlt className="h-3 w-3" />
                         </a>
                       ) : (
-                        <span className="text-text-primary">{edu.institution}</span>
+                        <span className="text-text-primary">
+                          {edu.institution}
+                        </span>
                       )}
                     </div>
 
-                    {/* Location & Duration */}
+                    {/* Duration (Location not available) */}
                     <div className="flex flex-wrap items-center gap-2 text-sm text-text-tertiary mb-4">
-                      <span>{edu.location}</span>
-                      <span>•</span>
-                      <span>{edu.startDate} — {edu.endDate}</span>
+                      <span>{edu.period}</span>
                     </div>
 
                     {/* Description */}
                     {edu.description && (
-                      <p className="text-text-secondary mb-4">
+                      <p className="text-text-secondary mb-4 whitespace-pre-line">
                         {edu.description}
                       </p>
                     )}
 
-                    {/* Achievements */}
-                    {edu.achievements && edu.achievements.length > 0 && (
-                      <div className="space-y-2">
-                        {edu.achievements.map((achievement, i) => (
-                          <div key={i} className="flex items-center gap-2">
-                            <FaTrophy className="h-4 w-4 text-accent-blue shrink-0" />
-                            <span className="text-sm text-text-secondary">{achievement}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Status Badge */}
-                    {edu.endDate === 'Present' && (
-                      <div className="mt-4">
-                        <Badge variant="success">Currently Enrolled</Badge>
-                      </div>
-                    )}
+                    {/* Achievements removed */}
                   </div>
                 </div>
               </Card>

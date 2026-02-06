@@ -1,53 +1,72 @@
-import Link from 'next/link';
-import { Container, IconButton } from '@/components/ui';
-import { NAV_LINKS, EXTERNAL_LINKS, SOCIAL_LINKS, SITE_CONFIG } from '@/lib/constants';
-import { FaGithub, FaLinkedin, FaYoutube, FaInstagram, FaEnvelope, FaHeart } from 'react-icons/fa';
-import { FaXTwitter } from 'react-icons/fa6';
-
-const iconMap: Record<string, React.ElementType> = {
+import Link from "next/link";
+import { Container, IconButton } from "@/components/ui";
+import { NAV_LINKS, EXTERNAL_LINKS } from "@/lib/constants";
+import { AboutDto } from "@/lib/api-types";
+import {
   FaGithub,
   FaLinkedin,
-  FaXTwitter,
   FaYoutube,
   FaInstagram,
   FaEnvelope,
+  FaHeart,
+} from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
+
+const iconMap: Record<string, React.ElementType> = {
+  github: FaGithub,
+  linkedin: FaLinkedin,
+  xtwitter: FaXTwitter,
+  youtube: FaYoutube,
+  instagram: FaInstagram,
+  email: FaEnvelope,
 };
 
-export function Footer() {
+export function Footer({ about }: { about?: AboutDto | null }) {
   const currentYear = new Date().getFullYear();
 
+  // Use data from API or defaults/empty
+  const name = about?.name || "Dileepa Bandara";
+  const description = about?.tagline || "Personal Developer Portfolio";
+
   return (
-    <footer className="bg-brand-primary text-white">
+    <footer className="bg-brand-dark text-white">
       <Container>
         <div className="py-16">
           <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
             {/* Brand */}
             <div className="lg:col-span-2">
               <Link href="/" className="inline-block text-2xl font-bold mb-4">
-                {SITE_CONFIG.name.split(' ')[0]}
+                {name.split(" ")[0]}
                 <span className="text-accent-blue">.</span>
               </Link>
-              <p className="text-gray-400 max-w-md mb-6">
-                {SITE_CONFIG.description}
-              </p>
-              
+              <p className="text-white/80 max-w-md mb-6">{description}</p>
+
               {/* Social Icons */}
               <div className="flex items-center gap-3">
-                {SOCIAL_LINKS.slice(0, 5).map((social) => {
-                  const IconComponent = iconMap[social.icon];
-                  return (
-                    <IconButton
-                      key={social.name}
-                      href={social.href}
-                      external={true}
-                      variant='ghost'
-                      className="hover:text-accent-blue hover:bg-transparent"
-                      aria-label={social.name}
-                    >
-                      {IconComponent && <IconComponent className="h-4 w-4" />}
-                    </IconButton>
-                  );
-                })}
+                {about?.links &&
+                  Object.entries(about.links).map(([key, url]) => {
+                    // Filter out non-socials
+                    if (key === "website" || key === "email" || !url)
+                      return null;
+
+                    const platformKey = key.toLowerCase();
+                    const IconComponent = iconMap[platformKey];
+
+                    if (!IconComponent) return null;
+
+                    return (
+                      <IconButton
+                        key={key}
+                        href={url}
+                        external={true}
+                        variant="ghost"
+                        className="text-white/80 transition-colors duration-500 hover:text-accent-blue hover:bg-transparent"
+                        aria-label={key}
+                      >
+                        <IconComponent className="h-4 w-4 text-white/80 transition-colors duration-500" />
+                      </IconButton>
+                    );
+                  })}
               </div>
             </div>
 
@@ -59,7 +78,7 @@ export function Footer() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-white/80 hover:text-white transition-colors duration-500"
                     >
                       {link.label}
                     </Link>
@@ -76,12 +95,9 @@ export function Footer() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-gray-400 hover:text-white transition-colors inline-flex items-center gap-2"
+                      className="text-white/80 hover:text-white transition-colors duration-500 inline-flex items-center gap-2"
                     >
                       {link.label}
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-accent-blue/20 text-accent-blue">
-                        Soon
-                      </span>
                     </Link>
                   </li>
                 ))}
@@ -93,11 +109,12 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="py-6 border-t border-white/10">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-gray-400 text-sm text-center md:text-left">
-              © {currentYear} {SITE_CONFIG.name}. All rights reserved.
+            <p className="text-white/80 text-sm text-center md:text-left">
+              © {currentYear} {name}. All rights reserved.
             </p>
-            <p className="text-gray-400 text-sm flex items-center gap-1">
-              Made with <FaHeart className="h-4 w-4 text-red-500" /> using Next.js & Tailwind CSS
+            <p className="text-white/80 text-sm flex items-center gap-1">
+              Made with <FaHeart className="h-4 w-4 text-red-500" /> using
+              Next.js & Tailwind CSS
             </p>
           </div>
         </div>

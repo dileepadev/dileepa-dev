@@ -22,12 +22,13 @@ export const metadata: Metadata = {
   description: SITE_CONFIG.description,
   keywords: [
     "Dileepa Bandara",
-    "Software Engineer",
-    "Web Developer",
-    "Full Stack Developer",
-    "React Developer",
+    "AI Engineer",
+    "Software Developer",
+    "Open Source Contributor",
+    "Public Speaker",
     "Next.js",
     "TypeScript",
+    "Portfolio",
     "Sri Lanka",
   ],
   authors: [{ name: SITE_CONFIG.author, url: SITE_CONFIG.url }],
@@ -62,9 +63,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider>
-          {children}
-        </ThemeProvider>
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );

@@ -1,12 +1,22 @@
 import { Metadata } from "next";
 import { Container, Button, Card, Badge } from "@/components/ui";
 import { Navbar, Footer } from "@/components/sections";
-import { SPEAKING_ENGAGEMENTS } from "@/lib/constants";
-import { FaArrowLeft, FaMicrophone, FaMapMarkerAlt, FaUsers, FaExternalLinkAlt, FaFileAlt, FaVideo } from "react-icons/fa";
+import { api } from "@/lib/api";
+import {
+  FaArrowLeft,
+  FaCalendarAlt,
+  FaMicrophone,
+  FaMapMarkerAlt,
+  FaUsers,
+  FaExternalLinkAlt,
+  FaFileAlt,
+  FaVideo,
+} from "react-icons/fa";
 
 export const metadata: Metadata = {
-  title: "Public Speaking | Dileepa Bandara",
-  description: "Explore my speaking engagements, conference talks, workshops, and podcast appearances on web development and software engineering topics.",
+  title: "Events | Dileepa Bandara",
+  description:
+    "Explore my past and upcoming events, conference talks, workshops, and podcast appearances on web development and software engineering topics.",
 };
 
 const typeIcons = {
@@ -18,14 +28,47 @@ const typeIcons = {
 };
 
 const typeColors = {
-  conference: 'bg-accent-blue/10 text-accent-blue',
-  workshop: 'bg-accent-blue/10 text-accent-blue',
-  meetup: 'bg-accent-blue/10 text-accent-blue',
-  webinar: 'bg-accent-blue/10 text-accent-blue',
-  podcast: 'bg-accent-blue/10 text-accent-blue',
+  conference: "bg-accent-blue/10 text-accent-blue",
+  workshop: "bg-accent-blue/10 text-accent-blue",
+  meetup: "bg-accent-blue/10 text-accent-blue",
+  webinar: "bg-accent-blue/10 text-accent-blue",
+  podcast: "bg-accent-blue/10 text-accent-blue",
 };
 
-export default function PublicSpeakingPage() {
+export default async function EventsPage() {
+  const apiEvents = (await api.getEvents()) || [];
+
+  // Normalize data from API to match UI expectations
+  const events = apiEvents
+    .map((e, index) => {
+      // Map backend 'format' to frontend 'type'
+      let type: keyof typeof typeIcons = "conference";
+      const format = e.format.toLowerCase();
+      if (format.includes("workshop")) type = "workshop";
+      else if (format.includes("meetup")) type = "meetup";
+      else if (format.includes("webinar")) type = "webinar";
+      else if (format.includes("podcast")) type = "podcast";
+
+      // Use 'type' from API if available
+      if (e.type && e.type in typeIcons)
+        type = e.type as keyof typeof typeIcons;
+
+      return {
+        id: e._id || `event-${index}`,
+        title: e.title,
+        event: e.event || e.location, // fallback to location if event is missing
+        date: e.date,
+        type,
+        description: e.description,
+        location: e.location,
+        audience: e.audience,
+        url: e.url,
+        slides: e.slides,
+        recording: e.recording,
+      };
+    })
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
   return (
     <>
       <Navbar />
@@ -35,51 +78,58 @@ export default function PublicSpeakingPage() {
           <div className="max-w-4xl mx-auto text-center mb-16">
             <div className="flex justify-center mb-6">
               <div className="flex h-20 w-20 items-center justify-center rounded-full bg-accent-blue/10 text-accent-blue">
-                <FaMicrophone className="h-10 w-10" />
+                <FaCalendarAlt className="h-10 w-10" />
               </div>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-text-primary mb-4">
-              Public Speaking
+              Events
             </h1>
             <p className="text-xl text-text-secondary mb-6 max-w-2xl mx-auto">
-              Conference talks, workshops, meetups, and podcast appearances where I share knowledge and insights with the tech community.
+              Conference talks, workshops, meetups, and podcast appearances
+              where I share knowledge and insights with the tech community.
             </p>
             <Button href="/" variant="outline" leftIcon={<FaArrowLeft />}>
               Back to Home
             </Button>
           </div>
 
-          {/* Speaking Engagements Timeline */}
+          {/* Events Timeline */}
           <div className="max-w-5xl mx-auto">
-            {SPEAKING_ENGAGEMENTS.map((speaking, index) => {
-              const TypeIcon = typeIcons[speaking.type] || FaMicrophone;
-              const colorClass = typeColors[speaking.type] || 'bg-accent-blue/10 text-accent-blue';
-              
+            {events.map((event, index) => {
+              const TypeIcon = typeIcons[event.type] || FaMicrophone;
+              const colorClass =
+                typeColors[event.type] || "bg-accent-blue/10 text-accent-blue";
+
               return (
-                <div key={speaking.id} className="relative">
+                <div key={event.id} className="relative">
                   {/* Timeline Line */}
-                  {index < SPEAKING_ENGAGEMENTS.length - 1 && (
+                  {index < events.length - 1 && (
                     <div className="absolute left-10 top-24 bottom-0 w-0.5 bg-border-light hidden md:block" />
                   )}
-                  
+
                   <div className="mb-12 last:mb-0">
                     <Card variant="elevated" hover className="overflow-hidden">
                       <div className="md:flex">
                         {/* Left Section - Icon & Date */}
                         <div className="md:w-48 p-6 bg-bg-secondary border-b md:border-b-0 md:border-r border-border-light flex md:flex-col items-center md:items-center md:justify-center gap-4">
-                          <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${colorClass}`}>
+                          <div
+                            className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${colorClass}`}
+                          >
                             <TypeIcon className="h-6 w-6" />
                           </div>
                           <div className="flex-1 md:flex-none md:text-center">
                             <div className="text-sm font-medium text-text-primary mb-1">
-                              {new Date(speaking.date).toLocaleDateString('en-US', { 
-                                year: 'numeric', 
-                                month: 'short', 
-                                day: 'numeric' 
-                              })}
+                              {new Date(event.date).toLocaleDateString(
+                                "en-US",
+                                {
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "numeric",
+                                },
+                              )}
                             </div>
                             <Badge variant="default" size="sm">
-                              {speaking.type}
+                              {event.type}
                             </Badge>
                           </div>
                         </div>
@@ -88,36 +138,36 @@ export default function PublicSpeakingPage() {
                         <div className="flex-1 p-6">
                           {/* Title & Event */}
                           <h3 className="text-2xl font-bold text-text-primary mb-2">
-                            {speaking.title}
+                            {event.title}
                           </h3>
                           <div className="text-accent-blue font-semibold mb-4">
-                            {speaking.event}
+                            {event.event}
                           </div>
 
                           {/* Description */}
                           <p className="text-text-secondary mb-6">
-                            {speaking.description}
+                            {event.description}
                           </p>
 
                           {/* Meta Info */}
                           <div className="grid sm:grid-cols-2 gap-3 mb-6">
                             <div className="flex items-center gap-2 text-sm text-text-muted">
                               <FaMapMarkerAlt className="h-4 w-4 text-accent-blue shrink-0" />
-                              <span>{speaking.location}</span>
+                              <span>{event.location}</span>
                             </div>
-                            {speaking.audience && (
+                            {event.audience && (
                               <div className="flex items-center gap-2 text-sm text-text-muted">
                                 <FaUsers className="h-4 w-4 text-accent-blue shrink-0" />
-                                <span>{speaking.audience} attendees</span>
+                                <span>{event.audience} attendees</span>
                               </div>
                             )}
                           </div>
 
                           {/* Action Links */}
                           <div className="flex flex-wrap gap-3">
-                            {speaking.url && (
+                            {event.url && (
                               <a
-                                href={speaking.url}
+                                href={event.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent-blue/10 text-accent-blue hover:bg-accent-blue/20 transition-colors text-sm font-medium"
@@ -126,9 +176,9 @@ export default function PublicSpeakingPage() {
                                 Event Page
                               </a>
                             )}
-                            {speaking.slides && (
+                            {event.slides && (
                               <a
-                                href={speaking.slides}
+                                href={event.slides}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-bg-secondary text-text-primary hover:bg-bg-secondary/80 transition-colors text-sm font-medium border border-border-light"
@@ -137,9 +187,9 @@ export default function PublicSpeakingPage() {
                                 View Slides
                               </a>
                             )}
-                            {speaking.recording && (
+                            {event.recording && (
                               <a
-                                href={speaking.recording}
+                                href={event.recording}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-bg-secondary text-text-primary hover:bg-bg-secondary/80 transition-colors text-sm font-medium border border-border-light"
@@ -159,51 +209,19 @@ export default function PublicSpeakingPage() {
           </div>
 
           {/* Empty State */}
-          {SPEAKING_ENGAGEMENTS.length === 0 && (
+          {events.length === 0 && (
             <div className="text-center py-16">
               <div className="flex justify-center mb-6">
                 <div className="flex h-20 w-20 items-center justify-center rounded-full bg-bg-secondary text-text-muted">
-                  <FaMicrophone className="h-10 w-10" />
+                  <FaCalendarAlt className="h-10 w-10" />
                 </div>
               </div>
               <h2 className="text-2xl font-bold text-text-primary mb-4">
-                No speaking engagements yet
+                No events yet
               </h2>
               <p className="text-text-secondary mb-6">
                 Check back soon for upcoming talks and events!
               </p>
-            </div>
-          )}
-
-          {/* Speaking Types Stats */}
-          {SPEAKING_ENGAGEMENTS.length > 0 && (
-            <div className="mt-16 pt-16 border-t border-border-light">
-              <h2 className="text-2xl font-bold text-text-primary mb-8 text-center">
-                Speaking Experience
-              </h2>
-              <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-5">
-                {Object.entries(typeIcons).map(([type, Icon]) => {
-                  const count = SPEAKING_ENGAGEMENTS.filter(s => s.type === type).length;
-                  const colorClass = typeColors[type as keyof typeof typeColors];
-                  
-                  return (
-                    <div
-                      key={type}
-                      className="p-6 rounded-lg bg-bg-secondary text-center"
-                    >
-                      <div className={`inline-flex h-12 w-12 items-center justify-center rounded-xl ${colorClass} mb-3`}>
-                        <Icon className="h-6 w-6" />
-                      </div>
-                      <div className="text-3xl font-bold text-text-primary mb-1">
-                        {count}
-                      </div>
-                      <p className="text-sm font-medium text-text-secondary capitalize">
-                        {type}{count !== 1 ? 's' : ''}
-                      </p>
-                    </div>
-                  );
-                })}
-              </div>
             </div>
           )}
         </Container>

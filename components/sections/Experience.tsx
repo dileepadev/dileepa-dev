@@ -1,11 +1,60 @@
-'use client';
+"use client";
 
-import { Container, Section, SectionHeader, Card, Badge } from '@/components/ui';
-import { EXPERIENCES } from '@/lib/constants';
-import { motion } from 'framer-motion';
-import { FaBriefcase, FaExternalLinkAlt } from 'react-icons/fa';
+import {
+  Container,
+  Section,
+  SectionHeader,
+  Card,
+  Badge,
+} from "@/components/ui";
+import { ExperienceDto } from "@/lib/api-types";
+import { motion } from "framer-motion";
+import { FaBriefcase, FaExternalLinkAlt } from "react-icons/fa";
+import Image from "next/image";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 
-export function Experience() {
+function CompanyLogo({
+  logo,
+  alt,
+}: {
+  logo?: { light: string; dark: string } | null;
+  alt: string;
+}) {
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    // Defer setting mounted to avoid synchronous setState in effect body
+    // and potential cascading renders. Using requestAnimationFrame schedules
+    // the update after paint.
+    const rafId = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(rafId);
+  }, []);
+
+  if (!logo) return <FaBriefcase className="h-6 w-6" />;
+
+  if (!mounted) {
+    return <div className="w-full h-full relative" />;
+  }
+
+  const theme = resolvedTheme ?? "light";
+  const src = theme === "dark" ? logo.light : logo.dark;
+
+  return (
+    <div className="w-full h-full relative">
+      <Image
+        key={src}
+        src={src}
+        alt={alt}
+        fill
+        className="object-contain p-2"
+      />
+    </div>
+  );
+}
+
+export function Experience({ experiences }: { experiences?: ExperienceDto[] }) {
   return (
     <Section id="experience" background="primary">
       <Container>
@@ -20,9 +69,9 @@ export function Experience() {
           <div className="absolute left-8 top-0 bottom-0 w-px bg-border-light hidden md:block" />
 
           <div className="space-y-8">
-            {EXPERIENCES.map((exp, index) => (
+            {experiences?.map((exp, index) => (
               <motion.div
-                key={exp.id}
+                key={exp._id || index}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -34,70 +83,55 @@ export function Experience() {
                   <div className="w-2 h-2 rounded-full bg-white" />
                 </div>
 
-                <Card 
-                  variant="elevated" 
-                  hover 
-                  className="md:ml-16"
-                >
+                <Card variant="elevated" hover className="md:ml-16">
                   <div className="flex flex-col md:flex-row md:items-start gap-4">
                     {/* Company Icon */}
-                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-accent-blue/10 text-accent-blue">
-                      <FaBriefcase className="h-6 w-6" />
+                    <div className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-accent-blue/10 text-accent-blue overflow-hidden">
+                      <CompanyLogo logo={exp.logo} alt={exp.company} />
                     </div>
 
                     <div className="flex-1 min-w-0">
                       {/* Header */}
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
                         <h3 className="text-xl font-bold text-text-primary">
-                          {exp.role}
+                          {exp.title}
                         </h3>
                         <div className="flex items-center gap-2">
-                          <Badge variant={exp.endDate === 'Present' ? 'success' : 'default'}>
-                            {exp.type}
-                          </Badge>
+                          {/* Type is not available in API, removed Badge */}
                         </div>
                       </div>
 
-                      {/* Company & Location */}
+                      {/* Company & Location (Location not in API) */}
                       <div className="flex flex-wrap items-center gap-2 mb-3">
-                        {exp.companyUrl ? (
+                        {exp.url ? (
                           <a
-                            href={exp.companyUrl}
+                            href={exp.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-accent-blue hover:underline font-medium inline-flex items-center gap-1"
+                            className="text-text-primary hover:text-accent-blue transition-colors inline-flex items-center gap-1"
                           >
                             {exp.company}
                             <FaExternalLinkAlt className="h-3 w-3" />
                           </a>
                         ) : (
-                          <span className="font-medium text-text-primary">{exp.company}</span>
+                          <span className="font-medium text-text-primary">
+                            {exp.company}
+                          </span>
                         )}
-                        <span className="text-text-muted">•</span>
-                        <span className="text-text-tertiary">{exp.location}</span>
+                        {/* Location removed */}
                       </div>
 
                       {/* Date */}
                       <p className="text-sm text-text-muted mb-4">
-                        {exp.startDate} — {exp.endDate}
+                        {exp.period}
                       </p>
 
                       {/* Description */}
-                      <p className="text-text-secondary mb-4">
+                      <p className="text-text-secondary mb-4 whitespace-pre-line">
                         {exp.description}
                       </p>
 
-                      {/* Achievements */}
-                      {exp.achievements && exp.achievements.length > 0 && (
-                        <ul className="space-y-2 mb-4">
-                          {exp.achievements.map((achievement, i) => (
-                            <li key={i} className="flex items-start gap-2 text-text-secondary">
-                              <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent-blue" />
-                              {achievement}
-                            </li>
-                          ))}
-                        </ul>
-                      )}
+                      {/* Achievements removed as not in API */}
 
                       {/* Technologies */}
                       {exp.technologies && exp.technologies.length > 0 && (

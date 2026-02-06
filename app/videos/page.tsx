@@ -8,7 +8,8 @@ import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "Videos | Dileepa Bandara",
-  description: "Watch my tutorials, talks, and tech content on web development, cloud technologies, and software engineering.",
+  description:
+    "Watch my tutorials, talks, and tech content on web development, cloud technologies, and software engineering.",
 };
 
 export default function VideosPage() {
@@ -28,15 +29,16 @@ export default function VideosPage() {
               Video Content
             </h1>
             <p className="text-xl text-text-secondary mb-6 max-w-2xl mx-auto">
-              Tutorials, talks, and insights on web development, cloud technologies, and modern software engineering.
+              Tutorials, talks, and insights on web development, cloud
+              technologies, and modern software engineering.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button href="/" variant="outline" leftIcon={<FaArrowLeft />}>
                 Back to Home
               </Button>
-              <Button 
-                href="https://youtube.com/@dileepadev" 
-                external 
+              <Button
+                href="https://youtube.com/@dileepadev"
+                external
                 leftIcon={<FaYoutube />}
               >
                 Subscribe on YouTube
@@ -47,19 +49,23 @@ export default function VideosPage() {
           {/* Videos Grid */}
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {VIDEOS.map((video) => (
-              <Link 
-                key={video.id} 
+              <Link
+                key={video.id}
                 href={video.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group"
               >
-                <Card variant="elevated" hover className="h-full flex flex-col overflow-hidden">
+                <Card
+                  variant="elevated"
+                  hover
+                  className="h-full flex flex-col overflow-hidden"
+                >
                   {/* Thumbnail */}
                   <div className="relative aspect-video bg-bg-secondary overflow-hidden">
                     {video.thumbnailUrl ? (
-                      <Image 
-                        src={video.thumbnailUrl} 
+                      <Image
+                        src={video.thumbnailUrl}
                         alt={video.title}
                         fill
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 25vw"
@@ -70,7 +76,7 @@ export default function VideosPage() {
                         <FaPlay className="h-12 w-12 text-accent-blue opacity-50" />
                       </div>
                     )}
-                    
+
                     {/* Duration Badge */}
                     {video.duration && (
                       <div className="absolute bottom-2 right-2 px-2 py-1 rounded bg-black/80 text-white text-xs font-medium flex items-center gap-1">
@@ -78,7 +84,7 @@ export default function VideosPage() {
                         {video.duration}
                       </div>
                     )}
-                    
+
                     {/* Play Overlay */}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
                       <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-accent-blue rounded-full p-4">
@@ -116,7 +122,13 @@ export default function VideosPage() {
 
                     {/* Date & Platform */}
                     <div className="flex items-center justify-between pt-4 border-t border-border-light text-xs text-text-muted">
-                      <span>{new Date(video.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                      <span>
+                        {new Date(video.date).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </span>
                       <span className="flex items-center gap-1">
                         <FaYoutube className="h-3 w-3 text-red-500" />
                         {video.platform}
@@ -142,9 +154,9 @@ export default function VideosPage() {
               <p className="text-text-secondary mb-6">
                 Check back soon for new content!
               </p>
-              <Button 
-                href="https://youtube.com/@dileepadev" 
-                external 
+              <Button
+                href="https://youtube.com/@dileepadev"
+                external
                 leftIcon={<FaYoutube />}
               >
                 Visit YouTube Channel
