@@ -276,6 +276,88 @@ button:disabled,
   color: var(--accent-blue) !important;
   font-weight: 600;
 }
+
+/* Badge Utilities - variables and helpers for Badge component */
+:root {
+  /* Badge - light theme */
+  --badge-bg-default: var(--bg-tertiary);
+  --badge-text-default: var(--text-secondary);
+
+  --badge-bg-primary: var(--accent-blue-light);
+  --badge-text-primary: var(--accent-blue);
+
+  --badge-bg-secondary: var(--accent-blue-light);
+  --badge-text-secondary: var(--accent-blue);
+
+  --badge-bg-success: rgba(16, 185, 129, 0.12); /* emerald-500/12 */
+  --badge-text-success: #10b981; /* emerald-500 */
+
+  --badge-bg-warning: rgba(245, 158, 11, 0.12); /* amber-500/12 */
+  --badge-text-warning: #f59e0b; /* amber-500 */
+
+  --badge-bg-error: rgba(239, 68, 68, 0.12); /* red-500/12 */
+  --badge-text-error: #ef4444; /* red-500 */
+}
+
+.dark {
+  /* Badge - dark theme */
+  --badge-bg-default: var(--bg-tertiary);
+  --badge-text-default: var(--text-secondary);
+
+  --badge-bg-primary: var(--accent-blue-light);
+  --badge-text-primary: var(--accent-blue);
+
+  --badge-bg-secondary: var(--accent-blue-light);
+  --badge-text-secondary: var(--accent-blue);
+
+  --badge-bg-success: rgba(16, 185, 129, 0.12); /* emerald-500/12 */
+  --badge-text-success: #10b981; /* emerald-500 */
+
+  --badge-bg-warning: rgba(245, 158, 11, 0.12);
+  --badge-text-warning: #f59e0b;
+
+  --badge-bg-error: rgba(239, 68, 68, 0.12);
+  --badge-text-error: #ef4444;
+}
+
+/* Utility classes for Badge styles */
+.bg-badge-default {
+  background-color: var(--badge-bg-default) !important;
+}
+.text-badge-default {
+  color: var(--badge-text-default) !important;
+}
+.bg-badge-primary {
+  background-color: var(--badge-bg-primary) !important;
+}
+.text-badge-primary {
+  color: var(--badge-text-primary) !important;
+}
+.bg-badge-secondary {
+  background-color: var(--badge-bg-secondary) !important;
+}
+.text-badge-secondary {
+  color: var(--badge-text-secondary) !important;
+}
+.bg-badge-success {
+  background-color: var(--badge-bg-success) !important;
+}
+.text-badge-success {
+  color: var(--badge-text-success) !important;
+}
+.bg-badge-warning {
+  background-color: var(--badge-bg-warning) !important;
+}
+.text-badge-warning {
+  color: var(--badge-text-warning) !important;
+}
+.bg-badge-error {
+  background-color: var(--badge-bg-error) !important;
+}
+.text-badge-error {
+  color: var(--badge-text-error) !important;
+}
+
 /* Removed problematic header/nav overrides that forced brand-color (invisible in dark mode) */
 
 /* Animation Utilities */

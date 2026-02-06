@@ -146,7 +146,7 @@ export function Connect({ about }: { about?: AboutDto | null }) {
 
                 <Button
                   type="submit"
-                  className="w-full"
+                  className="w-full mt-4 mb-14"
                   disabled={isSubmitting}
                   rightIcon={<FaPaperPlane className="h-4 w-4" />}
                 >
@@ -226,6 +226,15 @@ export function Connect({ about }: { about?: AboutDto | null }) {
               </div>
             </Card>
           </motion.div>
+        </div>
+
+        <div className="mt-16 text-center">
+          <h3 className="text-xl font-bold text-text-primary mb-2">
+            Thanks for checking in
+          </h3>
+          <p className="text-lg text-text-secondary">
+            🧠 Think deeply. Build wisely. Keep your intelligence sharp!
+          </p>
         </div>
       </Container>
     </Section>

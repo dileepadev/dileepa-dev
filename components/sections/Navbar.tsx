@@ -161,7 +161,7 @@ export function Navbar() {
               const id = isHash ? link.href.slice(1) : link.href;
               const isActive = isHash && activeSection === id;
 
-              const baseClass = `px-4 py-1.5 text-xs font-medium transition-all duration-300 rounded-full`;
+              const baseClass = `px-4 py-1.5 text-sm font-medium transition-all duration-300 rounded-full`;
               const activeClass = isActive
                 ? "bg-accent-blue text-on-accent shadow-lg shadow-accent-blue/25"
                 : "text-text-muted hover:text-text-primary hover:bg-white/5";

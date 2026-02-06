@@ -8,7 +8,6 @@ import { ABOUT_WHAT_I_DO } from "@/lib/constants";
 import { AboutDto, ToolDto } from "@/lib/api-types";
 import { motion } from "framer-motion";
 import {
-  FaMapMarkerAlt,
   FaCode,
   FaCodeBranch,
   FaMicrophone,
@@ -85,7 +84,7 @@ export function About({
               whileHover={{ rotate: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="relative shrink-0 w-64 h-64 md:w-80 md:h-80 rounded-2xl overflow-hidden bg-bg-tertiary shadow-2xl ring-4 ring-white/10 dark:ring-white/5 order-start lg:order-first"
+              className="relative shrink-0 w-64 h-64 md:w-80 md:h-100 rounded-2xl overflow-hidden bg-bg-tertiary shadow-2xl ring-4 ring-white/10 dark:ring-white/5 order-start lg:order-first"
             >
               {about?.images.profilePng && (
                 <Image
@@ -104,16 +103,9 @@ export function About({
               viewport={{ once: true }}
               className="flex-1 text-center lg:text-left space-y-6 max-w-2xl"
             >
-              <div className="flex justify-center lg:justify-start">
-                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent-blue/10 text-accent-blue text-sm font-medium border border-accent-blue/20">
-                  <FaMapMarkerAlt className="h-3.5 w-3.5" />
-                  Work from Sri Lanka
-                </span>
-              </div>
-
               <div className="space-y-4">
                 <h3 className="text-2xl md:text-3xl font-bold text-text-primary">
-                  Building digital experiences that matter.
+                  Building intelligent experiences that matter.
                 </h3>
                 {about?.description &&
                   about.description.map((paragraph, idx) => (
@@ -128,7 +120,7 @@ export function About({
             </motion.div>
           </div>
 
-          {/* What I Do Grid */}
+          {/* What I Usually Do Grid */}
           <div className="space-y-10">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -136,8 +128,8 @@ export function About({
               viewport={{ once: true }}
               className="text-center"
             >
-              <h3 className="font-mono text-sm uppercase tracking-widest text-accent-blue">
-                What I Do
+              <h3 className="font-mono text-lg uppercase tracking-widest text-accent-blue">
+                What I Usually Do
               </h3>
             </motion.div>
 
@@ -159,7 +151,7 @@ export function About({
                     <h4 className="text-lg font-semibold text-text-primary mb-2">
                       {item.title}
                     </h4>
-                    <p className="text-sm text-text-tertiary leading-relaxed">
+                    <p className="text-base text-text-tertiary leading-relaxed">
                       {item.desc}
                     </p>
                   </motion.div>
@@ -168,7 +160,7 @@ export function About({
             </div>
           </div>
 
-          {/* Skills / Tools Grid */}
+          {/* Tech I Regularly Use Grid */}
           <div className="space-y-10">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -176,8 +168,8 @@ export function About({
               viewport={{ once: true }}
               className="text-center"
             >
-              <h3 className="font-mono text-sm uppercase tracking-widest text-accent-blue">
-                Tech Stack
+              <h3 className="font-mono text-lg uppercase tracking-widest text-accent-blue">
+                Tech I Regularly Use
               </h3>
             </motion.div>
 
@@ -195,7 +187,7 @@ export function About({
                     <div className="relative w-10 h-10 mb-3 transition-all duration-300">
                       <ToolLogo logo={tool.logo} alt={tool.name} />
                     </div>
-                    <span className="text-xs font-medium text-text-secondary group-hover:text-accent-blue transition-colors text-center">
+                    <span className="text-base font-medium text-text-secondary group-hover:text-accent-blue transition-colors text-center">
                       {tool.name}
                     </span>
                   </motion.div>

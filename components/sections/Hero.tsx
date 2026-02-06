@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Container, IconButton } from "@/components/ui";
+import { Container, IconButton, Tooltip } from "@/components/ui";
 import { AboutDto } from "@/lib/api-types";
 import {
   FaGithub,
@@ -64,26 +64,33 @@ export function Hero({ about }: { about?: AboutDto | null }) {
         </motion.div>
 
         {/* Terminal-style prompt line */}
-        <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="flex flex-wrap items-center justify-center gap-2 font-mono text-base sm:text-lg text-text-muted mb-6"
+        <Tooltip
+          content={
+            "You've opened my terminal. I'm a developer. Let me show you what I can do."
+          }
         >
-          <span className="text-accent-blue select-none">@</span>
-          <span className="text-text-tertiary">dileepadev</span>
-          <span
-            className="inline-flex h-4 w-0.5 bg-accent-blue ml-0.5 animate-pulse"
-            aria-hidden
-          />
-        </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="flex flex-wrap items-center justify-center gap-2 font-mono text-base sm:text-lg text-text-muted mb-6 cursor-default"
+            tabIndex={0}
+          >
+            <span className="text-accent-blue select-none">$</span>
+            <span className="text-text-tertiary">dileepadev</span>
+            <span
+              className="inline-flex h-4 w-0.5 bg-accent-blue ml-0.5 animate-pulse"
+              aria-hidden
+            />
+          </motion.div>
+        </Tooltip>
 
         {/* Name: single bold line */}
         <motion.h1
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.15 }}
-          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight text-text-primary mb-4"
+          className="text-5xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-transparent bg-clip-text bg-linear-to-r from-text-primary via-accent-blue to-accent-purple mb-8 animate-fade-in tracking-tight"
         >
           {about?.name}
         </motion.h1>
@@ -93,7 +100,7 @@ export function Hero({ about }: { about?: AboutDto | null }) {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.3 }}
-          className="font-mono text-base sm:text-lg text-text-muted tracking-wide mb-4"
+          className="font-mono font-semibold text-xl sm:text-2xl text-text-muted tracking-wide mb-6"
         >
           {about?.title}
         </motion.p>
@@ -101,7 +108,7 @@ export function Hero({ about }: { about?: AboutDto | null }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.35 }}
-          className="text-text-tertiary text-base md:text-lg max-w-md mb-10"
+          className="text-text-tertiary text-lg md:text-xl max-w-lg mb-10"
         >
           {about?.tagline}
         </motion.p>
@@ -114,7 +121,7 @@ export function Hero({ about }: { about?: AboutDto | null }) {
         >
           <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-bg-elevated border border-border-light text-text-secondary text-xs font-medium uppercase tracking-wider">
             <span className="size-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400" />
-            OPEN FOR OPPORTUNITIES
+            Open for opportunities
           </span>
         </motion.div>
 

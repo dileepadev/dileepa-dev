@@ -38,21 +38,21 @@ export const ABOUT_WHAT_I_DO: AboutWhatIDoItem[] = [
   {
     icon: "FaRobot",
     title: "AI Engineering",
-    desc: "Develop, Design, and Apply Solutions",
+    desc: "Design, build, and deploy AI solutions",
   },
   {
     icon: "FaServer",
     title: "Cloud & Backend",
-    desc: "APIs, Serverless, and Infrastructure",
+    desc: "Build APIs, serverless systems, and infrastructure",
   },
   {
     icon: "FaCodeBranch",
     title: "Open Source",
-    desc: "Contributing & Mentoring",
+    desc: "Contribute to open-source projects and mentor others",
   },
   {
     icon: "FaMicrophone",
     title: "Events",
-    desc: "Tech Events & Community",
+    desc: "Speak at tech events and foster community",
   },
 ];
