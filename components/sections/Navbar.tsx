@@ -134,7 +134,7 @@ export function Navbar() {
         "fixed top-5 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 w-[95%] max-w-5xl rounded-2xl",
         isScrolled
           ? "bg-bg-elevated/80 backdrop-blur-xl border border-white/10 shadow-sm shadow-brand-primary/50"
-          : "bg-transparent border border-transparent",
+          : "bg-bg-elevated/80 backdrop-blur-xl border border-transparent",
       )}
     >
       <div className="px-4 md:px-6">
