@@ -87,6 +87,7 @@ export interface CommunityDto {
   name: string;
   role: string;
   period: string;
+  communityUrl?: string;
   description: string;
   logo: LogoDto;
   current: boolean;

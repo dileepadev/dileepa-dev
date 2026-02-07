@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui";
 import { Card } from "./Card";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { FaUsers } from "react-icons/fa";
+import { FaUsers, FaExternalLinkAlt } from "react-icons/fa";
 
 interface CommunityListCardProps {
   community: CommunityDto;
@@ -63,7 +63,19 @@ export function CommunityListCard({
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">
               <h3 className="text-lg font-bold text-text-primary line-clamp-2">
-                {community.name}
+                {community.communityUrl ? (
+                  <a
+                    href={community.communityUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-accent-blue transition-colors inline-flex items-center gap-1"
+                  >
+                    {community.name}
+                    <FaExternalLinkAlt className="h-3 w-3" />
+                  </a>
+                ) : (
+                  community.name
+                )}
               </h3>
               <p className="text-base text-accent-blue font-medium mt-1">
                 {community.role}
