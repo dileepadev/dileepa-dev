@@ -17,6 +17,7 @@ import {
   FaInstagram,
   FaEnvelope,
   FaPaperPlane,
+  FaFacebook,
 } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import React, { useState } from "react";
@@ -27,6 +28,7 @@ const iconMap: Record<string, React.ElementType> = {
   xtwitter: FaXTwitter,
   youtube: FaYoutube,
   instagram: FaInstagram,
+  facebook: FaFacebook,
   email: FaEnvelope,
 };
 
@@ -59,6 +61,7 @@ export function Connect({ about }: { about?: AboutDto | null }) {
     xtwitter: "X (Twitter)",
     youtube: "YouTube",
     instagram: "Instagram",
+    facebook: "Facebook",
   };
 
   return (
@@ -79,7 +82,7 @@ export function Connect({ about }: { about?: AboutDto | null }) {
             transition={{ duration: 0.5 }}
           >
             <Card variant="elevated">
-              <h3 className="text-xl font-bold text-text-primary mb-6">
+              <h3 className="text-xl font-bold text-text-primary mb-5">
                 Send a Message
               </h3>
 

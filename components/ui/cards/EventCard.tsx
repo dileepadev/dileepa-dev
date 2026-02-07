@@ -15,16 +15,23 @@ export function EventCard({ event, className }: EventCardProps) {
     <Card variant="elevated" hover className={className}>
       <div className="flex flex-col h-full">
         <div className="flex flex-col flex-1 p-5">
-          {event.format && (
+          {event.format &&
             // Format
-            <Badge
-              variant="primary"
-              size="base"
-              className="mb-3 self-start capitalize"
-            >
-              {event.format}
-            </Badge>
-          )}
+            (() => {
+              const fmt = String(event.format || "").toLowerCase();
+              const variant = /webinar|online/.test(fmt)
+                ? "online"
+                : "inperson";
+              return (
+                <Badge
+                  variant={variant}
+                  size="base"
+                  className="mb-3 self-start capitalize"
+                >
+                  {event.format}
+                </Badge>
+              );
+            })()}
 
           {/* Title */}
           <h3 className="text-lg font-bold text-text-primary mb-2 line-clamp-2">

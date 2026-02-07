@@ -8,7 +8,11 @@ interface BadgeProps {
     | "secondary"
     | "success"
     | "warning"
-    | "error";
+    | "error"
+    | "active"
+    | "inactive"
+    | "inperson"
+    | "online";
   size?: "sm" | "base" | "md";
   className?: string;
 }
@@ -20,6 +24,10 @@ const variantClasses = {
   success: "bg-badge-success text-badge-success",
   warning: "bg-badge-warning text-badge-warning",
   error: "bg-badge-error text-badge-error",
+  active: "bg-badge-active text-badge-active",
+  inactive: "bg-badge-inactive text-badge-inactive",
+  inperson: "bg-badge-inperson text-badge-inperson",
+  online: "bg-badge-online text-badge-online",
 };
 
 const sizeClasses = {

@@ -74,7 +74,7 @@ export function CommunityCard({ community, className }: CommunityCardProps) {
       <div className="flex items-center justify-between pt-4 border-t border-border-light">
         <div className="flex items-center gap-2">
           <Badge
-            variant={community.current ? "success" : "warning"}
+            variant={community.current ? "active" : "inactive"}
             size="base"
           >
             {community.current ? "Current" : "Past"}

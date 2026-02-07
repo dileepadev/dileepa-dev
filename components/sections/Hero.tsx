@@ -8,6 +8,7 @@ import {
   FaLinkedin,
   FaYoutube,
   FaInstagram,
+  FaFacebook,
   FaArrowDown,
 } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
@@ -19,6 +20,7 @@ const iconMap: Record<string, React.ElementType> = {
   xtwitter: FaXTwitter,
   youtube: FaYoutube,
   instagram: FaInstagram,
+  facebook: FaFacebook,
 };
 
 export function Hero({ about }: { about?: AboutDto | null }) {

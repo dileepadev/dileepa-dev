@@ -73,9 +73,18 @@ export function EventListCard({
                     day: "numeric",
                   })}
                 </div>
-                <Badge variant="default" size="sm">
-                  {event.displayType}
-                </Badge>
+                {/* Map event format to badge variant */}
+                {(() => {
+                  const fmt = String(event.displayType || "").toLowerCase();
+                  const variant = /webinar|online/.test(fmt)
+                    ? "online"
+                    : "inperson";
+                  return (
+                    <Badge variant={variant} size="sm" className="capitalize">
+                      {event.displayType}
+                    </Badge>
+                  );
+                })()}
               </div>
             </div>
 

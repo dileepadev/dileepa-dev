@@ -12,6 +12,7 @@ export interface LinksDto {
   xtwitter: string;
   instagram: string;
   youtube: string;
+  facebook?: string;
 }
 
 export interface AboutDto {

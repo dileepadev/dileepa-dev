@@ -71,7 +71,7 @@ export function CommunityListCard({
             </div>
             <div className="shrink-0">
               <Badge
-                variant={community.current ? "success" : "warning"}
+                variant={community.current ? "active" : "inactive"}
                 size="base"
               >
                 {community.current ? "Current" : "Past"}

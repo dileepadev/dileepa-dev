@@ -297,6 +297,19 @@ button:disabled,
 
   --badge-bg-error: rgba(239, 68, 68, 0.12); /* red-500/12 */
   --badge-text-error: #ef4444; /* red-500 */
+
+  /* Active/inactive/in-person/online */
+  --badge-bg-active: rgba(16, 185, 129, 0.12);
+  --badge-text-active: #10b981;
+
+  --badge-bg-inactive: rgba(148, 163, 184, 0.08);
+  --badge-text-inactive: #94a3b8;
+
+  --badge-bg-inperson: rgba(168, 85, 247, 0.12);
+  --badge-text-inperson: #a855f7;
+
+  --badge-bg-online: rgba(14, 165, 233, 0.12);
+  --badge-text-online: #0ea5e9;
 }
 
 .dark {
@@ -318,6 +331,19 @@ button:disabled,
 
   --badge-bg-error: rgba(239, 68, 68, 0.12);
   --badge-text-error: #ef4444;
+
+  /* Active/inactive/in-person/online (dark variants) */
+  --badge-bg-active: rgba(16, 185, 129, 0.12);
+  --badge-text-active: #10b981;
+
+  --badge-bg-inactive: rgba(148, 163, 184, 0.08);
+  --badge-text-inactive: #94a3b8;
+
+  --badge-bg-inperson: rgba(168, 85, 247, 0.15);
+  --badge-text-inperson: #c084fc;
+
+  --badge-bg-online: rgba(14, 165, 233, 0.12);
+  --badge-text-online: #0ea5e9;
 }
 
 /* Utility classes for Badge styles */
@@ -356,6 +382,30 @@ button:disabled,
 }
 .text-badge-error {
   color: var(--badge-text-error) !important;
+}
+.bg-badge-active {
+  background-color: var(--badge-bg-active) !important;
+}
+.text-badge-active {
+  color: var(--badge-text-active) !important;
+}
+.bg-badge-inactive {
+  background-color: var(--badge-bg-inactive) !important;
+}
+.text-badge-inactive {
+  color: var(--badge-text-inactive) !important;
+}
+.bg-badge-inperson {
+  background-color: var(--badge-bg-inperson) !important;
+}
+.text-badge-inperson {
+  color: var(--badge-text-inperson) !important;
+}
+.bg-badge-online {
+  background-color: var(--badge-bg-online) !important;
+}
+.text-badge-online {
+  color: var(--badge-text-online) !important;
 }
 
 /* Removed problematic header/nav overrides that forced brand-color (invisible in dark mode) */
