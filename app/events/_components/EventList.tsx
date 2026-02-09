@@ -18,7 +18,12 @@ interface EventListProps {
   initialEvents: EventDto[];
 }
 
-type SortOption = "priority" | "date-desc" | "date-asc" | "title-asc" | "title-desc";
+type SortOption =
+  | "priority"
+  | "date-desc"
+  | "date-asc"
+  | "title-asc"
+  | "title-desc";
 type ViewOption = "card" | "table";
 
 export function EventList({ initialEvents }: EventListProps) {
