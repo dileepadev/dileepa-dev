@@ -39,6 +39,7 @@ export interface ExperienceDto {
   description: string;
   technologies: string[];
   logo: LogoDto;
+  index?: number;
 }
 
 export interface EducationDto {
@@ -49,6 +50,7 @@ export interface EducationDto {
   description: string;
   url: string;
   logo: LogoDto;
+  index?: number;
 }
 
 export interface EventDto {
@@ -64,6 +66,7 @@ export interface EventDto {
   slides?: string;
   recording?: string;
   audience?: string;
+  index?: number;
 }
 
 export interface VideoDto {
@@ -72,6 +75,7 @@ export interface VideoDto {
   date: string;
   link: string;
   thumbnail: string;
+  index?: number;
 }
 
 export interface BlogDto {
@@ -80,6 +84,7 @@ export interface BlogDto {
   date: string;
   excerpt: string;
   link: string;
+  index?: number;
 }
 
 export interface CommunityDto {
@@ -91,10 +96,12 @@ export interface CommunityDto {
   description: string;
   logo: LogoDto;
   current: boolean;
+  index?: number;
 }
 
 export interface ToolDto {
   _id?: string;
   name: string;
   logo: LogoDto;
+  index?: number;
 }

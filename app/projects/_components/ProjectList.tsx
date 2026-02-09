@@ -21,6 +21,7 @@ interface Project {
   demoUrl?: string;
   image?: string;
   featured?: boolean;
+  index?: number;
 }
 
 // Dummy data for projects until API is ready
@@ -41,6 +42,7 @@ const DUMMY_PROJECTS: Project[] = [
     githubUrl: "https://github.com/dileepadev/dileepa-dev",
     demoUrl: "https://dileepa.dev",
     featured: true,
+    index: 4,
   },
   {
     id: "2",
@@ -51,6 +53,7 @@ const DUMMY_PROJECTS: Project[] = [
     category: "Developer Tools",
     githubUrl: "https://github.com/dileepadev/cosmos-explorer",
     featured: true,
+    index: 3,
   },
   {
     id: "3",
@@ -60,6 +63,7 @@ const DUMMY_PROJECTS: Project[] = [
     technologies: ["React", "Python", "OpenAI", "Pinecone"],
     category: "AI / Machine Learning",
     demoUrl: "https://ai-chat.dileepa.dev",
+    index: 2,
   },
   {
     id: "4",
@@ -69,14 +73,15 @@ const DUMMY_PROJECTS: Project[] = [
     technologies: ["Node.js", "Express", "PostgreSQL", "Redis"],
     category: "APIs & Backend",
     githubUrl: "https://github.com/dileepadev/shop-api",
+    index: 1,
   },
 ];
 
-type SortOption = "featured" | "newest" | "title";
+type SortOption = "priority" | "featured" | "newest" | "title";
 
 export function ProjectList() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState<SortOption>("featured");
+  const [sortBy, setSortBy] = useState<SortOption>("priority");
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
 
   const categories = useMemo(() => {
@@ -108,6 +113,8 @@ export function ProjectList() {
     // Sort
     result.sort((a, b) => {
       switch (sortBy) {
+        case "priority":
+          return (b.index || 0) - (a.index || 0);
         case "featured":
           if (a.featured && !b.featured) return -1;
           if (!a.featured && b.featured) return 1;
@@ -212,6 +219,7 @@ export function ProjectList() {
                 onChange={(e) => setSortBy(e.target.value as SortOption)}
                 className="block w-full pl-11 pr-10 py-3 bg-bg-primary border border-border-light rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-blue/50 focus:border-accent-blue text-text-primary appearance-none transition-all cursor-pointer shadow-sm font-medium"
               >
+                <option value="priority">Priority</option>
                 <option value="featured">Featured First</option>
                 <option value="newest">Newest First</option>
                 <option value="title">Alphabetical</option>

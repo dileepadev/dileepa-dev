@@ -16,12 +16,17 @@ interface CommunityListProps {
   communities: CommunityDto[];
 }
 
-type SortOption = "current-first" | "past-first" | "name-asc" | "name-desc";
+type SortOption =
+  | "priority"
+  | "current-first"
+  | "past-first"
+  | "name-asc"
+  | "name-desc";
 type ViewOption = "card" | "table";
 
 export function CommunityList({ communities }: CommunityListProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState<SortOption>("current-first");
+  const [sortBy, setSortBy] = useState<SortOption>("priority");
   const [view, setView] = useState<ViewOption>("card");
 
   const filteredAndSortedCommunities = useMemo(() => {
@@ -36,6 +41,8 @@ export function CommunityList({ communities }: CommunityListProps) {
       )
       .sort((a, b) => {
         switch (sortBy) {
+          case "priority":
+            return (b.index || 0) - (a.index || 0);
           case "current-first":
             if (a.current !== b.current) return a.current ? -1 : 1;
             return a.name.localeCompare(b.name);
@@ -131,6 +138,7 @@ export function CommunityList({ communities }: CommunityListProps) {
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortOption)}
               >
+                <option value="priority">Priority</option>
                 <option value="current-first">Current First</option>
                 <option value="past-first">Past First</option>
                 <option value="name-asc">Name (A-Z)</option>

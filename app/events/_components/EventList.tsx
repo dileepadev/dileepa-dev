@@ -18,12 +18,12 @@ interface EventListProps {
   initialEvents: EventDto[];
 }
 
-type SortOption = "date-desc" | "date-asc" | "title-asc" | "title-desc";
+type SortOption = "priority" | "date-desc" | "date-asc" | "title-asc" | "title-desc";
 type ViewOption = "card" | "table";
 
 export function EventList({ initialEvents }: EventListProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState<SortOption>("date-desc");
+  const [sortBy, setSortBy] = useState<SortOption>("priority");
   const [view, setView] = useState<ViewOption>("card");
 
   const normalizedEvents = useMemo(() => {
@@ -50,6 +50,8 @@ export function EventList({ initialEvents }: EventListProps) {
       )
       .sort((a, b) => {
         switch (sortBy) {
+          case "priority":
+            return (b.index || 0) - (a.index || 0);
           case "date-desc":
             return new Date(b.date).getTime() - new Date(a.date).getTime();
           case "date-asc":
@@ -143,6 +145,7 @@ export function EventList({ initialEvents }: EventListProps) {
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortOption)}
               >
+                <option value="priority">Priority</option>
                 <option value="date-desc">Newest First</option>
                 <option value="date-asc">Oldest First</option>
                 <option value="title-asc">Title (A-Z)</option>

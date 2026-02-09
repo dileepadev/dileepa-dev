@@ -18,12 +18,12 @@ interface VideoListProps {
   videos: VideoDto[];
 }
 
-type SortOption = "newest" | "oldest" | "title-asc" | "title-desc";
+type SortOption = "priority" | "newest" | "oldest" | "title-asc" | "title-desc";
 type ViewOption = "card" | "table";
 
 export function VideoList({ videos }: VideoListProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState<SortOption>("newest");
+  const [sortBy, setSortBy] = useState<SortOption>("priority");
   const [view, setView] = useState<ViewOption>("card");
 
   const filteredAndSortedVideos = useMemo(() => {
@@ -33,6 +33,8 @@ export function VideoList({ videos }: VideoListProps) {
       )
       .sort((a, b) => {
         switch (sortBy) {
+          case "priority":
+            return (b.index || 0) - (a.index || 0);
           case "newest":
             return new Date(b.date).getTime() - new Date(a.date).getTime();
           case "oldest":
@@ -126,6 +128,7 @@ export function VideoList({ videos }: VideoListProps) {
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortOption)}
               >
+                <option value="priority">Priority</option>
                 <option value="newest">Newest First</option>
                 <option value="oldest">Oldest First</option>
                 <option value="title-asc">Title (A-Z)</option>

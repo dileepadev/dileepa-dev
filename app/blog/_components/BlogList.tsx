@@ -18,12 +18,12 @@ interface BlogListProps {
   initialBlogs: BlogDto[];
 }
 
-type SortOption = "newest" | "oldest" | "title-asc" | "title-desc";
+type SortOption = "priority" | "newest" | "oldest" | "title-asc" | "title-desc";
 type ViewOption = "card" | "table";
 
 export function BlogList({ initialBlogs }: BlogListProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState<SortOption>("newest");
+  const [sortBy, setSortBy] = useState<SortOption>("priority");
   const [view, setView] = useState<ViewOption>("card");
 
   const filteredAndSortedBlogs = useMemo(() => {
@@ -42,6 +42,8 @@ export function BlogList({ initialBlogs }: BlogListProps) {
     // Sort
     result.sort((a, b) => {
       switch (sortBy) {
+        case "priority":
+          return (b.index || 0) - (a.index || 0);
         case "newest":
           return new Date(b.date).getTime() - new Date(a.date).getTime();
         case "oldest":
