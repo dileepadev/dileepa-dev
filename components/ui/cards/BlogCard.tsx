@@ -23,11 +23,19 @@ export function BlogCard({ blog, className }: BlogCardProps) {
         hover
         className={`h-full flex flex-col ${className}`}
       >
-        {/* Cover Image Placeholder - DTO doesn't have image */}
-        <div className="relative aspect-video bg-linear-to-br from-blue-500/20 to-cyan-500/20 overflow-hidden rounded-t-lg">
-          <div className="w-full h-full flex items-center justify-center">
-            <FaPen className="h-10 w-10 text-blue-500 opacity-50" />
-          </div>
+        {/* Cover Image */}
+        <div className="relative aspect-video overflow-hidden rounded-t-lg">
+          {blog.bannerUrl ? (
+            <img
+              src={blog.bannerUrl}
+              alt={`${blog.title} banner`}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-blue-500/20 to-cyan-500/20">
+              <FaPen className="h-10 w-10 text-blue-500 opacity-50" />
+            </div>
+          )}
         </div>
 
         {/* Content */}

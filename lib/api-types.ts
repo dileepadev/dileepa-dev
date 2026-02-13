@@ -84,6 +84,7 @@ export interface BlogDto {
   date: string;
   excerpt: string;
   link: string;
+  bannerUrl?: string;
   index?: number;
 }
 

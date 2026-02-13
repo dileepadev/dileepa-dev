@@ -18,6 +18,16 @@ export function BlogListCard({ blog, className }: BlogListCardProps) {
       className={`flex flex-col h-full group ${className}`}
     >
       <div className="p-8 flex flex-col h-full">
+        {blog.bannerUrl && (
+          <div className="mb-4 w-full rounded-lg overflow-hidden aspect-video">
+            <img
+              src={blog.bannerUrl}
+              alt={`${blog.title} banner`}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        )}
+
         {/* Date */}
         <div className="flex items-center gap-2 text-sm text-text-muted mb-4">
           <FaCalendarAlt className="h-3 w-3 text-accent-blue" />
