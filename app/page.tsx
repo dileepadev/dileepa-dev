@@ -8,6 +8,7 @@ import {
   Connect,
   Footer,
 } from "@/components/sections";
+import { ThankYou } from "@/components/sections/ThankYou";
 import { getPortfolioData } from "@/lib/api";
 
 export const revalidate = 3600;
@@ -30,6 +31,7 @@ export default async function Home() {
           blogs={data.blogs}
         />
         <Connect about={data.about} />
+        <ThankYou about={data.about} />
       </main>
       <Footer about={data.about} />
     </>

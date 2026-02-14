@@ -31,7 +31,7 @@ export function Footer({ about }: { about?: AboutDto | null }) {
   const description = about?.tagline || "Personal Developer Portfolio";
 
   return (
-    <footer className="bg-brand-dark text-white border-t border-accent-blue/20">
+    <footer className="bg-bg-secondary text-text-primary border-t border-accent-blue/20">
       <Container>
         <div className="py-16">
           <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
@@ -41,10 +41,10 @@ export function Footer({ about }: { about?: AboutDto | null }) {
                 {name.split(" ")[0]}
                 <span className="text-accent-blue">.</span>
               </Link>
-              <p className="text-white/80 max-w-md mb-6">{description}</p>
+              <p className="text-text-secondary max-w-md mb-6">{description}</p>
 
               {/* Social Icons */}
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-5 text-text-muted">
                 {about?.links &&
                   Object.entries(about.links).map(([key, url]) => {
                     // Filter out non-socials
@@ -62,10 +62,10 @@ export function Footer({ about }: { about?: AboutDto | null }) {
                         href={url}
                         external={true}
                         variant="ghost"
-                        className="text-white/80 transition-colors duration-500 hover:text-accent-blue hover:bg-transparent"
+                        className="hover:text-accent-blue hover:bg-transparent"
                         aria-label={key}
                       >
-                        <IconComponent className="h-4 w-4 text-white/80 transition-colors duration-500" />
+                        <IconComponent className="size-5" />
                       </IconButton>
                     );
                   })}
@@ -80,7 +80,7 @@ export function Footer({ about }: { about?: AboutDto | null }) {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-white/80 hover:text-white transition-colors duration-500"
+                      className="text-text-secondary hover:text-accent-blue transition-colors duration-500"
                     >
                       {link.label}
                     </Link>
@@ -97,7 +97,7 @@ export function Footer({ about }: { about?: AboutDto | null }) {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-white/80 hover:text-white transition-colors duration-500 inline-flex items-center gap-2"
+                      className="text-text-secondary hover:text-accent-blue transition-colors duration-500 inline-flex items-center gap-2"
                     >
                       {link.label}
                     </Link>
@@ -109,12 +109,12 @@ export function Footer({ about }: { about?: AboutDto | null }) {
         </div>
 
         {/* Bottom Bar */}
-        <div className="py-6 border-t border-white/10">
+        <div className="py-6 border-t border-border-light">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-white/80 text-sm text-center md:text-left">
+            <p className="text-text-secondary text-sm text-center md:text-left">
               © {currentYear} {name}. All rights reserved.
             </p>
-            <p className="text-white/80 text-sm flex items-center gap-1">
+            <p className="text-text-secondary text-sm flex items-center gap-1">
               Made with <FaHeart className="h-4 w-4 text-red-500" /> using
               Next.js & Tailwind CSS
             </p>
