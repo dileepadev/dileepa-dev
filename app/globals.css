@@ -5,121 +5,8 @@
    Brand Color: #030a14 (Deep Navy)
    ============================================ */
 
-/* CSS Custom Properties - Light Mode (Default) */
-:root {
-  /* Brand Colors (deep blue only) */
-  --brand-primary: #030a14; /* primary deep navy */
-  --brand-primary-light: #030a14; /* keep same — avoid other color variants */
-  --brand-primary-dark: #010204; /* deeper blue for dark mode accents */
-
-  /* Accent Colors (silver — matches primary palette) */
-  --accent-blue: #475569; /* slate-600 — cool silver */
-  --accent-blue-light: rgba(71, 85, 105, 0.12);
-  --accent-blue-dark: #334155;
-  /* Text on accent background (for contrast) */
-  --text-on-accent: #ffffff;
-
-  /* Background Colors */
-  --bg-primary: #ffffff;
-  --bg-secondary: #f8fafc;
-  --bg-tertiary: #f1f5f9;
-  --bg-elevated: #ffffff;
-
-  /* Text Colors */
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-tertiary: #64748b;
-  --text-muted: #727d8f;
-  --text-inverse: #ffffff;
-
-  /* Border Colors */
-  --border-light: #e2e8f0;
-  --border-medium: #cbd5e1;
-  --border-dark: #94a3b8;
-
-  /* Shadow Colors */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg:
-    0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-xl:
-    0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-
-  /* Typography */
-  --font-sans: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-
-  /* Spacing Scale */
-  --space-xs: 0.25rem;
-  --space-sm: 0.5rem;
-  --space-md: 1rem;
-  --space-lg: 1.5rem;
-  --space-xl: 2rem;
-  --space-2xl: 3rem;
-  --space-3xl: 4rem;
-  --space-4xl: 6rem;
-
-  /* Border Radius */
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
-  --radius-2xl: 1.5rem;
-  --radius-full: 9999px;
-
-  /* Transitions */
-  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
-
-  /* Z-Index Scale */
-  --z-dropdown: 50;
-  --z-sticky: 100;
-  --z-fixed: 150;
-  --z-modal: 200;
-  --z-tooltip: 250;
-}
-
-/* Dark Mode */
-.dark {
-  --brand-primary: #030a14;
-  --brand-primary-light: #030a14;
-  --brand-primary-dark: #010204;
-
-  /* Accent - Silver on dark backgrounds */
-  --accent-blue: #cbd5e1; /* slate-300 — bright silver */
-  --accent-blue-light: rgba(203, 213, 225, 0.15);
-  --accent-blue-dark: #94a3b8;
-  /* Dark text on silver for readability */
-  --text-on-accent: #0f172a;
-
-  /* Deep-blue backgrounds */
-  --bg-primary: #010204; /* very deep blue background */
-  --bg-secondary: #030a14; /* primary brand as secondary layer */
-  --bg-tertiary: #06121a; /* slightly lighter than secondary for hover/cards */
-  --bg-elevated: #030a14;
-
-  --text-primary: #f8fafc;
-  --text-secondary: #e2e8f0;
-  --text-tertiary: #cbd5e1;
-  --text-muted: #94a3b8;
-  --text-inverse: #010204;
-
-  /* Borders - Visible slate blues */
-  --border-light: #1e293b;
-  --border-medium: #334155;
-  --border-dark: #475569;
-
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.5);
-  --shadow-md:
-    0 4px 6px -1px rgb(0 0 0 / 0.45), 0 2px 4px -2px rgb(0 0 0 / 0.35);
-  --shadow-lg:
-    0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.4);
-  --shadow-xl:
-    0 20px 25px -5px rgb(0 0 0 / 0.6), 0 8px 10px -6px rgb(0 0 0 / 0.45);
-}
-
-/* Tailwind Theme Integration */
+/* 1. TAILWIND THEME INTEGRATION
+   -------------------------------------------- */
 @theme inline {
   --color-brand-primary: var(--brand-primary);
   --color-brand-light: var(--brand-primary-light);
@@ -149,137 +36,83 @@
   --font-mono: var(--font-mono);
 }
 
-/* Base Styles */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+/* 2. CSS CUSTOM PROPERTIES (VARIABLES)
+   -------------------------------------------- */
 
-html {
-  scroll-behavior: smooth;
-  scroll-padding-top: 6rem; /* clear fixed navbar (top-5 + h-16) */
-}
-
-body {
-  font-family: var(--font-sans);
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Focus Styles */
-:focus-visible {
-  outline: 2px solid var(--brand-primary);
-  outline-offset: 2px;
-}
-
-/* Selection */
-::selection {
-  background-color: var(--brand-primary);
-  color: white;
-}
-::-moz-selection {
-  background-color: var(--brand-primary);
-  color: white;
-}
-
-/* Dark mode: swap selection colors for better contrast */
-html.dark ::selection,
-.dark ::selection {
-  background-color: var(--accent-blue);
-  color: var(--text-on-accent);
-}
-html.dark ::-moz-selection,
-.dark ::-moz-selection {
-  background-color: var(--accent-blue);
-  color: var(--text-on-accent);
-}
-
-/* Scrollbar Styling */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--border-medium);
-  border-radius: var(--radius-full);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--border-dark);
-}
-
-/* Utility Classes */
-.glass {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-.dark .glass {
-  background: rgba(3, 10, 20, 0.8);
-}
-
-/* Cursor for interactive elements */
-/* Ensure obvious pointer for clickable controls across the site */
-a,
-button,
-input[type="button"],
-input[type="submit"],
-input[type="reset"],
-[role="button"],
-summary,
-label[for] {
-  cursor: pointer;
-}
-
-/* Disabled controls show not-allowed */
-button:disabled,
-[disabled] {
-  cursor: not-allowed;
-  opacity: 0.6; /* visual hint */
-}
-
-/* Utility class for manual use */
-.cursor-pointer {
-  cursor: pointer !important;
-}
-
-/* Accent utilities - ensure consistent accent color across themes */
-.text-accent-blue {
-  color: var(--accent-blue) !important;
-}
-.text-on-accent {
-  color: var(--text-on-accent) !important;
-}
-.hover\:text-on-accent:hover {
-  color: var(--text-on-accent) !important;
-}
-.bg-accent-blue {
-  background-color: var(--accent-blue) !important;
-}
-.border-accent-blue {
-  border-color: var(--accent-blue) !important;
-}
-.hover\:text-accent-blue:hover {
-  color: var(--accent-blue) !important;
-}
-.active-accent {
-  color: var(--accent-blue) !important;
-  font-weight: 600;
-}
-
-/* Badge Utilities - variables and helpers for Badge component */
+/* Light Mode (Default) */
 :root {
-  /* Badge - light theme */
+  /* --- Brand Colors (deep blue only) --- */
+  --brand-primary: #030a14;
+  --brand-primary-light: #030a14; /* keep same — avoid other color variants */
+  --brand-primary-dark: #010204; /* deeper blue for dark mode accents */
+
+  /* --- Accent Colors (silver — matches primary palette) --- */
+  --accent-blue: #475569; /* slate-600 — cool silver */
+  --accent-blue-light: rgba(71, 85, 105, 0.12);
+  --accent-blue-dark: #334155;
+  --text-on-accent: #ffffff; /* Text on accent background */
+
+  /* --- Background Colors --- */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #f1f5f9;
+  --bg-elevated: #ffffff;
+
+  /* --- Text Colors --- */
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-tertiary: #64748b;
+  --text-muted: #727d8f;
+  --text-inverse: #ffffff;
+
+  /* --- Border Colors --- */
+  --border-light: #e2e8f0;
+  --border-medium: #cbd5e1;
+  --border-dark: #94a3b8;
+
+  /* --- Shadow Colors --- */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1),
+    0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+  /* --- Typography --- */
+  --font-sans: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* --- Spacing Scale --- */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+  --space-4xl: 6rem;
+
+  /* --- Border Radius --- */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+
+  /* --- Transitions --- */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* --- Z-Index Scale --- */
+  --z-dropdown: 50;
+  --z-sticky: 100;
+  --z-fixed: 150;
+  --z-modal: 200;
+  --z-tooltip: 250;
+
+  /* --- Component: Badges (Light) --- */
   --badge-bg-default: var(--bg-tertiary);
   --badge-text-default: var(--text-secondary);
 
@@ -312,8 +145,46 @@ button:disabled,
   --badge-text-online: #0ea5e9;
 }
 
+/* Dark Mode Overrides */
 .dark {
-  /* Badge - dark theme */
+  /* --- Brand & Accents --- */
+  --brand-primary: #030a14;
+  --brand-primary-light: #030a14;
+  --brand-primary-dark: #010204;
+
+  --accent-blue: #cbd5e1; /* slate-300 — bright silver */
+  --accent-blue-light: rgba(203, 213, 225, 0.15);
+  --accent-blue-dark: #94a3b8;
+  --text-on-accent: #0f172a; /* Dark text on silver */
+
+  /* --- Backgrounds --- */
+  --bg-primary: #010204; /* very deep blue background */
+  --bg-secondary: #030a14; /* primary brand as secondary layer */
+  --bg-tertiary: #06121a; /* slightly lighter than secondary */
+  --bg-elevated: #030a14;
+
+  /* --- Text --- */
+  --text-primary: #f8fafc;
+  --text-secondary: #e2e8f0;
+  --text-tertiary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-inverse: #010204;
+
+  /* --- Borders (Visible slate blues) --- */
+  --border-light: #1e293b;
+  --border-medium: #334155;
+  --border-dark: #475569;
+
+  /* --- Shadows --- */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.5);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.45),
+    0 2px 4px -2px rgb(0 0 0 / 0.35);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5),
+    0 4px 6px -4px rgb(0 0 0 / 0.4);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.6),
+    0 8px 10px -6px rgb(0 0 0 / 0.45);
+
+  /* --- Component: Badges (Dark) --- */
   --badge-bg-default: var(--bg-tertiary);
   --badge-text-default: var(--text-secondary);
 
@@ -323,8 +194,8 @@ button:disabled,
   --badge-bg-secondary: var(--accent-blue-light);
   --badge-text-secondary: var(--accent-blue);
 
-  --badge-bg-success: rgba(16, 185, 129, 0.12); /* emerald-500/12 */
-  --badge-text-success: #10b981; /* emerald-500 */
+  --badge-bg-success: rgba(16, 185, 129, 0.12);
+  --badge-text-success: #10b981;
 
   --badge-bg-warning: rgba(245, 158, 11, 0.12);
   --badge-text-warning: #f59e0b;
@@ -332,7 +203,7 @@ button:disabled,
   --badge-bg-error: rgba(239, 68, 68, 0.12);
   --badge-text-error: #ef4444;
 
-  /* Active/inactive/in-person/online (dark variants) */
+  /* Active/inactive/in-person/online (Dark) */
   --badge-bg-active: rgba(16, 185, 129, 0.12);
   --badge-text-active: #10b981;
 
@@ -346,7 +217,136 @@ button:disabled,
   --badge-text-online: #0ea5e9;
 }
 
-/* Utility classes for Badge styles */
+/* 3. BASE STYLES & RESETS
+   -------------------------------------------- */
+
+/* Box Sizing */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* HTML Defaults */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 6rem; /* clear fixed navbar (top-5 + h-16) */
+}
+
+/* Body Defaults */
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Focus Handling */
+:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 2px;
+}
+
+/* Selection Styling */
+::selection {
+  background-color: var(--brand-primary);
+  color: white;
+}
+::-moz-selection {
+  background-color: var(--brand-primary);
+  color: white;
+}
+
+/* Dark mode selection */
+html.dark ::selection,
+.dark ::selection {
+  background-color: var(--accent-blue);
+  color: var(--text-on-accent);
+}
+html.dark ::-moz-selection,
+.dark ::-moz-selection {
+  background-color: var(--accent-blue);
+  color: var(--text-on-accent);
+}
+
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-medium);
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-dark);
+}
+
+/* 4. UTILITY CLASSES
+   -------------------------------------------- */
+
+/* Glass Morphism */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.dark .glass {
+  background: rgba(3, 10, 20, 0.8);
+}
+
+/* Cursor & Interaction */
+a,
+button,
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+[role="button"],
+summary,
+label[for] {
+  cursor: pointer;
+}
+
+button:disabled,
+[disabled] {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.cursor-pointer {
+  cursor: pointer !important;
+}
+
+/* Accent Utilities */
+.text-accent-blue {
+  color: var(--accent-blue) !important;
+}
+.text-on-accent {
+  color: var(--text-on-accent) !important;
+}
+.hover\:text-on-accent:hover {
+  color: var(--text-on-accent) !important;
+}
+.bg-accent-blue {
+  background-color: var(--accent-blue) !important;
+}
+.border-accent-blue {
+  border-color: var(--accent-blue) !important;
+}
+.hover\:text-accent-blue:hover {
+  color: var(--accent-blue) !important;
+}
+.active-accent {
+  color: var(--accent-blue) !important;
+  font-weight: 600;
+}
+
+/* Badge Utility Classes */
 .bg-badge-default {
   background-color: var(--badge-bg-default) !important;
 }
@@ -408,17 +408,35 @@ button:disabled,
   color: var(--badge-text-online) !important;
 }
 
-/* Status / Availability dot — used in Hero and similar UI spots */
+/* Status Available Dot */
 .status-available-dot {
-  background-color: var(--badge-text-success) !important; /* emerald-500 */
+  background-color: var(--badge-text-success) !important;
 }
 .dark .status-available-dot {
-  background-color: #34d399 !important; /* emerald-400 for dark mode */
+  background-color: #34d399 !important;
 }
 
-/* Removed problematic header/nav overrides that forced brand-color (invisible in dark mode) */
+/* Container Width Utilities */
+.container-sm {
+  max-width: 640px;
+}
+.container-md {
+  max-width: 768px;
+}
+.container-lg {
+  max-width: 1024px;
+}
+.container-xl {
+  max-width: 1280px;
+}
+.container-2xl {
+  max-width: 1536px;
+}
 
-/* Animation Utilities */
+/* 5. ANIMATIONS
+   -------------------------------------------- */
+
+/* Keyframes */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -460,6 +478,7 @@ button:disabled,
   }
 }
 
+/* Animation Utilities */
 .animate-fade-in {
   animation: fadeIn 0.5s ease-out forwards;
 }
@@ -470,21 +489,4 @@ button:disabled,
 
 .animate-slide-down {
   animation: slideDown 0.5s ease-out forwards;
-}
-
-/* Container Widths */
-.container-sm {
-  max-width: 640px;
-}
-.container-md {
-  max-width: 768px;
-}
-.container-lg {
-  max-width: 1024px;
-}
-.container-xl {
-  max-width: 1280px;
-}
-.container-2xl {
-  max-width: 1536px;
 }
