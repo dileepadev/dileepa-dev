@@ -20,6 +20,7 @@ export interface AboutDto {
   title: string;
   tagline: string;
   description: string[];
+  status: string;
   images: ImageDto;
   links: LinksDto;
   connect: string[];

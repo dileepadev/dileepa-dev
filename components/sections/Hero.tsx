@@ -123,7 +123,7 @@ export function Hero({ about }: { about?: AboutDto | null }) {
         >
           <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-bg-elevated border border-border-light text-text-secondary text-xs font-medium uppercase tracking-wider">
             <span className="size-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400" />
-            Open for opportunities
+            {about?.status}
           </span>
         </motion.div>
 
