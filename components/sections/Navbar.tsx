@@ -255,11 +255,7 @@ export function Navbar() {
                   {link.label}
                 </Link>
               );
-            })}
-            <Button href="#connect" size="md" className="mt-2 w-full">
-              Contact Me
-            </Button>
-          </div>
+            })}          </div>
         </div>
       </div>
     </header>
