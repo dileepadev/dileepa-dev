@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ThemeToggle, Button } from "@/components/ui";
+import { ThemeToggle } from "@/components/ui";
 import { NAV_LINKS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { FiMenu, FiX } from "react-icons/fi";
@@ -164,7 +164,7 @@ export function Navbar() {
               const baseClass = `px-4 py-1.5 text-sm font-medium transition-all duration-300 rounded-full`;
               const activeClass = isActive
                 ? "bg-accent-blue text-on-accent shadow-lg shadow-accent-blue/25"
-                : "text-text-muted hover:text-text-primary hover:bg-white/5";
+                : "text-text-primary hover:text-text-muted hover:bg-white/5";
 
               if (isHash) {
                 return (
@@ -239,7 +239,7 @@ export function Navbar() {
                       handleNavClick(link.href);
                     }}
                     aria-current={isActive ? "page" : undefined}
-                    className={`w-full text-left px-4 py-3 text-base font-medium transition-colors rounded-lg ${isActive ? "bg-accent-blue text-on-accent" : "text-text-secondary hover:text-text-primary hover:bg-bg-secondary"}`}
+                    className={`w-full text-left px-4 py-3 text-base font-medium transition-colors rounded-lg ${isActive ? "bg-accent-blue text-on-accent" : "text-text-primary hover:text-text-secondary hover:bg-bg-secondary"}`}
                   >
                     {link.label}
                   </a>
@@ -250,12 +250,13 @@ export function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`w-full text-left px-4 py-3 text-base font-medium text-text-secondary transition-colors hover:text-text-primary hover:bg-bg-secondary rounded-lg`}
+                  className={`w-full text-left px-4 py-3 text-base font-medium text-text-primary transition-colors hover:text-text-secondary hover:bg-bg-secondary rounded-lg`}
                 >
                   {link.label}
                 </Link>
               );
-            })}          </div>
+            })}{" "}
+          </div>
         </div>
       </div>
     </header>
