@@ -408,6 +408,14 @@ button:disabled,
   color: var(--badge-text-online) !important;
 }
 
+/* Status / Availability dot — used in Hero and similar UI spots */
+.status-available-dot {
+  background-color: var(--badge-text-success) !important; /* emerald-500 */
+}
+.dark .status-available-dot {
+  background-color: #34d399 !important; /* emerald-400 for dark mode */
+}
+
 /* Removed problematic header/nav overrides that forced brand-color (invisible in dark mode) */
 
 /* Animation Utilities */

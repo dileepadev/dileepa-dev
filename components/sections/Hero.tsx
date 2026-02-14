@@ -122,7 +122,7 @@ export function Hero({ about }: { about?: AboutDto | null }) {
           transition={{ duration: 0.3, delay: 0.45 }}
         >
           <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-bg-elevated border border-border-light text-text-secondary text-xs font-medium uppercase tracking-wider">
-            <span className="size-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400" />
+            <span className="size-1.5 rounded-full status-available-dot" />
             {about?.status}
           </span>
         </motion.div>
