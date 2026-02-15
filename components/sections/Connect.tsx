@@ -102,7 +102,7 @@ export function Connect({ about }: { about?: AboutDto | null }) {
                       setFormData({ ...formData, name: e.target.value })
                     }
                     required
-                    className="w-full px-4 py-3 rounded-lg border border-border-light bg-bg-primary text-text-primary placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-accent-blue focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 rounded-lg border border-border-light bg-bg-primary text-text-primary placeholder-text-muted hover:border-accent-blue/30 focus:outline-none focus:ring-2 focus:ring-accent-blue focus:border-transparent transition-all"
                     placeholder="Your name"
                   />
                 </div>
@@ -122,7 +122,7 @@ export function Connect({ about }: { about?: AboutDto | null }) {
                       setFormData({ ...formData, email: e.target.value })
                     }
                     required
-                    className="w-full px-4 py-3 rounded-lg border border-border-light bg-bg-primary text-text-primary placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-accent-blue focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 rounded-lg border border-border-light bg-bg-primary text-text-primary placeholder-text-muted hover:border-accent-blue/30 focus:outline-none focus:ring-2 focus:ring-accent-blue focus:border-transparent transition-all"
                     placeholder="your.email@example.com"
                   />
                 </div>
@@ -142,7 +142,7 @@ export function Connect({ about }: { about?: AboutDto | null }) {
                     }
                     required
                     rows={5}
-                    className="w-full px-4 py-3 rounded-lg border border-border-light bg-bg-primary text-text-primary placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-accent-blue focus:border-transparent transition-all resize-none"
+                    className="w-full px-4 py-3 rounded-lg border border-border-light bg-bg-primary text-text-primary placeholder-text-muted hover:border-accent-blue/30 focus:outline-none focus:ring-2 focus:ring-accent-blue focus:border-transparent transition-all resize-none"
                     placeholder="Your message..."
                   />
                 </div>
