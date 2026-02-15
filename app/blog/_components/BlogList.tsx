@@ -181,7 +181,7 @@ export function BlogList({ initialBlogs }: BlogListProps) {
 
       {/* Blogs List */}
       {view === "card" ? (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2 max-w-6xl mx-auto animate-in fade-in duration-500">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2 max-w-6xl mx-auto">
           {filteredAndSortedBlogs.map((blog) => (
             <BlogListCard
               key={blog._id ?? blog.link}
@@ -191,7 +191,7 @@ export function BlogList({ initialBlogs }: BlogListProps) {
           ))}
         </div>
       ) : (
-        <div className="bg-bg-secondary rounded-2xl border border-border-light overflow-hidden shadow-sm animate-in fade-in duration-500">
+        <div className="bg-bg-secondary rounded-2xl border border-border-light overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead className="hidden md:table-header-group bg-bg-tertiary border-b border-border-light">

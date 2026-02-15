@@ -193,7 +193,7 @@ export function EventList({ initialEvents }: EventListProps) {
 
       {/* Events List */}
       {view === "card" ? (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-1 max-w-6xl mx-auto animate-in fade-in duration-500">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-1 max-w-6xl mx-auto">
           {filteredAndSortedEvents.map((event, index) => (
             <EventListCard
               key={event.id}
@@ -203,7 +203,7 @@ export function EventList({ initialEvents }: EventListProps) {
           ))}
         </div>
       ) : (
-        <div className="bg-bg-secondary rounded-2xl border border-border-light overflow-hidden shadow-sm animate-in fade-in duration-500">
+        <div className="bg-bg-secondary rounded-2xl border border-border-light overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead className="hidden md:table-header-group bg-bg-tertiary border-b border-border-light">

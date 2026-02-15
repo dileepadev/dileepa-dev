@@ -171,7 +171,7 @@ export function VideoList({ videos }: VideoListProps) {
 
       {/* Videos List */}
       {view === "card" ? (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2 max-w-6xl mx-auto animate-in fade-in duration-500">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2 max-w-6xl mx-auto">
           {filteredAndSortedVideos.map((video: VideoDto) => (
             <VideoCard
               key={video._id ?? video.link}
@@ -181,7 +181,7 @@ export function VideoList({ videos }: VideoListProps) {
           ))}
         </div>
       ) : (
-        <div className="bg-bg-secondary rounded-2xl border border-border-light overflow-hidden shadow-sm animate-in fade-in duration-500">
+        <div className="bg-bg-secondary rounded-2xl border border-border-light overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead className="hidden md:table-header-group bg-bg-tertiary border-b border-border-light">
