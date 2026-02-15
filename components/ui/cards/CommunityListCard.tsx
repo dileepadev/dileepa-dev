@@ -68,10 +68,10 @@ export function CommunityListCard({
                     href={community.communityUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:text-accent-blue transition-colors inline-flex items-center gap-1"
+                    className="hover:text-accent-blue transition-colors"
                   >
                     {community.name}
-                    <FaExternalLinkAlt className="h-3 w-3" />
+                    <FaExternalLinkAlt className="inline-block h-3 w-3 ml-1 mb-0.5" />
                   </a>
                 ) : (
                   community.name

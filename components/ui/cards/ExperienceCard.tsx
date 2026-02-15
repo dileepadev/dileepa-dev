@@ -74,10 +74,10 @@ export function ExperienceCard({ experience, className }: ExperienceCardProps) {
                 href={experience.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-text-primary hover:text-accent-blue transition-colors inline-flex items-center gap-1 font-medium"
+                className="text-text-primary hover:text-accent-blue transition-colors font-medium"
               >
                 {experience.company}
-                <FaExternalLinkAlt className="h-3 w-3" />
+                <FaExternalLinkAlt className="inline-block h-3 w-3 ml-1 mb-0.5" />
               </a>
             ) : (
               <span className="font-medium text-text-primary">
