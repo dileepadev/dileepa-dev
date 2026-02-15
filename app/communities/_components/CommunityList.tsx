@@ -62,9 +62,9 @@ export function CommunityList({ communities }: CommunityListProps) {
   return (
     <div className="space-y-8">
       {/* Controls */}
-      <div className="flex flex-col md:flex-row gap-6 items-end justify-between bg-bg-secondary p-6 rounded-2xl border border-border-light shadow-sm">
+      <div className="flex flex-col lg:flex-row gap-6 lg:items-end justify-between bg-bg-secondary p-6 rounded-2xl border border-border-light shadow-sm">
         {/* Search */}
-        <div className="w-full md:max-w-md space-y-2">
+        <div className="w-full lg:max-w-md space-y-2">
           <label
             htmlFor="search"
             className="text-sm font-semibold text-text-secondary ml-1"
@@ -86,11 +86,11 @@ export function CommunityList({ communities }: CommunityListProps) {
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row w-full md:w-auto gap-4">
+        <div className="flex flex-col sm:flex-row w-full lg:w-auto gap-4">
           {/* View Toggle */}
           <div className="w-full sm:w-auto space-y-2">
             <span className="block text-sm font-semibold text-text-secondary ml-1">
-              View
+              View Mode
             </span>
             <div className="flex bg-bg-primary p-1 rounded-xl border border-border-light shadow-sm h-12">
               <button
@@ -128,7 +128,7 @@ export function CommunityList({ communities }: CommunityListProps) {
             >
               Sort by
             </label>
-            <div className="relative w-full md:w-auto min-w-48">
+            <div className="relative w-full sm:min-w-48">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-text-muted">
                 <FaSortAmountDown className="h-4 w-4" />
               </div>
@@ -138,7 +138,7 @@ export function CommunityList({ communities }: CommunityListProps) {
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortOption)}
               >
-                <option value="priority">Priority</option>
+                <option value="priority">Priority Order</option>
                 <option value="current-first">Current First</option>
                 <option value="past-first">Past First</option>
                 <option value="name-asc">Name (A-Z)</option>
@@ -165,14 +165,14 @@ export function CommunityList({ communities }: CommunityListProps) {
       </div>
 
       {/* Results Info */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between px-1">
         {searchQuery && (
           <p className="text-text-secondary animate-in fade-in slide-in-from-left-4 duration-300">
             Found{" "}
             <span className="text-text-primary font-bold">
               {filteredAndSortedCommunities.length}
             </span>{" "}
-            communities matching &quot;
+            results for &quot;
             <span className="text-accent-blue font-medium">{searchQuery}</span>
             &quot;
           </p>
@@ -193,8 +193,8 @@ export function CommunityList({ communities }: CommunityListProps) {
       ) : (
         <div className="bg-bg-secondary rounded-2xl border border-border-light overflow-hidden shadow-sm animate-in fade-in duration-500">
           <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead className="bg-bg-tertiary border-b border-border-light">
+            <table className="w-full text-left border-collapse">
+              <thead className="hidden md:table-header-group bg-bg-tertiary border-b border-border-light">
                 <tr>
                   <th className="py-4 px-6 text-sm font-semibold text-text-secondary">
                     Community & Role
@@ -211,24 +211,26 @@ export function CommunityList({ communities }: CommunityListProps) {
                 {filteredAndSortedCommunities.map((community) => (
                   <tr
                     key={community._id}
-                    className="hover:bg-bg-primary/50 transition-colors group"
+                    className="flex flex-col md:table-row hover:bg-bg-primary/50 transition-colors group p-4 md:p-0"
                   >
-                    <td className="py-4 px-6">
+                    <td className="py-2 md:py-6 px-0 md:px-6">
                       <div className="flex items-center gap-4">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={community.logo.light}
-                          alt={community.name}
-                          className="w-10 h-10 rounded-lg object-contain bg-white dark:hidden"
-                        />
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={community.logo.dark}
-                          alt={community.name}
-                          className="w-10 h-10 rounded-lg object-contain bg-black hidden dark:block"
-                        />
-                        <div>
-                          <h3 className="font-semibold text-text-primary group-hover:text-accent-blue transition-colors">
+                        <div className="shrink-0">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={community.logo.light}
+                            alt={community.name}
+                            className="w-12 h-12 md:w-10 md:h-10 rounded-lg object-contain bg-white dark:hidden shadow-sm p-1"
+                          />
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={community.logo.dark}
+                            alt={community.name}
+                            className="w-12 h-12 md:w-10 md:h-10 rounded-lg object-contain bg-black hidden dark:block shadow-sm p-1"
+                          />
+                        </div>
+                        <div className="min-w-0">
+                          <h3 className="font-bold md:font-semibold text-text-primary group-hover:text-accent-blue transition-colors text-base md:text-sm">
                             {community.name}
                           </h3>
                           <p className="text-sm text-text-muted">
@@ -237,16 +239,22 @@ export function CommunityList({ communities }: CommunityListProps) {
                         </div>
                       </div>
                     </td>
-                    <td className="py-4 px-6">
-                      <span className="text-sm text-text-secondary">
+                    <td className="py-2 md:py-6 px-0 md:px-6">
+                      <span className="md:hidden text-xs font-bold text-text-muted uppercase block mb-1">
+                        Period
+                      </span>
+                      <span className="text-sm text-text-secondary font-medium md:font-normal">
                         {community.period}
                       </span>
                     </td>
-                    <td className="py-4 px-6 text-center">
+                    <td className="py-2 md:py-6 px-0 md:px-6 text-left md:text-center">
+                      <span className="md:hidden text-xs font-bold text-text-muted uppercase block mb-1">
+                        Status
+                      </span>
                       <Badge
                         variant={community.current ? "active" : "inactive"}
                         size="sm"
-                        className="uppercase"
+                        className="uppercase tracking-tighter"
                       >
                         {community.current ? "Current" : "Past"}
                       </Badge>

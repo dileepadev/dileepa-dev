@@ -25,10 +25,10 @@ export function CommunityListCard({
 
   return (
     <Card variant="elevated" hover className={`h-full ${className}`}>
-      <div className="flex items-start gap-6 p-5">
+      <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 p-6">
         {/* Left: Logo */}
         <div className="shrink-0">
-          <div className="flex h-40 w-40 items-center justify-center rounded-lg bg-accent-blue/10 text-accent-blue overflow-hidden relative">
+          <div className="flex h-32 w-32 sm:h-40 sm:w-40 items-center justify-center rounded-2xl bg-accent-blue/10 text-accent-blue overflow-hidden relative shadow-inner">
             {community.logo ? (
               mounted ? (
                 <>
@@ -37,7 +37,7 @@ export function CommunityListCard({
                       src={community.logo.light}
                       alt={community.name}
                       fill
-                      className="object-contain p-2"
+                      className="object-contain p-3"
                     />
                   </div>
                   <div className="hidden dark:block w-full h-full relative">
@@ -45,7 +45,7 @@ export function CommunityListCard({
                       src={community.logo.dark}
                       alt={community.name}
                       fill
-                      className="object-contain p-2"
+                      className="object-contain p-3"
                     />
                   </div>
                 </>
@@ -53,16 +53,16 @@ export function CommunityListCard({
                 <div className="w-full h-full relative" />
               )
             ) : (
-              <FaUsers className="h-6 w-6" />
+              <FaUsers className="h-10 w-10 sm:h-12 sm:w-12" />
             )}
           </div>
         </div>
 
         {/* Right: Content */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between gap-4">
+        <div className="flex-1 min-w-0 text-center sm:text-left w-full">
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
             <div className="min-w-0">
-              <h3 className="text-lg font-bold text-text-primary line-clamp-2">
+              <h3 className="text-xl font-bold text-text-primary">
                 {community.communityUrl ? (
                   <a
                     href={community.communityUrl}
@@ -77,14 +77,15 @@ export function CommunityListCard({
                   community.name
                 )}
               </h3>
-              <p className="text-base text-accent-blue font-medium mt-1">
+              <p className="text-lg text-accent-blue font-semibold mt-1">
                 {community.role}
               </p>
             </div>
-            <div className="shrink-0">
+            <div className="flex justify-center sm:justify-start shrink-0">
               <Badge
                 variant={community.current ? "active" : "inactive"}
                 size="base"
+                className="uppercase tracking-wider"
               >
                 {community.current ? "Current" : "Past"}
               </Badge>
@@ -92,12 +93,12 @@ export function CommunityListCard({
           </div>
 
           {community.description && (
-            <p className="text-text-secondary mt-3 text-base line-clamp-3">
+            <p className="text-text-secondary mt-4 text-base line-clamp-3 leading-relaxed">
               {community.description}
             </p>
           )}
 
-          <div className="mt-4 pt-4 border-t border-border-light text-base text-text-muted flex items-center justify-between">
+          <div className="mt-6 pt-4 border-t border-border-light text-base text-text-muted flex items-center justify-center sm:justify-between font-medium">
             <span>{community.period}</span>
           </div>
         </div>

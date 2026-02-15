@@ -52,9 +52,9 @@ export function VideoList({ videos }: VideoListProps) {
   return (
     <div className="space-y-8">
       {/* Controls */}
-      <div className="flex flex-col md:flex-row gap-6 items-end justify-between bg-bg-secondary p-6 rounded-2xl border border-border-light shadow-sm">
+      <div className="flex flex-col lg:flex-row gap-6 lg:items-end justify-between bg-bg-secondary p-6 rounded-2xl border border-border-light shadow-sm">
         {/* Search */}
-        <div className="w-full md:max-w-md space-y-2">
+        <div className="w-full lg:max-w-md space-y-2">
           <label
             htmlFor="search"
             className="text-sm font-semibold text-text-secondary ml-1"
@@ -76,11 +76,11 @@ export function VideoList({ videos }: VideoListProps) {
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row w-full md:w-auto gap-4">
+        <div className="flex flex-col sm:flex-row w-full lg:w-auto gap-4">
           {/* View Toggle */}
           <div className="w-full sm:w-auto space-y-2">
             <span className="block text-sm font-semibold text-text-secondary ml-1">
-              View
+              View Mode
             </span>
             <div className="flex bg-bg-primary p-1 rounded-xl border border-border-light shadow-sm h-12">
               <button
@@ -118,7 +118,7 @@ export function VideoList({ videos }: VideoListProps) {
             >
               Sort by
             </label>
-            <div className="relative w-full md:w-auto min-w-48">
+            <div className="relative w-full sm:min-w-48">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-text-muted">
                 <FaSortAmountDown className="h-4 w-4" />
               </div>
@@ -128,7 +128,7 @@ export function VideoList({ videos }: VideoListProps) {
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortOption)}
               >
-                <option value="priority">Priority</option>
+                <option value="priority">Priority Order</option>
                 <option value="newest">Newest First</option>
                 <option value="oldest">Oldest First</option>
                 <option value="title-asc">Title (A-Z)</option>
@@ -183,17 +183,17 @@ export function VideoList({ videos }: VideoListProps) {
       ) : (
         <div className="bg-bg-secondary rounded-2xl border border-border-light overflow-hidden shadow-sm animate-in fade-in duration-500">
           <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead className="bg-bg-tertiary border-b border-border-light">
+            <table className="w-full text-left border-collapse">
+              <thead className="hidden md:table-header-group bg-bg-tertiary border-b border-border-light">
                 <tr>
                   <th className="py-4 px-6 text-sm font-semibold text-text-secondary">
-                    Video
+                    Video content
                   </th>
                   <th className="py-4 px-6 text-sm font-semibold text-text-secondary w-48">
-                    Date
+                    Published
                   </th>
                   <th className="py-4 px-6 text-sm font-semibold text-text-secondary w-24 text-center">
-                    Link
+                    Watch
                   </th>
                 </tr>
               </thead>
@@ -201,11 +201,11 @@ export function VideoList({ videos }: VideoListProps) {
                 {filteredAndSortedVideos.map((video) => (
                   <tr
                     key={video._id ?? video.link}
-                    className="hover:bg-bg-primary/50 transition-colors group"
+                    className="flex flex-col md:table-row hover:bg-bg-primary/50 transition-colors group p-4 md:p-0"
                   >
-                    <td className="py-4 px-6">
+                    <td className="py-2 md:py-6 px-0 md:px-6">
                       <div className="flex items-center gap-4">
-                        <div className="hidden sm:block relative w-24 h-16 rounded-lg overflow-hidden shrink-0 bg-black">
+                        <div className="relative w-20 h-14 md:w-24 md:h-16 rounded-lg overflow-hidden shrink-0 bg-black shadow-sm">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={video.thumbnail}
@@ -213,13 +213,16 @@ export function VideoList({ videos }: VideoListProps) {
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />
                         </div>
-                        <h3 className="font-semibold text-text-primary group-hover:text-accent-blue transition-colors line-clamp-2">
+                        <h3 className="font-bold md:font-semibold text-text-primary group-hover:text-accent-blue transition-colors text-base md:text-sm line-clamp-2">
                           {video.title}
                         </h3>
                       </div>
                     </td>
-                    <td className="py-4 px-6">
-                      <div className="flex items-center gap-2 text-sm text-text-secondary">
+                    <td className="py-2 md:py-6 px-0 md:px-6">
+                      <span className="md:hidden text-xs font-bold text-text-muted uppercase block mb-1">
+                        Published
+                      </span>
+                      <div className="flex items-center gap-2 text-sm text-text-secondary font-medium md:font-normal">
                         <FaCalendar className="h-3 w-3 text-text-muted" />
                         {new Date(video.date).toLocaleDateString("en-US", {
                           year: "numeric",
@@ -228,15 +231,18 @@ export function VideoList({ videos }: VideoListProps) {
                         })}
                       </div>
                     </td>
-                    <td className="py-4 px-6 text-center">
+                    <td className="py-2 md:py-6 px-0 md:px-6 text-left md:text-center">
+                      <span className="md:hidden text-xs font-bold text-text-muted uppercase block mb-2">
+                        Watch
+                      </span>
                       <a
                         href={video.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center h-8 w-8 rounded-full bg-bg-primary border border-border-light text-text-muted hover:text-red-600 hover:border-red-600 transition-all"
+                        className="inline-flex items-center justify-center h-10 w-10 md:h-8 md:w-8 rounded-full bg-bg-primary border border-border-light text-text-muted hover:text-red-600 hover:border-red-600 transition-all shadow-sm"
                         title="Watch Video"
                       >
-                        <FaExternalLinkAlt className="h-3 w-3" />
+                        <FaExternalLinkAlt className="h-4 w-4 md:h-3 md:w-3" />
                       </a>
                     </td>
                   </tr>

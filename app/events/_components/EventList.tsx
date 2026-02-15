@@ -74,9 +74,9 @@ export function EventList({ initialEvents }: EventListProps) {
   return (
     <div className="space-y-8">
       {/* Controls */}
-      <div className="flex flex-col md:flex-row gap-6 items-end justify-between bg-bg-secondary p-6 rounded-2xl border border-border-light shadow-sm">
+      <div className="flex flex-col lg:flex-row gap-6 lg:items-end justify-between bg-bg-secondary p-6 rounded-2xl border border-border-light shadow-sm">
         {/* Search */}
-        <div className="w-full md:max-w-md space-y-2">
+        <div className="w-full lg:max-w-md space-y-2">
           <label
             htmlFor="search"
             className="text-sm font-semibold text-text-secondary ml-1"
@@ -98,11 +98,11 @@ export function EventList({ initialEvents }: EventListProps) {
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row w-full md:w-auto gap-4">
+        <div className="flex flex-col sm:flex-row w-full lg:w-auto gap-4">
           {/* View Toggle */}
           <div className="w-full sm:w-auto space-y-2">
             <span className="block text-sm font-semibold text-text-secondary ml-1">
-              View
+              View Mode
             </span>
             <div className="flex bg-bg-primary p-1 rounded-xl border border-border-light shadow-sm h-12">
               <button
@@ -140,7 +140,7 @@ export function EventList({ initialEvents }: EventListProps) {
             >
               Sort by
             </label>
-            <div className="relative w-full md:w-auto min-w-48">
+            <div className="relative w-full sm:min-w-48">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-text-muted">
                 <FaSortAmountDown className="h-4 w-4" />
               </div>
@@ -150,7 +150,7 @@ export function EventList({ initialEvents }: EventListProps) {
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortOption)}
               >
-                <option value="priority">Priority</option>
+                <option value="priority">Priority Order</option>
                 <option value="date-desc">Newest First</option>
                 <option value="date-asc">Oldest First</option>
                 <option value="title-asc">Title (A-Z)</option>
@@ -205,8 +205,8 @@ export function EventList({ initialEvents }: EventListProps) {
       ) : (
         <div className="bg-bg-secondary rounded-2xl border border-border-light overflow-hidden shadow-sm animate-in fade-in duration-500">
           <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead className="bg-bg-tertiary border-b border-border-light">
+            <table className="w-full text-left border-collapse">
+              <thead className="hidden md:table-header-group bg-bg-tertiary border-b border-border-light">
                 <tr>
                   <th className="py-4 px-6 text-sm font-semibold text-text-secondary">
                     Event
@@ -223,14 +223,14 @@ export function EventList({ initialEvents }: EventListProps) {
                 {filteredAndSortedEvents.map((event) => (
                   <tr
                     key={event.id}
-                    className="hover:bg-bg-primary/50 transition-colors group"
+                    className="flex flex-col md:table-row hover:bg-bg-primary/50 transition-colors group p-4 md:p-0"
                   >
-                    <td className="py-4 px-6">
+                    <td className="py-2 md:py-6 px-0 md:px-6">
                       <div className="flex flex-col">
-                        <h3 className="font-semibold text-text-primary group-hover:text-accent-blue transition-colors">
+                        <h3 className="font-bold md:font-semibold text-text-primary group-hover:text-accent-blue transition-colors text-base md:text-sm">
                           {event.title}
                         </h3>
-                        <div className="flex items-center gap-2 mt-1">
+                        <div className="flex items-center gap-2 mt-2 md:mt-1">
                           {(() => {
                             const fmt = String(
                               event.format || "",
@@ -242,7 +242,7 @@ export function EventList({ initialEvents }: EventListProps) {
                               <Badge
                                 variant={variant}
                                 size="sm"
-                                className="uppercase"
+                                className="uppercase tracking-tighter"
                               >
                                 {event.format
                                   ? event.format.charAt(0).toUpperCase() +
@@ -254,8 +254,11 @@ export function EventList({ initialEvents }: EventListProps) {
                         </div>
                       </div>
                     </td>
-                    <td className="py-4 px-6">
-                      <div className="flex items-center gap-2 text-sm text-text-secondary">
+                    <td className="py-2 md:py-6 px-0 md:px-6">
+                      <span className="md:hidden text-xs font-bold text-text-muted uppercase block mb-1">
+                        Date
+                      </span>
+                      <div className="flex items-center gap-2 text-sm text-text-secondary font-medium md:font-normal">
                         <FaCalendarAlt className="h-3 w-3 text-text-muted" />
                         {new Date(event.date).toLocaleDateString("en-US", {
                           year: "numeric",
@@ -264,8 +267,11 @@ export function EventList({ initialEvents }: EventListProps) {
                         })}
                       </div>
                     </td>
-                    <td className="py-4 px-6">
-                      <div className="flex items-center gap-2 text-sm text-text-secondary">
+                    <td className="py-2 md:py-6 px-0 md:px-6">
+                      <span className="md:hidden text-xs font-bold text-text-muted uppercase block mb-1">
+                        Location
+                      </span>
+                      <div className="flex items-center gap-2 text-sm text-text-secondary font-medium md:font-normal">
                         <FaMapMarkerAlt className="h-3 w-3 text-text-muted" />
                         <span>{event.displayEvent}</span>
                       </div>
