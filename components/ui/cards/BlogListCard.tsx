@@ -3,6 +3,7 @@
 import { BlogDto } from "@/lib/api-types";
 import { Card } from "./Card";
 import { FaCalendarAlt, FaArrowRight, FaExternalLinkAlt } from "react-icons/fa";
+import Image from "next/image";
 
 interface BlogListCardProps {
   blog: BlogDto;
@@ -20,10 +21,12 @@ export function BlogListCard({ blog, className }: BlogListCardProps) {
       <div className="p-8 flex flex-col h-full">
         {blog.bannerUrl && (
           <div className="mb-4 w-full rounded-lg overflow-hidden aspect-video">
-            <img
+            <Image
               src={blog.bannerUrl}
               alt={`${blog.title} banner`}
               className="w-full h-full object-cover"
+              width={640}
+              height={360}
             />
           </div>
         )}

@@ -13,6 +13,7 @@ import {
 import { VideoCard } from "@/components/ui/cards";
 import type { VideoDto } from "@/lib/api-types";
 import { Button } from "@/components/ui";
+import Image from "next/image";
 
 interface VideoListProps {
   videos: VideoDto[];
@@ -206,10 +207,11 @@ export function VideoList({ videos }: VideoListProps) {
                     <td className="py-2 md:py-6 px-0 md:px-6">
                       <div className="flex items-center gap-4">
                         <div className="relative w-20 h-14 md:w-24 md:h-16 rounded-lg overflow-hidden shrink-0 bg-black shadow-sm">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
+                          <Image
                             src={video.thumbnail}
                             alt={video.title}
+                            width={640}
+                            height={360}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />
                         </div>

@@ -11,6 +11,7 @@ import {
 import { CommunityListCard } from "@/components/ui/cards";
 import type { CommunityDto } from "@/lib/api-types";
 import { Button, Badge } from "@/components/ui";
+import Image from "next/image";
 
 interface CommunityListProps {
   communities: CommunityDto[];
@@ -216,17 +217,19 @@ export function CommunityList({ communities }: CommunityListProps) {
                     <td className="py-2 md:py-6 px-0 md:px-6">
                       <div className="flex items-center gap-4">
                         <div className="shrink-0">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
+                          <Image
                             src={community.logo.light}
                             alt={community.name}
-                            className="w-12 h-12 md:w-10 md:h-10 rounded-lg object-contain bg-white dark:hidden shadow-sm p-1"
+                            width={40}
+                            height={40}
+                            className="w-12 h-12 md:w-10 md:h-10 rounded-lg object-contain bg-bg-elevated dark:hidden shadow-sm p-1"
                           />
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
+                          <Image
                             src={community.logo.dark}
                             alt={community.name}
-                            className="w-12 h-12 md:w-10 md:h-10 rounded-lg object-contain bg-black hidden dark:block shadow-sm p-1"
+                            width={40}
+                            height={40}
+                            className="w-12 h-12 md:w-10 md:h-10 rounded-lg object-contain bg-bg-elevated hidden dark:block shadow-sm p-1"
                           />
                         </div>
                         <div className="min-w-0">

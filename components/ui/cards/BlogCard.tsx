@@ -4,6 +4,7 @@ import { BlogDto } from "@/lib/api-types";
 import { Card } from "./Card";
 import { FaPen } from "react-icons/fa";
 import Link from "next/link";
+import Image from "next/image";
 
 interface BlogCardProps {
   blog: BlogDto;
@@ -26,10 +27,12 @@ export function BlogCard({ blog, className }: BlogCardProps) {
         {/* Cover Image */}
         <div className="relative aspect-video overflow-hidden rounded-t-lg">
           {blog.bannerUrl ? (
-            <img
+            <Image
               src={blog.bannerUrl}
               alt={`${blog.title} banner`}
               className="w-full h-full object-cover"
+              width={640}
+              height={360}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-blue-500/20 to-cyan-500/20">
