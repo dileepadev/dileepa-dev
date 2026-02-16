@@ -63,7 +63,7 @@ export interface EventDto {
   description: string;
   event?: string; // Optional field for UI mapping
   type?: string; // Optional field for UI mapping
-  url?: string;
+  url: string;
   slides?: string;
   recording?: string;
   audience?: string;

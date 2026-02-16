@@ -7,6 +7,7 @@ import {
   FaUsers,
   FaThLarge,
   FaList,
+  FaExternalLinkAlt,
 } from "react-icons/fa";
 import { CommunityListCard } from "@/components/ui/cards";
 import type { CommunityDto } from "@/lib/api-types";
@@ -234,7 +235,19 @@ export function CommunityList({ communities }: CommunityListProps) {
                         </div>
                         <div className="min-w-0">
                           <h3 className="font-bold md:font-semibold text-text-primary group-hover:text-accent-blue transition-colors text-base md:text-sm">
-                            {community.name}
+                            {community.communityUrl ? (
+                              <a
+                                href={community.communityUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1"
+                              >
+                                {community.name}
+                                <FaExternalLinkAlt className="h-3 w-3" />
+                              </a>
+                            ) : (
+                              community.name
+                            )}
                           </h3>
                           <p className="text-sm text-text-muted">
                             {community.role}

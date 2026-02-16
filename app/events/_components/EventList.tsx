@@ -8,6 +8,7 @@ import {
   FaThLarge,
   FaList,
   FaMapMarkerAlt,
+  FaExternalLinkAlt,
 } from "react-icons/fa";
 import { Button } from "@/components/ui";
 import { EventListCard } from "@/components/ui/cards";
@@ -217,6 +218,9 @@ export function EventList({ initialEvents }: EventListProps) {
                   <th className="py-4 px-6 text-sm font-semibold text-text-secondary w-48">
                     Location
                   </th>
+                  <th className="py-4 px-6 text-sm font-semibold text-text-secondary w-32 text-center">
+                    Visit
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border-light">
@@ -230,6 +234,21 @@ export function EventList({ initialEvents }: EventListProps) {
                         <h3 className="font-bold md:font-semibold text-text-primary group-hover:text-accent-blue transition-colors text-base md:text-sm">
                           {event.title}
                         </h3>
+                        {/* <h3 className="font-bold md:font-semibold text-text-primary group-hover:text-accent-blue transition-colors text-base md:text-sm">
+                          {event.url ? (
+                            <a
+                              href={event.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-2"
+                            >
+                              {event.title}
+                              <FaExternalLinkAlt className="h-3 w-3" />
+                            </a>
+                          ) : (
+                            event.title
+                          )}
+                        </h3> */}
                         <div className="flex items-center gap-2 mt-2 md:mt-1">
                           {(() => {
                             const fmt = String(
@@ -275,6 +294,26 @@ export function EventList({ initialEvents }: EventListProps) {
                         <FaMapMarkerAlt className="h-3 w-3 text-text-muted" />
                         <span>{event.displayEvent}</span>
                       </div>
+                    </td>
+                    <td className="py-2 md:py-6 px-0 md:px-6 text-left md:text-center">
+                      <span className="md:hidden text-xs font-bold text-text-muted uppercase block mb-2">
+                        Visit
+                      </span>
+                      {event.url ? (
+                        <a
+                          href={event.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center justify-center h-10 w-10 md:h-8 md:w-8 rounded-full bg-bg-primary border border-border-light text-text-muted hover:text-accent-blue hover:border-accent-blue transition-all duration-500 shadow-sm"
+                          title="Visit Event Page"
+                        >
+                          <FaExternalLinkAlt className="h-4 w-4 md:h-3 md:w-3" />
+                        </a>
+                      ) : (
+                        <span className="text-sm text-text-muted italic">
+                          N/A
+                        </span>
+                      )}
                     </td>
                   </tr>
                 ))}

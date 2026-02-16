@@ -241,7 +241,7 @@ export function VideoList({ videos }: VideoListProps) {
                         href={video.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center h-10 w-10 md:h-8 md:w-8 rounded-full bg-bg-primary border border-border-light text-text-muted hover:text-red-600 hover:border-red-600 transition-all shadow-sm"
+                        className="inline-flex items-center justify-center h-10 w-10 md:h-8 md:w-8 rounded-full bg-bg-primary border border-border-light text-text-muted hover:text-accent-blue hover:border-accent-blue transition-all duration-500 shadow-sm"
                         title="Watch Video"
                       >
                         <FaExternalLinkAlt className="h-4 w-4 md:h-3 md:w-3" />

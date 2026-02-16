@@ -2,7 +2,7 @@
 
 import { BlogDto } from "@/lib/api-types";
 import { Card } from "./Card";
-import { FaCalendarAlt, FaArrowRight, FaExternalLinkAlt } from "react-icons/fa";
+import { FaCalendarAlt, FaArrowRight } from "react-icons/fa";
 import Image from "next/image";
 
 interface BlogListCardProps {
@@ -63,14 +63,6 @@ export function BlogListCard({ blog, className }: BlogListCardProps) {
           >
             Read More
             <FaArrowRight className="h-3 w-3 transform group-hover:translate-x-1 transition-transform" />
-          </a>
-          <a
-            href={blog.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-2 rounded-lg bg-bg-secondary text-text-muted hover:text-accent-blue transition-colors"
-          >
-            <FaExternalLinkAlt className="h-3 w-3" />
           </a>
         </div>
       </div>

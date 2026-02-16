@@ -94,6 +94,21 @@ export function EventListCard({
               <h3 className="text-2xl font-bold text-text-primary mb-2">
                 {event.title}
               </h3>
+              {/* <h3 className="text-2xl font-bold text-text-primary mb-2">
+                {event.url ? (
+                  <a
+                    href={event.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-accent-blue transition-colors"
+                  >
+                    {event.title}
+                    <FaExternalLinkAlt className="inline-block h-4 w-4 ml-2 mb-1" />
+                  </a>
+                ) : (
+                  event.title
+                )}
+              </h3> */}
               <div className="text-accent-blue font-semibold mb-4">
                 {event.displayEvent}
               </div>

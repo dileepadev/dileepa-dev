@@ -3,7 +3,11 @@
 import { EventDto } from "@/lib/api-types";
 import { Badge } from "@/components/ui";
 import { Card } from "./Card";
-import { FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
+import {
+  FaCalendarAlt,
+  FaMapMarkerAlt,
+  FaExternalLinkAlt,
+} from "react-icons/fa";
 
 interface EventCardProps {
   event: EventDto;
@@ -35,7 +39,19 @@ export function EventCard({ event, className }: EventCardProps) {
 
           {/* Title */}
           <h3 className="text-lg font-bold text-text-primary mb-2 line-clamp-2">
-            {event.title}
+            {event.url ? (
+              <a
+                href={event.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-accent-blue transition-colors"
+              >
+                {event.title}
+                <FaExternalLinkAlt className="inline-block h-3 w-3 ml-1 mb-0.5" />
+              </a>
+            ) : (
+              event.title
+            )}
           </h3>
 
           {/* Description */}
