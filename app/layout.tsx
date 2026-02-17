@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { Toaster } from "react-hot-toast";
 import { Analytics } from "@vercel/analytics/next";
 import { SITE_CONFIG } from "@/lib/constants";
 import "./globals.css";
@@ -64,7 +65,20 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          {children}
+          <Toaster
+            position="bottom-center"
+            reverseOrder={false}
+            toastOptions={{
+              style: {
+                background: "var(--bg-elevated)",
+                color: "var(--text-primary)",
+                border: "1px solid var(--border-light)",
+              },
+            }}
+          />
+        </ThemeProvider>
         <Analytics />
       </body>
     </html>

@@ -11,6 +11,7 @@ import {
 import { AboutDto } from "@/lib/api-types";
 import { api } from "@/lib/api";
 import { motion } from "framer-motion";
+import toast from "react-hot-toast";
 import {
   FaGithub,
   FaLinkedin,
@@ -45,21 +46,28 @@ export function Connect({ about }: { about?: AboutDto | null }) {
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
+    const toastId = toast.loading("Sending your message...");
 
     try {
       const response = await api.postMessage(formData);
 
       if (response) {
         setFormData({ name: "", email: "", subject: "", message: "" });
-        alert("Message sent! I'll get back to you soon.");
+        toast.success("Message sent! I'll get back to you soon.", {
+          id: toastId,
+        });
       } else {
-        alert(
+        toast.error(
           "Something went wrong. Please try again or contact me via email.",
+          { id: toastId },
         );
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      alert("Something went wrong. Please try again or contact me via email.");
+      toast.error(
+        "Something went wrong. Please try again or contact me via email.",
+        { id: toastId },
+      );
     } finally {
       setIsSubmitting(false);
     }
