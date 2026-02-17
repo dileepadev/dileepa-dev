@@ -9,6 +9,7 @@ import {
   CardButton,
 } from "@/components/ui";
 import { AboutDto } from "@/lib/api-types";
+import { api } from "@/lib/api";
 import { motion } from "framer-motion";
 import {
   FaGithub,
@@ -36,6 +37,7 @@ export function Connect({ about }: { about?: AboutDto | null }) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    subject: "",
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -44,12 +46,23 @@ export function Connect({ about }: { about?: AboutDto | null }) {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // TODO: Implement form submission
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      const response = await api.postMessage(formData);
 
-    setFormData({ name: "", email: "", message: "" });
-    setIsSubmitting(false);
-    alert("Message sent! I'll get back to you soon.");
+      if (response) {
+        setFormData({ name: "", email: "", subject: "", message: "" });
+        alert("Message sent! I'll get back to you soon.");
+      } else {
+        alert(
+          "Something went wrong. Please try again or contact me via email.",
+        );
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("Something went wrong. Please try again or contact me via email.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const email = about?.links?.email;
@@ -137,6 +150,30 @@ export function Connect({ about }: { about?: AboutDto | null }) {
 
                 <div>
                   <label
+                    htmlFor="subject"
+                    className="block text-sm font-medium text-text-primary mb-2"
+                  >
+                    Subject{" "}
+                    <span className="text-badge-error ml-1" aria-hidden="true">
+                      *
+                    </span>
+                    <span className="sr-only"> required</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="subject"
+                    value={formData.subject}
+                    onChange={(e) =>
+                      setFormData({ ...formData, subject: e.target.value })
+                    }
+                    required
+                    className="w-full px-4 py-3 rounded-lg border border-border-light bg-bg-primary text-text-primary placeholder-text-muted hover:border-accent-blue/30 duration-500 focus:outline-none focus:ring-2 focus:ring-accent-blue focus:border-transparent transition-all"
+                    placeholder="Subject of your message"
+                  />
+                </div>
+
+                <div>
+                  <label
                     htmlFor="message"
                     className="block text-sm font-medium text-text-primary mb-2"
                   >
@@ -161,7 +198,7 @@ export function Connect({ about }: { about?: AboutDto | null }) {
 
                 <Button
                   type="submit"
-                  className="w-full mt-4 mb-14"
+                  className="w-full"
                   disabled={isSubmitting}
                   rightIcon={<FaPaperPlane className="h-4 w-4" />}
                 >
@@ -177,12 +214,12 @@ export function Connect({ about }: { about?: AboutDto | null }) {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="space-y-6"
+            className="space-y-10"
           >
             {/* Direct Contact */}
             {email && (
               <Card variant="elevated">
-                <h3 className="text-xl font-bold text-text-primary mb-4">
+                <h3 className="text-xl font-bold text-text-primary mb-5">
                   Direct Contact
                 </h3>
                 <p className="text-text-secondary mb-6">
@@ -200,7 +237,7 @@ export function Connect({ about }: { about?: AboutDto | null }) {
 
             {/* Social Links */}
             <Card variant="elevated">
-              <h3 className="text-xl font-bold text-text-primary mb-4">
+              <h3 className="text-xl font-bold text-text-primary mb-5">
                 Find Me On
               </h3>
               <p className="text-text-secondary mb-6">

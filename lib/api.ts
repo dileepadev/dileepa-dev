@@ -8,6 +8,7 @@ import {
   VideoDto,
   BlogDto,
 } from "./api-types";
+import { ContactFormData } from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -27,6 +28,26 @@ async function fetchAPI<T>(endpoint: string): Promise<T | null> {
   }
 }
 
+async function postAPI<T, D>(endpoint: string, data: D): Promise<T | null> {
+  try {
+    const response = await fetch(`${API_URL}${endpoint}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      console.error(`Error posting to ${endpoint}: ${response.statusText}`);
+      return null;
+    }
+    return response.json();
+  } catch (error) {
+    console.error(`Error posting to ${endpoint}:`, error);
+    return null;
+  }
+}
+
 export const api = {
   getAbout: () => fetchAPI<AboutDto>("/about"),
   getExperiences: () => fetchAPI<ExperienceDto[]>("/experiences"),
@@ -36,6 +57,7 @@ export const api = {
   getEvents: () => fetchAPI<EventDto[]>("/events"),
   getVideos: () => fetchAPI<VideoDto[]>("/videos"),
   getBlogs: () => fetchAPI<BlogDto[]>("/blogs"),
+  postMessage: (data: ContactFormData) => postAPI("/contact", data),
 };
 
 export async function getPortfolioData() {
