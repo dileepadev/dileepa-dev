@@ -206,7 +206,7 @@ export function Connect({ about }: { about?: AboutDto | null }) {
               <p className="text-text-secondary mb-6">
                 Connect with me on social media for updates and more.
               </p>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {about?.links &&
                   Object.entries(about.links).map(([key, url]) => {
                     if (key === "website" || key === "email" || !url)

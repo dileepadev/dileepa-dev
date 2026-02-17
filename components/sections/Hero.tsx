@@ -132,7 +132,7 @@ export function Hero({ about }: { about?: AboutDto | null }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.65 }}
-          className="flex items-center gap-5 text-text-muted mt-8"
+          className="flex items-center gap-5 text-text-muted mt-8 flex-wrap"
         >
           {about?.links &&
             Object.entries(about.links).map(([key, url]) => {

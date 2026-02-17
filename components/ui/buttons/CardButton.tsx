@@ -17,9 +17,9 @@ export const cardButtonVariantClasses: Record<CardButtonVariant, string> = {
   primary:
     "bg-accent-blue text-on-accent hover:bg-accent-blue/90 shadow-md hover:shadow-xl transition-all duration-500 ease-in-out hover:scale-105",
   secondary:
-    "bg-accent-blue/10 text-accent-blue hover:bg-accent-blue hover:text-on-accent transition-all duration-500 ease-in-out hover:scale-105",
+    "bg-accent-blue/5 text-accent-blue hover:bg-accent-blue hover:text-on-accent transition-all duration-500 ease-in-out hover:scale-105",
   social:
-    "bg-bg-secondary text-text-secondary hover:bg-accent-blue hover:text-on-accent transition-all duration-500 ease-in-out hover:scale-105",
+    "bg-accent-blue/5 text-text-secondary hover:bg-accent-blue hover:text-on-accent transition-all duration-500 ease-in-out hover:scale-105",
 };
 
 export function CardButton({
@@ -32,7 +32,7 @@ export function CardButton({
   ...props
 }: CardButtonProps) {
   const baseClasses = cn(
-    "inline-flex items-center gap-3 px-6 py-4 rounded-xl font-medium group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2",
+    "inline-flex items-center gap-2 px-4 py-3 sm:gap-3 sm:px-6 sm:py-4 rounded-xl font-medium group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2",
     cardButtonVariantClasses[variant],
     className,
   );

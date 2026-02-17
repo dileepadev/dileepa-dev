@@ -44,7 +44,7 @@ export function Footer({ about }: { about?: AboutDto | null }) {
               <p className="text-text-secondary max-w-md mb-6">{description}</p>
 
               {/* Social Icons */}
-              <div className="flex items-center gap-5 text-text-muted">
+              <div className="flex items-center gap-5 text-text-muted flex-wrap">
                 {about?.links &&
                   Object.entries(about.links).map(([key, url]) => {
                     // Filter out non-socials
