@@ -29,7 +29,6 @@ export const NAV_LINKS: NavLink[] = [
 // External Links (for future pages)
 export const EXTERNAL_LINKS: NavLink[] = [
   { label: "Blog", href: "/blog", isExternal: false },
-  { label: "Projects", href: "/projects", isExternal: false },
   { label: "Videos", href: "/videos", isExternal: false },
   { label: "Events", href: "/events", isExternal: false },
 ];
