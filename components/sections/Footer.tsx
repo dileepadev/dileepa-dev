@@ -9,9 +9,9 @@ import {
   FaInstagram,
   FaEnvelope,
   FaFacebook,
-  FaHeart,
 } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
+import packageJson from "@/package.json";
 
 const iconMap: Record<string, React.ElementType> = {
   github: FaGithub,
@@ -114,10 +114,19 @@ export function Footer({ about }: { about?: AboutDto | null }) {
             <p className="text-text-secondary text-sm text-center md:text-left">
               © {currentYear} {name}. All rights reserved.
             </p>
-            <p className="text-text-secondary text-sm flex items-center gap-1">
-              Made with <FaHeart className="h-4 w-4 text-red-500" /> using
-              Next.js & Tailwind CSS
-            </p>
+            <div className="flex items-center gap-3 text-text-secondary text-sm">
+              <Link
+                href="https://github.com/dileepadev/dileepa-dev"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 hover:text-accent-blue transition-colors duration-300"
+              >
+                <FaGithub className="h-4 w-4" />
+                <span>View Source</span>
+              </Link>
+              <div className="w-0.5 h-4 bg-border-medium rounded-sm"></div>
+              <span>v{packageJson.version}</span>
+            </div>
           </div>
         </div>
       </Container>
