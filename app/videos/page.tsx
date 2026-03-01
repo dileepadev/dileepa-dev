@@ -3,6 +3,7 @@ import { Container, Button } from "@/components/ui";
 import { Navbar, Footer } from "@/components/sections";
 import { FaArrowLeft, FaYoutube } from "react-icons/fa";
 import { VideoList } from "./_components/VideoList";
+import { api } from "@/lib/api";
 import type { VideoDto } from "@/lib/api-types";
 
 export const metadata: Metadata = {
@@ -25,7 +26,7 @@ async function getVideos(): Promise<VideoDto[]> {
 }
 
 export default async function VideosPage() {
-  const videos = await getVideos();
+  const [videos, about] = await Promise.all([getVideos(), api.getAbout()]);
 
   return (
     <>
@@ -61,10 +62,10 @@ export default async function VideosPage() {
           </div>
 
           {/* Video List (Search & Sort) */}
-          <VideoList videos={videos} />
+          <VideoList videos={videos || []} />
         </Container>
       </main>
-      <Footer />
+      <Footer about={about || undefined} />
     </>
   );
 }

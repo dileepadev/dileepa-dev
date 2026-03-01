@@ -1,14 +1,15 @@
 import { Metadata } from "next";
-import Link from "next/link";
 import { Navbar, Footer } from "@/components/sections";
 import { Container, Section, Button } from "@/components/ui";
+import { api } from "@/lib/api";
 
 export const metadata: Metadata = {
   title: "404 - Page Not Found",
   description: "The page you are looking for does not exist.",
 };
 
-export default function NotFound() {
+export default async function NotFound() {
+  const about = await api.getAbout();
   return (
     <>
       <Navbar />
@@ -24,7 +25,8 @@ export default function NotFound() {
                   Page Not Found
                 </h2>
                 <p className="text-lg text-text-secondary">
-                  Oops! The page you are looking for does not exist or has been moved.
+                  Oops! The page you are looking for does not exist or has been
+                  moved.
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
@@ -39,7 +41,7 @@ export default function NotFound() {
           </Container>
         </Section>
       </main>
-      <Footer />
+      <Footer about={about || undefined} />
     </>
   );
 }

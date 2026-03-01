@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function EventsPage() {
-  const events = (await api.getEvents()) || [];
+  const [events, about] = await Promise.all([api.getEvents(), api.getAbout()]);
 
   return (
     <>
@@ -39,10 +39,10 @@ export default async function EventsPage() {
           </div>
 
           {/* Events List (Search & Sort) */}
-          <EventList initialEvents={events} />
+          <EventList initialEvents={events || []} />
         </Container>
       </main>
-      <Footer />
+      <Footer about={about || undefined} />
     </>
   );
 }

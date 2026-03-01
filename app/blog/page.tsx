@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function BlogPage() {
-  const blogs = (await api.getBlogs()) || [];
+  const [blogs, about] = await Promise.all([api.getBlogs(), api.getAbout()]);
 
   return (
     <>
@@ -39,10 +39,10 @@ export default async function BlogPage() {
           </div>
 
           {/* Blog Content */}
-          <BlogList initialBlogs={blogs} />
+          <BlogList initialBlogs={blogs || []} />
         </Container>
       </main>
-      <Footer />
+      <Footer about={about || undefined} />
     </>
   );
 }

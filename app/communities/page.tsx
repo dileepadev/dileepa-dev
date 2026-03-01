@@ -12,7 +12,10 @@ export const metadata: Metadata = {
 };
 
 export default async function CommunitiesPage() {
-  const communities = (await api.getCommunities()) || [];
+  const [communities, about] = await Promise.all([
+    api.getCommunities(),
+    api.getAbout(),
+  ]);
 
   return (
     <>
@@ -39,10 +42,10 @@ export default async function CommunitiesPage() {
           </div>
 
           {/* Communities List (Search & Sort) */}
-          <CommunityList communities={communities} />
+          <CommunityList communities={communities || []} />
         </Container>
       </main>
-      <Footer />
+      <Footer about={about || undefined} />
     </>
   );
 }
