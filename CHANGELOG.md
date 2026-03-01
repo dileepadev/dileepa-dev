@@ -13,6 +13,36 @@ Changes are organized into the following categories:
 
 - Changes for the next release are available in development branches.
 
+## [v1.3.0] - 2026-03-02
+
+### Added - v1.3.0
+
+- Redesigned personal website **from the ground up** with a stronger visual identity.
+- Initialized base project with **Next.js 16**.
+- Implemented API-driven content fetching.
+- Developed comprehensive key sections: `Navbar`, `Hero`, `About`, `Experience`, `Education`, `Community` (Communities, Events, Video Content, Blog Content), `Connect`, and `Footer`.
+- Created dedicated pages: `Home`, `404`, `Communities`, `Events`, `Videos`, and `Blog`.
+- Defined and applied a consistent **design system** (spacing, typography, colors).
+- Enhanced UI with subtle, performance-friendly animations and micro-interactions.
+- Integrated analytics and monitoring suite:
+  - **Vercel Web Analytics**
+  - **Vercel Speed Insights**
+  - **Microsoft Clarity**
+  - **Google Analytics**
+
+### Changed - v1.3.0
+
+- Refactored component architecture for better reusability and maintainability.
+- Improved visual hierarchy and content readability.
+- Optimized responsiveness across all screen sizes.
+- Enhanced accessibility with better contrast, focus states, and semantic markup.
+- Ensured full parity between **dark** and **light** modes.
+- Validated and optimized SEO metadata and social sharing previews.
+
+### Removed - v1.3.0
+
+- Cleaned up unused styles, components, and assets.
+
 ## [v1.2.0] - 2026-01-15
 
 ### Added - v1.2.0
@@ -120,3 +150,4 @@ Changes are organized into the following categories:
 [v1.0.0]: https://github.com/dileepadev/dileepa-dev/releases/tag/v1.0.0
 [v1.1.0]: https://github.com/dileepadev/dileepa-dev/releases/tag/v1.1.0
 [v1.2.0]: https://github.com/dileepadev/dileepa-dev/releases/tag/v1.2.0
+[v1.3.0]: https://github.com/dileepadev/dileepa-dev/releases/tag/v1.3.0
