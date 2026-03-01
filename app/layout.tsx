@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { Toaster } from "react-hot-toast";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { SITE_CONFIG } from "@/lib/constants";
 import "./globals.css";
 
@@ -128,6 +129,7 @@ export default function RootLayout({
           />
         </ThemeProvider>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

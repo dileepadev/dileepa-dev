@@ -1,6 +1,6 @@
 ---
 agent: "agent"
-model: GPT-4o (copilot)
+model: GPT-5 mini (copilot)
 tools: ["execute", "read", "search"]
 description: "Generate a new commit message based on the provided code changes."
 ---
