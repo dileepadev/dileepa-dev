@@ -9,7 +9,7 @@ export const SITE_CONFIG = {
   name: "Dileepa Bandara",
   title: "Dileepa Bandara | AI Engineer",
   description:
-    "Personal website of Dileepa Bandara - AI Engineer, Developer, and Tech Enthusiast. Explore my portfolio, experience, and connect with me.",
+    "I'm an AI Engineer passionate about building intelligent solutions that make a difference. Here you'll find my work, experience, and ways to connect. Let's create something amazing together!",
   url: "https://dileepa.dev",
   email: "contact@dileepa.dev",
   author: "Dileepa Bandara",
