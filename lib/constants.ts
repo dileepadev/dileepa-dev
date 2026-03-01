@@ -19,11 +19,11 @@ export const SITE_CONFIG = {
 
 // Navigation Links
 export const NAV_LINKS: NavLink[] = [
-  { label: "About", href: "#about" },
-  { label: "Experience", href: "#experience" },
-  { label: "Education", href: "#education" },
-  { label: "Community", href: "#community" },
-  { label: "Connect", href: "#connect" },
+  { label: "About", href: "/#about" },
+  { label: "Experience", href: "/#experience" },
+  { label: "Education", href: "/#education" },
+  { label: "Community", href: "/#community" },
+  { label: "Connect", href: "/#connect" },
 ];
 
 // External Links (for future pages)

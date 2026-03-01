@@ -76,16 +76,23 @@ export function Footer({ about }: { about?: AboutDto | null }) {
             <div>
               <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
               <ul className="space-y-3">
-                {NAV_LINKS.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="text-text-secondary hover:text-accent-blue transition-colors duration-500"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
+                {NAV_LINKS.map((link) => {
+                  // ensure hash-based quick links always navigate back to home
+                  const href = link.href.startsWith("#")
+                    ? `/${link.href}`
+                    : link.href;
+
+                  return (
+                    <li key={link.href}>
+                      <Link
+                        href={href}
+                        className="text-text-secondary hover:text-accent-blue transition-colors duration-500"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
 

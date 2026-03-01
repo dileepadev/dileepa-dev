@@ -26,8 +26,9 @@ export function Navbar() {
   const [activeSection, setActiveSection] = useState<string | null>(null);
 
   useEffect(() => {
-    const sectionIds = NAV_LINKS.filter((l) => l.href.startsWith("#")).map(
-      (l) => l.href.slice(1),
+    // gather section IDs for scroll‑spy
+    const sectionIds = NAV_LINKS.filter((l) => l.href.includes("#")).map(
+      (l) => l.href.split("#")[1],
     );
     if (sectionIds.length === 0) return;
 
@@ -114,14 +115,16 @@ export function Navbar() {
 
   const handleNavClick = (href: string) => {
     setIsMobileMenuOpen(false);
-    if (href.startsWith("#")) {
-      const id = href.slice(1);
+    const isHash = href.startsWith("#") || href.startsWith("/#");
+    if (isHash) {
+      const id = href.split("#")[1];
       setActiveSection(id); // Set active immediately for better UX
       const el = document.getElementById(id);
       if (el) {
         el.scrollIntoView({ behavior: "smooth", block: "start" });
       } else {
-        router.push("/" + href);
+        // navigate to home page with fragment
+        router.push(href.startsWith("/#") ? href : "/" + href);
       }
     } else {
       router.push(href);
@@ -157,8 +160,9 @@ export function Navbar() {
           {/* Desktop Navigation - Pill Design */}
           <div className="hidden md:flex items-center gap-1 p-1 rounded-full border border-white/5 backdrop-blur-sm">
             {NAV_LINKS.map((link) => {
-              const isHash = link.href.startsWith("#");
-              const id = isHash ? link.href.slice(1) : link.href;
+              const isHash =
+                link.href.startsWith("#") || link.href.startsWith("/#");
+              const id = isHash ? link.href.split("#")[1] : link.href;
               const isActive = isHash && activeSection === id;
 
               const baseClass = `px-4 py-1.5 text-sm font-medium transition-all duration-300 rounded-full`;
@@ -225,8 +229,9 @@ export function Navbar() {
         >
           <div className="flex flex-col gap-1 pt-4 border-t border-border-light">
             {NAV_LINKS.map((link) => {
-              const isHash = link.href.startsWith("#");
-              const id = isHash ? link.href.slice(1) : link.href;
+              const isHash =
+                link.href.startsWith("#") || link.href.startsWith("/#");
+              const id = isHash ? link.href.split("#")[1] : link.href;
               const isActive = isHash && activeSection === id;
 
               if (isHash) {
