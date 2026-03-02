@@ -4,7 +4,6 @@ import { Navbar, Footer } from "@/components/sections";
 import { FaArrowLeft, FaYoutube } from "react-icons/fa";
 import { VideoList } from "./_components/VideoList";
 import { api } from "@/lib/api";
-import type { VideoDto } from "@/lib/api-types";
 
 export const metadata: Metadata = {
   title: "Videos | Dileepa Bandara",
@@ -12,21 +11,12 @@ export const metadata: Metadata = {
     "Watch my tutorials, talks, and tech content on web development, cloud technologies, and software engineering.",
 };
 
-const API_URL = process.env.API_URL || "http://localhost:3000";
-
-async function getVideos(): Promise<VideoDto[]> {
-  try {
-    const res = await fetch(`${API_URL}/videos`, { cache: "no-store" });
-    if (!res.ok) return [];
-    return (await res.json()) as VideoDto[];
-  } catch (error) {
-    console.error("Failed to fetch videos:", error);
-    return [];
-  }
-}
-
 export default async function VideosPage() {
-  const [videos, about] = await Promise.all([getVideos(), api.getAbout()]);
+  const [videosData, about] = await Promise.all([
+    api.getVideos(),
+    api.getAbout(),
+  ]);
+  const videos = videosData || [];
 
   return (
     <>
