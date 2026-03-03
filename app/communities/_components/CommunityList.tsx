@@ -1,0 +1,317 @@
+"use client";
+
+import { useState, useMemo } from "react";
+import {
+  FaSearch,
+  FaSortAmountDown,
+  FaUsers,
+  FaThLarge,
+  FaList,
+  FaExternalLinkAlt,
+} from "react-icons/fa";
+import { CommunityListCard } from "@/components/ui/cards";
+import type { CommunityDto } from "@/lib/api-types";
+import { Button, Badge } from "@/components/ui";
+import Image from "next/image";
+
+interface CommunityListProps {
+  communities: CommunityDto[];
+}
+
+type SortOption =
+  | "priority"
+  | "current-first"
+  | "past-first"
+  | "name-asc"
+  | "name-desc";
+type ViewOption = "card" | "table";
+
+export function CommunityList({ communities }: CommunityListProps) {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState<SortOption>("priority");
+  const [view, setView] = useState<ViewOption>("card");
+
+  const filteredAndSortedCommunities = useMemo(() => {
+    return [...communities]
+      .filter(
+        (community) =>
+          community.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          community.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          community.description
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()),
+      )
+      .sort((a, b) => {
+        switch (sortBy) {
+          case "priority":
+            return (b.index || 0) - (a.index || 0);
+          case "current-first":
+            if (a.current !== b.current) return a.current ? -1 : 1;
+            return a.name.localeCompare(b.name);
+          case "past-first":
+            if (a.current !== b.current) return a.current ? 1 : -1;
+            return a.name.localeCompare(b.name);
+          case "name-asc":
+            return a.name.localeCompare(b.name);
+          case "name-desc":
+            return b.name.localeCompare(a.name);
+          default:
+            return 0;
+        }
+      });
+  }, [communities, searchQuery, sortBy]);
+
+  return (
+    <div className="space-y-8">
+      {/* Controls */}
+      <div className="flex flex-col lg:flex-row gap-6 lg:items-end justify-between bg-bg-secondary p-6 rounded-2xl border border-border-light shadow-sm">
+        {/* Search */}
+        <div className="w-full lg:max-w-md space-y-2">
+          <label
+            htmlFor="search"
+            className="text-sm font-semibold text-text-secondary ml-1"
+          >
+            Search Communities
+          </label>
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-text-muted">
+              <FaSearch className="h-4 w-4" />
+            </div>
+            <input
+              id="search"
+              type="text"
+              placeholder="Search by name, role, or description..."
+              className="block w-full pl-11 pr-4 py-3 bg-bg-primary border border-border-light rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-blue/50 focus:border-accent-blue text-text-primary placeholder-text-muted transition-all shadow-sm"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-col sm:flex-row w-full lg:w-auto gap-4">
+          {/* View Toggle */}
+          <div className="w-full sm:w-auto space-y-2">
+            <span className="block text-sm font-semibold text-text-secondary ml-1">
+              View Mode
+            </span>
+            <div className="flex bg-bg-primary p-1 rounded-xl border border-border-light shadow-sm h-12">
+              <button
+                onClick={() => setView("card")}
+                className={`flex-1 sm:flex-none w-12 flex items-center justify-center rounded-lg transition-all ${
+                  view === "card"
+                    ? "bg-accent-blue/10 text-accent-blue shadow-sm"
+                    : "text-text-muted hover:text-text-primary hover:bg-bg-secondary"
+                }`}
+                title="Card View"
+                aria-label="Card View"
+              >
+                <FaThLarge className="h-5 w-5" />
+              </button>
+              <button
+                onClick={() => setView("table")}
+                className={`flex-1 sm:flex-none w-12 flex items-center justify-center rounded-lg transition-all ${
+                  view === "table"
+                    ? "bg-accent-blue/10 text-accent-blue shadow-sm"
+                    : "text-text-muted hover:text-text-primary hover:bg-bg-secondary"
+                }`}
+                title="Table View"
+                aria-label="Table View"
+              >
+                <FaList className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Sort */}
+          <div className="w-full sm:w-auto space-y-2">
+            <label
+              htmlFor="sort"
+              className="block text-sm font-semibold text-text-secondary ml-1"
+            >
+              Sort by
+            </label>
+            <div className="relative w-full sm:min-w-48">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-text-muted">
+                <FaSortAmountDown className="h-4 w-4" />
+              </div>
+              <select
+                id="sort"
+                className="block w-full pl-11 pr-10 py-3 bg-bg-primary border border-border-light rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-blue/50 focus:border-accent-blue text-text-primary appearance-none transition-all cursor-pointer shadow-sm font-medium h-12"
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as SortOption)}
+              >
+                <option value="priority">Priority Order</option>
+                <option value="current-first">Current First</option>
+                <option value="past-first">Past First</option>
+                <option value="name-asc">Name (A-Z)</option>
+                <option value="name-desc">Name (Z-A)</option>
+              </select>
+              <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-text-muted">
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Results Info */}
+      <div className="flex items-center justify-between px-1">
+        {searchQuery && (
+          <p className="text-text-secondary animate-in fade-in slide-in-from-left-4 duration-300">
+            Found{" "}
+            <span className="text-text-primary font-bold">
+              {filteredAndSortedCommunities.length}
+            </span>{" "}
+            results for &quot;
+            <span className="text-accent-blue font-medium">{searchQuery}</span>
+            &quot;
+          </p>
+        )}
+      </div>
+
+      {/* Communities List */}
+      {view === "card" ? (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-1 max-w-6xl mx-auto">
+          {filteredAndSortedCommunities.map((community) => (
+            <CommunityListCard
+              key={community._id}
+              community={community}
+              className="h-full"
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="bg-bg-secondary rounded-2xl border border-border-light overflow-hidden shadow-sm">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead className="hidden md:table-header-group bg-bg-tertiary border-b border-border-light">
+                <tr>
+                  <th className="py-4 px-6 text-sm font-semibold text-text-secondary">
+                    Community & Role
+                  </th>
+                  <th className="py-4 px-6 text-sm font-semibold text-text-secondary w-48">
+                    Period
+                  </th>
+                  <th className="py-4 px-6 text-sm font-semibold text-text-secondary w-32 text-center">
+                    Status
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border-light">
+                {filteredAndSortedCommunities.map((community) => (
+                  <tr
+                    key={community._id}
+                    className="flex flex-col md:table-row hover:bg-bg-primary/50 transition-colors group p-4 md:p-0"
+                  >
+                    <td className="py-2 md:py-6 px-0 md:px-6">
+                      <div className="flex items-center gap-4">
+                        <div className="shrink-0">
+                          <Image
+                            src={community.logo.light}
+                            alt={community.name}
+                            width={40}
+                            height={40}
+                            className="w-12 h-12 md:w-10 md:h-10 rounded-lg object-contain bg-bg-elevated dark:hidden shadow-sm p-1"
+                          />
+                          <Image
+                            src={community.logo.dark}
+                            alt={community.name}
+                            width={40}
+                            height={40}
+                            className="w-12 h-12 md:w-10 md:h-10 rounded-lg object-contain bg-bg-elevated hidden dark:block shadow-sm p-1"
+                          />
+                        </div>
+                        <div className="min-w-0">
+                          <h3 className="font-bold md:font-semibold text-text-primary group-hover:text-accent-blue transition-colors text-base md:text-sm">
+                            {community.communityUrl ? (
+                              <a
+                                href={community.communityUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1"
+                              >
+                                {community.name}
+                                <FaExternalLinkAlt className="h-3 w-3" />
+                              </a>
+                            ) : (
+                              community.name
+                            )}
+                          </h3>
+                          <p className="text-sm text-text-muted">
+                            {community.role}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="py-2 md:py-6 px-0 md:px-6">
+                      <span className="md:hidden text-xs font-bold text-text-muted uppercase block mb-1">
+                        Period
+                      </span>
+                      <span className="text-sm text-text-secondary font-medium md:font-normal">
+                        {community.period}
+                      </span>
+                    </td>
+                    <td className="py-2 md:py-6 px-0 md:px-6 text-left md:text-center">
+                      <span className="md:hidden text-xs font-bold text-text-muted uppercase block mb-1">
+                        Status
+                      </span>
+                      <Badge
+                        variant={community.current ? "active" : "inactive"}
+                        size="sm"
+                        className="uppercase tracking-tighter"
+                      >
+                        {community.current ? "Current" : "Past"}
+                      </Badge>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Empty States */}
+      {filteredAndSortedCommunities.length === 0 && (
+        <div className="text-center py-20 bg-bg-secondary rounded-3xl border border-dashed border-border-light shadow-inner">
+          <div className="flex justify-center mb-6">
+            <div className="flex h-24 w-24 items-center justify-center rounded-full bg-bg-primary text-text-muted shadow-sm">
+              <FaUsers className="h-12 w-12" />
+            </div>
+          </div>
+          <h2 className="text-2xl font-bold text-text-primary mb-3">
+            {searchQuery
+              ? "No matching communities found"
+              : "No communities available"}
+          </h2>
+          <p className="text-text-secondary mb-8 max-w-md mx-auto px-4">
+            {searchQuery
+              ? `We couldn't find any communities matching "${searchQuery}". Please try different keywords.`
+              : "There are no communities to display at the moment."}
+          </p>
+          {searchQuery && (
+            <Button
+              onClick={() => setSearchQuery("")}
+              variant="outline"
+              className="min-w-40"
+            >
+              Clear Search
+            </Button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}

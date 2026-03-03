@@ -13,9 +13,39 @@ Changes are organized into the following categories:
 
 - Changes for the next release are available in development branches.
 
+## [v1.3.0] - 2026-03-03
+
+### Added - v1.3.0
+
+- Redesigned personal website **from the ground up** with a stronger visual identity.
+- Initialized base project with **Next.js 16**.
+- Implemented API-driven content fetching.
+- Developed comprehensive key sections: `Navbar`, `Hero`, `About`, `Experience`, `Education`, `Community` (Communities, Events, Video Content, Blog Content), `Connect`, and `Footer`.
+- Created dedicated pages: `Home`, `404`, `Communities`, `Events`, `Videos`, and `Blog`.
+- Defined and applied a consistent **design system** (spacing, typography, colors).
+- Enhanced UI with subtle, performance-friendly animations and micro-interactions.
+- Integrated analytics and monitoring suite:
+  - **Vercel Web Analytics**
+  - **Vercel Speed Insights**
+  - **Microsoft Clarity**
+  - **Google Analytics**
+
+### Changed - v1.3.0
+
+- Refactored component architecture for better reusability and maintainability.
+- Improved visual hierarchy and content readability.
+- Optimized responsiveness across all screen sizes.
+- Enhanced accessibility with better contrast, focus states, and semantic markup.
+- Ensured full parity between **dark** and **light** modes.
+- Validated and optimized SEO metadata and social sharing previews.
+
+### Removed - v1.3.0
+
+- Cleaned up unused styles, components, and assets.
+
 ## [v1.2.0] - 2026-01-15
 
-### Added
+### Added - v1.2.0
 
 - Initialized base project using **Next.js 15**.
 - Implemented core layout sections: `Navbar`, `Hero`, `About`, `Experience`, `Education`, `Community`, `Connect`, and `Footer`.
@@ -28,7 +58,7 @@ Changes are organized into the following categories:
   - **Microsoft Clarity**
   - **Google Analytics**
 
-### Changed
+### Changed - v1.2.0
 
 - Refactored routing logic to use a **single-page scrollable layout**.
 - Updated the **navbar** to support in-page scroll instead of navigation between routes.
@@ -36,7 +66,7 @@ Changes are organized into the following categories:
 - Standardized and refined **theme styling** for consistency across components.
 - Applied accessibility improvements and layout responsiveness across screen sizes.
 
-### Fixed
+### Fixed - v1.2.0
 
 - Resolved layout issues related to **padding and margins** in multiple sections.
 - Ensured compatibility and readability in both **dark** and **light** modes.
@@ -49,12 +79,12 @@ Changes are organized into the following categories:
 
 ## [v1.1.0] - 2026-01-15
 
-### Added
+### Added - v1.1.0
 
 - New font to Inter
 - Add pageHeaderTheme
 
-### Changed
+### Changed - v1.1.0
   
 - Update dependencies
   - version [1.0.1 -> 1.1.0]
@@ -91,7 +121,7 @@ Changes are organized into the following categories:
   - Update README.md
   - Remove extra inputs from ISSUE_TEMPLATE/feature_request.md
 
-### Fixed
+### Fixed - v1.1.0
 
 - Replace unsupported links
 - Experience page missing items
@@ -101,7 +131,7 @@ Changes are organized into the following categories:
 
 ## [v1.0.0] - 2026-01-14
 
-### Added
+### Added - v1.0.0
 
 - Initial production release of the personal website (`v1.0.0`).
 - Core layout components: Navigation Bar, Main Body layout, Footer, and Theme Switcher (light/dark mode).
@@ -120,3 +150,4 @@ Changes are organized into the following categories:
 [v1.0.0]: https://github.com/dileepadev/dileepa-dev/releases/tag/v1.0.0
 [v1.1.0]: https://github.com/dileepadev/dileepa-dev/releases/tag/v1.1.0
 [v1.2.0]: https://github.com/dileepadev/dileepa-dev/releases/tag/v1.2.0
+[v1.3.0]: https://github.com/dileepadev/dileepa-dev/releases/tag/v1.3.0

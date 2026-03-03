@@ -23,32 +23,42 @@ Welcome to my personal website project, hosted at [dileepa.dev](https://dileepa.
 
 ## Tools and Technologies
 
-- **Framework:** [Next.js](https://nextjs.org/)  
-- **Language:** [TypeScript](https://www.typescriptlang.org/)  
-- **Runtime:** [Node.js](https://nodejs.org/)  
-- **Package Manager:** [npm](https://www.npmjs.com/)  
-- **Linting:** [ESLint](https://eslint.org/)  
-- **Formatting:** [Prettier](https://prettier.io/)  
-- **Styling:** [Tailwind CSS](https://tailwindcss.com/)  
-- **Version Control:** [Git](https://git-scm.com/)  
-- **State Management:** [useState](https://react.dev/reference/react/useState)  
-- **Deployment:** [Vercel](https://vercel.com/)  
-- **Image Optimization:** [Next.js Image](https://nextjs.org/docs/api-reference/next/image)  
-- **API Communication:** [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)
-- **Email Service:** [Resend](https://resend.com/)
+- **Framework:** [Next.js 16](https://nextjs.org/)
+- **Library:** [React 19](https://react.dev/)
+- **Language:** [TypeScript](https://www.typescriptlang.org/)
+- **Runtime:** [Node.js](https://nodejs.org/)
+- **Package Manager:** [npm](https://www.npmjs.com/)
+- **Linting:** [ESLint](https://eslint.org/)
+- **Formatting:** [Prettier](https://prettier.io/)
+- **Styling:** [Tailwind CSS 4](https://tailwindcss.com/)
+- **Animations:** [Framer Motion](https://www.framer.com/motion/)
+- **Theming:** [Next Themes](https://github.com/pacocoursey/next-themes)
+- **Deployment:** [Vercel](https://vercel.com/)
+- **Analytics:**
+  - [Vercel Analytics](https://vercel.com/analytics)
+  - [Vercel Speed Insights](https://vercel.com/docs/speed-insights)
+  - [Google Analytics](https://analytics.google.com/)
+  - [Microsoft Clarity](https://clarity.microsoft.com/)
+- **Image Optimization:** [Next.js Image](https://nextjs.org/docs/api-reference/next/image)
+- **API Communication:** [api.dileepa.dev](https://api.dileepa.dev/)
 - **Icons:** [React Icons](https://react-icons.github.io/react-icons)
 
 ## Captured Media
 
-![Dileepa Bandara](./public/dileepa-dev-1-2-0.webp)
+![Dileepa Bandara](https://dileepadev.github.io/images/dileepa-dev/preview-1.3.0.png)
 
 ## Sections
 
-- **About** – Provides general profile information about me.
-- **Experience** – Includes my work experience, skills, and technologies I've worked with.
-- **Education** – Displays my educational background and qualifications.
-- **Community** – Highlights my contributions to tech communities, speaking engagements, and video content.
-- **Connect** – Lists ways to reach me via social media and other platforms.
+- **Hero:** Introduction and call to action.
+- **About:** General profile information and biography.
+- **Experience:** Professional journey, skills, and technologies.
+- **Education:** Academic background and qualifications.
+- **Community:**
+  - **Communities:** Tech communities I am part of.
+  - **Events:** Events I have attended or spoken at.
+  - **Videos:** Video content and tutorials.
+  - **Blog:** Articles and thoughts on technology.
+- **Connect:** Social media links and contact information.
 
 ## Getting Started
 
@@ -99,7 +109,7 @@ To get a copy of this project up and running on your local machine, follow these
    npx next dev
    ```
 
-   Note: The `next dev --turbopack` command can be used to start the development server with Turbopack. Click [here](https://nextjs.org/docs/app/api-reference/turbopack) for more information.
+   Note: The `next dev --turbopack` command can be used to start the development server with Turbopack. Click [here link](https://nextjs.org/docs/app/api-reference/turbopack) for more information.
 
 5. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result. To change the port, use the `-p` flag. For example, `npm run dev -- -p 4000`.
 
