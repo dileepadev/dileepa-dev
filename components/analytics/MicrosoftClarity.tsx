@@ -4,17 +4,13 @@ const microsoftClarityProjectId =
   process.env.NEXT_PUBLIC_MICROSOFT_CLARITY_PROJECT_ID;
 
 export default function MicrosoftClarity() {
-  console.log("microsoftClarityProjectId: ", microsoftClarityProjectId);
   if (!microsoftClarityProjectId) {
     console.error("Microsoft Clarity Project ID is not defined.");
     return null;
   }
-  if (
-    process.env.NODE_ENV === "production" ||
-    process.env.NODE_ENV === "development"
-  ) {
+  if (process.env.NODE_ENV === "production") {
     return (
-      <Script id="microsoft-clarity-analytics">
+      <Script id="microsoft-clarity-analytics" strategy="afterInteractive">
         {`
               (function(c,l,a,r,i,t,y){
                   c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
