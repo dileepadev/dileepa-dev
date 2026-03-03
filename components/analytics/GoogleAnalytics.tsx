@@ -7,9 +7,9 @@ export default function GoogleAnalyticsComponent() {
     return null;
   }
 
-  return (
-    <>
-      <GoogleAnalytics gaId={GoogleAnalyticsID} />
-    </>
-  );
+  if (process.env.NODE_ENV === "production") {
+    return <GoogleAnalytics gaId={GoogleAnalyticsID} />;
+  }
+
+  return null;
 }
