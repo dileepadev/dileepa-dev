@@ -129,12 +129,16 @@ To get a copy of this project up and running on your local machine, follow these
 
 6. You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-7. Copy the example environment file and update it with your configuration:
+7. Copy the environment template for the mode you are running and fill it in:
 
    ```bash
-   cp .env.example .env
-   # Then edit .env as needed
+   cp .env.development.example .env.development   # what `next dev` loads
+   cp .env.production.example .env.production     # what `next build`/`next start` load
    ```
+
+   Each file is complete on its own — there is no shared base file and no
+   `.env.local` override, so the value you read in a file is the value in
+   effect. Both are gitignored; only the `*.example` templates are committed.
 
 ## Deployment on Vercel
 
