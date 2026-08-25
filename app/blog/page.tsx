@@ -1,16 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import {
-  Badge,
-  Container,
-  EmptyState,
-  Item,
-  ItemList,
-  Section,
-} from "@/components/ui";
+import { Badge, Container, EmptyState, Section } from "@/components/ui";
 import { api } from "@/lib/api";
 import { EMPTY_STATES } from "@/lib/constants";
-import { formatDate, readingTime, toDateAttribute } from "@/lib/format";
+import { BlogSearch } from "./_components/BlogSearch";
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -63,38 +56,13 @@ export default async function BlogPage() {
           </ul>
         )}
 
-        <div className="mt-10">
-          {posts.length === 0 ? (
+        {posts.length === 0 ? (
+          <div className="mt-10">
             <EmptyState {...EMPTY_STATES.posts} />
-          ) : (
-            <ItemList>
-              {posts.map((post) => (
-                <Item
-                  key={post.slug}
-                  title={post.title}
-                  href={`/blog/${post.slug}`}
-                  description={post.description}
-                  meta={
-                    <>
-                      <time
-                        dateTime={toDateAttribute(post.publishedDate)}
-                        className="block"
-                      >
-                        {formatDate(post.publishedDate)}
-                      </time>
-                      <span className="block">
-                        {readingTime(post.readingTimeMinutes)}
-                      </span>
-                      {post.series && (
-                        <span className="block">{post.series.name}</span>
-                      )}
-                    </>
-                  }
-                />
-              ))}
-            </ItemList>
-          )}
-        </div>
+          </div>
+        ) : (
+          <BlogSearch posts={posts} />
+        )}
       </Container>
     </Section>
   );
