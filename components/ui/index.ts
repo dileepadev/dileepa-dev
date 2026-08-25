@@ -10,3 +10,4 @@ export { EntryList, Entry } from "./EntryList";
 export { ItemList, Item, ViewAll } from "./ItemList";
 export { EmptyState } from "./EmptyState";
 export { Gallery } from "./Gallery";
+export { SearchInput } from "./SearchInput";
