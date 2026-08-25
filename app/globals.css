@@ -1833,6 +1833,163 @@ pre {
   color: var(--fg);
 }
 
+/* --- View tabs (All / Series) ------------------------------------------- */
+
+.view-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 3px;
+  background: var(--bg-surface);
+  border: var(--hairline) solid var(--border-strong);
+  border-radius: var(--radius);
+  margin-bottom: var(--space-6);
+}
+
+.view-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-3);
+  height: 32px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-size: var(--text-small);
+  font-weight: 500;
+  color: var(--fg-muted);
+  cursor: pointer;
+  transition:
+    background-color var(--dur) var(--ease),
+    color var(--dur) var(--ease);
+}
+
+.view-tab:hover {
+  color: var(--fg);
+  background: var(--surface-hover);
+}
+
+.view-tab.is-active {
+  color: var(--brand);
+  background: var(--surface-hover);
+}
+
+.view-tab-count {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  background: var(--raised-hover);
+  color: var(--fg-muted);
+}
+
+.view-tab.is-active .view-tab-count {
+  color: var(--brand);
+}
+
+/* --- Series cards & grid ------------------------------------------------ */
+
+.series-grid {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.series-card {
+  border: var(--hairline) solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  padding: var(--space-6);
+  transition:
+    border-color var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease);
+}
+
+.series-card:hover {
+  border-color: var(--brand);
+}
+
+.series-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.series-card-title {
+  font-size: var(--text-h3);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+  margin-top: var(--space-1);
+}
+
+.series-card-desc {
+  margin-top: var(--space-3);
+  color: var(--fg-muted);
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
+}
+
+.series-posts-list {
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: var(--hairline) solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.series-post-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  font-size: var(--text-small);
+}
+
+.series-post-num {
+  font-family: var(--font-mono);
+  color: var(--fg-muted);
+  flex-shrink: 0;
+  width: 1.5rem;
+}
+
+.series-post-title {
+  color: var(--fg);
+  text-decoration: none;
+  transition: color var(--dur) var(--ease);
+}
+
+.series-post-title:hover {
+  color: var(--brand);
+}
+
+.series-detail-header {
+  margin-bottom: var(--space-8);
+  padding-bottom: var(--space-6);
+  border-bottom: var(--hairline) solid var(--border);
+}
+
+.series-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+  color: var(--brand);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: color var(--dur) var(--ease);
+}
+
+.series-back-btn:hover {
+  color: var(--fg);
+}
+
 /* --- Back to top -------------------------------------------------------- */
 
 .back-to-top {
