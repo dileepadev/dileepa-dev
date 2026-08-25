@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { ImageIcon } from "lucide-react";
+import { ImageIcon, Maximize2 } from "lucide-react";
+import { ImageLightbox } from "@/components/ui/ImageLightbox";
 import { cn } from "@/lib/utils";
 
 const GITHUB_RAW_BASE = `https://raw.githubusercontent.com/${process.env.NEXT_PUBLIC_BLOG_CONTENT_REPO || "dileepadev/blog-dileepa-dev"}/${process.env.NEXT_PUBLIC_BLOG_CONTENT_REF || "main"}/public`;
@@ -54,7 +55,7 @@ interface MarkdownImageProps
 
 /**
  * Enhanced Markdown image renderer with URL resolution, graceful error handling,
- * responsive scaling, and optional caption support.
+ * responsive scaling, optional caption support, and full-screen lightbox inspection.
  */
 export function MarkdownImage({
   src,
@@ -64,6 +65,7 @@ export function MarkdownImage({
 }: MarkdownImageProps) {
   const [hasError, setHasError] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   if (!src || typeof src !== "string") {
     return null;
@@ -85,27 +87,52 @@ export function MarkdownImage({
   }
 
   return (
-    <figure className="my-6 overflow-hidden rounded-lg border border-border-strong bg-bg-surface">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={resolvedSrc}
-        alt={alt ?? ""}
-        loading="lazy"
-        decoding="async"
-        onError={() => setHasError(true)}
-        onLoad={() => setIsLoaded(true)}
-        className={cn(
-          "h-auto w-full max-w-full object-contain transition-opacity duration-200",
-          isLoaded ? "opacity-100" : "opacity-90",
-          className,
+    <>
+      <figure className="group my-6 overflow-hidden rounded-lg border border-border-strong bg-bg-surface transition-colors duration-200 hover:border-brand/40">
+        <button
+          type="button"
+          onClick={() => setIsLightboxOpen(true)}
+          title="Click to view full screen"
+          aria-label={alt ? `View full screen image: ${alt}` : "View full screen image"}
+          className="relative block w-full cursor-zoom-in border-none bg-transparent p-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={resolvedSrc}
+            alt={alt ?? ""}
+            loading="lazy"
+            decoding="async"
+            onError={() => setHasError(true)}
+            onLoad={() => setIsLoaded(true)}
+            className={cn(
+              "h-auto w-full max-w-full object-contain transition-all duration-200 group-hover:scale-[1.005]",
+              isLoaded ? "opacity-100" : "opacity-90",
+              className,
+            )}
+            {...props}
+          />
+
+          {/* Hover zoom indicator overlay badge */}
+          <div className="pointer-events-none absolute bottom-3 right-3 flex items-center gap-1.5 rounded-sm border border-border-strong bg-bg-surface/90 px-2 py-1 font-mono text-label text-fg shadow-sm backdrop-blur-sm opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+            <Maximize2 className="h-3 w-3 text-brand" aria-hidden="true" />
+            <span>Full screen</span>
+          </div>
+        </button>
+
+        {alt && (
+          <figcaption className="border-t border-border-strong bg-bg-surface px-4 py-2 text-center font-mono text-label text-fg-muted">
+            {alt}
+          </figcaption>
         )}
-        {...props}
+      </figure>
+
+      {/* Fullscreen Lightbox Modal */}
+      <ImageLightbox
+        src={resolvedSrc}
+        alt={alt}
+        isOpen={isLightboxOpen}
+        onClose={() => setIsLightboxOpen(false)}
       />
-      {alt && (
-        <figcaption className="border-t border-border-strong bg-bg-surface px-4 py-2 text-center font-mono text-label text-fg-muted">
-          {alt}
-        </figcaption>
-      )}
-    </figure>
+    </>
   );
 }
