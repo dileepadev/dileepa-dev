@@ -2395,6 +2395,24 @@ pre {
    Shiki emits both themes and swaps them with CSS variables, so highlighting
    follows the site theme without shipping a second copy of the markup.
    ============================================================ */
+.shiki,
+.shiki span {
+  color: var(--shiki-light);
+  font-style: var(--shiki-light-font-style);
+  font-weight: var(--shiki-light-font-weight);
+  text-decoration: var(--shiki-light-text-decoration);
+}
+
+[data-theme="dark"] .shiki,
+[data-theme="dark"] .shiki span,
+.dark .shiki,
+.dark .shiki span {
+  color: var(--shiki-dark) !important;
+  font-style: var(--shiki-dark-font-style) !important;
+  font-weight: var(--shiki-dark-font-weight) !important;
+  text-decoration: var(--shiki-dark-text-decoration) !important;
+}
+
 .prose pre {
   border: var(--hairline) solid var(--border-strong);
   background: var(--bg-raised) !important;
@@ -2408,12 +2426,34 @@ pre {
   font-family: var(--font-code);
 }
 
-[data-theme="dark"] .shiki,
-[data-theme="dark"] .shiki span {
-  color: var(--shiki-dark) !important;
-  font-style: var(--shiki-dark-font-style) !important;
-  font-weight: var(--shiki-dark-font-weight) !important;
-  text-decoration: var(--shiki-dark-text-decoration) !important;
+/* Inline code within prose */
+.prose :not(pre) > code {
+  font-family: var(--font-code);
+  font-size: 0.875em;
+  font-weight: 500;
+  padding: 0.15em 0.4em;
+  border-radius: var(--radius-sm);
+  background: var(--surface-hover);
+  border: var(--hairline) solid var(--border-strong);
+  color: var(--brand);
+}
+
+/* Code block scrollbars */
+.code-block-pre::-webkit-scrollbar {
+  height: 6px;
+}
+
+.code-block-pre::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.code-block-pre::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: var(--radius-pill);
+}
+
+.code-block-pre::-webkit-scrollbar-thumb:hover {
+  background: var(--brand);
 }
 
 /* ============================================================

@@ -1,12 +1,13 @@
 import Link from "next/link";
 import type { MDXComponents } from "mdx/types";
+import { CodeBlock } from "./CodeBlock";
 
 /**
  * The components MDX renders into.
  *
  * Most elements are styled by `.prose` in globals.css rather than overridden
  * here — a component per tag would put the blog's styling in two places. These
- * three exist because they need behaviour, not styling.
+ * exist because they need behaviour, not styling.
  */
 export const mdxComponents: MDXComponents = {
   // Internal links route client-side; external ones open safely.
@@ -58,26 +59,8 @@ export const mdxComponents: MDXComponents = {
     );
   },
 
-  // Shiki puts the language on the `pre`; the chrome shows it and gives the
-  // block a header, matching the Astro blog's Pre component.
-  pre: ({ children, ...props }) => {
-    const language =
-      typeof props["data-language"] === "string"
-        ? props["data-language"]
-        : undefined;
-    return (
-      <div className="overflow-hidden rounded-lg border border-border-strong">
-        {language && (
-          <div className="border-b border-border-strong bg-bg-surface px-4 py-2">
-            <span className="font-mono text-small text-fg-muted">
-              {language}
-            </span>
-          </div>
-        )}
-        <pre {...props} className="!m-0 !rounded-none !border-0 p-4">
-          {children}
-        </pre>
-      </div>
-    );
-  },
+  // Enhanced code block with syntax highlighting, language badge, and copy button.
+  pre: (props) => <CodeBlock {...props} />,
 };
+
+export { CodeBlock } from "./CodeBlock";
