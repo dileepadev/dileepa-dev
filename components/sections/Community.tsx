@@ -134,6 +134,7 @@ export function CommunitySection({
                   key={video.id}
                   title={video.title}
                   href={video.link}
+                  description={video.description || undefined}
                   meta={formatMonth(video.date)}
                 />
               ))}

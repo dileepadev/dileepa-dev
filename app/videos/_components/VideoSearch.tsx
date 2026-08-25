@@ -10,14 +10,8 @@ import {
   SortSelect,
   type SortOption,
 } from "@/components/ui";
+import type { Video } from "@/lib/api-types";
 import { formatDate } from "@/lib/format";
-
-interface VideoSummary {
-  id: string;
-  title: string;
-  link: string;
-  date: string;
-}
 
 type VideoSortKey = "newest" | "oldest" | "title-asc" | "title-desc";
 
@@ -29,15 +23,22 @@ const SORT_OPTIONS: SortOption<VideoSortKey>[] = [
 ];
 
 /** Client-side search and sorting across videos. */
-export function VideoSearch({ videos }: { videos: VideoSummary[] }) {
+export function VideoSearch({ videos }: { videos: Video[] }) {
   const [query, setQuery] = useState("");
   const [sortBy, setSortBy] = useState<VideoSortKey>("newest");
 
   const q = query.toLowerCase().trim();
 
   const filteredAndSorted = useMemo(() => {
+    // Search covers the description too. A reader searching "azure" means the
+    // subject, and the subject is as likely to be in the sentence under the
+    // title as in the title itself.
     const result = q
-      ? videos.filter((v) => v.title.toLowerCase().includes(q))
+      ? videos.filter(
+          (v) =>
+            v.title.toLowerCase().includes(q) ||
+            (v.description ?? "").toLowerCase().includes(q),
+        )
       : [...videos];
 
     result.sort((a, b) => {
@@ -85,7 +86,8 @@ export function VideoSearch({ videos }: { videos: VideoSummary[] }) {
       {hasFilter && (
         <div className="filter-status">
           <span>
-            Showing {filteredAndSorted.length} of {videos.length} {videos.length === 1 ? "video" : "videos"}
+            Showing {filteredAndSorted.length} of {videos.length}{" "}
+            {videos.length === 1 ? "video" : "videos"}
           </span>
           <button
             type="button"
@@ -105,10 +107,7 @@ export function VideoSearch({ videos }: { videos: VideoSummary[] }) {
           >
             {hasFilter && (
               <div className="mt-4 flex justify-center">
-                <Button
-                  variant="secondary"
-                  onClick={() => setQuery("")}
-                >
+                <Button variant="secondary" onClick={() => setQuery("")}>
                   Clear filter
                 </Button>
               </div>
@@ -123,6 +122,7 @@ export function VideoSearch({ videos }: { videos: VideoSummary[] }) {
                 key={video.id}
                 title={video.title}
                 href={video.link}
+                description={video.description || undefined}
                 meta={formatDate(video.date)}
               />
             ))}
