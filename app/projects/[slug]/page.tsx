@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { ExternalLink, FileText, Globe } from "lucide-react";
+import { FaGithub } from "react-icons/fa6";
 import { Badge, Chip, Container, LinkButton, Section } from "@/components/ui";
 import { api } from "@/lib/api";
 import { SITE_CONFIG } from "@/lib/constants";
@@ -70,11 +72,31 @@ export default async function ProjectPage({ params }: Params) {
 
         {links.length > 0 && (
           <div className="mt-6 flex flex-wrap gap-3">
-            {links.map(([kind, url]) => (
-              <LinkButton key={kind} href={url} variant="secondary">
-                {humanise(kind)}
-              </LinkButton>
-            ))}
+            {links.map(([kind, url]) => {
+              const lower = kind.toLowerCase();
+              const isGithub =
+                lower.includes("github") || lower.includes("repo") || lower.includes("source");
+              const Icon =
+                isGithub
+                  ? FaGithub
+                  : lower.includes("demo") || lower.includes("live") || lower.includes("site")
+                    ? Globe
+                    : lower.includes("doc") || lower.includes("paper")
+                      ? FileText
+                      : ExternalLink;
+
+              return (
+                <LinkButton
+                  key={kind}
+                  href={url}
+                  variant="secondary"
+                  className="inline-flex items-center gap-2"
+                >
+                  <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
+                  <span>{humanise(kind)}</span>
+                </LinkButton>
+              );
+            })}
           </div>
         )}
 

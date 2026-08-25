@@ -1,6 +1,14 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import {
+  Building2,
+  Calendar,
+  MapPin,
+  Presentation,
+  Users,
+  Video,
+} from "lucide-react";
 import { Badge, Container, LinkButton, Section } from "@/components/ui";
 import { api } from "@/lib/api";
 import type { EventRecord } from "@/lib/api-types";
@@ -121,10 +129,11 @@ export default async function EventPage({ params }: Params) {
           <p className="mt-4 text-h3 text-fg-muted">{event.summary}</p>
         )}
 
-        <dl className="mt-6 grid gap-x-6 gap-y-2 font-mono text-small text-fg-muted sm:grid-cols-2">
+        <dl className="mt-6 grid gap-x-6 gap-y-3 font-mono text-small text-fg-muted sm:grid-cols-2">
           <div>
             <dt className="sr-only">Date</dt>
-            <dd>
+            <dd className="flex items-center gap-2">
+              <Calendar className="h-4 w-4 shrink-0 text-fg-muted" strokeWidth={1.75} aria-hidden="true" />
               <time dateTime={toDateAttribute(event.startAt)}>
                 {formatDate(event.startAt)}
               </time>
@@ -133,27 +142,36 @@ export default async function EventPage({ params }: Params) {
           {event.location && (
             <div>
               <dt className="sr-only">Location</dt>
-              <dd>
-                {[
-                  event.location.venue,
-                  event.location.city,
-                  event.location.country,
-                ]
-                  .filter(Boolean)
-                  .join(", ")}
+              <dd className="flex items-center gap-2">
+                <MapPin className="h-4 w-4 shrink-0 text-fg-muted" strokeWidth={1.75} aria-hidden="true" />
+                <span>
+                  {[
+                    event.location.venue,
+                    event.location.city,
+                    event.location.country,
+                  ]
+                    .filter(Boolean)
+                    .join(", ")}
+                </span>
               </dd>
             </div>
           )}
           {event.host?.name && (
             <div>
               <dt className="sr-only">Event</dt>
-              <dd>{event.host.name}</dd>
+              <dd className="flex items-center gap-2">
+                <Building2 className="h-4 w-4 shrink-0 text-fg-muted" strokeWidth={1.75} aria-hidden="true" />
+                <span>{event.host.name}</span>
+              </dd>
             </div>
           )}
           {event.audienceSize && (
             <div>
               <dt className="sr-only">Audience</dt>
-              <dd>{event.audienceSize} attendees</dd>
+              <dd className="flex items-center gap-2">
+                <Users className="h-4 w-4 shrink-0 text-fg-muted" strokeWidth={1.75} aria-hidden="true" />
+                <span>{event.audienceSize} attendees</span>
+              </dd>
             </div>
           )}
         </dl>
@@ -245,7 +263,8 @@ export default async function EventPage({ params }: Params) {
             <h2>Recordings</h2>
             <ul className="mt-4 space-y-2">
               {(event.recordings ?? []).map((recording) => (
-                <li key={recording.url} className="font-mono text-small">
+                <li key={recording.url} className="flex items-center gap-2 font-mono text-small">
+                  <Video className="h-4 w-4 shrink-0 text-brand" strokeWidth={1.75} aria-hidden="true" />
                   <a
                     href={recording.url}
                     target="_blank"
@@ -268,7 +287,8 @@ export default async function EventPage({ params }: Params) {
         {event.slides && (
           <section className="mt-12">
             <h2>Slides</h2>
-            <p className="mt-4 font-mono text-small">
+            <p className="mt-4 flex items-center gap-2 font-mono text-small">
+              <Presentation className="h-4 w-4 shrink-0 text-brand" strokeWidth={1.75} aria-hidden="true" />
               <a
                 href={event.slides.url}
                 target="_blank"

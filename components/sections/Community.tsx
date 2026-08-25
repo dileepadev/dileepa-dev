@@ -1,3 +1,4 @@
+import { Video as VideoIcon } from "lucide-react";
 import {
   Container,
   Gallery,
@@ -134,6 +135,7 @@ export function CommunitySection({
                   key={video.id}
                   title={video.title}
                   href={video.link}
+                  icon={<VideoIcon className="h-4 w-4 text-brand shrink-0" strokeWidth={1.75} aria-hidden="true" />}
                   meta={formatMonth(video.date)}
                 />
               ))}

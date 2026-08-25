@@ -15,12 +15,8 @@ interface CommonProps {
  * reference's values. The component names them rather than restating them in
  * utilities: the contact form renders a bare `<button class="btn btn--primary">`
  * and the hero renders this, and the two have to be the same button.
- *
- * `inline-block` rather than `inline-flex`: the reference's buttons are
- * text-only, and a flex box centres a label that padding and `line-height: 1`
- * have already placed.
  */
-const base = "btn inline-block";
+const base = "btn inline-flex items-center justify-center gap-2";
 
 const variants: Record<Variant, string> = {
   primary: "btn--primary",

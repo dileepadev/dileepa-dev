@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { ChevronDown, List } from "lucide-react";
 import type { Heading } from "@/lib/mdx";
 import { cn } from "@/lib/utils";
 
@@ -71,9 +72,13 @@ export function TableOfContents({ headings }: { headings: Heading[] }) {
         <div className="mt-3">{list}</div>
       </nav>
 
-      <details className="rounded-lg border border-border-strong bg-bg-surface p-4 lg:hidden">
-        <summary className="cursor-pointer font-mono text-small text-fg-muted">
-          On this page
+      <details className="group rounded-lg border border-border-strong bg-bg-surface p-4 lg:hidden">
+        <summary className="flex cursor-pointer items-center justify-between font-mono text-small text-fg-muted">
+          <span className="inline-flex items-center gap-2">
+            <List className="h-4 w-4 shrink-0 text-fg-muted" strokeWidth={1.75} aria-hidden="true" />
+            <span>On this page</span>
+          </span>
+          <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-[160ms] ease-brand group-open:rotate-180" strokeWidth={1.75} aria-hidden="true" />
         </summary>
         <div className="mt-3">{list}</div>
       </details>

@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { Container, LinkButton } from "@/components/ui";
+import { Briefcase, Mail, MapPin } from "lucide-react";
+import { Container, LinkButton, StatusBadge } from "@/components/ui";
 import type { About } from "@/lib/api-types";
 import { SITE_CONFIG } from "@/lib/constants";
 import { paragraphs, portrait as portraitUrl } from "@/lib/format";
@@ -38,20 +39,24 @@ export function Hero({ about }: { about: About | null }) {
       <div className="hero">
         <div className="hero-inner">
           <div className="min-w-0">
+            {about?.status && (
+              <div className="hero-meta">
+                <StatusBadge>{about.status}</StatusBadge>
+              </div>
+            )}
             <h1 className="display">{tagline}</h1>
             {lead && <p className="hero-lead">{lead}</p>}
 
             <div className="hero-actions">
-              <LinkButton href="/#contact">Get in touch</LinkButton>
+              <LinkButton href="/#contact">
+                <Mail className="h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
+                <span>Get in touch</span>
+              </LinkButton>
               <LinkButton href="/#work" variant="secondary">
-                See the work
+                <Briefcase className="h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
+                <span>See the work</span>
               </LinkButton>
             </div>
-            {about?.status && (
-              <div className="hero-meta">
-                <span className="hero-meta-value badge">{about.status}</span>
-              </div>
-            )}
           </div>
 
           {portrait && (
@@ -69,9 +74,17 @@ export function Hero({ about }: { about: About | null }) {
                 <div>
                   <div className="hero-name">{name}</div>
                   {role && (
-                    <div className="hero-role">
-                      {role}
-                      {about?.location ? ` · ${about.location}` : ""}
+                    <div className="hero-role flex items-center justify-center gap-1.5 flex-wrap">
+                      <span>{role}</span>
+                      {about?.location && (
+                        <>
+                          <span className="text-fg-muted">·</span>
+                          <span className="inline-flex items-center gap-1">
+                            <MapPin className="h-3.5 w-3.5 text-fg-muted" strokeWidth={1.75} aria-hidden="true" />
+                            <span>{about.location}</span>
+                          </span>
+                        </>
+                      )}
                     </div>
                   )}
                 </div>

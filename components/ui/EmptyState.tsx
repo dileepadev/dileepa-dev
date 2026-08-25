@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+import { FolderSearch } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
@@ -7,10 +9,12 @@ import { cn } from "@/lib/utils";
 export function EmptyState({
   title,
   hint,
+  icon,
   className,
 }: {
   title: string;
   hint?: string;
+  icon?: ReactNode;
   className?: string;
 }) {
   return (
@@ -20,6 +24,9 @@ export function EmptyState({
         className,
       )}
     >
+      <div className="mb-3 flex justify-center text-fg-muted/60">
+        {icon ?? <FolderSearch className="h-8 w-8" strokeWidth={1.5} aria-hidden="true" />}
+      </div>
       <p className="max-w-none text-fg">{title}</p>
       {hint && (
         <p className="mt-2 max-w-none text-small text-fg-muted">{hint}</p>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FiCheck, FiLink } from "react-icons/fi";
+import { Check, Link2 } from "lucide-react";
 import { FaLinkedin, FaXTwitter } from "react-icons/fa6";
 
 const linkClasses =
@@ -36,7 +36,8 @@ export function Share({ url, title }: { url: string; title: string }) {
         rel="noopener noreferrer"
         className={linkClasses}
       >
-        <FaXTwitter className="h-4 w-4" aria-hidden="true" />X
+        <FaXTwitter className="h-4 w-4 shrink-0" aria-hidden="true" />
+        <span>X</span>
       </a>
       <a
         href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`}
@@ -44,16 +45,16 @@ export function Share({ url, title }: { url: string; title: string }) {
         rel="noopener noreferrer"
         className={linkClasses}
       >
-        <FaLinkedin className="h-4 w-4" aria-hidden="true" />
-        LinkedIn
+        <FaLinkedin className="h-4 w-4 shrink-0" aria-hidden="true" />
+        <span>LinkedIn</span>
       </a>
       <button type="button" onClick={copy} className={linkClasses}>
         {copied ? (
-          <FiCheck className="h-4 w-4 text-brand" aria-hidden="true" />
+          <Check className="h-4 w-4 shrink-0 text-brand" strokeWidth={1.75} aria-hidden="true" />
         ) : (
-          <FiLink className="h-4 w-4" aria-hidden="true" />
+          <Link2 className="h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
         )}
-        {copied ? "Link copied" : "Copy link"}
+        <span>{copied ? "Link copied" : "Copy link"}</span>
       </button>
     </div>
   );

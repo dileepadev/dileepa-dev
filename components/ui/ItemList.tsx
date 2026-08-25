@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import Link from "next/link";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 
 /**
  * The item list — communities, events, posts, videos.
@@ -17,6 +18,7 @@ export function Item({
   external,
   description,
   meta,
+  icon,
   children,
 }: {
   title: string;
@@ -25,6 +27,7 @@ export function Item({
   description?: string;
   /** Mono, right-aligned on wide screens. Dates, formats, counts. */
   meta?: ReactNode;
+  icon?: ReactNode;
   children?: ReactNode;
 }) {
   const isExternal = external ?? href?.startsWith("http");
@@ -32,7 +35,8 @@ export function Item({
   return (
     <article className="item">
       <div className="min-w-0">
-        <h3>
+        <h3 className="flex items-center gap-2 flex-wrap">
+          {icon && <span className="shrink-0">{icon}</span>}
           {href ? (
             isExternal ? (
               <a href={href} target="_blank" rel="noopener noreferrer">
@@ -63,16 +67,19 @@ export function ViewAll({
   children: string;
   external?: boolean;
 }) {
+  const isExternal = external ?? href.startsWith("http");
   const body = (
     <>
-      {children}
-      <svg viewBox="0 0 24 24" strokeLinecap="round" aria-hidden="true">
-        <path d="M5 12h14M13 6l6 6-6 6" />
-      </svg>
+      <span>{children}</span>
+      {isExternal ? (
+        <ArrowUpRight className="h-3.5 w-3.5 shrink-0" strokeWidth={2} aria-hidden="true" />
+      ) : (
+        <ArrowRight className="h-3.5 w-3.5 shrink-0" strokeWidth={2} aria-hidden="true" />
+      )}
     </>
   );
 
-  if (external ?? href.startsWith("http")) {
+  if (isExternal) {
     return (
       <a
         className="view-all"
