@@ -1,13 +1,7 @@
 import type { Metadata } from "next";
-import {
-  Container,
-  EmptyState,
-  Item,
-  ItemList,
-  Section,
-} from "@/components/ui";
+import { Container, EmptyState, Section } from "@/components/ui";
 import { api } from "@/lib/api";
-import { formatDate } from "@/lib/format";
+import { VideoSearch } from "./_components/VideoSearch";
 
 export const metadata: Metadata = {
   title: "Videos",
@@ -41,16 +35,7 @@ export default async function VideosPage() {
             hint="Recordings appear here once they are added in the admin."
           />
         ) : (
-          <ItemList>
-            {videos.map((video) => (
-              <Item
-                key={video.id}
-                title={video.title}
-                href={video.link}
-                meta={formatDate(video.date)}
-              />
-            ))}
-          </ItemList>
+          <VideoSearch videos={videos} />
         )}
       </Container>
     </Section>
