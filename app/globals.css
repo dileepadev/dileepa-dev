@@ -489,7 +489,7 @@ pre {
   vertical-align: baseline;
 }
 
-/* --- Header ------------------------------------------------------------- */
+/* --- Header & Navigation ------------------------------------------------ */
 
 .site-header {
   position: sticky;
@@ -498,70 +498,222 @@ pre {
   padding-top: 0.75rem;
 }
 
-/* 64px, not 72px: a bar holding a 14px link row and a 40px control had 24px
-   of air above and below it, which read as a toolbar rather than a lockup and
-   five links. The shadow was three different blue-black rgba values lifted
-   from another palette — rgb(15 23 42), rgb(3 7 18), rgb(17 24 39) — casting a
-   slate tint over a page whose neutrals are dead neutral. It is the page's own
-   black now, and the border is the page's own border. */
+.nav-wrapper {
+  position: relative;
+}
+
 .nav {
-  height: 64px;
+  height: 60px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-6);
+  gap: var(--space-4);
   padding: 0 var(--space-4);
-  /* Solid, not translucent — a see-through bar let scrolling content show
-     through the links and read as unfinished. */
-  background: var(--bg-surface);
+  background: color-mix(in srgb, var(--bg-surface) 88%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: var(--hairline) solid var(--border-strong);
   border-radius: var(--radius-xl);
-  /* The bar is the one element on the page that casts a shadow, because it is
-     the one element that is genuinely floating above the content. */
   box-shadow: var(--shadow-nav);
+  transition:
+    background-color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease);
 }
 
 .nav-right {
   display: flex;
   align-items: center;
-  gap: var(--space-6);
+  gap: var(--space-3);
   min-width: 0;
+}
+
+.nav-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
 }
 
 .nav-links {
-  display: flex;
-  align-items: center;
-  gap: var(--space-6);
-  min-width: 0;
-  overflow-x: auto;
-  white-space: nowrap;
-  scrollbar-width: none;
-}
-
-.nav-links::-webkit-scrollbar {
   display: none;
+  align-items: center;
+  gap: var(--space-1);
 }
 
-.nav-links a {
+@media (min-width: 768px) {
+  .nav-links {
+    display: flex;
+  }
+}
+
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius);
   font-size: var(--text-small);
   font-weight: 500;
   letter-spacing: var(--track-label);
   color: var(--fg-muted);
   text-decoration: none;
-  padding: var(--space-2) 0;
-  transition: color var(--dur) var(--ease);
+  transition:
+    color var(--dur) var(--ease),
+    background-color var(--dur) var(--ease);
 }
 
-.nav-links a:hover {
+.nav-link:hover {
+  color: var(--fg);
+  background: var(--surface-hover);
+}
+
+.nav-link.is-active,
+.nav-link[aria-current="true"],
+.nav-link[aria-current="page"] {
+  color: var(--brand);
+  font-weight: 500;
+  background: color-mix(in srgb, var(--brand) 10%, transparent);
+}
+
+.nav-mobile-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--control-h);
+  height: var(--control-h);
+  padding: 0;
+  border: var(--hairline) solid var(--border-strong);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--fg-muted);
+  cursor: pointer;
+  transition:
+    background-color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease),
+    color var(--dur) var(--ease);
+}
+
+@media (min-width: 768px) {
+  .nav-mobile-toggle {
+    display: none;
+  }
+}
+
+.nav-mobile-toggle:hover {
+  background: var(--surface-hover);
+  color: var(--fg);
+  border-color: var(--brand);
+}
+
+.nav-mobile-toggle.is-open {
+  background: var(--surface-hover);
+  color: var(--fg);
+  border-color: var(--brand);
+}
+
+/* Mobile dropdown menu */
+.nav-mobile-menu {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  left: 0;
+  right: 0;
+  z-index: 50;
+  padding: var(--space-3);
+  background: color-mix(in srgb, var(--bg-surface) 96%, transparent);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: var(--hairline) solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-nav), 0 20px 40px -10px rgb(0 0 0 / 0.35);
+  animation: dropdown-in var(--dur) var(--ease);
+}
+
+.nav-mobile-section-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  line-height: var(--lh-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  padding: var(--space-1) var(--space-2);
+  margin-bottom: var(--space-1);
+}
+
+.nav-mobile-links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.nav-mobile-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius);
+  font-size: var(--text-body);
+  font-weight: 500;
+  color: var(--fg);
+  text-decoration: none;
+  transition:
+    background-color var(--dur) var(--ease),
+    color var(--dur) var(--ease);
+}
+
+.nav-mobile-link:hover {
+  background: var(--surface-hover);
+}
+
+.nav-mobile-link.is-active,
+.nav-mobile-link[aria-current="true"] {
+  color: var(--brand);
+  background: color-mix(in srgb, var(--brand) 10%, transparent);
+}
+
+.nav-mobile-divider {
+  height: var(--hairline);
+  background: var(--border);
+  margin: var(--space-3) 0;
+}
+
+.nav-mobile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-1);
+}
+
+.nav-mobile-sublink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius);
+  font-size: var(--text-small);
+  font-weight: 500;
+  color: var(--fg-muted);
+  text-decoration: none;
+  transition:
+    background-color var(--dur) var(--ease),
+    color var(--dur) var(--ease);
+}
+
+.nav-mobile-sublink:hover {
+  background: var(--surface-hover);
   color: var(--fg);
 }
 
-/* The current section is the one place the nav spends the accent. It was also
-   the one place the row changed weight, so the links either side shifted a
-   pixel as you scrolled — the weight is now constant and only colour moves. */
-.nav-links a[aria-current="true"],
-.nav-links a[aria-current="page"] {
+.nav-mobile-sublink.is-active,
+.nav-mobile-sublink[aria-current="page"] {
   color: var(--brand);
+  background: color-mix(in srgb, var(--brand) 10%, transparent);
+}
+
+.nav-active-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--brand);
+  flex-shrink: 0;
 }
 
 /* --- Theme toggle ------------------------------------------------------- */
