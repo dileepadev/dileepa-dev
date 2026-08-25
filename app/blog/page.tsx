@@ -1,48 +1,101 @@
-import { Metadata } from "next";
-import { Container, Button } from "@/components/ui";
-import { Navbar, Footer } from "@/components/sections";
-import { FaArrowLeft, FaPen } from "react-icons/fa";
+import type { Metadata } from "next";
+import Link from "next/link";
+import {
+  Badge,
+  Container,
+  EmptyState,
+  Item,
+  ItemList,
+  Section,
+} from "@/components/ui";
 import { api } from "@/lib/api";
-import { BlogList } from "./_components/BlogList";
+import { EMPTY_STATES } from "@/lib/constants";
+import { formatDate, readingTime, toDateAttribute } from "@/lib/format";
 
 export const metadata: Metadata = {
   title: "Blog",
-  description:
-    "Read my thoughts on software development, technology, and more.",
+  description: "Notes on what I build, and what went wrong on the way.",
+  alternates: {
+    canonical: "/blog",
+    types: { "application/rss+xml": "/blog/rss.xml" },
+  },
 };
 
 export default async function BlogPage() {
-  const [blogs, about] = await Promise.all([api.getBlogs(), api.getAbout()]);
+  const posts = await api.getAllBlogs();
+
+  // Tags, most used first, so the filter row leads with what there is most of.
+  const tagCounts = new Map<string, number>();
+  for (const post of posts) {
+    for (const tag of post.tags ?? [])
+      tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+  }
+  const tags = [...tagCounts.entries()].sort(
+    (a, b) => b[1] - a[1] || a[0].localeCompare(b[0]),
+  );
 
   return (
-    <>
-      <Navbar />
-      <main className="min-h-screen pt-24 pb-16 bg-bg-primary">
-        <Container>
-          {/* Header */}
-          <div className="max-w-4xl mx-auto text-center mb-16">
-            <div className="flex justify-center mb-6">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-accent-blue/10 text-accent-blue">
-                <FaPen className="h-10 w-10" />
-              </div>
-            </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-text-primary mb-4">
-              Blog
-            </h1>
-            <p className="text-xl text-text-secondary mb-6 max-w-2xl mx-auto">
-              I share my thoughts on software development, technology trends,
-              and personal experiences through articles and guides.
-            </p>
-            <Button href="/" variant="outline" leftIcon={<FaArrowLeft />}>
-              Back to Home
-            </Button>
-          </div>
+    <Section>
+      <Container>
+        <div className="section-label">Blog</div>
+        <h1>Writing</h1>
+        <p className="section-intro">
+          Notes on what I build, and what went wrong on the way.{" "}
+          <a href="/blog/rss.xml" className="text-brand">
+            RSS
+          </a>
+        </p>
 
-          {/* Blog Content */}
-          <BlogList initialBlogs={blogs || []} />
-        </Container>
-      </main>
-      <Footer about={about || undefined} />
-    </>
+        {tags.length > 0 && (
+          <ul className="mt-8 flex flex-wrap gap-2">
+            {tags.map(([tag, count]) => (
+              <li key={tag}>
+                <Link
+                  href={`/blog/tags/${encodeURIComponent(tag)}`}
+                  className="no-underline"
+                >
+                  <Badge>
+                    {tag} <span className="text-fg-muted">{count}</span>
+                  </Badge>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <div className="mt-10">
+          {posts.length === 0 ? (
+            <EmptyState {...EMPTY_STATES.posts} />
+          ) : (
+            <ItemList>
+              {posts.map((post) => (
+                <Item
+                  key={post.slug}
+                  title={post.title}
+                  href={`/blog/${post.slug}`}
+                  description={post.description}
+                  meta={
+                    <>
+                      <time
+                        dateTime={toDateAttribute(post.publishedDate)}
+                        className="block"
+                      >
+                        {formatDate(post.publishedDate)}
+                      </time>
+                      <span className="block">
+                        {readingTime(post.readingTimeMinutes)}
+                      </span>
+                      {post.series && (
+                        <span className="block">{post.series.name}</span>
+                      )}
+                    </>
+                  }
+                />
+              ))}
+            </ItemList>
+          )}
+        </div>
+      </Container>
+    </Section>
   );
 }
