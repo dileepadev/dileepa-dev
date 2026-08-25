@@ -1,232 +1,146 @@
-"use client";
-
 import {
   Container,
+  Gallery,
+  Item,
+  ItemList,
   Section,
-  SectionHeader,
-  CommunityCard,
-  EventCard,
-  VideoCard,
-  BlogCard,
-  Button,
+  SectionHeading,
+  Subsection,
+  ViewAll,
 } from "@/components/ui";
-import { CommunityDto, EventDto, VideoDto, BlogDto } from "@/lib/api-types";
-import { motion } from "framer-motion";
-import { FaArrowRight } from "react-icons/fa";
+import type {
+  BlogPost,
+  Community,
+  EventRecord,
+  GalleryPhoto,
+  Video,
+} from "@/lib/api-types";
+import { SECTIONS, SUBSECTIONS } from "@/lib/constants";
+import { formatDate, formatMonth, readingTime } from "@/lib/format";
 
-export function Community({
+/**
+ * Community — communities, events, the event gallery, writing, videos.
+ *
+ * Five subsections rather than five sections. They are all the same activity
+ * seen from different angles, and giving each one a full section heading would
+ * make the page claim five topics where there is one.
+ *
+ * Each subsection renders the first few records and links to its full index. An
+ * empty one returns nothing rather than an empty state: on the homepage a
+ * missing block is quieter than a box explaining its own absence, and the index
+ * pages carry the empty states instead.
+ */
+export function CommunitySection({
   communities,
   events,
+  gallery,
+  posts,
   videos,
-  blogs,
 }: {
-  communities?: CommunityDto[];
-  events?: EventDto[];
-  videos?: VideoDto[];
-  blogs?: BlogDto[];
+  communities: Community[];
+  events: EventRecord[];
+  gallery: GalleryPhoto[];
+  posts: BlogPost[];
+  videos: Video[];
 }) {
-  const latestCommunities = communities?.slice(0, 4) || [];
-  const latestEvents = events?.slice(0, 4) || [];
-  const latestVideos = videos?.slice(0, 4) || [];
-  const latestBlogs = blogs?.slice(0, 4) || [];
-
   return (
-    <Section id="community" background="primary">
+    <Section id="community">
       <Container>
-        <SectionHeader
-          subtitle="Community"
-          title="Giving Back"
-          description="My contributions to the community through volunteering, speaking, and contents."
-        />
+        <SectionHeading {...SECTIONS.community} />
 
-        <div className="space-y-32">
-          {/* Communities Section */}
-          {latestCommunities.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-            >
-              <div className="flex flex-col items-center text-center mb-12">
-                <div className="mb-4">
-                  <h2 className="text-3xl font-bold text-text-primary">
-                    Communities
-                  </h2>
-                  <p className="text-text-secondary">
-                    Organizations I&apos;ve had the pleasure to support and
-                    volunteer with
-                  </p>
-                </div>
-              </div>
+        {communities.length > 0 && (
+          <Subsection {...SUBSECTIONS.communities}>
+            <ItemList>
+              {communities.slice(0, 4).map((community) => (
+                <Item
+                  key={community.id}
+                  title={community.name}
+                  href={community.communityUrl || undefined}
+                  description={community.description}
+                  meta={
+                    <>
+                      <span className="block">{community.role}</span>
+                      <span className="block">{community.period}</span>
+                    </>
+                  }
+                />
+              ))}
+            </ItemList>
+            <ViewAll href="/communities">All communities</ViewAll>
+          </Subsection>
+        )}
 
-              {/* Communities */}
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-2 mb-16">
-                {latestCommunities.map((community, index) => (
-                  <motion.div
-                    key={community._id || index}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                  >
-                    <CommunityCard
-                      community={community}
-                      className="h-full flex flex-col p-6"
-                    />
-                  </motion.div>
-                ))}
-              </div>
+        {events.length > 0 && (
+          <Subsection {...SUBSECTIONS.events}>
+            <ItemList>
+              {events.map((event) => (
+                <Item
+                  key={event.id}
+                  title={event.title}
+                  href={`/events/${event.slug}`}
+                  description={event.summary}
+                  meta={
+                    <>
+                      <span className="block">{formatDate(event.startAt)}</span>
+                      <span className="block">
+                        {event.location?.venue ?? "Online"}
+                      </span>
+                    </>
+                  }
+                />
+              ))}
+            </ItemList>
+            <ViewAll href="/events">All events</ViewAll>
+          </Subsection>
+        )}
 
-              {communities && communities.length > 4 && (
-                <div className="flex justify-center">
-                  <Button
-                    href="/communities"
-                    variant="outline"
-                    rightIcon={<FaArrowRight />}
-                  >
-                    View All Communities
-                  </Button>
-                </div>
-              )}
-            </motion.div>
-          )}
+        {gallery.length > 0 && (
+          <Subsection id="gallery" {...SUBSECTIONS.gallery}>
+            <Gallery photos={gallery} />
+          </Subsection>
+        )}
 
-          {/* Events */}
-          {latestEvents.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-            >
-              <div className="flex flex-col items-center text-center mb-8">
-                <div className="mb-4">
-                  <h2 className="text-2xl font-bold text-text-primary">
-                    Events
-                  </h2>
-                  <p className="text-text-secondary">
-                    Conference talks, workshops, and events
-                  </p>
-                </div>
-              </div>
+        {posts.length > 0 && (
+          <Subsection {...SUBSECTIONS.blogs}>
+            <ItemList>
+              {posts.map((post) => (
+                <Item
+                  key={post.id}
+                  title={post.title}
+                  href={post.path || `/blog/${post.slug}`}
+                  description={post.description}
+                  meta={
+                    <>
+                      <span className="block">
+                        {formatDate(post.publishedDate)}
+                      </span>
+                      <span className="block">
+                        {readingTime(post.readingTimeMinutes)}
+                      </span>
+                    </>
+                  }
+                />
+              ))}
+            </ItemList>
+            <ViewAll href="/blog">All posts</ViewAll>
+          </Subsection>
+        )}
 
-              <div className="grid gap-6 md:grid-cols-2 mb-6">
-                {latestEvents.map((event, index) => (
-                  <motion.div
-                    key={event._id || index}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                  >
-                    <EventCard event={event} className="h-full" />
-                  </motion.div>
-                ))}
-              </div>
-
-              <div className="flex justify-center">
-                <Button
-                  href="/events"
-                  variant="outline"
-                  rightIcon={<FaArrowRight />}
-                >
-                  View All Events
-                </Button>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Videos */}
-          {latestVideos.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-            >
-              <div className="flex flex-col items-center text-center mb-8">
-                <div className="mb-4">
-                  <h2 className="text-2xl font-bold text-text-primary">
-                    Video Content
-                  </h2>
-                  <p className="text-text-secondary">
-                    Tutorials and tech insights
-                  </p>
-                </div>
-              </div>
-
-              <div className="grid gap-6 md:grid-cols-2 mb-6">
-                {latestVideos.map((video, index) => (
-                  <motion.div
-                    key={video._id || index}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                  >
-                    <VideoCard video={video} className="h-full" />
-                  </motion.div>
-                ))}
-              </div>
-
-              <div className="flex justify-center">
-                <Button
-                  href="/videos"
-                  variant="outline"
-                  rightIcon={<FaArrowRight />}
-                >
-                  Watch More Videos
-                </Button>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Blog */}
-          {latestBlogs.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-            >
-              <div className="flex flex-col items-center text-center mb-8">
-                <div className="mb-4">
-                  <h2 className="text-2xl font-bold text-text-primary">
-                    Blog Content
-                  </h2>
-                  <p className="text-text-secondary">
-                    Thoughts on tech and development
-                  </p>
-                </div>
-              </div>
-
-              <div className="grid gap-6 md:grid-cols-2 mb-6">
-                {latestBlogs.map((blog, index) => (
-                  <motion.div
-                    key={blog._id || index}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                  >
-                    <BlogCard blog={blog} className="h-full" />
-                  </motion.div>
-                ))}
-              </div>
-
-              <div className="flex justify-center">
-                <Button
-                  href="/blog"
-                  variant="outline"
-                  rightIcon={<FaArrowRight />}
-                >
-                  Read More Articles
-                </Button>
-              </div>
-            </motion.div>
-          )}
-        </div>
+        {videos.length > 0 && (
+          <Subsection {...SUBSECTIONS.videos}>
+            <ItemList>
+              {videos.slice(0, 4).map((video) => (
+                <Item
+                  key={video.id}
+                  title={video.title}
+                  href={video.link}
+                  meta={formatMonth(video.date)}
+                />
+              ))}
+            </ItemList>
+            <ViewAll href="/videos">All videos</ViewAll>
+          </Subsection>
+        )}
       </Container>
     </Section>
   );

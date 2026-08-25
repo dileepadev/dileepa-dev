@@ -1,139 +1,87 @@
 import Link from "next/link";
-import { Container, IconButton } from "@/components/ui";
-import { NAV_LINKS, EXTERNAL_LINKS } from "@/lib/constants";
-import { AboutDto } from "@/lib/api-types";
-import {
-  FaGithub,
-  FaLinkedin,
-  FaYoutube,
-  FaInstagram,
-  FaEnvelope,
-  FaFacebook,
-} from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
-import packageJson from "@/package.json";
+import { Container, Lockup } from "@/components/ui";
+import { FOOTER_LINKS, SITE_CONFIG } from "@/lib/constants";
+import { SOCIAL_ICONS } from "@/lib/social-icons";
+import type { About } from "@/lib/api-types";
 
-const iconMap: Record<string, React.ElementType> = {
-  github: FaGithub,
-  linkedin: FaLinkedin,
-  xtwitter: FaXTwitter,
-  youtube: FaYoutube,
-  instagram: FaInstagram,
-  facebook: FaFacebook,
-  email: FaEnvelope,
-};
-
-export function Footer({ about }: { about?: AboutDto | null }) {
-  const currentYear = new Date().getFullYear();
-
-  // Use data from API or defaults/empty
-  const name = about?.name || "Dileepa Bandara";
-  const description = about?.tagline || "Personal Developer Portfolio";
+export function Footer({ about }: { about?: About | null }) {
+  const links = about?.links;
+  const socials = SOCIAL_ICONS.map((icon) => ({
+    ...icon,
+    href: links?.[icon.key],
+  })).filter((icon): icon is typeof icon & { href: string } =>
+    Boolean(icon.href),
+  );
 
   return (
-    <footer className="bg-bg-secondary text-text-primary border-t border-accent-blue/20">
+    <footer className="site-footer">
       <Container>
-        <div className="py-16">
-          <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
-            {/* Brand */}
-            <div className="lg:col-span-2">
-              <Link href="/" className="inline-block text-2xl font-bold mb-4">
-                {name.split(" ")[0]}
-                <span className="text-accent-blue">.</span>
-              </Link>
-              <p className="text-text-secondary max-w-md mb-6">{description}</p>
+        <div className="footer-grid">
+          <div>
+            {/* Not a link to `/` here: the footer's lockup sits at the bottom
+                of the page a reader is already on. */}
+            <Lockup href="/#top" />
+            <p className="footer-tagline">{SITE_CONFIG.description}</p>
 
-              {/* Social Icons */}
-              <div className="flex items-center gap-5 text-text-muted flex-wrap">
-                {about?.links &&
-                  Object.entries(about.links).map(([key, url]) => {
-                    // Filter out non-socials
-                    if (key === "website" || key === "email" || !url)
-                      return null;
-
-                    const platformKey = key.toLowerCase();
-                    const IconComponent = iconMap[platformKey];
-
-                    if (!IconComponent) return null;
-
-                    return (
-                      <IconButton
-                        key={key}
-                        href={url}
-                        external={true}
-                        variant="ghost"
-                        className="hover:text-accent-blue hover:bg-transparent"
-                        aria-label={key}
-                      >
-                        <IconComponent className="size-5" />
-                      </IconButton>
-                    );
-                  })}
-              </div>
-            </div>
-
-            {/* Quick Links */}
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
-              <ul className="space-y-3">
-                {NAV_LINKS.map((link) => {
-                  // ensure hash-based quick links always navigate back to home
-                  const href = link.href.startsWith("#")
-                    ? `/${link.href}`
-                    : link.href;
-
-                  return (
-                    <li key={link.href}>
-                      <Link
-                        href={href}
-                        className="text-text-secondary hover:text-accent-blue transition-colors duration-500"
-                      >
-                        {link.label}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-
-            {/* External Links */}
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Explore</h4>
-              <ul className="space-y-3">
-                {EXTERNAL_LINKS.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="text-text-secondary hover:text-accent-blue transition-colors duration-500 inline-flex items-center gap-2"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
+            {socials.length > 0 && (
+              <div className="socials">
+                {socials.map((icon) => (
+                  <a
+                    key={icon.label}
+                    href={icon.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={icon.label}
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d={icon.path} />
+                    </svg>
+                  </a>
                 ))}
-              </ul>
-            </div>
+              </div>
+            )}
           </div>
+
+          {FOOTER_LINKS.map((column) => (
+            <div key={column.title} className="footer-col">
+              {/* Column titles are mono — they are labels, not headings. */}
+              <div className="footer-col-title">{column.title}</div>
+              {column.links.map((link) =>
+                link.isExternal ? (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {link.label}
+                  </a>
+                ) : (
+                  <Link key={link.href} href={link.href}>
+                    {link.label}
+                  </Link>
+                ),
+              )}
+            </div>
+          ))}
         </div>
 
-        {/* Bottom Bar */}
-        <div className="py-6 border-t border-border-light">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-text-secondary text-sm text-center md:text-left">
-              © {currentYear} {name}. All rights reserved.
-            </p>
-            <div className="flex items-center gap-3 text-text-secondary text-sm">
-              <Link
-                href="https://github.com/dileepadev/dileepa-dev"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 hover:text-accent-blue transition-colors duration-300"
-              >
-                <FaGithub className="h-4 w-4" />
-                <span>View Source</span>
-              </Link>
-              <div className="w-0.5 h-4 bg-border-medium rounded-sm"></div>
-              <span>v{packageJson.version}</span>
-            </div>
+        <div className="footer-bottom">
+          <span>
+            © {new Date().getFullYear()} {SITE_CONFIG.author}
+          </span>
+          <div className="footer-meta">
+            <a
+              href={SITE_CONFIG.repository}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="View source on GitHub"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d={SOCIAL_ICONS[0].path} />
+              </svg>
+              <span>Source</span>
+            </a>
           </div>
         </div>
       </Container>
