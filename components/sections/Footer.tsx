@@ -1,12 +1,17 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { GitBranch } from "lucide-react";
 import { FaGithub } from "react-icons/fa6";
 import { Container, Lockup } from "@/components/ui";
 import { FOOTER_LINKS, SITE_CONFIG } from "@/lib/constants";
 import { SOCIAL_ICONS } from "@/lib/social-icons";
 import type { About } from "@/lib/api-types";
+import { cn } from "@/lib/utils";
 
 export function Footer({ about }: { about?: About | null }) {
+  const pathname = usePathname();
   const links = about?.links;
   const socials = SOCIAL_ICONS.map((icon) => ({
     ...icon,
@@ -14,6 +19,12 @@ export function Footer({ about }: { about?: About | null }) {
   })).filter((icon): icon is typeof icon & { href: string } =>
     Boolean(icon.href),
   );
+
+  const isLinkActive = (href: string) => {
+    if (href.startsWith("http") || href.startsWith("/#")) return false;
+    if (href === "/") return pathname === "/";
+    return pathname === href || pathname.startsWith(`${href}/`);
+  };
 
   return (
     <footer className="site-footer">
@@ -49,22 +60,30 @@ export function Footer({ about }: { about?: About | null }) {
             <div key={column.title} className="footer-col">
               {/* Column titles are mono — they are labels, not headings. */}
               <div className="footer-col-title">{column.title}</div>
-              {column.links.map((link) =>
-                link.isExternal ? (
+              {column.links.map((link) => {
+                const active = isLinkActive(link.href);
+                return link.isExternal ? (
                   <a
                     key={link.href}
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
+                    className={cn(active && "is-active")}
+                    aria-current={active ? "page" : undefined}
                   >
                     {link.label}
                   </a>
                 ) : (
-                  <Link key={link.href} href={link.href}>
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={cn(active && "is-active")}
+                    aria-current={active ? "page" : undefined}
+                  >
                     {link.label}
                   </Link>
-                ),
-              )}
+                );
+              })}
             </div>
           ))}
         </div>
@@ -94,7 +113,11 @@ export function Footer({ about }: { about?: About | null }) {
               aria-label={`View branch ${SITE_CONFIG.branch} on GitHub`}
               className="inline-flex items-center gap-1.5"
             >
-              <GitBranch className="h-3.5 w-3.5 shrink-0" strokeWidth={1.75} aria-hidden="true" />
+              <GitBranch
+                className="h-3.5 w-3.5 shrink-0"
+                strokeWidth={1.75}
+                aria-hidden="true"
+              />
               <span>v{SITE_CONFIG.version}</span>
             </a>
           </div>

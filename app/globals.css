@@ -2118,11 +2118,19 @@ pre {
   line-height: var(--lh-small);
   color: var(--fg-muted);
   text-decoration: none;
-  transition: color var(--dur) var(--ease);
+  transition:
+    color var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
 }
 
 .footer-col a:hover {
+  color: var(--fg);
+}
+
+.footer-col a.is-active,
+.footer-col a[aria-current="page"] {
   color: var(--brand);
+  font-weight: 500;
 }
 
 .footer-bottom {
