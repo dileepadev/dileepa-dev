@@ -14,7 +14,7 @@ function escapeXml(value: string): string {
 export const revalidate = 3600;
 
 export async function GET() {
-  const posts = await api.getAllBlogs();
+  const posts = (await api.getAllBlogs()) ?? [];
   const updated = posts[0]?.publishedDate ?? new Date().toISOString();
 
   const items = posts

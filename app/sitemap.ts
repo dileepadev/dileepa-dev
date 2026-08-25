@@ -8,11 +8,15 @@ import { SITE_CONFIG } from "@/lib/constants";
  * discovering.
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [posts, projects, events] = await Promise.all([
+  const [rawPosts, rawProjects, rawEvents] = await Promise.all([
     api.getAllBlogs(),
     api.getProjects({ limit: 200 }),
     api.getEvents({ limit: 200 }),
   ]);
+
+  const posts = rawPosts ?? [];
+  const projects = rawProjects ?? [];
+  const events = rawEvents ?? [];
 
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: SITE_CONFIG.url, changeFrequency: "monthly", priority: 1 },

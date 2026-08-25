@@ -24,7 +24,7 @@ interface Params {
 
 export async function generateStaticParams() {
   const posts = await api.getAllBlogs();
-  return posts.map((post) => ({ slug: post.slug }));
+  return (posts ?? []).map((post) => ({ slug: post.slug }));
 }
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
@@ -103,7 +103,7 @@ export default async function BlogPostPage({ params }: Params) {
   const url = post.canonicalUrl || `${SITE_CONFIG.url}/blog/${post.slug}`;
   const headings = extractHeadings(content.body);
 
-  const allPosts = await api.getAllBlogs();
+  const allPosts = (await api.getAllBlogs()) ?? [];
   const seriesPosts = post.series
     ? allPosts.filter((other) => other.series?.name === post.series?.name)
     : [];

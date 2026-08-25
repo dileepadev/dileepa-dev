@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 };
 
 export default async function BlogPage() {
-  const posts = await api.getAllBlogs();
+  const posts = (await api.getAllBlogs()) ?? [];
 
   // Tags, most used first, so the filter row leads with what there is most of.
   const tagCounts = new Map<string, number>();

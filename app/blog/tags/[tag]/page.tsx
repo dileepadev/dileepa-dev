@@ -17,7 +17,7 @@ interface Params {
 
 export async function generateStaticParams() {
   const posts = await api.getAllBlogs();
-  const tags = new Set(posts.flatMap((post) => post.tags ?? []));
+  const tags = new Set((posts ?? []).flatMap((post) => post.tags ?? []));
   return [...tags].map((tag) => ({ tag: encodeURIComponent(tag) }));
 }
 
