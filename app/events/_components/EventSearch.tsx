@@ -3,16 +3,34 @@
 import { useState, useMemo } from "react";
 import {
   Badge,
+  Button,
   EmptyState,
   Item,
   ItemList,
   SearchInput,
+  SortSelect,
   Subsection,
+  type SortOption,
 } from "@/components/ui";
 import type { EventRecord } from "@/lib/api-types";
 import { formatDate, humanise } from "@/lib/format";
 
-/** Client-side search across both event groups. */
+type EventSortKey =
+  | "default"
+  | "newest"
+  | "oldest"
+  | "title-asc"
+  | "title-desc";
+
+const SORT_OPTIONS: SortOption<EventSortKey>[] = [
+  { value: "default", label: "Default order" },
+  { value: "newest", label: "Newest first" },
+  { value: "oldest", label: "Oldest first" },
+  { value: "title-asc", label: "Title (A–Z)" },
+  { value: "title-desc", label: "Title (Z–A)" },
+];
+
+/** Client-side search and sorting across events. */
 export function EventSearch({
   upcoming,
   completed,
@@ -21,6 +39,8 @@ export function EventSearch({
   completed: EventRecord[];
 }) {
   const [query, setQuery] = useState("");
+  const [sortBy, setSortBy] = useState<EventSortKey>("default");
+
   const q = query.toLowerCase().trim();
 
   const filteredUpcoming = useMemo(
@@ -34,38 +54,106 @@ export function EventSearch({
 
   const total = upcoming.length + completed.length;
   const shown = filteredUpcoming.length + filteredCompleted.length;
+  const hasFilter = q.length > 0;
+
+  // Custom unified sort across all matching events when not on default order
+  const customSortedEvents = useMemo(() => {
+    if (sortBy === "default") return null;
+
+    const merged = [...filteredUpcoming, ...filteredCompleted];
+    merged.sort((a, b) => {
+      switch (sortBy) {
+        case "newest": {
+          const dateA = a.startAt ? new Date(a.startAt).getTime() : 0;
+          const dateB = b.startAt ? new Date(b.startAt).getTime() : 0;
+          return dateB - dateA;
+        }
+        case "oldest": {
+          const dateA = a.startAt ? new Date(a.startAt).getTime() : 0;
+          const dateB = b.startAt ? new Date(b.startAt).getTime() : 0;
+          return dateA - dateB;
+        }
+        case "title-asc":
+          return a.title.localeCompare(b.title);
+        case "title-desc":
+          return b.title.localeCompare(a.title);
+        default:
+          return 0;
+      }
+    });
+
+    return merged;
+  }, [filteredUpcoming, filteredCompleted, sortBy]);
 
   return (
     <>
-      <SearchInput
-        value={query}
-        onChange={setQuery}
-        placeholder="Search events…"
-        resultCount={shown}
-        totalCount={total}
-      />
+      <div className="list-toolbar">
+        <SearchInput
+          value={query}
+          onChange={setQuery}
+          placeholder="Search talks, venues, topics…"
+        />
+        <SortSelect
+          value={sortBy}
+          onChange={setSortBy}
+          options={SORT_OPTIONS}
+          label="Sort events"
+        />
+      </div>
+
+      {hasFilter && (
+        <div className="filter-status">
+          <span>
+            Showing {shown} of {total} {total === 1 ? "event" : "events"}
+          </span>
+          <button
+            type="button"
+            onClick={() => setQuery("")}
+            className="filter-reset-btn"
+          >
+            Clear filter
+          </button>
+        </div>
+      )}
 
       {shown === 0 ? (
         <div className="mt-10">
           <EmptyState
             title="No events match your search."
-            hint="Try a different keyword or clear the search."
-          />
+            hint="Try a different keyword or clear the search filter."
+          >
+            {hasFilter && (
+              <div className="mt-4 flex justify-center">
+                <Button
+                  variant="secondary"
+                  onClick={() => setQuery("")}
+                >
+                  Clear filter
+                </Button>
+              </div>
+            )}
+          </EmptyState>
         </div>
       ) : (
-        <>
-          {filteredUpcoming.length > 0 && (
-            <Subsection title="Upcoming" note="Soonest first.">
-              <EventItems events={filteredUpcoming} />
-            </Subsection>
-          )}
+        <div className="mt-8">
+          {customSortedEvents ? (
+            <EventItems events={customSortedEvents} />
+          ) : (
+            <>
+              {filteredUpcoming.length > 0 && (
+                <Subsection title="Upcoming" note="Soonest first.">
+                  <EventItems events={filteredUpcoming} />
+                </Subsection>
+              )}
 
-          {filteredCompleted.length > 0 && (
-            <Subsection title="Past" note="Most recent first.">
-              <EventItems events={filteredCompleted} />
-            </Subsection>
+              {filteredCompleted.length > 0 && (
+                <Subsection title="Past" note="Most recent first.">
+                  <EventItems events={filteredCompleted} />
+                </Subsection>
+              )}
+            </>
           )}
-        </>
+        </div>
       )}
     </>
   );
