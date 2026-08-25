@@ -548,8 +548,10 @@ pre {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-1) var(--space-3);
+  padding: 0 var(--space-3);
+  height: 36px;
   border-radius: var(--radius);
+  border: var(--hairline) solid transparent;
   font-size: var(--text-small);
   font-weight: 500;
   letter-spacing: var(--track-label);
@@ -557,12 +559,18 @@ pre {
   text-decoration: none;
   transition:
     color var(--dur) var(--ease),
-    background-color var(--dur) var(--ease);
+    background-color var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
 }
 
 .nav-link:hover {
   color: var(--fg);
   background: var(--surface-hover);
+}
+
+.nav-link:active {
+  background: var(--raised-hover);
+  transform: scale(0.96);
 }
 
 .nav-link.is-active,
@@ -577,18 +585,18 @@ pre {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: var(--control-h);
-  height: var(--control-h);
+  width: 36px;
+  height: 36px;
   padding: 0;
-  border: var(--hairline) solid var(--border-strong);
+  border: var(--hairline) solid transparent;
   border-radius: var(--radius);
-  background: var(--bg-surface);
+  background: transparent;
   color: var(--fg-muted);
   cursor: pointer;
   transition:
     background-color var(--dur) var(--ease),
-    border-color var(--dur) var(--ease),
-    color var(--dur) var(--ease);
+    color var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
 }
 
 @media (min-width: 768px) {
@@ -597,16 +605,20 @@ pre {
   }
 }
 
-.nav-mobile-toggle:hover {
-  background: var(--surface-hover);
-  color: var(--fg);
-  border-color: var(--brand);
-}
-
+.nav-mobile-toggle:hover,
 .nav-mobile-toggle.is-open {
   background: var(--surface-hover);
   color: var(--fg);
-  border-color: var(--brand);
+}
+
+.nav-mobile-toggle:active {
+  background: var(--raised-hover);
+  transform: scale(0.96);
+}
+
+.nav-mobile-toggle:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 var(--ring-width) var(--ring);
 }
 
 /* Mobile dropdown menu */
@@ -716,34 +728,35 @@ pre {
 
 .theme-toggle {
   flex: 0 0 auto;
-  width: var(--control-h);
-  height: var(--control-h);
-  display: grid;
-  place-items: center;
-  border: var(--hairline) solid var(--border-strong);
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: var(--hairline) solid transparent;
   border-radius: var(--radius);
-  background: var(--bg-surface);
+  background: transparent;
   color: var(--fg-muted);
   cursor: pointer;
   transition:
     background-color var(--dur) var(--ease),
     color var(--dur) var(--ease),
-    border-color var(--dur) var(--ease);
+    transform var(--dur) var(--ease);
 }
 
-/* The same hover every other bordered surface takes: the surface lifts one
-   step and the border warms to the accent. It used to swap its border to the
-   colour of its own background, which made the button dissolve as you
-   approached it — and in the light theme --bg-raised is #fff, so the hover
-   was invisible on a #fff nav. */
 .theme-toggle:hover {
   background: var(--surface-hover);
   color: var(--fg);
-  border-color: var(--brand);
 }
 
 .theme-toggle:active {
   background: var(--raised-hover);
+  transform: scale(0.96);
+}
+
+.theme-toggle:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 var(--ring-width) var(--ring);
 }
 
 .theme-toggle svg {
