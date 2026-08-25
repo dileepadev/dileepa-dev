@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { GitBranch } from "lucide-react";
+import { FaGithub } from "react-icons/fa6";
 import { Container, Lockup } from "@/components/ui";
 import { FOOTER_LINKS, SITE_CONFIG } from "@/lib/constants";
 import { SOCIAL_ICONS } from "@/lib/social-icons";
@@ -73,6 +74,19 @@ export function Footer({ about }: { about?: About | null }) {
             © {new Date().getFullYear()} {SITE_CONFIG.author}
           </span>
           <div className="footer-meta">
+            <a
+              href={SITE_CONFIG.repository}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="View source on GitHub"
+              className="inline-flex items-center gap-1.5"
+            >
+              <FaGithub className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              <span>Source</span>
+            </a>
+            <span className="text-border-strong" aria-hidden="true">
+              /
+            </span>
             <a
               href={`${SITE_CONFIG.repository}/tree/${SITE_CONFIG.branch}`}
               target="_blank"
