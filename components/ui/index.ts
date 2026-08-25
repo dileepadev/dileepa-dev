@@ -13,3 +13,4 @@ export { Gallery } from "./Gallery";
 export { SearchInput } from "./SearchInput";
 export { SortSelect, type SortOption } from "./SortSelect";
 export { BackToTop } from "./BackToTop";
+export { LoadMore } from "./LoadMore";

@@ -6,6 +6,7 @@ import {
   EmptyState,
   Item,
   ItemList,
+  LoadMore,
   SearchInput,
   SortSelect,
   type SortOption,
@@ -21,7 +22,9 @@ const SORT_OPTIONS: SortOption<CommunitySortKey>[] = [
   { value: "name-desc", label: "Name (Z–A)" },
 ];
 
-/** Client-side search and sorting across communities. */
+const COMMUNITIES_PER_PAGE = 10;
+
+/** Client-side search, sorting, and progressive pagination across communities. */
 export function CommunitySearch({
   communities,
 }: {
@@ -29,6 +32,15 @@ export function CommunitySearch({
 }) {
   const [query, setQuery] = useState("");
   const [sortBy, setSortBy] = useState<CommunitySortKey>("default");
+  const [visibleCount, setVisibleCount] = useState(COMMUNITIES_PER_PAGE);
+
+  // Reset pagination when search or sort changes
+  const [prevFilterKey, setPrevFilterKey] = useState("");
+  const currentFilterKey = `${query}|${sortBy}`;
+  if (prevFilterKey !== currentFilterKey) {
+    setPrevFilterKey(currentFilterKey);
+    setVisibleCount(COMMUNITIES_PER_PAGE);
+  }
 
   const q = query.toLowerCase().trim();
 
@@ -56,6 +68,7 @@ export function CommunitySearch({
   }, [communities, q, sortBy]);
 
   const hasFilter = query.trim().length > 0;
+  const paginatedCommunities = filteredAndSorted.slice(0, visibleCount);
 
   return (
     <>
@@ -107,7 +120,7 @@ export function CommunitySearch({
       ) : (
         <div className="mt-8">
           <ItemList>
-            {filteredAndSorted.map((community) => (
+            {paginatedCommunities.map((community) => (
               <Item
                 key={community.id}
                 title={community.name}
@@ -125,6 +138,18 @@ export function CommunitySearch({
               />
             ))}
           </ItemList>
+
+          <LoadMore
+            shown={paginatedCommunities.length}
+            total={filteredAndSorted.length}
+            batchSize={COMMUNITIES_PER_PAGE}
+            onLoadMore={() =>
+              setVisibleCount((prev) => prev + COMMUNITIES_PER_PAGE)
+            }
+            onShowAll={() =>
+              setVisibleCount(filteredAndSorted.length)
+            }
+          />
         </div>
       )}
     </>

@@ -7,6 +7,7 @@ import {
   EmptyState,
   Item,
   ItemList,
+  LoadMore,
   SearchInput,
   SortSelect,
   Subsection,
@@ -30,7 +31,9 @@ const SORT_OPTIONS: SortOption<EventSortKey>[] = [
   { value: "title-desc", label: "Title (Z–A)" },
 ];
 
-/** Client-side search and sorting across events. */
+const EVENTS_PER_PAGE = 10;
+
+/** Client-side search, sorting, and progressive pagination across events. */
 export function EventSearch({
   upcoming,
   completed,
@@ -40,6 +43,17 @@ export function EventSearch({
 }) {
   const [query, setQuery] = useState("");
   const [sortBy, setSortBy] = useState<EventSortKey>("default");
+  const [visibleCount, setVisibleCount] = useState(EVENTS_PER_PAGE);
+  const [visiblePastCount, setVisiblePastCount] = useState(EVENTS_PER_PAGE);
+
+  // Reset pagination when search or sort changes
+  const [prevFilterKey, setPrevFilterKey] = useState("");
+  const currentFilterKey = `${query}|${sortBy}`;
+  if (prevFilterKey !== currentFilterKey) {
+    setPrevFilterKey(currentFilterKey);
+    setVisibleCount(EVENTS_PER_PAGE);
+    setVisiblePastCount(EVENTS_PER_PAGE);
+  }
 
   const q = query.toLowerCase().trim();
 
@@ -85,6 +99,9 @@ export function EventSearch({
     return merged;
   }, [filteredUpcoming, filteredCompleted, sortBy]);
 
+  const paginatedCustomEvents = customSortedEvents?.slice(0, visibleCount) ?? [];
+  const paginatedPastEvents = filteredCompleted.slice(0, visiblePastCount);
+
   return (
     <>
       <div className="list-toolbar">
@@ -124,10 +141,7 @@ export function EventSearch({
           >
             {hasFilter && (
               <div className="mt-4 flex justify-center">
-                <Button
-                  variant="secondary"
-                  onClick={() => setQuery("")}
-                >
+                <Button variant="secondary" onClick={() => setQuery("")}>
                   Clear filter
                 </Button>
               </div>
@@ -137,7 +151,20 @@ export function EventSearch({
       ) : (
         <div className="mt-8">
           {customSortedEvents ? (
-            <EventItems events={customSortedEvents} />
+            <>
+              <EventItems events={paginatedCustomEvents} />
+              <LoadMore
+                shown={paginatedCustomEvents.length}
+                total={customSortedEvents.length}
+                batchSize={EVENTS_PER_PAGE}
+                onLoadMore={() =>
+                  setVisibleCount((prev) => prev + EVENTS_PER_PAGE)
+                }
+                onShowAll={() =>
+                  setVisibleCount(customSortedEvents.length)
+                }
+              />
+            </>
           ) : (
             <>
               {filteredUpcoming.length > 0 && (
@@ -148,7 +175,18 @@ export function EventSearch({
 
               {filteredCompleted.length > 0 && (
                 <Subsection title="Past" note="Most recent first.">
-                  <EventItems events={filteredCompleted} />
+                  <EventItems events={paginatedPastEvents} />
+                  <LoadMore
+                    shown={paginatedPastEvents.length}
+                    total={filteredCompleted.length}
+                    batchSize={EVENTS_PER_PAGE}
+                    onLoadMore={() =>
+                      setVisiblePastCount((prev) => prev + EVENTS_PER_PAGE)
+                    }
+                    onShowAll={() =>
+                      setVisiblePastCount(filteredCompleted.length)
+                    }
+                  />
                 </Subsection>
               )}
             </>

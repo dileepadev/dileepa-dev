@@ -6,6 +6,7 @@ import {
   EmptyState,
   Item,
   ItemList,
+  LoadMore,
   SearchInput,
   SortSelect,
   type SortOption,
@@ -22,10 +23,21 @@ const SORT_OPTIONS: SortOption<VideoSortKey>[] = [
   { value: "title-desc", label: "Title (Z–A)" },
 ];
 
-/** Client-side search and sorting across videos. */
+const VIDEOS_PER_PAGE = 10;
+
+/** Client-side search, sorting, and progressive pagination across videos. */
 export function VideoSearch({ videos }: { videos: Video[] }) {
   const [query, setQuery] = useState("");
   const [sortBy, setSortBy] = useState<VideoSortKey>("newest");
+  const [visibleCount, setVisibleCount] = useState(VIDEOS_PER_PAGE);
+
+  // Reset pagination when search or sort changes
+  const [prevFilterKey, setPrevFilterKey] = useState("");
+  const currentFilterKey = `${query}|${sortBy}`;
+  if (prevFilterKey !== currentFilterKey) {
+    setPrevFilterKey(currentFilterKey);
+    setVisibleCount(VIDEOS_PER_PAGE);
+  }
 
   const q = query.toLowerCase().trim();
 
@@ -66,6 +78,7 @@ export function VideoSearch({ videos }: { videos: Video[] }) {
   }, [videos, q, sortBy]);
 
   const hasFilter = query.trim().length > 0;
+  const paginatedVideos = filteredAndSorted.slice(0, visibleCount);
 
   return (
     <>
@@ -117,7 +130,7 @@ export function VideoSearch({ videos }: { videos: Video[] }) {
       ) : (
         <div className="mt-8">
           <ItemList>
-            {filteredAndSorted.map((video) => (
+            {paginatedVideos.map((video) => (
               <Item
                 key={video.id}
                 title={video.title}
@@ -127,6 +140,18 @@ export function VideoSearch({ videos }: { videos: Video[] }) {
               />
             ))}
           </ItemList>
+
+          <LoadMore
+            shown={paginatedVideos.length}
+            total={filteredAndSorted.length}
+            batchSize={VIDEOS_PER_PAGE}
+            onLoadMore={() =>
+              setVisibleCount((prev) => prev + VIDEOS_PER_PAGE)
+            }
+            onShowAll={() =>
+              setVisibleCount(filteredAndSorted.length)
+            }
+          />
         </div>
       )}
     </>

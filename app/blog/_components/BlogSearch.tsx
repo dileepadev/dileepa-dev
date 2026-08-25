@@ -9,6 +9,7 @@ import {
   EmptyState,
   Item,
   ItemList,
+  LoadMore,
   SearchInput,
   SortSelect,
   type SortOption,
@@ -58,7 +59,10 @@ const SORT_OPTIONS: SortOption<BlogSortKey>[] = [
   { value: "read-time-desc", label: "Longest read" },
 ];
 
-/** Client-side search, sorting, and Series view across blog posts. */
+const POSTS_PER_PAGE = 10;
+const SERIES_PER_PAGE = 6;
+
+/** Client-side search, sorting, series, and progressive pagination across blog posts. */
 export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
   const [viewMode, setViewMode] = useState<ViewMode>("all");
   const [selectedSeriesName, setSelectedSeriesName] = useState<string | null>(
@@ -66,6 +70,17 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
   );
   const [query, setQuery] = useState("");
   const [sortBy, setSortBy] = useState<BlogSortKey>("newest");
+  const [visibleCount, setVisibleCount] = useState(POSTS_PER_PAGE);
+  const [visibleSeriesCount, setVisibleSeriesCount] = useState(SERIES_PER_PAGE);
+
+  // Reset pagination when filter/sort/view state changes
+  const [prevFilterKey, setPrevFilterKey] = useState("");
+  const currentFilterKey = `${query}|${sortBy}|${viewMode}`;
+  if (prevFilterKey !== currentFilterKey) {
+    setPrevFilterKey(currentFilterKey);
+    setVisibleCount(POSTS_PER_PAGE);
+    setVisibleSeriesCount(SERIES_PER_PAGE);
+  }
 
   // Derive series groups from posts that have a series name
   const allSeries = useMemo<SeriesGroup[]>(() => {
@@ -180,6 +195,8 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
   }, [allSeries, selectedSeriesName]);
 
   const hasFilter = query.trim().length > 0;
+  const paginatedPosts = filteredAndSortedPosts.slice(0, visibleCount);
+  const paginatedSeries = filteredSeries.slice(0, visibleSeriesCount);
 
   return (
     <div className="mt-8">
@@ -263,32 +280,46 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
                 )}
               </EmptyState>
             ) : (
-              <ItemList>
-                {filteredAndSortedPosts.map((post) => (
-                  <Item
-                    key={post.slug}
-                    title={post.title}
-                    href={`/blog/${post.slug}`}
-                    description={post.description ?? undefined}
-                    meta={
-                      <>
-                        <time
-                          dateTime={toDateAttribute(post.publishedDate)}
-                          className="block"
-                        >
-                          {formatDate(post.publishedDate)}
-                        </time>
-                        <span className="block">
-                          {readingTime(post.readingTimeMinutes)}
-                        </span>
-                        {post.series && (
-                          <span className="block">{post.series.name}</span>
-                        )}
-                      </>
-                    }
-                  />
-                ))}
-              </ItemList>
+              <>
+                <ItemList>
+                  {paginatedPosts.map((post) => (
+                    <Item
+                      key={post.slug}
+                      title={post.title}
+                      href={`/blog/${post.slug}`}
+                      description={post.description ?? undefined}
+                      meta={
+                        <>
+                          <time
+                            dateTime={toDateAttribute(post.publishedDate)}
+                            className="block"
+                          >
+                            {formatDate(post.publishedDate)}
+                          </time>
+                          <span className="block">
+                            {readingTime(post.readingTimeMinutes)}
+                          </span>
+                          {post.series && (
+                            <span className="block">{post.series.name}</span>
+                          )}
+                        </>
+                      }
+                    />
+                  ))}
+                </ItemList>
+
+                <LoadMore
+                  shown={paginatedPosts.length}
+                  total={filteredAndSortedPosts.length}
+                  batchSize={POSTS_PER_PAGE}
+                  onLoadMore={() =>
+                    setVisibleCount((prev) => prev + POSTS_PER_PAGE)
+                  }
+                  onShowAll={() =>
+                    setVisibleCount(filteredAndSortedPosts.length)
+                  }
+                />
+              </>
             )}
           </div>
         </>
@@ -408,68 +439,82 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
                   </EmptyState>
                 </div>
               ) : (
-                <div className="series-grid mt-8">
-                  {filteredSeries.map((series) => (
-                    <article key={series.name} className="series-card">
-                      <div className="series-card-header">
-                        <div>
-                          <span className="font-mono text-label uppercase tracking-label text-brand">
-                            Series · {series.posts.length}{" "}
-                            {series.posts.length === 1 ? "post" : "posts"}
-                          </span>
-                          <h2 className="series-card-title">{series.name}</h2>
-                        </div>
-                        <span className="font-mono text-small text-fg-muted">
-                          {readingTime(series.totalReadingTime)} total
-                        </span>
-                      </div>
-
-                      {series.description && (
-                        <p className="series-card-desc">
-                          {series.description}
-                        </p>
-                      )}
-
-                      {/* Series Posts Preview */}
-                      <div className="series-posts-list">
-                        {series.posts.map((post, idx) => (
-                          <div key={post.slug} className="series-post-row">
-                            <span className="series-post-num">
-                              {idx + 1}.
+                <>
+                  <div className="series-grid mt-8">
+                    {paginatedSeries.map((series) => (
+                      <article key={series.name} className="series-card">
+                        <div className="series-card-header">
+                          <div>
+                            <span className="font-mono text-label uppercase tracking-label text-brand">
+                              Series · {series.posts.length}{" "}
+                              {series.posts.length === 1 ? "post" : "posts"}
                             </span>
-                            <Link
-                              href={`/blog/${post.slug}`}
-                              className="series-post-title"
-                            >
-                              {post.title}
-                            </Link>
+                            <h2 className="series-card-title">{series.name}</h2>
                           </div>
-                        ))}
-                      </div>
+                          <span className="font-mono text-small text-fg-muted">
+                            {readingTime(series.totalReadingTime)} total
+                          </span>
+                        </div>
 
-                      <div className="mt-6 flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-border">
-                        <div className="flex flex-wrap gap-2">
-                          {series.tags.map((tag) => (
-                            <Badge key={tag}>{tag}</Badge>
+                        {series.description && (
+                          <p className="series-card-desc">
+                            {series.description}
+                          </p>
+                        )}
+
+                        {/* Series Posts Preview */}
+                        <div className="series-posts-list">
+                          {series.posts.map((post, idx) => (
+                            <div key={post.slug} className="series-post-row">
+                              <span className="series-post-num">
+                                {idx + 1}.
+                              </span>
+                              <Link
+                                href={`/blog/${post.slug}`}
+                                className="series-post-title"
+                              >
+                                {post.title}
+                              </Link>
+                            </div>
                           ))}
                         </div>
 
-                        <button
-                          type="button"
-                          onClick={() => setSelectedSeriesName(series.name)}
-                          className="view-all inline-flex items-center gap-1.5 font-mono text-small text-brand hover:underline cursor-pointer bg-transparent border-none p-0"
-                        >
-                          <span>View all {series.posts.length} parts</span>
-                          <ArrowRight
-                            className="h-3.5 w-3.5 shrink-0"
-                            strokeWidth={2}
-                            aria-hidden="true"
-                          />
-                        </button>
-                      </div>
-                    </article>
-                  ))}
-                </div>
+                        <div className="mt-6 flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-border">
+                          <div className="flex flex-wrap gap-2">
+                            {series.tags.map((tag) => (
+                              <Badge key={tag}>{tag}</Badge>
+                            ))}
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => setSelectedSeriesName(series.name)}
+                            className="view-all inline-flex items-center gap-1.5 font-mono text-small text-brand hover:underline cursor-pointer bg-transparent border-none p-0"
+                          >
+                            <span>View all {series.posts.length} parts</span>
+                            <ArrowRight
+                              className="h-3.5 w-3.5 shrink-0"
+                              strokeWidth={2}
+                              aria-hidden="true"
+                            />
+                          </button>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+
+                  <LoadMore
+                    shown={paginatedSeries.length}
+                    total={filteredSeries.length}
+                    batchSize={SERIES_PER_PAGE}
+                    onLoadMore={() =>
+                      setVisibleSeriesCount((prev) => prev + SERIES_PER_PAGE)
+                    }
+                    onShowAll={() =>
+                      setVisibleSeriesCount(filteredSeries.length)
+                    }
+                  />
+                </>
               )}
             </>
           )}
