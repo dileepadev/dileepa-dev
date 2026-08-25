@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { GitBranch } from "lucide-react";
 import { Container, Lockup } from "@/components/ui";
 import { FOOTER_LINKS, SITE_CONFIG } from "@/lib/constants";
 import { SOCIAL_ICONS } from "@/lib/social-icons";
@@ -25,19 +26,20 @@ export function Footer({ about }: { about?: About | null }) {
 
             {socials.length > 0 && (
               <div className="socials">
-                {socials.map((icon) => (
-                  <a
-                    key={icon.label}
-                    href={icon.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={icon.label}
-                  >
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                      <path d={icon.path} />
-                    </svg>
-                  </a>
-                ))}
+                {socials.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <a
+                      key={item.label}
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={item.label}
+                    >
+                      <Icon className="h-4.5 w-4.5" aria-hidden="true" />
+                    </a>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -72,15 +74,14 @@ export function Footer({ about }: { about?: About | null }) {
           </span>
           <div className="footer-meta">
             <a
-              href={SITE_CONFIG.repository}
+              href={`${SITE_CONFIG.repository}/tree/${SITE_CONFIG.branch}`}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="View source on GitHub"
+              aria-label={`View branch ${SITE_CONFIG.branch} on GitHub`}
+              className="inline-flex items-center gap-1.5"
             >
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d={SOCIAL_ICONS[0].path} />
-              </svg>
-              <span>Source</span>
+              <GitBranch className="h-3.5 w-3.5 shrink-0" strokeWidth={1.75} aria-hidden="true" />
+              <span>v{SITE_CONFIG.version}</span>
             </a>
           </div>
         </div>
