@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { MDXComponents } from "mdx/types";
 import { CodeBlock } from "./CodeBlock";
+import { MarkdownImage } from "./MarkdownImage";
 
 /**
  * The components MDX renders into.
@@ -33,34 +34,12 @@ export const mdxComponents: MDXComponents = {
     );
   },
 
-  /*
-   * A plain `<img>`, deliberately.
-   *
-   * Posts embed images by absolute URL from whatever host they happen to be
-   * on, and `next/image` only accepts hosts listed in `next.config.ts` — which
-   * is Cloudinary and nothing else. Routing post images through it would make
-   * a post fail the build for citing a screenshot from someone else's docs.
-   *
-   * The intrinsic size is unknown in Markdown, so the ratio is not constrained
-   * and the image lays out at its natural aspect. `loading` and `decoding` do
-   * the work `next/image` would otherwise have done here.
-   */
-  img: ({ src, alt }) => {
-    if (typeof src !== "string") return null;
-    return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
-        src={src}
-        alt={alt ?? ""}
-        loading="lazy"
-        decoding="async"
-        className="h-auto w-full rounded-lg border border-border-strong bg-bg-surface"
-      />
-    );
-  },
+  // Enhanced responsive Markdown image renderer with path resolution and error fallback.
+  img: (props) => <MarkdownImage {...props} />,
 
   // Enhanced code block with syntax highlighting, language badge, and copy button.
   pre: (props) => <CodeBlock {...props} />,
 };
 
 export { CodeBlock } from "./CodeBlock";
+export { MarkdownImage, resolveImageUrl } from "./MarkdownImage";
