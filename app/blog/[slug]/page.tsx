@@ -3,10 +3,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import {
+  BackToTop,
   pickReadNext,
+  PostInteractions,
   ReadNext,
   SeriesNav,
-  Share,
   TableOfContents,
 } from "@/components/blog";
 import { mdxComponents } from "@/components/mdx";
@@ -119,8 +120,8 @@ export default async function BlogPostPage({ params }: Params) {
           }}
         />
 
-        <div className="mx-auto max-w-3xl">
-          <p className="font-mono text-small text-fg-muted">
+        <header className="max-w-3xl">
+          <div className="section-label">
             <Link
               href="/blog"
               className="text-brand no-underline hover:underline"
@@ -133,29 +134,31 @@ export default async function BlogPostPage({ params }: Params) {
             </time>
             {" · "}
             {readingTime(post.readingTimeMinutes || content.readingTimeMinutes)}
-          </p>
+          </div>
 
-          <h1 className="mt-4">{post.title}</h1>
+          <h1 className="mt-3">{post.title}</h1>
           {post.description && (
-            <p className="mt-4 text-h3 text-fg-muted">{post.description}</p>
+            <p className="section-intro mt-4 text-h3 text-fg-muted">
+              {post.description}
+            </p>
           )}
 
           {post.updatedDate && post.updatedDate !== post.publishedDate && (
-            <p className="mt-2 font-mono text-small text-fg-muted">
+            <p className="mt-3 font-mono text-small text-fg-muted">
               Updated{" "}
               <time dateTime={toDateAttribute(post.updatedDate)}>
                 {formatDate(post.updatedDate)}
               </time>
             </p>
           )}
-        </div>
+        </header>
 
-        <div className="mt-12 gap-12 lg:grid lg:grid-cols-[1fr_220px]">
+        <div className="mt-10 gap-12 lg:grid lg:grid-cols-[1fr_220px]">
           {/* `min-w-0`: a grid track's automatic minimum is its content's
               min-content width, so a wide table or code block in the article
               pushed this column — and the rail beside it — past the container
               rather than scrolling inside itself. */}
-          <article className="mx-auto w-full max-w-3xl min-w-0 lg:mx-0">
+          <article className="w-full max-w-3xl min-w-0">
             <div className="mb-8 lg:hidden">
               <TableOfContents headings={headings} />
             </div>
@@ -189,15 +192,16 @@ export default async function BlogPostPage({ params }: Params) {
               </ul>
             )}
 
-            <div className="mt-8 border-t border-border-hairline pt-8">
-              <Share url={url} title={post.title} />
-            </div>
-
             {seriesPosts.length > 1 && (
               <div className="mt-12">
                 <SeriesNav posts={seriesPosts} currentSlug={post.slug} />
               </div>
             )}
+
+            {/* React, comment and share, then the thread — one client component
+                because the action bar's comment count and the comment list are
+                the same data, fetched once. */}
+            <PostInteractions slug={post.slug} url={url} title={post.title} />
 
             <div className="mt-16">
               <ReadNext posts={readNext} />
@@ -208,6 +212,8 @@ export default async function BlogPostPage({ params }: Params) {
             <TableOfContents headings={headings} />
           </aside>
         </div>
+
+        <BackToTop />
       </Container>
     </Section>
   );

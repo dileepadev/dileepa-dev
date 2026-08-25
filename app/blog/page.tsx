@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Badge, Container, EmptyState, Section } from "@/components/ui";
+import { BackToTop, Badge, Container, EmptyState, Section } from "@/components/ui";
 import { api } from "@/lib/api";
 import { EMPTY_STATES } from "@/lib/constants";
 import { BlogSearch } from "./_components/BlogSearch";
@@ -63,6 +63,8 @@ export default async function BlogPage() {
         ) : (
           <BlogSearch posts={posts} />
         )}
+
+        <BackToTop />
       </Container>
     </Section>
   );
