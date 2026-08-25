@@ -202,11 +202,6 @@
 [data-theme="dark"] {
   --border: var(--ink-600);
   --border-strong: var(--ink-500);
-  /* A text field's border is the only thing that says it is a text field, so
-     it is the one edge held to WCAG 1.4.11's 3:1 against the page — 3.0:1
-     here. Every other component is identified by what is inside it and can
-     stay at the quieter --border-strong. */
-  --border-input: #5b5b5b;
 
   /* The primary button was hard-coded to Emerald Deep in both themes while
      every other accent on a dark surface was Emerald Bright. Two greens, one
@@ -222,7 +217,6 @@
 [data-theme="light"] {
   --border: var(--paper-200);
   --border-strong: var(--paper-300);
-  --border-input: #8f8f8f; /* 3.0:1 on --bg */
 
   --brand-fill: var(--emerald-deep);
   --on-brand: var(--on-emerald-light); /* 5.0:1 on fill */
@@ -234,7 +228,6 @@
   :root:not([data-theme]) {
     --border: var(--paper-200);
     --border-strong: var(--paper-300);
-    --border-input: #8f8f8f;
     --brand-fill: var(--emerald-deep);
     --on-brand: var(--on-emerald-light);
     --shadow-nav: 0 8px 24px rgb(0 0 0 / 0.06), 0 1px 2px rgb(0 0 0 / 0.05);
@@ -518,13 +511,11 @@ pre {
   justify-content: space-between;
   gap: var(--space-6);
   padding: 0 var(--space-4);
-  /* The bar sits over scrolling content, so it is translucent rather than
-     opaque — an opaque bar reads as a second page pinned to the top. */
-  background: color-mix(in srgb, var(--bg-surface) 82%, transparent);
+  /* Solid, not translucent — a see-through bar let scrolling content show
+     through the links and read as unfinished. */
+  background: var(--bg-surface);
   border: var(--hairline) solid var(--border-strong);
   border-radius: var(--radius-xl);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
   /* The bar is the one element on the page that casts a shadow, because it is
      the one element that is genuinely floating above the content. */
   box-shadow: var(--shadow-nav);
@@ -665,13 +656,8 @@ pre {
   height: 260px;
   border-radius: 50%;
   object-fit: cover;
-  /* A cut-out on the page background reads as a mistake; the portrait always
-     sits on a surface. Brand guide §6.2. Named semantically rather than as
-     --ink-800, which is a dark grey behind the portrait in the light theme. */
   background: var(--bg-surface);
   border: var(--hairline) solid var(--border-strong);
-  /* Preflight's `img { max-width: 100% }` met the 240px `.hero-id` cap and
-     squashed the circle to a 240×260 ellipse. It is a fixed size. */
   max-width: none;
   flex: 0 0 auto;
 }
@@ -689,9 +675,6 @@ pre {
   color: var(--fg-muted);
 }
 
-/* 20ch rather than 18ch. The tagline is the longest single line of type on the
-   site and 18ch broke it across five lines at desktop; with the display step
-   down to 2.75rem it now sets in four without the column moving. */
 .hero .display {
   max-width: 20ch;
 }
@@ -709,11 +692,31 @@ pre {
   margin-top: var(--space-8);
 }
 
-/* Reuses `.badge` from the token sheet rather than defining a second pill
-   treatment — the status is a neutral chip, not a second emerald moment
-   competing with the primary CTA above it. Brand guide §1.5. */
 .hero-meta {
-  margin-top: var(--space-5);
+  margin-bottom: var(--space-4);
+}
+
+.hero-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius);
+  background: var(--bg-surface);
+  border: var(--hairline) solid var(--border);
+  font-family: var(--font-sans);
+  font-size: var(--text-small);
+  font-weight: 500;
+  color: var(--fg-muted);
+}
+
+.hero-status-dot {
+  display: inline-block;
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 50%;
+  background-color: var(--brand);
+  flex-shrink: 0;
 }
 
 /* --- Buttons ------------------------------------------------------------ */
@@ -1181,20 +1184,21 @@ pre {
 .form {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--space-4);
+  gap: var(--space-5);
   margin-top: var(--space-10);
   padding-top: var(--space-8);
   border-top: var(--hairline) solid var(--border);
 }
 
 .form label {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: var(--space-2);
   font-size: var(--text-small);
   line-height: var(--lh-small);
   font-weight: 500;
   letter-spacing: var(--track-label);
-  color: var(--fg-muted);
+  color: var(--fg);
 }
 
 .form label:nth-of-type(3),
@@ -1211,19 +1215,17 @@ pre {
 .form input,
 .form textarea {
   width: 100%;
-  padding: var(--space-3);
+  padding: var(--space-3) var(--space-4);
   background: var(--bg-surface);
-  /* At --border a field on a dark surface was a rectangle you had to look
-     for — 1.24:1 against the page, where the boundary is the only thing
-     identifying the control. */
-  border: var(--hairline) solid var(--border-input);
+  border: var(--hairline) solid var(--border-strong);
   border-radius: var(--radius);
   color: var(--fg);
   -webkit-text-fill-color: var(--fg);
   font-family: var(--font-sans);
-  font-size: var(--text-body);
+  font-size: var(--text-small);
   outline: none;
   transition:
+    background-color var(--dur) var(--ease),
     border-color var(--dur) var(--ease),
     box-shadow var(--dur) var(--ease);
 }
@@ -1238,34 +1240,39 @@ pre {
   line-height: normal;
 }
 
-/* Chrome tints a field it considers invalid, which on a `required` field means
-   every empty one on first paint. The reference pins the colour in all four
-   states so the form does not change appearance as it is filled in. */
+.form input:hover:not(:disabled):not(:focus),
+.form textarea:hover:not(:disabled):not(:focus) {
+  background: var(--surface-hover);
+  border-color: color-mix(in srgb, var(--fg) 20%, var(--border-strong));
+}
+
 .form input:invalid,
-.form textarea:invalid,
-.form input:user-invalid,
-.form textarea:user-invalid,
-.form input:valid,
-.form textarea:valid {
-  color: var(--fg);
-  -webkit-text-fill-color: var(--fg);
+.form textarea:invalid {
   box-shadow: none;
+}
+
+.form input:user-invalid:not(:focus),
+.form textarea:user-invalid:not(:focus) {
+  border-color: var(--error);
 }
 
 .form input::placeholder,
 .form textarea::placeholder {
   color: var(--fg-muted);
   -webkit-text-fill-color: var(--fg-muted);
-  opacity: 0.7;
+  opacity: 0.6;
 }
 
-/* The site's one focus ring: soft, 3px, accent-tinted. A hard 1px emerald
-   shadow on top of an emerald border drew as a 2px outline that jumped the
-   field's apparent size the moment it was focused. */
 .form input:focus,
 .form textarea:focus {
   border-color: var(--brand);
   box-shadow: 0 0 0 var(--ring-width) var(--ring);
+}
+
+.form input:disabled,
+.form textarea:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .form textarea {
@@ -1276,6 +1283,7 @@ pre {
 
 .form button {
   justify-self: start;
+  margin-top: var(--space-2);
 }
 
 /* --- Footer ------------------------------------------------------------- */

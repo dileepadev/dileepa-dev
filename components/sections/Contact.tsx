@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { Mail, Send } from "lucide-react";
 import { Container, Section, SectionHeading } from "@/components/ui";
 import { api, ApiError } from "@/lib/api";
 import type { About } from "@/lib/api-types";
@@ -45,11 +46,8 @@ export function Contact({ about }: { about: About | null }) {
         <SectionHeading {...SECTIONS.contact} />
 
         <a className="contact-email" href={`mailto:${email}`}>
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <rect width="20" height="16" x="2" y="4" rx="2" />
-            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-          </svg>
-          {email}
+          <Mail className="h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
+          <span>{email}</span>
         </a>
 
         <form className="form" onSubmit={onSubmit}>
@@ -60,7 +58,14 @@ export function Contact({ about }: { about: About | null }) {
                 *
               </span>
             </span>
-            <input type="text" name="name" autoComplete="name" required />
+            <input
+              type="text"
+              name="name"
+              autoComplete="name"
+              placeholder="Jane Doe"
+              disabled={sending}
+              required
+            />
           </label>
           <label>
             <span>
@@ -69,7 +74,14 @@ export function Contact({ about }: { about: About | null }) {
                 *
               </span>
             </span>
-            <input type="email" name="email" autoComplete="email" required />
+            <input
+              type="email"
+              name="email"
+              autoComplete="email"
+              placeholder="jane@example.com"
+              disabled={sending}
+              required
+            />
           </label>
           <label>
             <span>
@@ -78,7 +90,13 @@ export function Contact({ about }: { about: About | null }) {
                 *
               </span>
             </span>
-            <input type="text" name="subject" required />
+            <input
+              type="text"
+              name="subject"
+              placeholder="Project inquiry, speaking, etc."
+              disabled={sending}
+              required
+            />
           </label>
           <label>
             <span>
@@ -87,11 +105,18 @@ export function Contact({ about }: { about: About | null }) {
                 *
               </span>
             </span>
-            <textarea name="message" required />
+            <textarea
+              name="message"
+              rows={5}
+              placeholder="Tell me about your project, idea, or questions…"
+              disabled={sending}
+              required
+            />
           </label>
           {/* Names the action, not "Submit". Design system §8. */}
-          <button className="btn btn--primary" type="submit" disabled={sending}>
-            {sending ? "Sending…" : "Send message"}
+          <button className="btn btn--primary inline-flex items-center gap-2" type="submit" disabled={sending}>
+            <Send className="h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
+            <span>{sending ? "Sending…" : "Send message"}</span>
           </button>
         </form>
       </Container>
