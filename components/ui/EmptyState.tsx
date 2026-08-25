@@ -10,11 +10,13 @@ export function EmptyState({
   title,
   hint,
   icon,
+  children,
   className,
 }: {
   title: string;
   hint?: string;
   icon?: ReactNode;
+  children?: ReactNode;
   className?: string;
 }) {
   return (
@@ -31,6 +33,8 @@ export function EmptyState({
       {hint && (
         <p className="mt-2 max-w-none text-small text-fg-muted">{hint}</p>
       )}
+      {children && <div className="mt-5">{children}</div>}
     </div>
   );
 }
+

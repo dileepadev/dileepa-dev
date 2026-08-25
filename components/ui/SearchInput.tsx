@@ -1,37 +1,65 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { Search, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 /**
- * A filter-as-you-type search input with a clear button.
+ * A filter-as-you-type search input with keyboard shortcut and clear action.
  *
- * Controlled: the parent owns the query string and passes the setter. This
- * keeps the component pure — it never fetches, it just tells the parent what
- * the reader typed so the parent can filter its own list.
+ * Controlled: the parent owns the query string and passes the setter.
+ * Supports a global '/' hotkey to quickly jump focus to the search bar.
  */
 export function SearchInput({
   value,
   onChange,
   placeholder = "Search…",
-  resultCount,
-  totalCount,
+  className,
+  autoFocusHotkey = true,
 }: {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
-  /** How many items survived the filter. Omit to hide the count chip. */
-  resultCount?: number;
-  /** The unfiltered total, shown as "N of M". */
-  totalCount?: number;
+  className?: string;
+  /** When true, pressing '/' focuses this input if not already typing elsewhere. */
+  autoFocusHotkey?: boolean;
 }) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!autoFocusHotkey) return;
+
+    function handleKeyDown(e: KeyboardEvent) {
+      if (
+        e.key === "/" &&
+        !["INPUT", "TEXTAREA", "SELECT"].includes(
+          (document.activeElement?.tagName || "").toUpperCase(),
+        )
+      ) {
+        e.preventDefault();
+        inputRef.current?.focus();
+      } else if (e.key === "Escape" && document.activeElement === inputRef.current) {
+        if (value) {
+          onChange("");
+        } else {
+          inputRef.current?.blur();
+        }
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [autoFocusHotkey, value, onChange]);
+
   return (
-    <div className="search-input-wrap">
+    <div className={cn("search-input-wrap", className)}>
       <Search
         className="search-input-icon"
-        strokeWidth={1.5}
+        strokeWidth={1.75}
         aria-hidden="true"
       />
       <input
+        ref={inputRef}
         type="search"
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -39,20 +67,24 @@ export function SearchInput({
         className="search-input"
         aria-label={placeholder}
       />
-      {value && (
+      {value ? (
         <button
           type="button"
-          onClick={() => onChange("")}
+          onClick={() => {
+            onChange("");
+            inputRef.current?.focus();
+          }}
           className="search-input-clear"
           aria-label="Clear search"
         >
           <X className="h-3.5 w-3.5" strokeWidth={2} />
         </button>
-      )}
-      {resultCount !== undefined && totalCount !== undefined && value && (
-        <span className="search-input-count">
-          {resultCount} of {totalCount}
-        </span>
+      ) : (
+        autoFocusHotkey && (
+          <kbd className="search-kbd" aria-hidden="true" title="Press / to focus">
+            /
+          </kbd>
+        )
       )}
     </div>
   );
