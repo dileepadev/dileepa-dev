@@ -30,8 +30,19 @@ export default async function BlogPage() {
   return (
     <Section>
       <Container>
-        <div className="section-label">Blog</div>
-        <h1>Writing</h1>
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <div className="section-label">Blog</div>
+            <h1>Writing</h1>
+          </div>
+          {posts.length > 0 && (
+            <div className="font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1">
+              <span className="font-medium text-fg">{posts.length}</span>{" "}
+              {posts.length === 1 ? "post" : "posts"}
+            </div>
+          )}
+        </div>
+
         <p className="section-intro">
           Notes on what I build, and what went wrong on the way.{" "}
           <a href="/blog/rss.xml" className="text-brand">

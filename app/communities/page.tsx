@@ -11,12 +11,24 @@ export const metadata: Metadata = {
 
 export default async function CommunitiesPage() {
   const communities = await api.getCommunities();
+  const total = communities.length;
 
   return (
     <Section>
       <Container>
-        <div className="section-label">Communities</div>
-        <h1>Communities</h1>
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <div className="section-label">Communities</div>
+            <h1>Communities</h1>
+          </div>
+          {total > 0 && (
+            <div className="font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1">
+              <span className="font-medium text-fg">{total}</span>{" "}
+              {total === 1 ? "group" : "groups"}
+            </div>
+          )}
+        </div>
+
         <p className="section-intro">
           Groups I organise with or contribute to, and what I do in each.
         </p>

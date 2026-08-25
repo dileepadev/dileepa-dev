@@ -20,13 +20,25 @@ export default async function EventsPage() {
     api.getEvents({ status: "completed", limit: 100 }),
   ]);
 
-  const empty = upcoming.length === 0 && completed.length === 0;
+  const total = upcoming.length + completed.length;
+  const empty = total === 0;
 
   return (
     <Section>
       <Container>
-        <div className="section-label">Events</div>
-        <h1>Talks and workshops</h1>
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <div className="section-label">Events</div>
+            <h1>Talks and workshops</h1>
+          </div>
+          {total > 0 && (
+            <div className="font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1">
+              <span className="font-medium text-fg">{total}</span>{" "}
+              {total === 1 ? "event" : "events"}
+            </div>
+          )}
+        </div>
+
         <p className="section-intro">
           Events I have delivered at meetups, conferences and online. Slides and
           recordings are linked where they exist.
