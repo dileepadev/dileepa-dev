@@ -364,6 +364,43 @@ body {
   outline-offset: 2px;
 }
 
+/* Interactive cursor rules */
+a,
+button,
+[role="button"],
+[role="tab"],
+select,
+summary,
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+  cursor: pointer;
+}
+
+button:disabled,
+[role="button"][aria-disabled="true"],
+input:disabled,
+select:disabled,
+textarea:disabled {
+  cursor: not-allowed;
+}
+
+/* Badges when interactive */
+a > .badge,
+a .badge,
+button .badge {
+  cursor: pointer;
+}
+
+a:hover > .badge:not(.badge-filled),
+a:hover .badge:not(.badge-filled),
+button:hover > .badge:not(.badge-filled),
+button:hover .badge:not(.badge-filled) {
+  border-color: var(--brand);
+  background-color: var(--surface-hover);
+  color: var(--fg);
+}
+
 /* Long-form copy is the one place a link should announce itself. */
 .prose a:not(.heading-anchor) {
   color: var(--brand);
@@ -919,29 +956,25 @@ pre {
     background var(--dur) var(--ease),
     border-color var(--dur) var(--ease),
     box-shadow var(--dur) var(--ease),
-    color var(--dur) var(--ease);
+    color var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
 }
 
-/* The accent, as a fill.
-
-   This was hard-coded to Emerald Deep in both themes with a hand-written
-   #066348 hover and an rgba(8, 127, 91, .4) glow — so on Carbon the single
-   loudest element on the page wore a green that appeared nowhere else on it,
-   while every label, link and lockup around it was Emerald Bright. It is now
-   `--brand-fill`, which is the same value as `--brand`: the button is the
-   accent, not a second one. Hover and active mix toward `--fg`, which lightens
-   on Carbon and darkens on Paper and raises contrast in both. */
+/* The accent, as a fill. */
 .btn--primary {
   background: var(--brand-fill);
   color: var(--on-brand);
+  border-color: var(--brand-fill);
 }
 
 .btn--primary:hover {
   background: var(--brand-fill-hover);
+  border-color: var(--brand-fill-hover);
 }
 
 .btn--primary:active {
   background: var(--brand-fill-active);
+  transform: scale(0.98);
 }
 
 .btn--secondary {
@@ -950,11 +983,10 @@ pre {
   border-color: var(--border-strong);
 }
 
-/* The same lift every other bordered surface takes. It used to set its border
-   to its own background colour, which erased the edge on hover. */
 .btn--secondary:hover {
   background: var(--surface-hover);
   border-color: var(--brand);
+  color: var(--fg);
 }
 
 .btn--secondary:active {
@@ -1290,6 +1322,11 @@ pre {
   border: var(--hairline) solid var(--border-strong);
   background: var(--bg-surface);
   aspect-ratio: 4 / 3;
+  transition: border-color var(--dur) var(--ease);
+}
+
+.gallery figure:hover {
+  border-color: var(--brand);
 }
 
 .gallery img {
@@ -1701,7 +1738,7 @@ pre {
 
 .sort-dropdown-trigger:hover {
   background: var(--surface-hover);
-  border-color: color-mix(in srgb, var(--fg) 20%, var(--border-strong));
+  border-color: var(--brand);
 }
 
 .sort-dropdown-trigger:focus-visible,
@@ -1853,7 +1890,7 @@ pre {
   padding: 0 var(--space-3);
   height: 32px;
   border-radius: var(--radius-sm);
-  border: none;
+  border: var(--hairline) solid transparent;
   background: transparent;
   font-family: var(--font-sans);
   font-size: var(--text-small);
@@ -1862,17 +1899,20 @@ pre {
   cursor: pointer;
   transition:
     background-color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease),
     color var(--dur) var(--ease);
 }
 
 .view-tab:hover {
   color: var(--fg);
   background: var(--surface-hover);
+  border-color: var(--border-strong);
 }
 
 .view-tab.is-active {
   color: var(--brand);
   background: var(--surface-hover);
+  border-color: var(--brand);
 }
 
 .view-tab-count {

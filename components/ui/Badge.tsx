@@ -20,9 +20,10 @@ export function Badge({
   return (
     <span
       className={cn(
-        "inline-block rounded-sm border px-3 py-1 text-label font-medium tracking-[0.01em]",
+        "badge inline-block rounded-sm border px-3 py-1 text-label font-medium tracking-[0.01em]",
+        "transition-[background-color,border-color,color] duration-[160ms] ease-brand",
         variant === "filled"
-          ? "border-transparent bg-brand-fill text-on-brand"
+          ? "badge-filled border-transparent bg-brand-fill text-on-brand"
           : "border-border-strong bg-bg-surface text-fg-muted",
         className,
       )}
@@ -43,10 +44,10 @@ export function Chip({
   return (
     <span
       className={cn(
-        "inline-block rounded-sm border border-border-strong bg-bg-surface",
+        "chip inline-block rounded-sm border border-border-strong bg-bg-surface",
         "px-3 py-1 font-mono text-label/[1] tracking-[0.01em] text-fg-muted",
         "transition-[background-color,border-color,color] duration-[160ms] ease-brand",
-        "hover:border-brand hover:bg-surface-hover hover:text-fg",
+        "hover:border-brand hover:bg-surface-hover hover:text-fg cursor-pointer",
         className,
       )}
     >
