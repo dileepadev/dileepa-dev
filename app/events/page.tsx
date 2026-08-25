@@ -1,17 +1,8 @@
 import type { Metadata } from "next";
-import {
-  Badge,
-  Container,
-  EmptyState,
-  Item,
-  ItemList,
-  Section,
-  Subsection,
-} from "@/components/ui";
+import { Container, EmptyState, Section } from "@/components/ui";
 import { api } from "@/lib/api";
-import type { EventRecord } from "@/lib/api-types";
 import { EMPTY_STATES } from "@/lib/constants";
-import { formatDate, humanise } from "@/lib/format";
+import { EventSearch } from "./_components/EventSearch";
 
 export const metadata: Metadata = {
   title: "Events",
@@ -19,36 +10,6 @@ export const metadata: Metadata = {
     "Talks, workshops and webinars, with slides and recordings where they exist.",
   alternates: { canonical: "/events" },
 };
-
-function EventItems({ events }: { events: EventRecord[] }) {
-  return (
-    <ItemList>
-      {events.map((event) => (
-        <Item
-          key={event.id}
-          title={event.title}
-          href={`/events/${event.slug}`}
-          description={event.summary}
-          meta={
-            <>
-              <span className="block">{formatDate(event.startAt)}</span>
-              <span className="block">{humanise(event.format)}</span>
-              {(event.recordings ?? []).length > 0 && (
-                <span className="block">Recording</span>
-              )}
-            </>
-          }
-        >
-          <div className="flex flex-wrap items-center gap-2">
-            <Badge>{humanise(event.type)}</Badge>
-            {event.status === "cancelled" && <Badge>Cancelled</Badge>}
-            {event.location?.venue && <Badge>{event.location.venue}</Badge>}
-          </div>
-        </Item>
-      ))}
-    </ItemList>
-  );
-}
 
 export default async function EventsPage() {
   // Two queries rather than one filtered in the browser: upcoming sorts
@@ -74,19 +35,7 @@ export default async function EventsPage() {
         {empty ? (
           <EmptyState {...EMPTY_STATES.events} />
         ) : (
-          <>
-            {upcoming.length > 0 && (
-              <Subsection title="Upcoming" note="Soonest first.">
-                <EventItems events={upcoming} />
-              </Subsection>
-            )}
-
-            {completed.length > 0 && (
-              <Subsection title="Past" note="Most recent first.">
-                <EventItems events={completed} />
-              </Subsection>
-            )}
-          </>
+          <EventSearch upcoming={upcoming} completed={completed} />
         )}
       </Container>
     </Section>
