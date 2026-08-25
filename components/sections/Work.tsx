@@ -48,13 +48,13 @@ export function Work({
                 orgUrl={item.url || undefined}
                 description={item.description}
               >
-                {(item.technologies ?? []).length > 0 && (
+                {/* {(item.technologies ?? []).length > 0 && (
                   <div className="stack">
                     {(item.technologies ?? []).map((tech) => (
                       <span key={tech}>{tech}</span>
                     ))}
                   </div>
-                )}
+                )} */}
               </Entry>
             ))}
           </EntryList>

@@ -3,6 +3,7 @@ export { Section, SectionHeading, Subsection } from "./Section";
 export { Card } from "./Card";
 export { Button, LinkButton } from "./Button";
 export { Badge, Chip } from "./Badge";
+export { StatusBadge } from "./StatusBadge";
 export { Lockup } from "./Lockup";
 export { ThemeToggle } from "./ThemeToggle";
 export { EntryList, Entry } from "./EntryList";
