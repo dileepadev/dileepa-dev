@@ -1,36 +1,27 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  async redirects() {
+    return [
+      // `/sessions` existed only on the v2.0.0 branch and was never the
+      // published URL — `/events` was, and is again. The rule is kept so links
+      // shared from a preview deployment keep resolving.
+      { source: "/sessions", destination: "/events", permanent: true },
+      {
+        source: "/sessions/:slug",
+        destination: "/events/:slug",
+        permanent: true,
+      },
+    ];
+  },
   images: {
+    // Cloudinary and nothing else. Every image the platform serves goes through
+    // POST /uploads, so a second host here would mean an image had bypassed the
+    // one path that holds the credentials.
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "dileepadev.blob.core.windows.net",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "youtube.com",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "img.youtube.com",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
         hostname: "res.cloudinary.com",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "blog.dileepa.dev",
         port: "",
         pathname: "/**",
       },
