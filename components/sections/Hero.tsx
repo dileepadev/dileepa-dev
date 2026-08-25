@@ -2,7 +2,7 @@ import Image from "next/image";
 import { Container, LinkButton } from "@/components/ui";
 import type { About } from "@/lib/api-types";
 import { SITE_CONFIG } from "@/lib/constants";
-import { paragraphs } from "@/lib/format";
+import { paragraphs, portrait as portraitUrl } from "@/lib/format";
 
 /**
  * The hero.
@@ -18,10 +18,20 @@ export function Hero({ about }: { about: About | null }) {
   const name = about?.name ?? SITE_CONFIG.name;
   const role = about?.title ?? "";
   const tagline = about?.tagline ?? SITE_CONFIG.description;
-  // `description[0]` is the About section's heading, so the lead here is the
-  // paragraph after it rather than a second copy of the same sentence.
-  const lead = paragraphs(about?.description)[1] ?? "";
-  const portrait = about?.images?.profileWebp || about?.images?.profilePng;
+  // The supporting line under the tagline, and its own field on the about
+  // record. It used to be `description[1]` — the About section's second
+  // paragraph, borrowed — which meant editing the About copy silently moved
+  // the hero's lead, and the site had to know a coupling nothing declared.
+  //
+  // The old reading is kept as the fallback rather than removed: a record
+  // written before the field existed still renders the sentence it always
+  // did, and it comes from the same `/about` response either way. There is no
+  // second request here and there never was one to save.
+  const lead =
+    about?.taglineDescription?.trim() ||
+    paragraphs(about?.description)[1] ||
+    "";
+  const portrait = portraitUrl(about?.images);
 
   return (
     <Container>
@@ -37,6 +47,11 @@ export function Hero({ about }: { about: About | null }) {
                 See the work
               </LinkButton>
             </div>
+            {about?.status && (
+              <div className="hero-meta">
+                <span className="hero-meta-value badge">{about.status}</span>
+              </div>
+            )}
           </div>
 
           {portrait && (

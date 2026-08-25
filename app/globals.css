@@ -709,6 +709,13 @@ pre {
   margin-top: var(--space-8);
 }
 
+/* Reuses `.badge` from the token sheet rather than defining a second pill
+   treatment — the status is a neutral chip, not a second emerald moment
+   competing with the primary CTA above it. Brand guide §1.5. */
+.hero-meta {
+  margin-top: var(--space-5);
+}
+
 /* --- Buttons ------------------------------------------------------------ */
 
 /* The token sheet's `.btn` sets its type with a `font` shorthand, which resets

@@ -11,6 +11,8 @@
  * browser, which React reports as a hydration mismatch.
  */
 
+import type { About } from "./api-types";
+
 const LOCALE = "en-GB";
 const TIME_ZONE = "UTC";
 
@@ -91,4 +93,28 @@ export function paragraphs(value: string[] | null | undefined): string[] {
     .flatMap((entry) => entry.split(/\n\s*\n/))
     .map((entry) => entry.trim())
     .filter(Boolean);
+}
+
+/**
+ * The portrait, from whichever formats the about record actually carries.
+ *
+ * Three fields rather than one, because the admin uploads whatever it has:
+ * WebP is the smallest, JPEG is what a camera and most exports produce, PNG is
+ * the lossless original. Preference is smallest first, so a record that has
+ * only ever had a WebP still resolves to that WebP — adding JPEG changed
+ * nothing for the records that predate it.
+ *
+ * No conversion happens anywhere. Every one of these is a Cloudinary URL and
+ * goes through `next/image`, which re-encodes whatever it is handed; the file
+ * extension on the stored URL is not something this site reads.
+ *
+ * Typed against the generated `About` rather than a local shape on purpose: if
+ * one of these names stops resolving, the API changed and this is where it
+ * should break.
+ */
+export function portrait(
+  images: About["images"] | null | undefined,
+): string | null {
+  if (!images) return null;
+  return images.profileWebp || images.profileJpg || images.profilePng || null;
 }
