@@ -56,6 +56,7 @@ interface MarkdownImageProps
 /**
  * Enhanced Markdown image renderer with URL resolution, graceful error handling,
  * responsive scaling, optional caption support, and full-screen lightbox inspection.
+ * Uses phrasing tags (span/button) to avoid invalid HTML nesting when rendered inside markdown `<p>` tags.
  */
 export function MarkdownImage({
   src,
@@ -75,20 +76,28 @@ export function MarkdownImage({
 
   if (hasError) {
     return (
-      <figure className="my-6 overflow-hidden rounded-lg border border-border-strong bg-bg-surface p-6 text-center">
-        <div className="flex flex-col items-center justify-center gap-2 text-fg-muted">
+      <span
+        role="img"
+        aria-label={alt || "Image could not be loaded"}
+        className="my-6 block overflow-hidden rounded-lg border border-border-strong bg-bg-surface p-6 text-center"
+      >
+        <span className="flex flex-col items-center justify-center gap-2 text-fg-muted">
           <ImageIcon className="h-7 w-7 text-fg-muted/50" aria-hidden="true" />
           <span className="font-mono text-small text-fg-muted">
             {alt || "Image could not be loaded"}
           </span>
-        </div>
-      </figure>
+        </span>
+      </span>
     );
   }
 
   return (
     <>
-      <figure className="group my-6 overflow-hidden rounded-lg border border-border-strong bg-bg-surface transition-colors duration-200 hover:border-brand/40">
+      <span
+        role="figure"
+        aria-label={alt || "Blog content image"}
+        className="group my-6 block overflow-hidden rounded-lg border border-border-strong bg-bg-surface transition-colors duration-200 hover:border-brand/40"
+      >
         <button
           type="button"
           onClick={() => setIsLightboxOpen(true)}
@@ -113,20 +122,20 @@ export function MarkdownImage({
           />
 
           {/* Hover zoom indicator overlay badge */}
-          <div className="pointer-events-none absolute bottom-3 right-3 flex items-center gap-1.5 rounded-sm border border-border-strong bg-bg-surface/90 px-2 py-1 font-mono text-label text-fg shadow-sm backdrop-blur-sm opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+          <span className="pointer-events-none absolute bottom-3 right-3 flex items-center gap-1.5 rounded-sm border border-border-strong bg-bg-surface/90 px-2 py-1 font-mono text-label text-fg shadow-sm backdrop-blur-sm opacity-0 transition-opacity duration-200 group-hover:opacity-100">
             <Maximize2 className="h-3 w-3 text-brand" aria-hidden="true" />
             <span>Full screen</span>
-          </div>
+          </span>
         </button>
 
         {alt && (
-          <figcaption className="border-t border-border-strong bg-bg-surface px-4 py-2 text-center font-mono text-label text-fg-muted">
+          <span className="block border-t border-border-strong bg-bg-surface px-4 py-2 text-center font-mono text-label text-fg-muted">
             {alt}
-          </figcaption>
+          </span>
         )}
-      </figure>
+      </span>
 
-      {/* Fullscreen Lightbox Modal */}
+      {/* Fullscreen Lightbox Modal (renders via React portal to document.body) */}
       <ImageLightbox
         src={resolvedSrc}
         alt={alt}
