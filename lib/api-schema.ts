@@ -375,8 +375,8 @@ export interface paths {
       cookie?: never;
     };
     /**
-     * List communitys
-     * @description List communitys. Public callers see published records only.
+     * List communities
+     * @description List communities. Public callers see published records only.
      */
     get: operations["list_communities_communities_get"];
     put?: never;
@@ -405,8 +405,8 @@ export interface paths {
     options?: never;
     head?: never;
     /**
-     * Reorder communitys
-     * @description Set the order of several communitys in one request. Higher values sort first.
+     * Reorder communities
+     * @description Set the order of several communities in one request. Higher values sort first.
      */
     patch: operations["reorder_communities_communities_order_patch"];
     trace?: never;
@@ -831,6 +831,30 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api-links": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List the API's endpoints
+     * @description Every endpoint this API serves, grouped by tag.
+     *
+     *     URLs are absolute against the host this request arrived on, so a catalogue
+     *     read from localhost points at localhost and one read from production points
+     *     at production — there is no base URL to configure and none to get wrong.
+     */
+    get: operations["list_api_links_api_links_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -849,18 +873,14 @@ export interface components {
       title: string;
       /** Tagline */
       tagline: string;
-      /**
-       * Location
-       * @default
-       */
-      location: string;
+      /** Taglinedescription */
+      taglineDescription?: string | null;
+      /** Location */
+      location?: string | null;
       /** Description */
       description?: string[];
-      /**
-       * Status
-       * @default
-       */
-      status: string;
+      /** Status */
+      status?: string | null;
       images?: components["schemas"]["AboutImages-Output"];
       links?: components["schemas"]["AboutLinks"];
       /** Connect */
@@ -869,98 +889,82 @@ export interface components {
     /** AboutCreate */
     AboutCreate: {
       /** Name */
-      name: string;
+      name?: string | null;
       /** Title */
-      title: string;
+      title?: string | null;
       /** Tagline */
-      tagline: string;
-      /**
-       * Location
-       * @default
-       */
-      location: string;
+      tagline?: string | null;
+      /** Tagline Description */
+      tagline_description?: string | null;
+      /** Location */
+      location?: string | null;
       /** Description */
-      description: string[];
+      description?: string[] | null;
       /** Status */
-      status: string;
+      status?: string | null;
       images: components["schemas"]["AboutImages-Input"];
       links: components["schemas"]["AboutLinks"];
       /** Connect */
-      connect: string[];
+      connect?: string[] | null;
     };
-    /** AboutImages */
+    /**
+     * AboutImages
+     * @description The portrait, in every format it has been uploaded in.
+     *
+     *     Three portrait fields rather than one, because a consumer picks the format
+     *     it wants rather than the one that happens to be stored: `next/image` is
+     *     happiest with WebP, a JPEG is what a phone camera and most stock exports
+     *     produce, and the PNG is the lossless original. All three are optional and
+     *     a record may carry any subset — `portrait_sources()` is the order they are
+     *     preferred in.
+     */
     "AboutImages-Input": {
-      /**
-       * Banner Webp
-       * @default
-       */
-      banner_webp: string;
-      /**
-       * Profile Png
-       * @default
-       */
-      profile_png: string;
-      /**
-       * Profile Webp
-       * @default
-       */
-      profile_webp: string;
+      /** Banner Webp */
+      banner_webp?: string | null;
+      /** Profile Png */
+      profile_png?: string | null;
+      /** Profile Webp */
+      profile_webp?: string | null;
+      /** Profile Jpg */
+      profile_jpg?: string | null;
     };
-    /** AboutImages */
+    /**
+     * AboutImages
+     * @description The portrait, in every format it has been uploaded in.
+     *
+     *     Three portrait fields rather than one, because a consumer picks the format
+     *     it wants rather than the one that happens to be stored: `next/image` is
+     *     happiest with WebP, a JPEG is what a phone camera and most stock exports
+     *     produce, and the PNG is the lossless original. All three are optional and
+     *     a record may carry any subset — `portrait_sources()` is the order they are
+     *     preferred in.
+     */
     "AboutImages-Output": {
-      /**
-       * Bannerwebp
-       * @default
-       */
-      bannerWebp: string;
-      /**
-       * Profilepng
-       * @default
-       */
-      profilePng: string;
-      /**
-       * Profilewebp
-       * @default
-       */
-      profileWebp: string;
+      /** Bannerwebp */
+      bannerWebp?: string | null;
+      /** Profilepng */
+      profilePng?: string | null;
+      /** Profilewebp */
+      profileWebp?: string | null;
+      /** Profilejpg */
+      profileJpg?: string | null;
     };
     /** AboutLinks */
     AboutLinks: {
-      /**
-       * Website
-       * @default
-       */
-      website: string;
-      /**
-       * Email
-       * @default
-       */
-      email: string;
-      /**
-       * Github
-       * @default
-       */
-      github: string;
-      /**
-       * Linkedin
-       * @default
-       */
-      linkedin: string;
-      /**
-       * Xtwitter
-       * @default
-       */
-      xtwitter: string;
-      /**
-       * Instagram
-       * @default
-       */
-      instagram: string;
-      /**
-       * Youtube
-       * @default
-       */
-      youtube: string;
+      /** Website */
+      website?: string | null;
+      /** Email */
+      email?: string | null;
+      /** Github */
+      github?: string | null;
+      /** Linkedin */
+      linkedin?: string | null;
+      /** Xtwitter */
+      xtwitter?: string | null;
+      /** Instagram */
+      instagram?: string | null;
+      /** Youtube */
+      youtube?: string | null;
       /** Facebook */
       facebook?: string | null;
     };
@@ -972,6 +976,8 @@ export interface components {
       title?: string | null;
       /** Tagline */
       tagline?: string | null;
+      /** Tagline Description */
+      tagline_description?: string | null;
       /** Location */
       location?: string | null;
       /** Description */
@@ -982,6 +988,29 @@ export interface components {
       links?: components["schemas"]["AboutLinks"] | null;
       /** Connect */
       connect?: string[] | null;
+    };
+    /**
+     * ApiLink
+     * @description Every endpoint under one tag — which is one admin screen's worth.
+     */
+    ApiLink: {
+      /** Key */
+      key: string;
+      /** Label */
+      label: string;
+      /**
+       * Description
+       * @default
+       */
+      description: string;
+      /** Basepath */
+      basePath: string;
+      /** Url */
+      url: string;
+      /** Docsurl */
+      docsUrl?: string | null;
+      /** Endpoints */
+      endpoints?: components["schemas"]["Endpoint"][];
     };
     /** BlogCreate */
     BlogCreate: {
@@ -1492,6 +1521,53 @@ export interface components {
       /** Published */
       published?: boolean | null;
     };
+    /** Endpoint */
+    Endpoint: {
+      /** Method */
+      method: string;
+      /** Path */
+      path: string;
+      /** Url */
+      url: string;
+      /**
+       * Summary
+       * @default
+       */
+      summary: string;
+      /**
+       * Auth
+       * @default public
+       * @enum {string}
+       */
+      auth: "public" | "admin" | "api_key" | "admin_or_api_key";
+      /** Parameters */
+      parameters?: components["schemas"]["EndpointParameter"][];
+    };
+    /**
+     * EndpointParameter
+     * @description One variable an endpoint reads, named the way it goes over the wire.
+     */
+    EndpointParameter: {
+      /** Name */
+      name: string;
+      /**
+       * Location
+       * @enum {string}
+       */
+      location: "path" | "query" | "header" | "body";
+      /**
+       * Type
+       * @default string
+       */
+      type: string;
+      /**
+       * Required
+       * @default false
+       */
+      required: boolean;
+      /** Description */
+      description?: string | null;
+    };
     /** Event */
     Event: {
       /** Id */
@@ -1956,6 +2032,20 @@ export interface components {
       label: string;
       /** Value */
       value: string;
+    };
+    /** Page[ApiLink] */
+    Page_ApiLink_: {
+      /** Items */
+      items: components["schemas"]["ApiLink"][];
+      /**
+       * Total
+       * @description Matching documents, ignoring limit and offset
+       */
+      total: number;
+      /** Limit */
+      limit: number;
+      /** Offset */
+      offset: number;
     };
     /** Page[BlogPost] */
     Page_BlogPost_: {
@@ -4705,6 +4795,38 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["UploadDeleted"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  list_api_links_api_links_get: {
+    parameters: {
+      query?: {
+        limit?: number;
+        offset?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Page_ApiLink_"];
         };
       };
       /** @description Validation Error */
