@@ -1,48 +1,94 @@
-import { Metadata } from "next";
-import { Container, Button } from "@/components/ui";
-import { Navbar, Footer } from "@/components/sections";
+import type { Metadata } from "next";
+import {
+  Badge,
+  Container,
+  EmptyState,
+  Item,
+  ItemList,
+  Section,
+  Subsection,
+} from "@/components/ui";
 import { api } from "@/lib/api";
-import { FaArrowLeft, FaCalendarAlt } from "react-icons/fa";
-import { EventList } from "./_components/EventList";
+import type { EventRecord } from "@/lib/api-types";
+import { EMPTY_STATES } from "@/lib/constants";
+import { formatDate, humanise } from "@/lib/format";
 
 export const metadata: Metadata = {
-  title: "Events | Dileepa Bandara",
+  title: "Events",
   description:
-    "Explore my past and upcoming events, conference talks, workshops, and podcast appearances on web development and software engineering topics.",
+    "Talks, workshops and webinars, with slides and recordings where they exist.",
+  alternates: { canonical: "/events" },
 };
 
+function EventItems({ events }: { events: EventRecord[] }) {
+  return (
+    <ItemList>
+      {events.map((event) => (
+        <Item
+          key={event.id}
+          title={event.title}
+          href={`/events/${event.slug}`}
+          description={event.summary}
+          meta={
+            <>
+              <span className="block">{formatDate(event.startAt)}</span>
+              <span className="block">{humanise(event.format)}</span>
+              {(event.recordings ?? []).length > 0 && (
+                <span className="block">Recording</span>
+              )}
+            </>
+          }
+        >
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge>{humanise(event.type)}</Badge>
+            {event.status === "cancelled" && <Badge>Cancelled</Badge>}
+            {event.location?.venue && <Badge>{event.location.venue}</Badge>}
+          </div>
+        </Item>
+      ))}
+    </ItemList>
+  );
+}
+
 export default async function EventsPage() {
-  const [events, about] = await Promise.all([api.getEvents(), api.getAbout()]);
+  // Two queries rather than one filtered in the browser: upcoming sorts
+  // soonest-first and completed sorts most-recent-first, which is two opposite
+  // orders and cannot be one query.
+  const [upcoming, completed] = await Promise.all([
+    api.getEvents({ status: "upcoming", limit: 50 }),
+    api.getEvents({ status: "completed", limit: 100 }),
+  ]);
+
+  const empty = upcoming.length === 0 && completed.length === 0;
 
   return (
-    <>
-      <Navbar />
-      <main className="min-h-screen pt-24 pb-16 bg-bg-primary">
-        <Container>
-          {/* Header */}
-          <div className="max-w-4xl mx-auto text-center mb-16">
-            <div className="flex justify-center mb-6">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-accent-blue/10 text-accent-blue">
-                <FaCalendarAlt className="h-10 w-10" />
-              </div>
-            </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-text-primary mb-4">
-              Events
-            </h1>
-            <p className="text-xl text-text-secondary mb-6 max-w-2xl mx-auto">
-              Conference talks, workshops, meetups, and podcast appearances
-              where I share knowledge and insights with the tech community.
-            </p>
-            <Button href="/" variant="outline" leftIcon={<FaArrowLeft />}>
-              Back to Home
-            </Button>
-          </div>
+    <Section>
+      <Container>
+        <div className="section-label">Events</div>
+        <h1>Talks and workshops</h1>
+        <p className="section-intro">
+          Events I have delivered at meetups, conferences and online. Slides and
+          recordings are linked where they exist.
+        </p>
 
-          {/* Events List (Search & Sort) */}
-          <EventList initialEvents={events || []} />
-        </Container>
-      </main>
-      <Footer about={about || undefined} />
-    </>
+        {empty ? (
+          <EmptyState {...EMPTY_STATES.events} />
+        ) : (
+          <>
+            {upcoming.length > 0 && (
+              <Subsection title="Upcoming" note="Soonest first.">
+                <EventItems events={upcoming} />
+              </Subsection>
+            )}
+
+            {completed.length > 0 && (
+              <Subsection title="Past" note="Most recent first.">
+                <EventItems events={completed} />
+              </Subsection>
+            )}
+          </>
+        )}
+      </Container>
+    </Section>
   );
 }

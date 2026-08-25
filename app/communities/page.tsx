@@ -1,51 +1,60 @@
-import { Metadata } from "next";
-import { Container, Button } from "@/components/ui";
-import { Navbar, Footer } from "@/components/sections";
+import type { Metadata } from "next";
+import {
+  Container,
+  EmptyState,
+  Item,
+  ItemList,
+  Section,
+} from "@/components/ui";
 import { api } from "@/lib/api";
-import { FaArrowLeft, FaUsers } from "react-icons/fa";
-import { CommunityList } from "./_components/CommunityList";
 
 export const metadata: Metadata = {
-  title: "Communities | Dileepa Bandara",
-  description:
-    "All tech communities, meetups, and mentorship programs I've contributed to.",
+  title: "Communities",
+  description: "Tech communities I organise with or contribute to.",
+  alternates: { canonical: "/communities" },
 };
 
 export default async function CommunitiesPage() {
-  const [communities, about] = await Promise.all([
-    api.getCommunities(),
-    api.getAbout(),
-  ]);
+  const communities = await api.getCommunities();
 
   return (
-    <>
-      <Navbar />
-      <main className="min-h-screen pt-24 pb-16 bg-bg-primary">
-        <Container>
-          {/* Header */}
-          <div className="max-w-4xl mx-auto text-center mb-16">
-            <div className="flex justify-center mb-6">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-accent-blue/10 text-accent-blue">
-                <FaUsers className="h-10 w-10" />
-              </div>
-            </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-text-primary mb-4">
-              Tech Communities
-            </h1>
-            <p className="text-xl text-text-secondary mb-6 max-w-2xl mx-auto">
-              Meetups, organizing, mentorship, and community contributions
-              I&apos;ve been involved with.
-            </p>
-            <Button href="/" variant="outline" leftIcon={<FaArrowLeft />}>
-              Back to Home
-            </Button>
-          </div>
+    <Section>
+      <Container>
+        <div className="section-label">Communities</div>
+        <h1>Communities</h1>
+        <p className="section-intro">
+          Groups I organise with or contribute to, and what I do in each.
+        </p>
 
-          {/* Communities List (Search & Sort) */}
-          <CommunityList communities={communities || []} />
-        </Container>
-      </main>
-      <Footer about={about || undefined} />
-    </>
+        <div className="mt-10">
+          {communities.length === 0 ? (
+            <EmptyState
+              title="No communities are listed yet."
+              hint="They appear here once they are added in the admin."
+            />
+          ) : (
+            <ItemList>
+              {communities.map((community) => (
+                <Item
+                  key={community.id}
+                  title={community.name}
+                  href={community.communityUrl || undefined}
+                  description={community.description}
+                  meta={
+                    <>
+                      <span className="block">{community.role}</span>
+                      <span className="block">{community.period}</span>
+                      {community.current && (
+                        <span className="block text-brand">Current</span>
+                      )}
+                    </>
+                  }
+                />
+              ))}
+            </ItemList>
+          )}
+        </div>
+      </Container>
+    </Section>
   );
 }

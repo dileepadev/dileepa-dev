@@ -1,47 +1,22 @@
-import { Metadata } from "next";
-import { Navbar, Footer } from "@/components/sections";
-import { Container, Section, Button } from "@/components/ui";
-import { api } from "@/lib/api";
+import { Container, LinkButton, Section } from "@/components/ui";
 
-export const metadata: Metadata = {
-  title: "404 - Page Not Found",
-  description: "The page you are looking for does not exist.",
-};
-
-export default async function NotFound() {
-  const about = await api.getAbout();
+export default function NotFound() {
   return (
-    <>
-      <Navbar />
-      <main>
-        <Section className="min-h-[70vh] flex items-center justify-center text-center">
-          <Container size="md">
-            <div className="space-y-6">
-              <h1 className="text-8xl md:text-9xl font-bold text-accent-blue animate-pulse">
-                404
-              </h1>
-              <div className="space-y-2">
-                <h2 className="text-3xl md:text-4xl font-semibold text-text-primary">
-                  Page Not Found
-                </h2>
-                <p className="text-lg text-text-secondary">
-                  Oops! The page you are looking for does not exist or has been
-                  moved.
-                </p>
-              </div>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-                <Button href="/" variant="primary" size="lg">
-                  Back to Home
-                </Button>
-                <Button href="/#connect" variant="outline" size="lg">
-                  Contact Me
-                </Button>
-              </div>
-            </div>
-          </Container>
-        </Section>
-      </main>
-      <Footer about={about || undefined} />
-    </>
+    <Section>
+      <Container>
+        <div className="section-label">404</div>
+        <h1>That page is not here</h1>
+        <p className="mt-4 text-fg-muted">
+          The link may be out of date, or the page may have moved. The blog,
+          projects and events are all reachable from the navigation.
+        </p>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <LinkButton href="/">Go to the homepage</LinkButton>
+          <LinkButton href="/blog" variant="secondary">
+            Read the blog
+          </LinkButton>
+        </div>
+      </Container>
+    </Section>
   );
 }
