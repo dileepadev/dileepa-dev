@@ -1,4 +1,4 @@
-import { type ClassValue, clsx } from 'clsx';
+import { type ClassValue, clsx } from "clsx";
 
 // Utility function for merging class names
 export function cn(...inputs: ClassValue[]): string {
@@ -12,15 +12,15 @@ export function formatDate(date: string): string {
 
 // Check if we're on the client side
 export function isClient(): boolean {
-  return typeof window !== 'undefined';
+  return typeof window !== "undefined";
 }
 
 // Smooth scroll to element
 export function scrollToElement(id: string): void {
   if (!isClient()) return;
-  
+
   const element = document.getElementById(id);
   if (element) {
-    element.scrollIntoView({ behavior: 'smooth' });
+    element.scrollIntoView({ behavior: "smooth" });
   }
 }
