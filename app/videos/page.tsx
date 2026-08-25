@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Video as VideoIcon } from "lucide-react";
 import {
   Container,
   EmptyState,
@@ -48,7 +47,6 @@ export default async function VideosPage() {
                 key={video.id}
                 title={video.title}
                 href={video.link}
-                icon={<VideoIcon className="h-4 w-4 text-brand shrink-0" strokeWidth={1.75} aria-hidden="true" />}
                 meta={formatDate(video.date)}
               />
             ))}
