@@ -757,6 +757,209 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/blogs/{slug}/engagement": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Read view and reaction counts for a post
+     * @description Counts, plus whatever this caller already reacted with.
+     *
+     *     Read-only and safe to call on every page load, which is what the static
+     *     post page does to fill in the numbers it could not build in.
+     */
+    get: operations["get_engagement_blogs__slug__engagement_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/blogs/{slug}/views": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Record a view of a post
+     * @description Count a view once per reader per 24 hours.
+     *
+     *     The de-duplication is the unique index, not a check in this handler. A
+     *     read-then-write would let two concurrent requests both conclude they are the
+     *     first; here the second `create` raises `ConflictError` and the increment
+     *     simply does not happen.
+     *
+     *     A duplicate is not an error from the caller's side — they asked for the post
+     *     to be counted and it already is — so it returns the current numbers with the
+     *     same 200 as a first view. A client that reloads gets a truthful count rather
+     *     than an exception to handle.
+     */
+    post: operations["record_view_blogs__slug__views_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/blogs/{slug}/reactions": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Set, change, or clear this reader's reaction
+     * @description One reaction per reader per post.
+     *
+     *     Sending a different reaction moves the reader's vote; sending `null`, or the
+     *     one they already chose, clears it. The aggregate on the post is adjusted by
+     *     the delta between the old choice and the new one, so the counts stay
+     *     consistent without recounting the reactions collection on every write.
+     */
+    post: operations["set_reaction_blogs__slug__reactions_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/blogs/{slug}/comments": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Read the comments on a post
+     * @description Top-level comments, each with its replies. Oldest first.
+     */
+    get: operations["list_comments_blogs__slug__comments_get"];
+    put?: never;
+    /**
+     * Post a comment
+     * @description Accept a comment and show it immediately.
+     *
+     *     `request` and `response` are unused by the body but required by slowapi,
+     *     which reads the caller's address off one and writes the rate-limit headers
+     *     onto the other.
+     *
+     *     **A honeypot hit returns 201 and stores nothing.** Telling a bot that it
+     *     was detected is how it learns which field gave it away; a success it cannot
+     *     distinguish from the real thing is worth more than an honest 400. `accepted`
+     *     is `False` so a *human* client could tell, but the UI does not look at it —
+     *     there is no legitimate way for a person to trip this.
+     */
+    post: operations["post_comment_blogs__slug__comments_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/blogs/{slug}/comments/{comment_id}/reactions": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * React to a comment
+     * @description One reaction per reader per comment, changeable and clearable.
+     *
+     *     Same four reactions as a post and the same toggle rule, applied by the same
+     *     service — see `app/services/reactions.py`. Replies are comments, so this
+     *     works on them without a second route.
+     *
+     *     The slug is in the path and checked against the comment. It is not
+     *     redundant: it keeps a comment id from being reacted to through a post it
+     *     does not belong to, and it means an unpublished post's thread is unreachable
+     *     here for the same reason it is unreachable everywhere else.
+     */
+    post: operations["react_to_comment_blogs__slug__comments__comment_id__reactions_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/comments": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List comments
+     * @description Every comment, hidden ones included. **Authenticated only.**
+     *
+     *     Newest first here, unlike the public thread: this is a queue to work
+     *     through, and the thing most likely to need attention is the newest.
+     */
+    get: operations["list_all_comments_comments_get"];
+    put?: never;
+    /**
+     * Reply as the author
+     * @description The owner's own reply, marked as theirs.
+     *
+     *     This is the **only** path that sets `authorIsOwner`. A reader cannot claim
+     *     the badge because `CommentCreate` has no field for it and extra fields are
+     *     forbidden — the distinction is enforced by the shape of the request, not by
+     *     a check that could be forgotten.
+     *
+     *     Not rate limited: it requires a token, and the owner is not the threat model.
+     */
+    post: operations["create_comment_comments_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/comments/{comment_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * Delete a comment
+     * @description Permanent. Prefer hiding unless the content actually has to go.
+     */
+    delete: operations["delete_comment_comments__comment_id__delete"];
+    options?: never;
+    head?: never;
+    /**
+     * Edit or hide a comment
+     * @description Hiding sets `published: False`; the row stays.
+     *
+     *     Deletion is a separate, deliberate act. Hiding is reversible and keeps the
+     *     replies underneath it addressable — `thread()` promotes orphaned replies to
+     *     top level rather than losing them.
+     */
+    patch: operations["update_comment_comments__comment_id__patch"];
+    trace?: never;
+  };
   "/contact": {
     parameters: {
       query?: never;
@@ -1082,6 +1285,27 @@ export interface components {
       };
     };
     /**
+     * BlogEngagement
+     * @description The mutable half of a post: counts, plus what this reader did.
+     *
+     *     Separate from `BlogPost` because the post is built into a static page and
+     *     these numbers are not. The page ships without them and asks for them at
+     *     runtime, which is also why this is a small response rather than a whole
+     *     post.
+     */
+    BlogEngagement: {
+      /** Slug */
+      slug: string;
+      /**
+       * Views
+       * @default 0
+       */
+      views: number;
+      reactions?: components["schemas"]["ReactionCounts"];
+      /** Viewerreaction */
+      viewerReaction?: ("liked" | "insightful" | "useful" | "learned") | null;
+    };
+    /**
      * BlogLegacy
      * @description The v1 values, kept for one release so the URL rewrite is reversible.
      */
@@ -1172,6 +1396,12 @@ export interface components {
       contentHash: string;
       seo?: components["schemas"]["Seo-Output"];
       legacy?: components["schemas"]["BlogLegacy"] | null;
+      /**
+       * Views
+       * @default 0
+       */
+      views: number;
+      reactions?: components["schemas"]["ReactionCounts"];
     };
     /**
      * BlogSync
@@ -1293,6 +1523,128 @@ export interface components {
       folder?: string | null;
       /** Public Id */
       public_id?: string | null;
+    };
+    /**
+     * Comment
+     * @description What an admin sees: everything stored.
+     */
+    Comment: {
+      /** Id */
+      id: string;
+      /** Createdat */
+      createdAt?: string | null;
+      /** Updatedat */
+      updatedAt?: string | null;
+      /** Slug */
+      slug: string;
+      /** Author */
+      author: string;
+      /** Email */
+      email?: string | null;
+      /** Body */
+      body: string;
+      /** Parentid */
+      parentId?: string | null;
+      /**
+       * Authorisowner
+       * @default false
+       */
+      authorIsOwner: boolean;
+      reactions?: components["schemas"]["ReactionCounts"];
+      /**
+       * Published
+       * @default true
+       */
+      published: boolean;
+      /**
+       * Key
+       * @default
+       */
+      key: string;
+    };
+    /**
+     * CommentAdminCreate
+     * @description A comment written from the admin — the owner replying in their own thread.
+     *
+     *     Separate from `CommentCreate` because the two differ in every way that
+     *     matters: this one names its own post, sets no honeypot, is not rate limited,
+     *     and is marked as the author's. It is the only path that sets
+     *     `authorIsOwner`, which is why a reader cannot forge that badge — there is no
+     *     field for it on the public model.
+     */
+    CommentAdminCreate: {
+      /** Slug */
+      slug: string;
+      /** Author */
+      author: string;
+      /** Body */
+      body: string;
+      /** Parent Id */
+      parent_id?: string | null;
+      /**
+       * Published
+       * @default true
+       */
+      published: boolean;
+    };
+    /**
+     * CommentCreate
+     * @description What a reader submits.
+     *
+     *     `slug` is not here: it comes from the path, so a comment cannot be aimed at
+     *     a different post than the one it was posted on.
+     */
+    CommentCreate: {
+      /** Author */
+      author: string;
+      /** Email */
+      email?: string | null;
+      /** Body */
+      body: string;
+      /** Parent Id */
+      parent_id?: string | null;
+      /**
+       * Honeypot
+       * @default
+       */
+      honeypot: string;
+    };
+    /**
+     * CommentPosted
+     * @description The answer to a successful post.
+     *
+     *     Returns the comment so the client can render it without refetching the
+     *     whole thread — and `accepted: False` for a submission that was silently
+     *     dropped, which the UI still reports as success.
+     */
+    CommentPosted: {
+      /**
+       * Accepted
+       * @default true
+       */
+      accepted: boolean;
+      comment?: components["schemas"]["PublicComment"] | null;
+    };
+    /**
+     * CommentThread
+     * @description A top-level comment and its replies, oldest first within the thread.
+     */
+    CommentThread: {
+      comment: components["schemas"]["PublicComment"];
+      /** Replies */
+      replies?: components["schemas"]["PublicComment"][];
+    };
+    /**
+     * CommentUpdate
+     * @description Admin edits. A reader cannot reach this.
+     */
+    CommentUpdate: {
+      /** Author */
+      author?: string | null;
+      /** Body */
+      body?: string | null;
+      /** Published */
+      published?: boolean | null;
     };
     /** Community */
     Community: {
@@ -2061,6 +2413,20 @@ export interface components {
       /** Offset */
       offset: number;
     };
+    /** Page[Comment] */
+    Page_Comment_: {
+      /** Items */
+      items: components["schemas"]["Comment"][];
+      /**
+       * Total
+       * @description Matching documents, ignoring limit and offset
+       */
+      total: number;
+      /** Limit */
+      limit: number;
+      /** Offset */
+      offset: number;
+    };
     /** Page[Community] */
     Page_Community_: {
       /** Items */
@@ -2399,6 +2765,76 @@ export interface components {
       meta?: {
         [key: string]: unknown;
       } | null;
+    };
+    /**
+     * PublicComment
+     * @description What a reader sees. No email, no visitor key, by construction.
+     */
+    PublicComment: {
+      /** Id */
+      id: string;
+      /** Createdat */
+      createdAt?: string | null;
+      /** Updatedat */
+      updatedAt?: string | null;
+      /** Slug */
+      slug: string;
+      /** Author */
+      author: string;
+      /** Body */
+      body: string;
+      /** Parentid */
+      parentId?: string | null;
+      /**
+       * Authorisowner
+       * @default false
+       */
+      authorIsOwner: boolean;
+      reactions?: components["schemas"]["ReactionCounts"];
+      /** Viewerreaction */
+      viewerReaction?: ("liked" | "insightful" | "useful" | "learned") | null;
+    };
+    /**
+     * ReactionCounts
+     * @description How many readers chose each reaction.
+     *
+     *     Denormalised onto the post so rendering it is one read. `blog_reactions`
+     *     remains the record of *who* chose what, and is what makes a reader able to
+     *     change their mind without double-counting.
+     */
+    ReactionCounts: {
+      /**
+       * Liked
+       * @default 0
+       */
+      liked: number;
+      /**
+       * Insightful
+       * @default 0
+       */
+      insightful: number;
+      /**
+       * Useful
+       * @default 0
+       */
+      useful: number;
+      /**
+       * Learned
+       * @default 0
+       */
+      learned: number;
+    };
+    /**
+     * ReactionRequest
+     * @description Set, change, or clear this reader's reaction.
+     *
+     *     `None` clears it. One request shape for all three because they are one
+     *     operation from the reader's side — the button they press is a toggle, and
+     *     the API should not make the client work out which verb that is.
+     */
+    ReactionRequest: {
+      /** Reaction */
+      reaction?: ("liked" | "insightful" | "useful" | "learned") | null;
     };
     /** Recording */
     "Recording-Input": {
@@ -2754,6 +3190,11 @@ export interface components {
        * @default
        */
       thumbnail: string;
+      /**
+       * Description
+       * @default
+       */
+      description: string;
     };
     /** VideoCreate */
     VideoCreate: {
@@ -2765,6 +3206,11 @@ export interface components {
       link: string;
       /** Thumbnail */
       thumbnail: string;
+      /**
+       * Description
+       * @default
+       */
+      description: string;
       /**
        * Order
        * @default 0
@@ -2786,6 +3232,8 @@ export interface components {
       link?: string | null;
       /** Thumbnail */
       thumbnail?: string | null;
+      /** Description */
+      description?: string | null;
       /** Order */
       order?: number | null;
       /** Published */
@@ -4665,6 +5113,336 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["BlogPost"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  get_engagement_blogs__slug__engagement_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["BlogEngagement"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  record_view_blogs__slug__views_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["BlogEngagement"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  set_reaction_blogs__slug__reactions_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ReactionRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["BlogEngagement"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  list_comments_blogs__slug__comments_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CommentThread"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  post_comment_blogs__slug__comments_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CommentCreate"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CommentPosted"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  react_to_comment_blogs__slug__comments__comment_id__reactions_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+        comment_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ReactionRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PublicComment"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  list_all_comments_comments_get: {
+    parameters: {
+      query?: {
+        slug?: string | null;
+        published?: boolean | null;
+        limit?: number;
+        offset?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Page_Comment_"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  create_comment_comments_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CommentAdminCreate"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Comment"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  delete_comment_comments__comment_id__delete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        comment_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  update_comment_comments__comment_id__patch: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        comment_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CommentUpdate"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Comment"];
         };
       };
       /** @description Validation Error */
