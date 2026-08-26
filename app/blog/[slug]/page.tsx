@@ -29,6 +29,22 @@ interface Params {
   params: Promise<{ slug: string }>;
 }
 
+/**
+ * Only the slugs built here exist.
+ *
+ * Post bodies are read from a pinned content ref, so a post that was not in
+ * the set at build time cannot render at runtime either — there is no body to
+ * fetch for it. Leaving this open meant an unknown slug cost a live API call
+ * and a content lookup before 404ing, and Next served that 404 as a
+ * client-rendered shell: correct status, empty `<body>`. Closing it makes the
+ * router answer from the route table, which renders `not-found.tsx` on the
+ * server like any other page.
+ *
+ * The consequence to keep in mind: publishing a post needs a rebuild. That was
+ * already true of the pinned ref — see `content-pipeline.md` §8.
+ */
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
   const posts = await api.getAllBlogs();
   return (posts ?? []).map((post) => ({ slug: post.slug }));

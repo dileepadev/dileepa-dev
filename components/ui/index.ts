@@ -9,6 +9,7 @@ export { ThemeToggle } from "./ThemeToggle";
 export { EntryList, Entry } from "./EntryList";
 export { ItemList, Item, ViewAll } from "./ItemList";
 export { EmptyState } from "./EmptyState";
+export { NotFoundPage } from "./NotFoundPage";
 export { Gallery } from "./Gallery";
 export { SearchInput } from "./SearchInput";
 export { SortSelect, type SortOption } from "./SortSelect";
