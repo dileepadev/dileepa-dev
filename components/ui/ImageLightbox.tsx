@@ -110,7 +110,8 @@ export function ImageLightbox({
           <p className="font-mono text-small text-white/80">{alt}</p>
         ) : (
           <p className="font-mono text-label text-white/50">
-            Press <kbd className="rounded bg-white/10 px-1.5 py-0.5">Esc</kbd> or click anywhere to close
+            Press <kbd className="rounded bg-white/10 px-1.5 py-0.5">Esc</kbd>{" "}
+            or click anywhere to close
           </p>
         )}
       </div>

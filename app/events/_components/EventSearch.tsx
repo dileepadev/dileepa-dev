@@ -17,11 +17,7 @@ import type { EventRecord } from "@/lib/api-types";
 import { formatDate, humanise } from "@/lib/format";
 
 type EventSortKey =
-  | "default"
-  | "newest"
-  | "oldest"
-  | "title-asc"
-  | "title-desc";
+  "default" | "newest" | "oldest" | "title-asc" | "title-desc";
 
 const SORT_OPTIONS: SortOption<EventSortKey>[] = [
   { value: "default", label: "Default order" },
@@ -99,7 +95,8 @@ export function EventSearch({
     return merged;
   }, [filteredUpcoming, filteredCompleted, sortBy]);
 
-  const paginatedCustomEvents = customSortedEvents?.slice(0, visibleCount) ?? [];
+  const paginatedCustomEvents =
+    customSortedEvents?.slice(0, visibleCount) ?? [];
   const paginatedPastEvents = filteredCompleted.slice(0, visiblePastCount);
 
   return (
@@ -160,9 +157,7 @@ export function EventSearch({
                 onLoadMore={() =>
                   setVisibleCount((prev) => prev + EVENTS_PER_PAGE)
                 }
-                onShowAll={() =>
-                  setVisibleCount(customSortedEvents.length)
-                }
+                onShowAll={() => setVisibleCount(customSortedEvents.length)}
               />
             </>
           ) : (

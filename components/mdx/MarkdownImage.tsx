@@ -47,8 +47,7 @@ export function resolveImageUrl(src: string): string {
   return `${GITHUB_RAW_BASE}/${cleaned}`;
 }
 
-interface MarkdownImageProps
-  extends React.ImgHTMLAttributes<HTMLImageElement> {
+interface MarkdownImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src?: string;
   alt?: string;
 }
@@ -102,7 +101,9 @@ export function MarkdownImage({
           type="button"
           onClick={() => setIsLightboxOpen(true)}
           title="Click to view full screen"
-          aria-label={alt ? `View full screen image: ${alt}` : "View full screen image"}
+          aria-label={
+            alt ? `View full screen image: ${alt}` : "View full screen image"
+          }
           className="relative block w-full cursor-zoom-in border-none bg-transparent p-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}

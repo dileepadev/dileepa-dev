@@ -38,7 +38,10 @@ export function SearchInput({
       ) {
         e.preventDefault();
         inputRef.current?.focus();
-      } else if (e.key === "Escape" && document.activeElement === inputRef.current) {
+      } else if (
+        e.key === "Escape" &&
+        document.activeElement === inputRef.current
+      ) {
         if (value) {
           onChange("");
         } else {
@@ -81,7 +84,11 @@ export function SearchInput({
         </button>
       ) : (
         autoFocusHotkey && (
-          <kbd className="search-kbd" aria-hidden="true" title="Press / to focus">
+          <kbd
+            className="search-kbd"
+            aria-hidden="true"
+            title="Press / to focus"
+          >
             /
           </kbd>
         )

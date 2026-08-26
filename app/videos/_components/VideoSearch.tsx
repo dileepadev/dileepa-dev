@@ -145,12 +145,8 @@ export function VideoSearch({ videos }: { videos: Video[] }) {
             shown={paginatedVideos.length}
             total={filteredAndSorted.length}
             batchSize={VIDEOS_PER_PAGE}
-            onLoadMore={() =>
-              setVisibleCount((prev) => prev + VIDEOS_PER_PAGE)
-            }
-            onShowAll={() =>
-              setVisibleCount(filteredAndSorted.length)
-            }
+            onLoadMore={() => setVisibleCount((prev) => prev + VIDEOS_PER_PAGE)}
+            onShowAll={() => setVisibleCount(filteredAndSorted.length)}
           />
         </div>
       )}

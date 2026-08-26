@@ -59,7 +59,9 @@ function getNodeText(node: ReactNode): string {
   if (!node) return "";
   if (Array.isArray(node)) return node.map(getNodeText).join("");
   if (typeof node === "object" && "props" in node) {
-    return getNodeText((node as { props: { children?: ReactNode } }).props.children);
+    return getNodeText(
+      (node as { props: { children?: ReactNode } }).props.children,
+    );
   }
   return "";
 }
@@ -139,7 +141,11 @@ export function CodeBlock({ children, className, ...props }: PreProps) {
         >
           {copied ? (
             <>
-              <Check className="h-3 w-3 text-brand" strokeWidth={2.5} aria-hidden="true" />
+              <Check
+                className="h-3 w-3 text-brand"
+                strokeWidth={2.5}
+                aria-hidden="true"
+              />
               <span>Copied!</span>
             </>
           ) : (

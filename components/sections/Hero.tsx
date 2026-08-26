@@ -49,11 +49,19 @@ export function Hero({ about }: { about: About | null }) {
 
             <div className="hero-actions">
               <LinkButton href="/#contact">
-                <Mail className="h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
+                <Mail
+                  className="h-4 w-4 shrink-0"
+                  strokeWidth={1.75}
+                  aria-hidden="true"
+                />
                 <span>Get in touch</span>
               </LinkButton>
               <LinkButton href="/#work" variant="secondary">
-                <Briefcase className="h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
+                <Briefcase
+                  className="h-4 w-4 shrink-0"
+                  strokeWidth={1.75}
+                  aria-hidden="true"
+                />
                 <span>See the work</span>
               </LinkButton>
             </div>
@@ -80,7 +88,11 @@ export function Hero({ about }: { about: About | null }) {
                         <>
                           <span className="text-fg-muted">·</span>
                           <span className="inline-flex items-center gap-1">
-                            <MapPin className="h-3.5 w-3.5 text-fg-muted" strokeWidth={1.75} aria-hidden="true" />
+                            <MapPin
+                              className="h-3.5 w-3.5 text-fg-muted"
+                              strokeWidth={1.75}
+                              aria-hidden="true"
+                            />
                             <span>{about.location}</span>
                           </span>
                         </>

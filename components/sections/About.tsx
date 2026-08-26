@@ -5,9 +5,9 @@ import { PILLARS, SECTIONS } from "@/lib/constants";
 import { paragraphs as splitParagraphs } from "@/lib/format";
 
 const PILLAR_ICONS = [
-  Cpu,          // AI engineering
-  Server,       // Cloud and backend
-  Code2,        // Open source
+  Cpu, // AI engineering
+  Server, // Cloud and backend
+  Code2, // Open source
   Presentation, // Workshops and talks
 ];
 
@@ -44,10 +44,17 @@ export function About({ about }: { about: AboutData | null }) {
           {PILLARS.map((pillar, index) => {
             const Icon = PILLAR_ICONS[index % PILLAR_ICONS.length];
             return (
-              <Card key={pillar.title} className="card flex flex-col justify-between">
+              <Card
+                key={pillar.title}
+                className="card flex flex-col justify-between"
+              >
                 <div>
                   <div className="mb-4 inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border-strong bg-bg text-brand">
-                    <Icon className="h-4.5 w-4.5" strokeWidth={1.75} aria-hidden="true" />
+                    <Icon
+                      className="h-4.5 w-4.5"
+                      strokeWidth={1.75}
+                      aria-hidden="true"
+                    />
                   </div>
                   <h3>{pillar.title}</h3>
                   <p>{pillar.description}</p>

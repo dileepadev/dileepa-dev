@@ -19,12 +19,7 @@ import {
 export interface SocialIcon {
   label: string;
   key:
-    | "github"
-    | "linkedin"
-    | "xtwitter"
-    | "youtube"
-    | "instagram"
-    | "facebook";
+    "github" | "linkedin" | "xtwitter" | "youtube" | "instagram" | "facebook";
   icon: IconType;
 }
 

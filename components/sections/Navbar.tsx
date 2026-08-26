@@ -105,11 +105,7 @@ export function Navbar() {
                   }
                 >
                   {mobileOpen ? (
-                    <X
-                      className="h-4 w-4"
-                      strokeWidth={2}
-                      aria-hidden="true"
-                    />
+                    <X className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
                   ) : (
                     <Menu
                       className="h-4 w-4"
@@ -145,10 +141,7 @@ export function Navbar() {
                       >
                         <span>{link.label}</span>
                         {isCurrent && (
-                          <span
-                            className="nav-active-dot"
-                            aria-hidden="true"
-                          />
+                          <span className="nav-active-dot" aria-hidden="true" />
                         )}
                       </Link>
                     );
@@ -175,10 +168,7 @@ export function Navbar() {
                       >
                         <span>{link.label}</span>
                         {isCurrent && (
-                          <span
-                            className="nav-active-dot"
-                            aria-hidden="true"
-                          />
+                          <span className="nav-active-dot" aria-hidden="true" />
                         )}
                       </Link>
                     );

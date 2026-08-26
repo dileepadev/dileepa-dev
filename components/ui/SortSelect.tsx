@@ -141,10 +141,7 @@ export function SortSelect<T extends string>({
         />
         <span className="sort-dropdown-label">{selectedOption.label}</span>
         <ChevronDown
-          className={cn(
-            "sort-dropdown-chevron",
-            isOpen && "rotate-180",
-          )}
+          className={cn("sort-dropdown-chevron", isOpen && "rotate-180")}
           strokeWidth={1.75}
           aria-hidden="true"
         />

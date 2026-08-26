@@ -25,11 +25,7 @@ const SORT_OPTIONS: SortOption<CommunitySortKey>[] = [
 const COMMUNITIES_PER_PAGE = 10;
 
 /** Client-side search, sorting, and progressive pagination across communities. */
-export function CommunitySearch({
-  communities,
-}: {
-  communities: Community[];
-}) {
+export function CommunitySearch({ communities }: { communities: Community[] }) {
   const [query, setQuery] = useState("");
   const [sortBy, setSortBy] = useState<CommunitySortKey>("default");
   const [visibleCount, setVisibleCount] = useState(COMMUNITIES_PER_PAGE);
@@ -146,9 +142,7 @@ export function CommunitySearch({
             onLoadMore={() =>
               setVisibleCount((prev) => prev + COMMUNITIES_PER_PAGE)
             }
-            onShowAll={() =>
-              setVisibleCount(filteredAndSorted.length)
-            }
+            onShowAll={() => setVisibleCount(filteredAndSorted.length)}
           />
         </div>
       )}

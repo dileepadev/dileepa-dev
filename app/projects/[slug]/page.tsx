@@ -75,15 +75,18 @@ export default async function ProjectPage({ params }: Params) {
             {links.map(([kind, url]) => {
               const lower = kind.toLowerCase();
               const isGithub =
-                lower.includes("github") || lower.includes("repo") || lower.includes("source");
-              const Icon =
-                isGithub
-                  ? FaGithub
-                  : lower.includes("demo") || lower.includes("live") || lower.includes("site")
-                    ? Globe
-                    : lower.includes("doc") || lower.includes("paper")
-                      ? FileText
-                      : ExternalLink;
+                lower.includes("github") ||
+                lower.includes("repo") ||
+                lower.includes("source");
+              const Icon = isGithub
+                ? FaGithub
+                : lower.includes("demo") ||
+                    lower.includes("live") ||
+                    lower.includes("site")
+                  ? Globe
+                  : lower.includes("doc") || lower.includes("paper")
+                    ? FileText
+                    : ExternalLink;
 
               return (
                 <LinkButton

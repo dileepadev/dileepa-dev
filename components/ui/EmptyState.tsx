@@ -27,7 +27,13 @@ export function EmptyState({
       )}
     >
       <div className="mb-3 flex justify-center text-fg-muted/60">
-        {icon ?? <FolderSearch className="h-8 w-8" strokeWidth={1.5} aria-hidden="true" />}
+        {icon ?? (
+          <FolderSearch
+            className="h-8 w-8"
+            strokeWidth={1.5}
+            aria-hidden="true"
+          />
+        )}
       </div>
       <p className="max-w-none text-fg">{title}</p>
       {hint && (
@@ -37,4 +43,3 @@ export function EmptyState({
     </div>
   );
 }
-

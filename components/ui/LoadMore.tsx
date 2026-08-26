@@ -35,7 +35,9 @@ export function LoadMore({
   const percentage = Math.min(100, Math.round((shown / total) * 100));
 
   return (
-    <div className={`mt-10 flex flex-col items-center gap-3 ${className ?? ""}`}>
+    <div
+      className={`mt-10 flex flex-col items-center gap-3 ${className ?? ""}`}
+    >
       {/* Progress count & bar */}
       <div className="flex flex-col items-center gap-1.5 text-center">
         <p className="font-mono text-small text-fg-muted">
