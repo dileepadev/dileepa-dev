@@ -1,51 +1,49 @@
-import { Metadata } from "next";
-import { Container, Button } from "@/components/ui";
-import { Navbar, Footer } from "@/components/sections";
+import type { Metadata } from "next";
+import { Container, EmptyState, Section } from "@/components/ui";
 import { api } from "@/lib/api";
-import { FaArrowLeft, FaUsers } from "react-icons/fa";
-import { CommunityList } from "./_components/CommunityList";
+import { CommunitySearch } from "./_components/CommunitySearch";
 
 export const metadata: Metadata = {
-  title: "Communities | Dileepa Bandara",
-  description:
-    "All tech communities, meetups, and mentorship programs I've contributed to.",
+  title: "Communities",
+  description: "Tech communities I organise with or contribute to.",
+  alternates: { canonical: "/communities" },
 };
 
 export default async function CommunitiesPage() {
-  const [communities, about] = await Promise.all([
-    api.getCommunities(),
-    api.getAbout(),
-  ]);
+  const communities = await api.getCommunities();
+  const total = communities.length;
 
   return (
-    <>
-      <Navbar />
-      <main className="min-h-screen pt-24 pb-16 bg-bg-primary">
-        <Container>
-          {/* Header */}
-          <div className="max-w-4xl mx-auto text-center mb-16">
-            <div className="flex justify-center mb-6">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-accent-blue/10 text-accent-blue">
-                <FaUsers className="h-10 w-10" />
-              </div>
-            </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-text-primary mb-4">
-              Tech Communities
-            </h1>
-            <p className="text-xl text-text-secondary mb-6 max-w-2xl mx-auto">
-              Meetups, organizing, mentorship, and community contributions
-              I&apos;ve been involved with.
-            </p>
-            <Button href="/" variant="outline" leftIcon={<FaArrowLeft />}>
-              Back to Home
-            </Button>
+    <Section>
+      <Container>
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <div className="section-label">Communities</div>
+            <h1>Communities</h1>
           </div>
+          {total > 0 && (
+            <div className="font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1">
+              <span className="font-medium text-fg">{total}</span>{" "}
+              {total === 1 ? "group" : "groups"}
+            </div>
+          )}
+        </div>
 
-          {/* Communities List (Search & Sort) */}
-          <CommunityList communities={communities || []} />
-        </Container>
-      </main>
-      <Footer about={about || undefined} />
-    </>
+        <p className="section-intro">
+          Groups I organise with or contribute to, and what I do in each.
+        </p>
+
+        {communities.length === 0 ? (
+          <div className="mt-10">
+            <EmptyState
+              title="No communities are listed yet."
+              hint="They appear here once they are added in the admin."
+            />
+          </div>
+        ) : (
+          <CommunitySearch communities={communities} />
+        )}
+      </Container>
+    </Section>
   );
 }

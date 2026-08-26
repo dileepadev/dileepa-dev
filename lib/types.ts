@@ -70,12 +70,7 @@ export interface Community {
 export interface Skill {
   name: string;
   category:
-    | "language"
-    | "framework"
-    | "tool"
-    | "platform"
-    | "database"
-    | "other";
+    "language" | "framework" | "tool" | "platform" | "database" | "other";
   level?: "beginner" | "intermediate" | "advanced" | "expert";
   icon?: string;
 }
@@ -184,11 +179,7 @@ export interface SectionProps {
 
 // Button Variants
 export type ButtonVariant =
-  | "primary"
-  | "secondary"
-  | "outline"
-  | "ghost"
-  | "link";
+  "primary" | "secondary" | "outline" | "ghost" | "link";
 export type ButtonSize = "sm" | "md" | "lg";
 
 // Card Variants

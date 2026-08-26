@@ -30,8 +30,16 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files
+#   Only the *.example templates are committed, and they hold no real values.
+#   Configuration is split by environment the way the API splits it:
+#   .env.development is what `next dev` loads, .env.production is what
+#   `next build` and `next start` load, and there is no .env.local override —
+#   one file per environment, complete on its own.
 .env
+.env.*
+!.env.development.example
+!.env.production.example
 
 # vercel
 .vercel

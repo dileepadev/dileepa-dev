@@ -1,53 +1,53 @@
+import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 interface BadgeProps {
-  children: React.ReactNode;
-  variant?:
-    | "default"
-    | "primary"
-    | "secondary"
-    | "success"
-    | "warning"
-    | "error"
-    | "active"
-    | "inactive"
-    | "inperson"
-    | "online";
-  size?: "sm" | "base" | "md";
+  children: ReactNode;
+  /**
+   * `filled` is the one emerald variant and is reserved — one per surface.
+   * Everything else shares a single treatment, because with a single accent
+   * colour badges are told apart by their label, not by hue.
+   */
+  variant?: "default" | "filled";
   className?: string;
 }
-
-const variantClasses = {
-  default: "bg-badge-default text-badge-default",
-  primary: "bg-badge-primary text-badge-primary",
-  secondary: "bg-badge-secondary text-badge-secondary",
-  success: "bg-badge-success text-badge-success",
-  warning: "bg-badge-warning text-badge-warning",
-  error: "bg-badge-error text-badge-error",
-  active: "bg-badge-active text-badge-active",
-  inactive: "bg-badge-inactive text-badge-inactive",
-  inperson: "bg-badge-inperson text-badge-inperson",
-  online: "bg-badge-online text-badge-online",
-};
-
-const sizeClasses = {
-  sm: "px-2 py-0.5 text-sm",
-  base: "px-3 py-1 text-base",
-  md: "px-3 py-1 text-md",
-};
 
 export function Badge({
   children,
   variant = "default",
-  size = "md",
   className,
 }: BadgeProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center font-medium rounded-full",
-        variantClasses[variant],
-        sizeClasses[size],
+        "badge inline-block rounded-sm border px-3 py-1 text-label font-medium tracking-[0.01em]",
+        "transition-[background-color,border-color,color] duration-[160ms] ease-brand",
+        variant === "filled"
+          ? "badge-filled border-transparent bg-brand-fill text-on-brand"
+          : "border-border-strong bg-bg-surface text-fg-muted",
+        className,
+      )}
+    >
+      {children}
+    </span>
+  );
+}
+
+/** A stack chip: mono, hovering to a `--brand` border. */
+export function Chip({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <span
+      className={cn(
+        "chip inline-block rounded-sm border border-border-strong bg-bg-surface",
+        "px-3 py-1 font-mono text-label/[1] tracking-[0.01em] text-fg-muted",
+        "transition-[background-color,border-color,color] duration-[160ms] ease-brand",
+        "hover:border-brand hover:bg-surface-hover hover:text-fg cursor-pointer",
         className,
       )}
     >

@@ -1,0 +1,21 @@
+# The vendored canonical token sheet. AGENTS.md: it is a copy, and a copy can
+# drift — when the canonical file in `dileepadev/docs/brand/` changes, re-copy
+# it rather than patching it here. Formatting it would rewrite lines the source
+# does not have, and every later re-copy would then show a spurious diff.
+app/brand-tokens.css
+
+# Generated, not written. `openapi.json` is the API's published spec and
+# `lib/api-schema.ts` is produced from it by `npm run api:types`; formatting
+# either one means the next regeneration reverts the change.
+openapi.json
+lib/api-schema.ts
+
+# Build output and dependencies.
+.next/
+node_modules/
+
+# Prose is hand-wrapped, not machine-wrapped. Every Markdown file here is
+# wrapped to a deliberate measure and uses `*emphasis*` and indented fences;
+# Prettier rewrites all three. Formatting code is worth a tool, formatting
+# sentences is worth an argument with one.
+*.md

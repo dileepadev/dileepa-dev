@@ -56,9 +56,31 @@ Welcome to my personal website project, hosted at [dileepa.dev](https://dileepa.
 - **Community:**
   - **Communities:** Tech communities I am part of.
   - **Events:** Events I have attended or spoken at.
-  - **Videos:** Video content and tutorials.
+  - **Videos:** Walkthroughs and talks, each with a short description, linking out to YouTube.
   - **Blog:** Articles and thoughts on technology.
 - **Connect:** Social media links and contact information.
+
+### Blog posts
+
+Post pages are static — built from the API's metadata index and the Markdown in
+[`blog-dileepa-dev`](https://github.com/dileepadev/blog-dileepa-dev), read from Git at build time
+against a **pinned commit SHA** (`BLOG_CONTENT_REF`). Publishing therefore takes two steps: merge
+the post in the blog repo, then bump that ref here and rebuild.
+
+Three things on a post are not static, and are fetched in the browser instead:
+
+- **Reactions** — four of them (liked, insightful, useful, learned), one per reader, changeable by
+  pressing the same one again. Rendered as emoji rather than a custom icon set, deliberately: the
+  brand guide allows one accent hue and no second, and emoji carry colour as *content* without
+  entering the palette.
+- **Views** — counted once per reader per 24 hours. The de-duplication is the API's, not the
+  browser's; the client guard only avoids a request already known to be a no-op.
+- **Comments** — one level of replies, each comment and reply carrying the same four reactions.
+  Comments go live the moment they are posted.
+
+React, Comment and Share sit in one action bar under the article, with the counts summarised above
+it. If the API is unreachable the counts and the React button do not render — but **Share still
+does**, because it needs nothing from the API.
 
 ## Getting Started
 
@@ -129,12 +151,16 @@ To get a copy of this project up and running on your local machine, follow these
 
 6. You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-7. Copy the example environment file and update it with your configuration:
+7. Copy the environment template for the mode you are running and fill it in:
 
    ```bash
-   cp .env.example .env
-   # Then edit .env as needed
+   cp .env.development.example .env.development   # what `next dev` loads
+   cp .env.production.example .env.production     # what `next build`/`next start` load
    ```
+
+   Each file is complete on its own — there is no shared base file and no
+   `.env.local` override, so the value you read in a file is the value in
+   effect. Both are gitignored; only the `*.example` templates are committed.
 
 ## Deployment on Vercel
 

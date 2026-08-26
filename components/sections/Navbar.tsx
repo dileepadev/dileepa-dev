@@ -1,269 +1,222 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { ThemeToggle } from "@/components/ui";
+import { usePathname } from "next/navigation";
+import { Menu, X } from "lucide-react";
+import { Container, Lockup, ThemeToggle } from "@/components/ui";
 import { NAV_LINKS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-import { FiMenu, FiX } from "react-icons/fi";
 
+const MORE_LINKS = [
+  { label: "Blog", href: "/blog" },
+  { label: "Events", href: "/events" },
+  { label: "Videos", href: "/videos" },
+  { label: "Communities", href: "/communities" },
+];
+
+/**
+ * The floating navigation bar.
+ *
+ * Sits as a floating translucent pill with frosted glass backdrop blur.
+ * On desktop: renders the brand lockup, section navigation links, and theme toggle.
+ * On mobile: replaces cramped horizontal scrolling with an accessible, animated dropdown menu.
+ */
 export function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const router = useRouter();
+  const pathname = usePathname();
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const active = useScrollSpy(pathname === "/");
+  const navRef = useRef<HTMLDivElement>(null);
 
+  // Close mobile menu when pathname changes during render (React 19 pattern)
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname);
+    setMobileOpen(false);
+  }
+
+  // Close mobile menu on outside pointer click or Escape
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
+    if (!mobileOpen) return;
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    function handlePointerDown(e: MouseEvent | TouchEvent) {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+        setMobileOpen(false);
+      }
+    }
 
-  // Active section tracking (scroll-spy)
-  const [activeSection, setActiveSection] = useState<string | null>(null);
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        setMobileOpen(false);
+      }
+    }
 
-  useEffect(() => {
-    // gather section IDs for scroll‑spy
-    const sectionIds = NAV_LINKS.filter((l) => l.href.includes("#")).map(
-      (l) => l.href.split("#")[1],
-    );
-    if (sectionIds.length === 0) return;
-
-    // IntersectionObserver to handle most cases
-    const observer = new IntersectionObserver(
-      (entries) => {
-        // Find the section that is most prominent in the top part of the viewport
-        const intersecting = entries.filter((entry) => entry.isIntersecting);
-        if (intersecting.length > 0) {
-          // If multiple are intersecting, prefer the one whose top is closest to our reference point
-          const closest = intersecting.reduce((prev, curr) => {
-            const prevDist = Math.abs(prev.boundingClientRect.top - 100);
-            const currDist = Math.abs(curr.boundingClientRect.top - 100);
-            return prevDist < currDist ? prev : curr;
-          });
-          setActiveSection(closest.target.id);
-        }
-      },
-      {
-        root: null,
-        rootMargin: "-100px 0px -70% 0px", // Focus on the top-third of the viewport
-        threshold: 0,
-      },
-    );
-
-    // Observe existing elements
-    sectionIds.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
-
-    // Scroll-based fallback & initial check (handles cases where IntersectionObserver may miss)
-    let rafId: number | null = null;
-    const checkActiveOnScroll = () => {
-      if (rafId) cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(() => {
-        let closestId: string | null = null;
-        let closestDistance = Infinity;
-
-        sectionIds.forEach((id) => {
-          const el = document.getElementById(id);
-          if (!el) return;
-          const rect = el.getBoundingClientRect();
-
-          // reference point slightly below the top to account for the fixed header
-          // This should match or be slightly larger than the scroll-padding-top in globals.css (6rem = 96px)
-          const referencePoint = 120; // px from top
-
-          // Prefer sections that contain the reference point (distance = 0)
-          let distance: number;
-          if (rect.top <= referencePoint && rect.bottom >= referencePoint) {
-            distance = 0;
-          } else {
-            distance = Math.min(
-              Math.abs(rect.top - referencePoint),
-              Math.abs(rect.bottom - referencePoint),
-            );
-          }
-
-          if (distance < closestDistance) {
-            closestDistance = distance;
-            closestId = id;
-          }
-        });
-
-        if (closestId) {
-          setActiveSection((prev) => (prev === closestId ? prev : closestId));
-        }
-      });
-    };
-
-    // Run an initial check and attach listeners
-    checkActiveOnScroll();
-    window.addEventListener("scroll", checkActiveOnScroll, { passive: true });
-    window.addEventListener("resize", checkActiveOnScroll);
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("touchstart", handlePointerDown);
+    window.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      observer.disconnect();
-      window.removeEventListener("scroll", checkActiveOnScroll);
-      window.removeEventListener("resize", checkActiveOnScroll);
-      if (rafId) cancelAnimationFrame(rafId);
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("touchstart", handlePointerDown);
+      window.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
-
-  const handleNavClick = (href: string) => {
-    setIsMobileMenuOpen(false);
-    const isHash = href.startsWith("#") || href.startsWith("/#");
-    if (isHash) {
-      const id = href.split("#")[1];
-      setActiveSection(id); // Set active immediately for better UX
-      const el = document.getElementById(id);
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth", block: "start" });
-      } else {
-        // navigate to home page with fragment
-        router.push(href.startsWith("/#") ? href : "/" + href);
-      }
-    } else {
-      router.push(href);
-    }
-  };
+  }, [mobileOpen]);
 
   return (
-    <header
-      className={cn(
-        "fixed top-5 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 w-[95%] max-w-5xl rounded-2xl",
-        isScrolled
-          ? "bg-bg-elevated/80 backdrop-blur-xl border border-white/10 shadow-sm shadow-brand-primary/50"
-          : "bg-bg-elevated/80 backdrop-blur-xl border border-transparent",
-      )}
-    >
-      <div className="px-4 md:px-6">
-        <nav className="flex h-14 md:h-16 items-center justify-between">
-          {/* Logo - Minimal */}
-          <Link
-            href="/"
-            onClick={(e) => {
-              if (window.location.pathname === "/") {
-                e.preventDefault();
-                window.scrollTo({ top: 0, behavior: "smooth" });
-                setActiveSection(null);
-              }
-            }}
-            className="text-lg font-bold text-text-primary hover:text-accent-blue transition-colors tracking-tight"
-          >
-            /<span className="text-accent-blue">.</span>
-          </Link>
+    <header className="site-header">
+      <Container>
+        <div ref={navRef} className="nav-wrapper">
+          <div className="nav">
+            <Lockup href="/#top" />
 
-          {/* Desktop Navigation - Pill Design */}
-          <div className="hidden md:flex items-center gap-1 p-1 rounded-full border border-white/5 backdrop-blur-sm">
-            {NAV_LINKS.map((link) => {
-              const isHash =
-                link.href.startsWith("#") || link.href.startsWith("/#");
-              const id = isHash ? link.href.split("#")[1] : link.href;
-              const isActive = isHash && activeSection === id;
+            <div className="nav-right">
+              {/* Desktop links */}
+              <nav className="nav-links" aria-label="Sections">
+                {NAV_LINKS.map((link) => {
+                  const hash = hashOf(link.href);
+                  const isCurrent = pathname === "/" && hash === active;
 
-              const baseClass = `px-4 py-1.5 text-sm font-medium transition-all duration-300 rounded-full`;
-              const activeClass = isActive
-                ? "bg-accent-blue text-on-accent shadow-lg shadow-accent-blue/25"
-                : "text-text-primary hover:text-text-muted hover:bg-white/5";
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className={cn("nav-link", isCurrent && "is-active")}
+                      aria-current={isCurrent ? "true" : undefined}
+                    >
+                      {link.label}
+                    </Link>
+                  );
+                })}
+              </nav>
 
-              if (isHash) {
-                return (
-                  <a
-                    key={link.href}
-                    href={link.href}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleNavClick(link.href);
-                    }}
-                    aria-current={isActive ? "page" : undefined}
-                    className={`${baseClass} ${activeClass}`}
-                  >
-                    {link.label}
-                  </a>
-                );
-              }
+              <div className="nav-controls">
+                <ThemeToggle />
 
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`${baseClass} ${activeClass}`}
+                {/* Mobile menu toggle button */}
+                <button
+                  type="button"
+                  onClick={() => setMobileOpen((prev) => !prev)}
+                  className={cn("nav-mobile-toggle", mobileOpen && "is-open")}
+                  aria-expanded={mobileOpen}
+                  aria-label={
+                    mobileOpen
+                      ? "Close navigation menu"
+                      : "Open navigation menu"
+                  }
                 >
-                  {link.label}
-                </Link>
-              );
-            })}
-          </div>
-
-          {/* Right Side Actions */}
-          <div className="flex items-center gap-3">
-            <div className="scale-90">
-              <ThemeToggle />
+                  {mobileOpen ? (
+                    <X className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
+                  ) : (
+                    <Menu
+                      className="h-4 w-4"
+                      strokeWidth={2}
+                      aria-hidden="true"
+                    />
+                  )}
+                </button>
+              </div>
             </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden flex h-9 w-9 items-center justify-center rounded-full bg-bg-tertiary text-text-primary border border-white/10"
-              aria-label="Toggle menu"
-            >
-              {isMobileMenuOpen ? (
-                <FiX className="h-4 w-4" />
-              ) : (
-                <FiMenu className="h-4 w-4" />
-              )}
-            </button>
           </div>
-        </nav>
 
-        {/* Mobile Menu */}
-        <div
-          className={cn(
-            "md:hidden overflow-hidden transition-all duration-300",
-            isMobileMenuOpen ? "max-h-96 pb-4" : "max-h-0",
+          {/* Mobile dropdown menu */}
+          {mobileOpen && (
+            <div className="nav-mobile-menu">
+              <nav aria-label="Mobile navigation">
+                <div className="nav-mobile-section-label">Sections</div>
+                <div className="nav-mobile-links">
+                  {NAV_LINKS.map((link) => {
+                    const hash = hashOf(link.href);
+                    const isCurrent = pathname === "/" && hash === active;
+
+                    return (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        onClick={() => setMobileOpen(false)}
+                        className={cn(
+                          "nav-mobile-link",
+                          isCurrent && "is-active",
+                        )}
+                        aria-current={isCurrent ? "true" : undefined}
+                      >
+                        <span>{link.label}</span>
+                        {isCurrent && (
+                          <span className="nav-active-dot" aria-hidden="true" />
+                        )}
+                      </Link>
+                    );
+                  })}
+                </div>
+
+                <div className="nav-mobile-divider" />
+
+                <div className="nav-mobile-section-label">Explore</div>
+                <div className="nav-mobile-grid">
+                  {MORE_LINKS.map((link) => {
+                    const isCurrent = pathname.startsWith(link.href);
+
+                    return (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        onClick={() => setMobileOpen(false)}
+                        className={cn(
+                          "nav-mobile-sublink",
+                          isCurrent && "is-active",
+                        )}
+                        aria-current={isCurrent ? "page" : undefined}
+                      >
+                        <span>{link.label}</span>
+                        {isCurrent && (
+                          <span className="nav-active-dot" aria-hidden="true" />
+                        )}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </nav>
+            </div>
           )}
-        >
-          <div className="flex flex-col gap-1 pt-4 border-t border-border-light">
-            {NAV_LINKS.map((link) => {
-              const isHash =
-                link.href.startsWith("#") || link.href.startsWith("/#");
-              const id = isHash ? link.href.split("#")[1] : link.href;
-              const isActive = isHash && activeSection === id;
-
-              if (isHash) {
-                return (
-                  <a
-                    key={link.href}
-                    href={link.href}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleNavClick(link.href);
-                    }}
-                    aria-current={isActive ? "page" : undefined}
-                    className={`w-full text-left px-4 py-3 text-base font-medium transition-colors rounded-lg ${isActive ? "bg-accent-blue text-on-accent" : "text-text-primary hover:text-text-secondary hover:bg-bg-secondary"}`}
-                  >
-                    {link.label}
-                  </a>
-                );
-              }
-
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`w-full text-left px-4 py-3 text-base font-medium text-text-primary transition-colors hover:text-text-secondary hover:bg-bg-secondary rounded-lg`}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}{" "}
-          </div>
         </div>
-      </div>
+      </Container>
     </header>
   );
+}
+
+/** `/#work` → `work`. */
+function hashOf(href: string): string {
+  return href.slice(href.indexOf("#") + 1);
+}
+
+/**
+ * Marks the section currently in view.
+ *
+ * Uses a dynamic IntersectionObserver with rootMargin tuned for smooth section detection.
+ */
+function useScrollSpy(enabled: boolean): string | null {
+  const [active, setActive] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!enabled) return;
+
+    const sections = NAV_LINKS.map((link) =>
+      document.getElementById(hashOf(link.href)),
+    ).filter((el): el is HTMLElement => el !== null);
+
+    if (sections.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) setActive(entry.target.id);
+        }
+      },
+      { rootMargin: "-30% 0px -55% 0px", threshold: 0 },
+    );
+
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, [enabled]);
+
+  return enabled ? active : null;
 }

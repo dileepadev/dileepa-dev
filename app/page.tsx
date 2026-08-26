@@ -1,39 +1,49 @@
 import {
-  Navbar,
-  Hero,
   About,
-  Experience,
-  Education,
-  Community,
-  Connect,
-  Footer,
+  CommunitySection,
+  Contact,
+  EducationSection,
+  Hero,
+  Work,
 } from "@/components/sections";
-import { ThankYou } from "@/components/sections/ThankYou";
-import { getPortfolioData } from "@/lib/api";
+import { getHomepageData } from "@/lib/api";
 
-export const revalidate = 3600;
-
-export default async function Home() {
-  const data = await getPortfolioData();
+/**
+ * The homepage is the site.
+ *
+ * Everything lives here as a section, in the order the layout reference sets:
+ * hero, about, work, education, community, contact. The index pages under
+ * /projects, /events, /blog, /communities and /videos exist for the full lists;
+ * this page is the whole picture in one scroll.
+ */
+export default async function HomePage() {
+  const {
+    about,
+    experiences,
+    educations,
+    tools,
+    communities,
+    projects,
+    events,
+    posts,
+    videos,
+    gallery,
+  } = await getHomepageData();
 
   return (
-    <>
-      <Navbar />
-      <main>
-        <Hero about={data.about} />
-        <About about={data.about} tools={data.tools} />
-        <Experience experiences={data.experiences} />
-        <Education educations={data.educations} />
-        <Community
-          communities={data.communities}
-          events={data.events}
-          videos={data.videos}
-          blogs={data.blogs}
-        />
-        <Connect about={data.about} />
-        <ThankYou about={data.about} />
-      </main>
-      <Footer about={data.about} />
-    </>
+    <div id="top">
+      <Hero about={about} />
+      <About about={about} />
+      <Work experiences={experiences} tools={tools} projects={projects} />
+      <EducationSection educations={educations} />
+      <CommunitySection
+        communities={communities}
+        events={events}
+        gallery={gallery}
+        posts={posts}
+        videos={videos}
+      />
+      <Contact about={about} />
+    </div>
   );
 }

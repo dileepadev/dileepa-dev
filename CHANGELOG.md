@@ -11,7 +11,128 @@ Changes are organized into the following categories:
 
 ## [Unreleased]
 
-- Changes for the next release are available in development branches.
+### 2.0.0 — in progress on `feat/v2.0.0`
+
+The site absorbs the blog, gains projects and an event gallery, and is rebuilt against the
+platform design system. Content comes from FastAPI; post bodies come from Git.
+
+#### Added - v2.0.0
+
+- **Post interactions** — a React · Comment · Share action bar under every article, with the
+  counts summarised above it. Reactions (four kinds, one per reader, toggled by pressing the same
+  one again), a view count de-duplicated per reader per 24 hours by the API, and comments with one
+  level of replies that carry the same four reactions. Post pages are static, so all of it is
+  fetched in the browser; `PostInteractions` owns the thread because the bar's comment count and
+  the comment list are the same data.
+- Reactions render as **emoji** rather than a custom icon set. The brand guide allows one accent
+  hue and no second, and emoji carry colour as content — like a photograph — without entering the
+  palette. Colour appears only once a reader has reacted; until then the trigger is a neutral line
+  icon, which is what keeps a page of comments calm.
+- Video descriptions on `/videos` and on the homepage, and the search matches them.
+- **`/projects` and `/projects/[slug]`** — the projects the API gained in v2.0.0. Featured ones
+  appear under Work on the homepage.
+- **The blog reader.** `/blog`, `/blog/[slug]`, `/blog/tags/[tag]` and `/blog/rss.xml`, with a
+  table of contents, share links, series navigation and "Read next". Post metadata comes from
+  the API and post bodies are read from `blog-dileepa-dev` at build time, joined by slug — see
+  `content-pipeline.md`. Once a build ships, nothing at runtime can take the blog down.
+- **The event gallery** — `/gallery`, and a section on the homepage. A flat grid of
+  `events[].photos` across every event, newest first, each tile linking to the event it came
+  from. There is no `/photos` resource behind it and there should not be one: a photograph has no
+  life of its own away from the event it was taken at, and the caption needs the event's title
+  and date to mean anything.
+- Sitemap covering the blog, projects and events. JSON-LD `BlogPosting` on posts and
+  `schema.org/Event` on event pages.
+- The portrait-based favicon set, web manifest, and a 1200×630 Open Graph card, vendored from
+  `dileepadev/docs/brand/`.
+- `NEXT_PUBLIC_SITE_URL`, so canonical URLs, the sitemap and the RSS feed are composed from the
+  origin the app is actually served from.
+
+#### Changed - v2.0.0
+
+- **The layout reference is implemented, not approximated.** The 760px measure, the floating nav
+  pill, the section rhythm, the entry and item grids, the subsection rule and the footer are
+  reproduced in `app/globals.css` against the semantic tokens — because "the same layout" is a
+  thing that has to keep being true after the next edit. Two deliberate departures, both from
+  `design-system.md` §2: the reference's `<style>` block carries v1.0 tokens and a second accent
+  hue, and it uses font weights 600 and 800.
+- **The homepage is the site.** Everything is a section on it, in the reference's order: hero,
+  about, work, education, community, contact. The index pages exist for the full lists.
+- **The hero display heading is the tagline, not the name.** What someone does is the useful
+  thing to read first; the name belongs beside the portrait, where it identifies the face.
+- Section labels are words — "Work" — rather than `01 / work`. Numbering makes the page claim an
+  order it does not have and breaks the moment a section is added in the middle.
+- **`/sessions` is `/events` again.** The v2.0.0 branch briefly renamed the resource; `/events`
+  was already the published URL and the rename bought nothing. `/sessions` redirects, for links
+  shared from a preview deployment.
+- **Configuration is split by environment** — `.env.development` and `.env.production`, each
+  complete on its own, matching how `api-dileepa-dev` splits its. There is deliberately **no
+  `.env.local`**: it would override both and reintroduce the "which file won?" question the split
+  exists to answer.
+- Brand tokens are imported through Tailwind 4 `@theme`; Manrope and JetBrains Mono load through
+  `next/font` at weights 400, 500 and 700 only. No hard-coded hex in any component.
+- Post bodies are read recursively. Posts are grouped `posts/<year>/<month>/<slug>.md`,
+  and the Git trees API with `recursive=1` reads the whole tree in one request rather than one
+  per month. The response's `truncated` flag is checked rather than assumed — a silently short
+  list looks exactly like posts having been deleted.
+- Markdown images render as a plain `<img>` rather than through `next/image`. Posts embed images
+  by absolute URL from whatever host they are on, and `next/image` accepts only the hosts in
+  `next.config.ts`, which is Cloudinary and nothing else. Routing them through it would make a
+  post fail the build for citing a screenshot from someone else's documentation.
+
+#### Fixed - v2.0.0
+
+- **A collection response is checked before it is unwrapped.** v1 returned a bare array from its
+  collection endpoints, and reading `.items` off one yields `undefined` — with the crash landing
+  wherever the caller first maps over it, which is a stack trace pointing at a page component for
+  a problem two layers away. A wrong `NEXT_PUBLIC_API_URL` now produces an `ApiError` naming the
+  endpoint and the likely cause.
+
+- **The two same-site slug redirects are implemented.** Both posts were renamed after
+  publication and both old slugs were live long enough to be shared, so
+  `2026-08-06-zero-to-agent-microsoft-foundry-series-kickoff` and `2026-02-11-welcome` now
+  redirect to their current slugs. The first lived in the blog's deleted `astro.config.mjs` and
+  would have gone with it. Both were driven in a browser and return a single hop.
+- **`rel=canonical` is composed rather than trusted.** The canonical tag, the Open Graph url, the
+  `BlogPosting` JSON-LD, the RSS feed and the sitemap each read `post.canonicalUrl` and fell back
+  to a composed URL — five copies of the same expression. That field is stored, and a row written
+  before the v2.0.0 URL rewrite still names `blog.dileepa.dev`, a host that is retired rather than
+  redirected: a canonical pointing at it asks search engines to prefer a dead URL over the live
+  one. `lib/format.ts`'s `postUrl` honours a stored value only when it is already on this origin,
+  so the tag is correct whether or not the production rewrite has run.
+- **JSON-LD is escaped before it is embedded.** Both structured-data blocks went into the page
+  through `JSON.stringify` and `dangerouslySetInnerHTML`. `JSON.stringify` does not escape `<`, so
+  a `</script>` anywhere in a title, summary or speaker name would close the tag and let the rest
+  parse as HTML. Those fields are admin-written today, which is why this is hardening rather than
+  a fix, but the escape belongs in place before one of them is sourced from somewhere else.
+
+- **Every blog post 404'd in a production build while `/blog` listed all eighteen.** Post bodies
+  are read from `blog-dileepa-dev` at `BLOG_CONTENT_REF` under `posts/`, and that directory only
+  existed on the blog repo's `feat/v2.0.0` branch — on `main` the posts were still Astro content
+  at `src/content/posts/*.mdx`. The tree filter matched zero files, `getPostContent` returned
+  `null` for every slug, and each post page fell through to `notFound()`. Because post *metadata*
+  comes from the API rather than from Git, the index was unaffected, which is what made it look
+  like a rendering bug rather than a configuration one. The content move is now on the blog
+  repo's `main`.
+- **An empty post set now fails the build.** `lib/content.ts` treated zero files as an empty blog
+  and carried on, so the failure above shipped as eighteen prerendered 404 pages and a green
+  build. It raises an error naming the repository, the ref and the posts directory instead, and
+  logs the source and post count on a successful load.
+- **`/blog/[slug]` closes `dynamicParams`.** A body cannot be fetched for a slug that was not in
+  the set at build time, so an unknown slug cost a live API call and a content lookup before
+  404ing — and Next served that 404 as a client-rendered shell with an empty `<body>`. The router
+  now rejects the slug and `not-found.tsx` renders on the server.
+- **404 pages sit beside the routes that raise them.** `app/blog/[slug]`, `app/projects/[slug]`
+  and `app/events/[slug]` each have a `not-found.tsx` naming what is missing, sharing one
+  `NotFoundPage` component with the root one so four copies cannot drift.
+
+#### Removed - v2.0.0
+
+- **Blog banners.** Posts carry no image of their own; anything a post shows is an ordinary
+  Markdown image in the body. Photographs appear in exactly two places on this site — the hero
+  portrait and the event gallery — and keeping that budget small is what makes a page of
+  photographs read as a deliberate section rather than decoration.
+- **Video thumbnails.** `/videos` lists titles and dates and links out. A wall of YouTube
+  thumbnails is neither of the two permitted places, and those images are not on an allowed host.
 
 ## [v1.3.0] - 2026-03-03
 
@@ -85,7 +206,7 @@ Changes are organized into the following categories:
 - Add pageHeaderTheme
 
 ### Changed - v1.1.0
-  
+
 - Update dependencies
   - version [1.0.1 -> 1.1.0]
   - next [13.5.4 -> 14.1.4]
