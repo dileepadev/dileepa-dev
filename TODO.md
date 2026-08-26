@@ -23,7 +23,8 @@ wait on `api-dileepa-dev` reaching parity.
 ### Foundation ✅
 
 - [x] Next.js 16.1.6 → **16.3.x**, React → **19.2.x**, Tailwind CSS → **4.3.x**, `@types/node` → **^22**
-- [ ] `admin-dileepa-dev` lands on the **same** Next and React versions — check before releasing
+- [x] `admin-dileepa-dev` lands on the **same** Next and React versions — verified: both are on
+      Next 16.3.2, React 19.2.8 and Tailwind ^4.3.3, and both report version 2.0.0
 - [x] Vendor `brand-tokens.css` from `dileepadev/docs/brand/` into the repo, recording the source
 - [x] Import the tokens into Tailwind 4 `@theme` in `app/globals.css`
 - [x] Manrope + JetBrains Mono via `next/font`, weights 400/500/700 only
@@ -41,14 +42,19 @@ wait on `api-dileepa-dev` reaching parity.
       `app/globals.css` rather than approximated in utility classes, because "the same layout" has
       to keep being true after the next edit
 - [x] `dileepadev /.` lockup — italic emerald slash, dot spaced with `margin-left`
-- [x] Portrait-based favicon set (brand guide §3.2); portrait on `--bg-surface`
+- [x] Portrait-based favicon set (brand guide §3.2). The icons ship with a **transparent**
+      field rather than a filled one, so each surface draws its own background behind the
+      portrait — brand-guide.md §5 records `portrait-field` as applying to the platform
+      profile crops, not to this set
 - [x] Sentence case everywhere; all copy in the v2.0.0 voice
 - [x] **"passionate about" removed from `lib/constants.ts`** — it is on the banned list
 - [x] Section labels are words, not `01 /` numbers
 - [x] The hero display heading is the **tagline**, not the name
 - [ ] Audit: emerald appears once per surface, never scattered
 - [ ] Verify both themes against the guide's contrast pairings
-- [ ] Re-evaluate Framer Motion against the new tone; honour `prefers-reduced-motion`
+- [x] Re-evaluate Framer Motion against the new tone — it was imported nowhere, so the answer was
+      to drop the dependency rather than tune it. `prefers-reduced-motion` is honoured in
+      `globals.css` and `brand-tokens.css`, which is where the motion actually lives
 - [x] No hard-coded hex anywhere in `components/`
 
 ### Blog reader — net-new, not a port ✅
@@ -65,6 +71,29 @@ wait on `api-dileepa-dev` reaching parity.
 - [x] All 18 posts render with formatting and code highlighting intact
 - [x] **No banner.** Posts carry no image of their own; a Markdown image renders as a plain
       `<img>`, because `next/image` accepts only the hosts in `next.config.ts`
+
+### The content pipeline ✅
+
+- [x] **Every post 404'd in a production build while `/blog` listed all eighteen.** `BLOG_CONTENT_REF`
+      pointed at the blog repo's `main`, where the posts were still Astro content under
+      `src/content/posts/*.mdx`; nothing matched `posts/`, so `getPostContent` returned `null` for
+      every slug. The index was unaffected because its data comes from the API, which is what made
+      it read as a rendering bug. Fixed at the source: the content move is merged to the blog
+      repo's `main`
+- [x] **An empty post set fails the build** rather than prerendering eighteen 404 pages and
+      reporting success. The error names the repository, the ref and the posts directory
+- [x] `/blog/[slug]` sets `dynamicParams = false` — a body cannot be fetched for a slug that was
+      not in the build's set, and closing the route makes its 404 render on the server instead of
+      as an empty client shell
+- [x] A `not-found.tsx` beside `/blog/[slug]`, `/projects/[slug]` and `/events/[slug]`, sharing one
+      `NotFoundPage` component with the root one
+- [x] The blog repo's `API_BASE_URL` secret still named the retired v1 Vercel API, so the sync
+      workflow failed with `DEPLOYMENT_NOT_FOUND` on every post. Repointed at `api.dileepa.dev`;
+      18 synced, 0 failed
+- [ ] **`/projects/[slug]` and `/events/[slug]` still serve their 404 as a client-rendered shell** —
+      correct status, empty `<body>` until hydration. `dynamicParams` has to stay open there:
+      both are published from the admin and must resolve without a rebuild. Revisit if Next
+      changes how an on-demand `notFound()` is streamed
 
 ### Post interactions ✅
 
@@ -131,11 +160,9 @@ Two same-site rules survive, and neither is optional:
 - [x] **Welcome slug:** `dileepa.dev/blog/2026-02-11-welcome` → `2026-02-10-welcome`. The content
       move renamed that post and changed its `publishedDate`; the corrected date is kept. Same
       commit, same verification — one hop, correct target
-- [ ] The sitemap lists neither old slug — **data-dependent, not code-dependent.** The sitemap is
-      composed from whatever `/blogs` returns, so this is only true once the production migration
-      has run and the legacy-slug stub is unpublished there, as it already is in `development`.
-      What _is_ closed in code: `postUrl` means no sitemap entry can carry the retired
-      `blog.dileepa.dev` host regardless of what a row holds
+- [x] The sitemap lists neither old slug — verified against a production build reading the live
+      API: 102 entries, every one on `https://dileepa.dev`, 18 post URLs, and neither
+      `2026-02-11-welcome` nor the legacy Part 1 slug among them
 - [x] `remotePatterns` is Cloudinary and nothing else — `blog.dileepa.dev` is gone from it
 
 ### SEO
@@ -149,35 +176,50 @@ Two same-site rules survive, and neither is optional:
       copies of the same fallback
 - [x] Carry over titles, descriptions, published and updated dates, OG and Twitter cards
 - [x] JSON-LD: `BlogPosting` on posts, `schema.org/Event` on event pages
-- [ ] Submit the sitemap for `dileepa.dev` in Search Console
-- [ ] Remove the `blog.dileepa.dev` property. **Not a change of address** — that tool requires the
-      old URLs to 301, and they do not
+- [ ] Submit the sitemap for `dileepa.dev` in Search Console — **after the deployment**
+- [ ] Remove the `blog.dileepa.dev` property, and the DNS record with it. **Not a change of
+      address** — that tool requires the old URLs to 301, and they do not. The host currently
+      resolves to a registrar forward and has no certificate. **After the deployment**
 
 ### Testing
 
 - [x] `npm run lint`, `npm run typecheck` and `npm run build` all clean
-- [ ] Both themes, on every new surface — a component that passes contrast in one can fail in the other
-- [ ] 375px width
-- [ ] API-backed pages verified against a real API response, not a mock
-- [ ] **All 18 posts return a direct 200 at `dileepa.dev/blog/{slug}` — against production, not localhost**
-- [ ] The two same-site slug redirects each return a single hop to a live 200
-- [ ] No broken image in any migrated post
-- [ ] Social preview cards render on LinkedIn and X
+- [x] API-backed pages verified against a real API response, not a mock — the production build
+      reads `api.dileepa.dev`, and `https://dileepa.dev` is in the API's CORS allowlist
+- [x] **All 18 posts return a direct 200 with their body rendered** — verified against a local
+      production build (`next build && next start`), not the dev server. 77 internal links across
+      every section crawled, 0 non-200
+- [x] The two same-site slug redirects each return a single 308 hop to a live 200, and `/sessions`
+      does too
+- [x] No broken image in any migrated post — the three Cloudinary URLs all return 200, and no post
+      references a path this repository or the blog repository would have to serve
+- [x] Both the dev server and the production build load content correctly — `local:../blog-dileepa-dev/posts`
+      in development, the pinned SHA from GitHub in production, 18 posts either way
+- [ ] Repeat the 18-post check against `dileepa.dev` itself, once deployed
+- [ ] Both themes, on every new surface — a component that passes contrast in one can fail in the
+      other. Needs a browser
+- [ ] 375px width. Needs a browser
+- [ ] Keyboard navigation and visible focus rings on every interactive element. Needs a browser
 - [ ] Lighthouse ≥ 95 on all four categories — homepage, a blog post, an event detail page
-- [ ] Keyboard navigation and visible focus rings on every interactive element
-- [ ] Analytics reporting continuously through the rebuild
+- [ ] Social preview cards render on LinkedIn and X — **after the deployment**
+- [ ] Analytics reporting continuously through the rebuild — **after the deployment**
 
 ### Documentation and release
 
 - [x] Update `README.md` — routes, sections, stack, and what a post page does at runtime
 - [x] `CHANGELOG.md` entries under Added, Changed, Fixed, Removed
 - [x] Version → `2.0.0` in `package.json`
-- [ ] Merge `feat/v2.0.0`; tag `v2.0.0`
+- [x] Merge `feat/v2.0.0` into `dev`, then `dev` into `main`
+- [ ] Tag `v2.0.0` — held until the deployment, which is deliberately not part of this work
+- [ ] Deploy `main` and verify the post-deployment items above
 - [ ] Close [issue #15](https://github.com/dileepadev/dileepa-dev/issues/15)
 
-## Later
+## Standing rules
 
-- [ ] Keep the two same-site slug redirects indefinitely — the cost of a redirect rule is nothing;
-      removing one is what costs
-- [ ] Consider a comment count on the blog index, once the API carries one without fetching every
-      thread
+Not tasks, and not to be "cleaned up" later.
+
+- **Keep the two same-site slug redirects indefinitely.** A redirect rule costs nothing to keep;
+  removing one costs a live link.
+- **Keep the pinned content ref pinned.** `BLOG_CONTENT_REF` is a commit SHA on the blog repo's
+  `main`, bumped deliberately when publishing. An unpinned ref makes a build's output depend on
+  when it ran.

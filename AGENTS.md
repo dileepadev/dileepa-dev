@@ -37,7 +37,7 @@ The v2.0.0 routes do not exist yet. Know which is which.
 | `lib/api.ts` | **Built.** The FastAPI client, plus `getHomepageData()` and `getGallery()` |
 | `lib/api-schema.ts` | **Generated** from `openapi.json` by `npm run api:types`. Never edited by hand |
 | `lib/api-types.ts` | **Built.** Names the generated shapes; the only file that reaches into `api-schema.ts` |
-| `lib/content.ts` | **Built.** Post bodies, read from Git at build time against a pinned ref |
+| `lib/content.ts` | **Built.** Post bodies, read from Git at build time against a pinned ref. Fails the build on an empty post set |
 
 ## Toolchain
 
@@ -131,6 +131,20 @@ There is no test suite. Before calling a change done:
   their source, so no redirect layer exists and none is planned. Two **same-site** slug rules do
   survive and are easy to lose: the legacy Part 1 slug, and `2026-02-11-welcome` →
   `2026-02-10-welcome`. The map is `dileepadev/docs/architecture/redirects.md`.
+- **An empty post set fails the build, deliberately.** `lib/content.ts` filters a whole-repo tree
+  down to `BLOG_CONTENT_POSTS_DIR`, so a ref that does not carry that directory yields zero files
+  rather than an error — and because post *metadata* comes from the API, `/blog` goes on listing
+  every post while every `/blog/[slug]` falls through to `notFound()`. That is a build which
+  prerenders eighteen 404 pages and reports success, and it is what a ref pointing at the
+  pre-v2.0.0 blog tree did. `assertNotEmpty` turns it into a failure that names the ref and the
+  directory. **Do not soften it into a warning.**
+- **`/blog/[slug]` sets `dynamicParams = false`.** Post bodies come from a pinned ref, so a slug
+  that was not in the set at build time has no body to fetch and cannot render at runtime either.
+  Closing the route also fixes the 404 itself: an on-demand `notFound()` is served as a
+  client-rendered shell — correct status, empty `<body>` — whereas a slug the router rejects
+  renders `not-found.tsx` on the server like any other page. `/projects/[slug]` and
+  `/events/[slug]` keep `dynamicParams` open on purpose: those are published from the admin and
+  must resolve without a rebuild, and they still carry the empty-shell 404.
 - **A post page is static; three things on it are not.** Reactions, views and comments are fetched
   in the browser by `PostInteractions`, which owns the comment thread — the action bar's count and
   the comment list are the same data, and fetching it twice is waste nobody notices. Anything else

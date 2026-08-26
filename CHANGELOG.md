@@ -105,6 +105,26 @@ platform design system. Content comes from FastAPI; post bodies come from Git.
   parse as HTML. Those fields are admin-written today, which is why this is hardening rather than
   a fix, but the escape belongs in place before one of them is sourced from somewhere else.
 
+- **Every blog post 404'd in a production build while `/blog` listed all eighteen.** Post bodies
+  are read from `blog-dileepa-dev` at `BLOG_CONTENT_REF` under `posts/`, and that directory only
+  existed on the blog repo's `feat/v2.0.0` branch — on `main` the posts were still Astro content
+  at `src/content/posts/*.mdx`. The tree filter matched zero files, `getPostContent` returned
+  `null` for every slug, and each post page fell through to `notFound()`. Because post *metadata*
+  comes from the API rather than from Git, the index was unaffected, which is what made it look
+  like a rendering bug rather than a configuration one. The content move is now on the blog
+  repo's `main`.
+- **An empty post set now fails the build.** `lib/content.ts` treated zero files as an empty blog
+  and carried on, so the failure above shipped as eighteen prerendered 404 pages and a green
+  build. It raises an error naming the repository, the ref and the posts directory instead, and
+  logs the source and post count on a successful load.
+- **`/blog/[slug]` closes `dynamicParams`.** A body cannot be fetched for a slug that was not in
+  the set at build time, so an unknown slug cost a live API call and a content lookup before
+  404ing — and Next served that 404 as a client-rendered shell with an empty `<body>`. The router
+  now rejects the slug and `not-found.tsx` renders on the server.
+- **404 pages sit beside the routes that raise them.** `app/blog/[slug]`, `app/projects/[slug]`
+  and `app/events/[slug]` each have a `not-found.tsx` naming what is missing, sharing one
+  `NotFoundPage` component with the root one so four copies cannot drift.
+
 #### Removed - v2.0.0
 
 - **Blog banners.** Posts carry no image of their own; anything a post shows is an ordinary

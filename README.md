@@ -63,7 +63,10 @@ Welcome to my personal website project, hosted at [dileepa.dev](https://dileepa.
 ### Blog posts
 
 Post pages are static — built from the API's metadata index and the Markdown in
-[`blog-dileepa-dev`](https://github.com/dileepadev/blog-dileepa-dev), read from Git at build time.
+[`blog-dileepa-dev`](https://github.com/dileepadev/blog-dileepa-dev), read from Git at build time
+against a **pinned commit SHA** (`BLOG_CONTENT_REF`). Publishing therefore takes two steps: merge
+the post in the blog repo, then bump that ref here and rebuild.
+
 Three things on a post are not static, and are fetched in the browser instead:
 
 - **Reactions** — four of them (liked, insightful, useful, learned), one per reader, changeable by
