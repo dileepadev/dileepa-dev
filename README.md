@@ -56,9 +56,28 @@ Welcome to my personal website project, hosted at [dileepa.dev](https://dileepa.
 - **Community:**
   - **Communities:** Tech communities I am part of.
   - **Events:** Events I have attended or spoken at.
-  - **Videos:** Video content and tutorials.
+  - **Videos:** Walkthroughs and talks, each with a short description, linking out to YouTube.
   - **Blog:** Articles and thoughts on technology.
 - **Connect:** Social media links and contact information.
+
+### Blog posts
+
+Post pages are static — built from the API's metadata index and the Markdown in
+[`blog-dileepa-dev`](https://github.com/dileepadev/blog-dileepa-dev), read from Git at build time.
+Three things on a post are not static, and are fetched in the browser instead:
+
+- **Reactions** — four of them (liked, insightful, useful, learned), one per reader, changeable by
+  pressing the same one again. Rendered as emoji rather than a custom icon set, deliberately: the
+  brand guide allows one accent hue and no second, and emoji carry colour as *content* without
+  entering the palette.
+- **Views** — counted once per reader per 24 hours. The de-duplication is the API's, not the
+  browser's; the client guard only avoids a request already known to be a no-op.
+- **Comments** — one level of replies, each comment and reply carrying the same four reactions.
+  Comments go live the moment they are posted.
+
+React, Comment and Share sit in one action bar under the article, with the counts summarised above
+it. If the API is unreachable the counts and the React button do not render — but **Share still
+does**, because it needs nothing from the API.
 
 ## Getting Started
 

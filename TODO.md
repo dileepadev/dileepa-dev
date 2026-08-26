@@ -66,6 +66,29 @@ wait on `api-dileepa-dev` reaching parity.
 - [x] **No banner.** Posts carry no image of their own; a Markdown image renders as a plain
       `<img>`, because `next/image` accepts only the hosts in `next.config.ts`
 
+### Post interactions ✅
+
+Post pages are static; these three are the only parts that change after a build, so they are
+fetched in the browser. `PostInteractions` owns the thread, because the action bar's comment count
+and the comment list are the same data and fetching it twice would be waste nobody notices.
+
+- [x] **Action bar** — React · Comment · Share in one row, counts summarised above it
+- [x] **Reactions** — four kinds, one per reader, toggled by pressing the same one again
+- [x] **Views**, shown subtly. De-duplication is the API's; the client guard only avoids a request
+      already known to be a no-op
+- [x] **Comments** — one level of replies, matching LinkedIn's depth. A reply to a reply is
+      re-parented rather than rejected
+- [x] **Reactions on comments and replies**, the same four, sharing one picker component
+- [x] **Emoji rather than a custom icon set.** The brand guide allows one accent hue and no
+      second; emoji carry colour as *content*, like a photograph, without entering the palette
+- [x] Colour only appears once a reader has reacted — the trigger is a neutral line icon until
+      then, which is what keeps a page of comments calm
+- [x] Verified in a browser, both themes: the compact picker opens **downward** so it does not
+      cover the comment being reacted to, and 🎓 was replaced with 📚 because most platforms draw
+      the graduation cap near-black and it vanished on the dark theme
+- [x] Share never withholds itself — it needs nothing from the API, so an outage does not stop a
+      reader passing the article on
+
 ### Projects, events and the gallery ✅
 
 - [x] `/projects` and `/projects/[slug]`; featured block under Work on the homepage
@@ -91,23 +114,22 @@ wait on `api-dileepa-dev` reaching parity.
       array, and trusting the shape turns a wrong `NEXT_PUBLIC_API_URL` into
       `map is not a function` inside a page component
 
-### Redirects — the highest-consequence work in v2.0.0
+### Redirects — same-site only
 
-> [!WARNING]
-> `blog.dileepa.dev` is on GitHub Pages, which cannot issue 301s. Its DNS moves to Vercel
-> **before** anything is switched off. The map is
-> `dileepadev/docs/architecture/redirects.md` — it is the source of truth, not this list.
+> [!NOTE]
+> **`blog.dileepa.dev` is retired, not redirected.** The links that pointed at it were updated at
+> their source, so there is no redirect layer to build and nothing gating the decommission. What
+> that costs — indexed and third-party links to the old host now 404 — is recorded in
+> `dileepadev/docs/architecture/redirects.md` §1, which remains the source of truth, not this list.
 
-- [ ] Repoint `blog.dileepa.dev` DNS to Vercel
-- [ ] `next.config.ts` redirects with `has: [{ type: "host", value: "blog.dileepa.dev" }]`
-- [ ] 18 post URLs → `dileepa.dev/blog/{slug}` (301)
-- [ ] `blog.dileepa.dev/` and `/blog` → `dileepa.dev/blog`
-- [ ] `blog.dileepa.dev/about` → `dileepa.dev/#about`
-- [ ] `blog.dileepa.dev/images/**` → Cloudinary
-- [ ] `blog.dileepa.dev/sitemap-index.xml` → `dileepa.dev/sitemap.xml`
-- [ ] **Legacy slug, single hop, on both hosts:**
-      `2026-08-06-zero-to-agent-microsoft-foundry-series-kickoff` →
-      `2026-08-06-part-1-kicking-off-the-series`
+Two same-site rules survive, and neither is optional:
+
+- [ ] **Legacy slug:** `dileepa.dev/blog/2026-08-06-zero-to-agent-microsoft-foundry-series-kickoff`
+      → `2026-08-06-part-1-kicking-off-the-series`. It lived in the blog's deleted
+      `astro.config.mjs` and is easy to lose with it
+- [ ] **Welcome slug:** `dileepa.dev/blog/2026-02-11-welcome` → `2026-02-10-welcome`. The content
+      move renamed that post and changed its `publishedDate`; the corrected date is kept
+- [ ] The sitemap lists neither old slug
 - [x] `remotePatterns` is Cloudinary and nothing else — `blog.dileepa.dev` is gone from it
 
 ### SEO
@@ -115,8 +137,9 @@ wait on `api-dileepa-dev` reaching parity.
 - [ ] `rel=canonical` on every post pointing at the `dileepa.dev` URL
 - [x] Carry over titles, descriptions, published and updated dates, OG and Twitter cards
 - [x] JSON-LD: `BlogPosting` on posts, `schema.org/Event` on event pages
-- [ ] Google Search Console change of address from the blog property
-- [ ] Resubmit the sitemap; keep the old sitemap URL redirecting
+- [ ] Submit the sitemap for `dileepa.dev` in Search Console
+- [ ] Remove the `blog.dileepa.dev` property. **Not a change of address** — that tool requires the
+      old URLs to 301, and they do not
 
 ### Testing
 
@@ -124,7 +147,8 @@ wait on `api-dileepa-dev` reaching parity.
 - [ ] Both themes, on every new surface — a component that passes contrast in one can fail in the other
 - [ ] 375px width
 - [ ] API-backed pages verified against a real API response, not a mock
-- [ ] **All 19 old blog URLs return a single-hop 301 to a live 200 — against production, not localhost**
+- [ ] **All 18 posts return a direct 200 at `dileepa.dev/blog/{slug}` — against production, not localhost**
+- [ ] The two same-site slug redirects each return a single hop to a live 200
 - [ ] No broken image in any migrated post
 - [ ] Social preview cards render on LinkedIn and X
 - [ ] Lighthouse ≥ 95 on all four categories — homepage, a blog post, an event detail page
@@ -133,7 +157,7 @@ wait on `api-dileepa-dev` reaching parity.
 
 ### Documentation and release
 
-- [ ] Update `README.md` — routes, sections, stack
+- [x] Update `README.md` — routes, sections, stack, and what a post page does at runtime
 - [x] `CHANGELOG.md` entries under Added, Changed, Fixed, Removed
 - [x] Version → `2.0.0` in `package.json`
 - [ ] Merge `feat/v2.0.0`; tag `v2.0.0`
@@ -141,4 +165,7 @@ wait on `api-dileepa-dev` reaching parity.
 
 ## Later
 
-- [ ] Keep the `blog.dileepa.dev` redirect layer live and monitored for **at least 12 months**
+- [ ] Keep the two same-site slug redirects indefinitely — the cost of a redirect rule is nothing;
+      removing one is what costs
+- [ ] Consider a comment count on the blog index, once the API carries one without fetching every
+      thread

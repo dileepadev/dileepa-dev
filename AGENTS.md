@@ -127,13 +127,23 @@ There is no test suite. Before calling a change done:
 
 ## Gotchas
 
-- **`/blog` is not a blog.** It is a list of links pointing at `blog.dileepa.dev`. Building the
-  real reader — MDX pipeline, `[slug]` route, Shiki highlighting, table of contents, share,
-  "Read next" — is net-new work, not a port.
-- **The blog redirects are the highest-consequence part of v2.0.0.** 18 published post URLs plus
-  one legacy slug must return single-hop 301s. `blog.dileepa.dev` is on GitHub Pages, which
-  cannot issue 301s, so its DNS has to move before anything is switched off. The map lives in
-  `dileepadev/docs/architecture/redirects.md`. Verify against production, never localhost.
+- **`blog.dileepa.dev` is retired, not redirected.** The links pointing at it were updated at
+  their source, so no redirect layer exists and none is planned. Two **same-site** slug rules do
+  survive and are easy to lose: the legacy Part 1 slug, and `2026-02-11-welcome` →
+  `2026-02-10-welcome`. The map is `dileepadev/docs/architecture/redirects.md`.
+- **A post page is static; three things on it are not.** Reactions, views and comments are fetched
+  in the browser by `PostInteractions`, which owns the comment thread — the action bar's count and
+  the comment list are the same data, and fetching it twice is waste nobody notices. Anything else
+  added to a post should be built, not fetched.
+- **Engagement fails silently; comments do not.** A reader who loses a view counter has lost
+  nothing, so the bar renders without it. A reader who typed a paragraph and pressed a button is
+  owed an answer, so a failed comment says so and keeps the text. Share is never withheld — it
+  needs nothing from the API.
+- **Reaction glyphs are emoji, and that is a brand decision.** §1 of the brand guide allows one
+  accent hue and no second. Emoji carry colour as *content*, like a photograph, without entering
+  the palette; a custom colour icon set would mean inventing four brand hues and hard-coding hex.
+  If you change one, check it on the **dark** theme — that is how 🎓 was caught rendering
+  near-black and replaced with 📚.
 - **`remotePatterns` is Cloudinary and nothing else.** Every image the platform serves goes
   through `POST /uploads`, so a second host would mean an image had bypassed the one path holding
   the credentials. The consequence is that anything *not* from Cloudinary — a Markdown image in a

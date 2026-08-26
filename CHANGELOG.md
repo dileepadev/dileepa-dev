@@ -18,6 +18,17 @@ platform design system. Content comes from FastAPI; post bodies come from Git.
 
 #### Added - v2.0.0
 
+- **Post interactions** — a React · Comment · Share action bar under every article, with the
+  counts summarised above it. Reactions (four kinds, one per reader, toggled by pressing the same
+  one again), a view count de-duplicated per reader per 24 hours by the API, and comments with one
+  level of replies that carry the same four reactions. Post pages are static, so all of it is
+  fetched in the browser; `PostInteractions` owns the thread because the bar's comment count and
+  the comment list are the same data.
+- Reactions render as **emoji** rather than a custom icon set. The brand guide allows one accent
+  hue and no second, and emoji carry colour as content — like a photograph — without entering the
+  palette. Colour appears only once a reader has reacted; until then the trigger is a neutral line
+  icon, which is what keeps a page of comments calm.
+- Video descriptions on `/videos` and on the homepage, and the search matches them.
 - **`/projects` and `/projects/[slug]`** — the projects the API gained in v2.0.0. Featured ones
   appear under Work on the homepage.
 - **The blog reader.** `/blog`, `/blog/[slug]`, `/blog/tags/[tag]` and `/blog/rss.xml`, with a
