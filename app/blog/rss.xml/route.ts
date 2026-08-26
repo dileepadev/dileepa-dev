@@ -1,5 +1,6 @@
 import { api } from "@/lib/api";
 import { SITE_CONFIG } from "@/lib/constants";
+import { postUrl } from "@/lib/format";
 
 /** XML has five characters that must be escaped, and post titles contain them. */
 function escapeXml(value: string): string {
@@ -19,7 +20,7 @@ export async function GET() {
 
   const items = posts
     .map((post) => {
-      const url = post.canonicalUrl || `${SITE_CONFIG.url}/blog/${post.slug}`;
+      const url = postUrl(post);
       return `    <item>
       <title>${escapeXml(post.title)}</title>
       <link>${escapeXml(url)}</link>

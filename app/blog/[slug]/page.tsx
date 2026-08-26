@@ -16,8 +16,14 @@ import { api } from "@/lib/api";
 import type { BlogPost } from "@/lib/api-types";
 import { getPostContent } from "@/lib/content";
 import { SITE_CONFIG } from "@/lib/constants";
+import { jsonLd } from "@/lib/utils";
 import { extractHeadings, mdxOptions } from "@/lib/mdx";
-import { formatDate, readingTime, toDateAttribute } from "@/lib/format";
+import {
+  formatDate,
+  postUrl,
+  readingTime,
+  toDateAttribute,
+} from "@/lib/format";
 
 interface Params {
   params: Promise<{ slug: string }>;
@@ -42,16 +48,17 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   return {
     title,
     description,
-    // Every post points at its dileepa.dev URL, including any still reachable
-    // through the old host during the redirect window.
+    // Every post points at its own dileepa.dev URL. `postUrl` refuses a
+    // stored canonical on the retired host, which is why this is not just
+    // `post.canonicalUrl`.
     alternates: {
-      canonical: post.canonicalUrl || `${SITE_CONFIG.url}/blog/${post.slug}`,
+      canonical: postUrl(post),
     },
     openGraph: {
       type: "article",
       title,
       description,
-      url: post.canonicalUrl || `${SITE_CONFIG.url}/blog/${post.slug}`,
+      url: postUrl(post),
       publishedTime: post.publishedDate ?? undefined,
       modifiedTime: post.updatedDate ?? undefined,
       tags: post.tags ?? [],
@@ -101,7 +108,7 @@ export default async function BlogPostPage({ params }: Params) {
   ]);
   if (!post || !content) notFound();
 
-  const url = post.canonicalUrl || `${SITE_CONFIG.url}/blog/${post.slug}`;
+  const url = postUrl(post);
   const headings = extractHeadings(content.body);
 
   const allPosts = (await api.getAllBlogs()) ?? [];
@@ -116,7 +123,7 @@ export default async function BlogPostPage({ params }: Params) {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(articleJsonLd(post, url)),
+            __html: jsonLd(articleJsonLd(post, url)),
           }}
         />
 

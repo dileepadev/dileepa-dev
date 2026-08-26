@@ -12,6 +12,7 @@
  */
 
 import type { About } from "./api-types";
+import { SITE_CONFIG } from "./constants";
 
 const LOCALE = "en-GB";
 const TIME_ZONE = "UTC";
@@ -32,6 +33,39 @@ export function formatDate(value: string | null | undefined): string {
     year: "numeric",
     timeZone: TIME_ZONE,
   }).format(date);
+}
+
+/**
+ * The canonical URL for a post — always on this site.
+ *
+ * `canonicalUrl` is a stored field rather than a computed one: the API returns
+ * whatever the row holds, and rows written before the v2.0.0 URL rewrite still
+ * carry `blog.dileepa.dev`. That host is retired rather than redirected
+ * (`dileepadev/docs/architecture/redirects.md` §1), so a URL pointing at it is
+ * a dead link — and putting one in `rel=canonical`, the sitemap or the feed
+ * asks search engines to prefer the dead host over this one.
+ *
+ * So a stored value is honoured only when it is already on this site's origin.
+ * Anything else is composed from the slug, which is what §6 requires: every
+ * post's canonical names its own `dileepa.dev` URL. This holds whether or not
+ * the production rewrite has run, which is the point — the correctness of the
+ * tag should not depend on the state of a migration.
+ */
+export function postUrl(post: {
+  slug: string;
+  canonicalUrl?: string | null;
+}): string {
+  const own = `${SITE_CONFIG.url.replace(/\/$/, "")}/blog/${post.slug}`;
+  const stored = post.canonicalUrl?.trim();
+  if (!stored) return own;
+  try {
+    if (new URL(stored).origin === new URL(SITE_CONFIG.url).origin)
+      return stored;
+  } catch {
+    // A stored value that is not a parseable absolute URL is not usable as a
+    // canonical either. Fall through to the composed one.
+  }
+  return own;
 }
 
 /** "Aug 2026" — for a metadata column where the day is noise. */

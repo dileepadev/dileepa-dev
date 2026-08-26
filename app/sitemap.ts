@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { api } from "@/lib/api";
 import { SITE_CONFIG } from "@/lib/constants";
+import { postUrl } from "@/lib/format";
 
 /**
  * The sitemap covers the blog, projects and events as well as the static
@@ -52,7 +53,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     ...staticRoutes,
     ...posts.map((post) => ({
-      url: post.canonicalUrl || `${SITE_CONFIG.url}/blog/${post.slug}`,
+      url: postUrl(post),
       lastModified: post.updatedDate ?? post.publishedDate ?? undefined,
       changeFrequency: "yearly" as const,
       priority: 0.7,
