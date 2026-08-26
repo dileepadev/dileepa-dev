@@ -128,7 +128,15 @@ async function walk(dir: string): Promise<string[]> {
 
 async function listLocal(): Promise<PostContent[]> {
   const dir = path.resolve(LOCAL_PATH!, POSTS_DIR);
-  const files = await walk(dir);
+  const files = await walk(dir).catch((error: NodeJS.ErrnoException) => {
+    // A wrong BLOG_CONTENT_LOCAL_PATH is the likeliest local misconfiguration,
+    // and a bare ENOENT does not say which variable produced the path.
+    if (error.code !== "ENOENT") throw error;
+    throw new Error(
+      `${dir} does not exist. BLOG_CONTENT_LOCAL_PATH is ${LOCAL_PATH} and ` +
+        `BLOG_CONTENT_POSTS_DIR is ${POSTS_DIR}; unset the former to read from GitHub.`,
+    );
+  });
   return Promise.all(
     files.map(async (file) => parse(file, await fs.readFile(file, "utf8"))),
   );
@@ -173,12 +181,49 @@ async function listRemote(): Promise<PostContent[]> {
   );
 }
 
+/** Where the content came from, for the build log. */
+export const contentSource = LOCAL_PATH
+  ? `local:${LOCAL_PATH}/${POSTS_DIR}`
+  : `${REPO}@${REF}/${POSTS_DIR}`;
+
 // Cached for the process. The ref is pinned, so the content cannot change
 // underneath a running build.
 let cache: Promise<Map<string, PostContent>> | null = null;
 
+/**
+ * An empty post set is a configuration fault, not an empty blog.
+ *
+ * `listRemote` filters a whole-repo tree down to `POSTS_DIR`, so a ref that
+ * does not carry that directory yields zero files rather than an error. The
+ * index is built from the API and goes on listing every post, so the only
+ * symptom is that every `/blog/[slug]` falls through to `notFound()` — a build
+ * that prerenders eighteen 404 pages and reports success.
+ *
+ * That is exactly what a ref pointing at the pre-v2.0.0 blog repo did, where
+ * the posts were still under `src/content/posts/`. Fail here instead, naming
+ * the values that can be wrong.
+ */
+function assertNotEmpty(posts: PostContent[]): PostContent[] {
+  if (posts.length > 0) return posts;
+  throw new Error(
+    `No posts found in ${contentSource}. Post metadata comes from the API, so ` +
+      `the blog index would still list every post while every post page 404s. ` +
+      `Check that BLOG_CONTENT_REF (${REF}) carries BLOG_CONTENT_POSTS_DIR ` +
+      `(${POSTS_DIR})` +
+      (LOCAL_PATH
+        ? `, and that BLOG_CONTENT_LOCAL_PATH (${LOCAL_PATH}) is a blog checkout.`
+        : `.`),
+  );
+}
+
 async function load(): Promise<Map<string, PostContent>> {
-  const posts = LOCAL_PATH ? await listLocal() : await listRemote();
+  const posts = assertNotEmpty(
+    LOCAL_PATH ? await listLocal() : await listRemote(),
+  );
+  // Where the words came from, written into the build log. The failure this
+  // guards against is reading the right repository at the wrong ref, and that
+  // is invisible unless the ref is recorded.
+  console.log(`[content] ${posts.length} posts from ${contentSource}`);
   return new Map(posts.map((post) => [post.slug, post]));
 }
 
@@ -197,8 +242,3 @@ export async function getPostContent(
   const posts = await getAllContent();
   return posts.get(slug) ?? null;
 }
-
-/** Where the content came from, for the build log. */
-export const contentSource = LOCAL_PATH
-  ? `local:${LOCAL_PATH}/${POSTS_DIR}`
-  : `${REPO}@${REF}/${POSTS_DIR}`;
