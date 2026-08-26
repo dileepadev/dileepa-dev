@@ -22,7 +22,7 @@ import readingTimeOf from "reading-time";
 
 const REPO = process.env.BLOG_CONTENT_REPO || "dileepadev/blog-dileepa-dev";
 const REF = process.env.BLOG_CONTENT_REF || "main";
-const POSTS_DIR = process.env.BLOG_CONTENT_POSTS_DIR || "content/posts";
+const POSTS_DIR = process.env.BLOG_CONTENT_POSTS_DIR || "posts";
 const TOKEN = process.env.GITHUB_TOKEN;
 
 /**
@@ -73,9 +73,9 @@ function sanitise(body: string): string {
 /**
  * The slug is the file name, not the path.
  *
- * Posts are grouped as `content/posts/<year>/<month>/<slug>.md`. The
- * directories are grouping and were never part of the URL — the slug is the
- * URL and a published one is never renamed. See `redirects.md`.
+ * Posts are grouped as `posts/<year>/<month>/<slug>.md`. The directories are
+ * grouping and were never part of the URL — the slug is the URL and a
+ * published one is never renamed. See `redirects.md`.
  */
 function slugOf(filepath: string): string {
   const filename = filepath.split("/").pop() ?? filepath;

@@ -17,6 +17,13 @@ import remarkGfm from "remark-gfm";
 export const mdxOptions: MDXRemoteProps["options"] = {
   parseFrontmatter: false,
   mdxOptions: {
+    // Parse as Markdown, not MDX. The posts are plain Markdown by contract —
+    // `blog-dileepa-dev/AGENTS.md` says so, and a post needing a component is
+    // a missing feature here rather than JSX in prose. Left at the default
+    // `mdx`, ordinary Markdown is a syntax error: `<` starts JSX, so a bare
+    // `<https://…>` autolink or an `<!-- … -->` comment fails the whole build,
+    // and `{` starts an expression. Under `md` those are Markdown again.
+    format: "md",
     remarkPlugins: [remarkGfm],
     rehypePlugins: [
       rehypeSlug,
