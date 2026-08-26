@@ -70,7 +70,7 @@ platform design system. Content comes from FastAPI; post bodies come from Git.
   exists to answer.
 - Brand tokens are imported through Tailwind 4 `@theme`; Manrope and JetBrains Mono load through
   `next/font` at weights 400, 500 and 700 only. No hard-coded hex in any component.
-- Post bodies are read recursively. Posts are grouped `content/posts/<year>/<month>/<slug>.md`,
+- Post bodies are read recursively. Posts are grouped `posts/<year>/<month>/<slug>.md`,
   and the Git trees API with `recursive=1` reads the whole tree in one request rather than one
   per month. The response's `truncated` flag is checked rather than assumed — a silently short
   list looks exactly like posts having been deleted.
@@ -86,6 +86,24 @@ platform design system. Content comes from FastAPI; post bodies come from Git.
   wherever the caller first maps over it, which is a stack trace pointing at a page component for
   a problem two layers away. A wrong `NEXT_PUBLIC_API_URL` now produces an `ApiError` naming the
   endpoint and the likely cause.
+
+- **The two same-site slug redirects are implemented.** Both posts were renamed after
+  publication and both old slugs were live long enough to be shared, so
+  `2026-08-06-zero-to-agent-microsoft-foundry-series-kickoff` and `2026-02-11-welcome` now
+  redirect to their current slugs. The first lived in the blog's deleted `astro.config.mjs` and
+  would have gone with it. Both were driven in a browser and return a single hop.
+- **`rel=canonical` is composed rather than trusted.** The canonical tag, the Open Graph url, the
+  `BlogPosting` JSON-LD, the RSS feed and the sitemap each read `post.canonicalUrl` and fell back
+  to a composed URL — five copies of the same expression. That field is stored, and a row written
+  before the v2.0.0 URL rewrite still names `blog.dileepa.dev`, a host that is retired rather than
+  redirected: a canonical pointing at it asks search engines to prefer a dead URL over the live
+  one. `lib/format.ts`'s `postUrl` honours a stored value only when it is already on this origin,
+  so the tag is correct whether or not the production rewrite has run.
+- **JSON-LD is escaped before it is embedded.** Both structured-data blocks went into the page
+  through `JSON.stringify` and `dangerouslySetInnerHTML`. `JSON.stringify` does not escape `<`, so
+  a `</script>` anywhere in a title, summary or speaker name would close the tag and let the rest
+  parse as HTML. Those fields are admin-written today, which is why this is hardening rather than
+  a fix, but the escape belongs in place before one of them is sourced from somewhere else.
 
 #### Removed - v2.0.0
 
@@ -168,7 +186,7 @@ platform design system. Content comes from FastAPI; post bodies come from Git.
 - Add pageHeaderTheme
 
 ### Changed - v1.1.0
-  
+
 - Update dependencies
   - version [1.0.1 -> 1.1.0]
   - next [13.5.4 -> 14.1.4]

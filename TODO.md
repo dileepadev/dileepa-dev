@@ -55,7 +55,7 @@ wait on `api-dileepa-dev` reaching parity.
 
 - [x] Build-time fetch of `blog-dileepa-dev` content, pinned to a ref
       (see `dileepadev/docs/architecture/content-pipeline.md`)
-- [x] Read the posts **recursively** — they are grouped `content/posts/<year>/<month>/<slug>.md`,
+- [x] Read the posts **recursively** — they are grouped `posts/<year>/<month>/<slug>.md`,
       and the Git trees API with `recursive=1` is one request rather than one per month
 - [x] `/blog` index — the real reader, replacing the link list
 - [x] `/blog/[slug]` — table of contents, share, "Read next"
@@ -80,7 +80,7 @@ and the comment list are the same data and fetching it twice would be waste nobo
       re-parented rather than rejected
 - [x] **Reactions on comments and replies**, the same four, sharing one picker component
 - [x] **Emoji rather than a custom icon set.** The brand guide allows one accent hue and no
-      second; emoji carry colour as *content*, like a photograph, without entering the palette
+      second; emoji carry colour as _content_, like a photograph, without entering the palette
 - [x] Colour only appears once a reader has reacted — the trigger is a neutral line icon until
       then, which is what keeps a page of comments calm
 - [x] Verified in a browser, both themes: the compact picker opens **downward** so it does not
@@ -124,17 +124,29 @@ and the comment list are the same data and fetching it twice would be waste nobo
 
 Two same-site rules survive, and neither is optional:
 
-- [ ] **Legacy slug:** `dileepa.dev/blog/2026-08-06-zero-to-agent-microsoft-foundry-series-kickoff`
+- [x] **Legacy slug:** `dileepa.dev/blog/2026-08-06-zero-to-agent-microsoft-foundry-series-kickoff`
       → `2026-08-06-part-1-kicking-off-the-series`. It lived in the blog's deleted
-      `astro.config.mjs` and is easy to lose with it
-- [ ] **Welcome slug:** `dileepa.dev/blog/2026-02-11-welcome` → `2026-02-10-welcome`. The content
-      move renamed that post and changed its `publishedDate`; the corrected date is kept
-- [ ] The sitemap lists neither old slug
+      `astro.config.mjs` and is easy to lose with it. In `next.config.ts`; driven in a browser
+      and returns a single hop to the new slug
+- [x] **Welcome slug:** `dileepa.dev/blog/2026-02-11-welcome` → `2026-02-10-welcome`. The content
+      move renamed that post and changed its `publishedDate`; the corrected date is kept. Same
+      commit, same verification — one hop, correct target
+- [ ] The sitemap lists neither old slug — **data-dependent, not code-dependent.** The sitemap is
+      composed from whatever `/blogs` returns, so this is only true once the production migration
+      has run and the legacy-slug stub is unpublished there, as it already is in `development`.
+      What _is_ closed in code: `postUrl` means no sitemap entry can carry the retired
+      `blog.dileepa.dev` host regardless of what a row holds
 - [x] `remotePatterns` is Cloudinary and nothing else — `blog.dileepa.dev` is gone from it
 
 ### SEO
 
-- [ ] `rel=canonical` on every post pointing at the `dileepa.dev` URL
+- [x] `rel=canonical` on every post pointing at the `dileepa.dev` URL. `lib/format.ts`'s
+      `postUrl` composes it rather than trusting the stored `canonicalUrl`, which on an
+      un-migrated row still names `blog.dileepa.dev` — a host that is retired rather than
+      redirected, so a canonical pointing at it asks search engines to prefer a dead URL. A
+      stored value is honoured only when it is already on this origin. The same helper now backs
+      the canonical tag, the OG url, the JSON-LD, the feed and the sitemap, which were five
+      copies of the same fallback
 - [x] Carry over titles, descriptions, published and updated dates, OG and Twitter cards
 - [x] JSON-LD: `BlogPosting` on posts, `schema.org/Event` on event pages
 - [ ] Submit the sitemap for `dileepa.dev` in Search Console
