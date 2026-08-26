@@ -31,6 +31,21 @@ export type Project = Schemas["Project"];
 export type EventRecord = Schemas["Event"];
 export type BlogPost = Schemas["BlogPost"];
 
+// Engagement. Separate from `BlogPost` because a post page is static and these
+// numbers are not — the page is built without them and fetches them on mount.
+export type BlogEngagement = Schemas["BlogEngagement"];
+export type ReactionCounts = Schemas["ReactionCounts"];
+
+/** The four reactions, as a type rather than four string literals repeated. */
+export type ReactionKind = NonNullable<BlogEngagement["viewerReaction"]>;
+
+// Comments. `PublicComment` is the only comment shape this site ever sees —
+// the admin-only `Comment`, which carries the commenter's email, is not
+// reachable from here and deliberately has no type exported.
+export type PublicComment = Schemas["PublicComment"];
+export type CommentThread = Schemas["CommentThread"];
+export type CommentPosted = Schemas["CommentPosted"];
+
 // --- Shared shapes ---------------------------------------------------------
 
 // FastAPI emits `-Input` and `-Output` variants for any model used in both a

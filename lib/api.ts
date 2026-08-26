@@ -17,7 +17,11 @@
 import type {
   About,
   ApiErrorBody,
+  BlogEngagement,
   BlogPost,
+  CommentPosted,
+  CommentThread,
+  PublicComment,
   Community,
   ContactRequest,
   ContactResult,
@@ -27,6 +31,7 @@ import type {
   GalleryPhoto,
   Page,
   Project,
+  ReactionKind,
   Tool,
   Video,
 } from "./api-types";
@@ -195,6 +200,34 @@ async function optional<T>(
 
 // --- Profile ---------------------------------------------------------------
 
+/**
+ * A call that must never be cached, in either direction.
+ *
+ * `request` is built for build-time reads and defaults to a revalidate window.
+ * Engagement is the opposite case: it runs in the browser, the numbers change
+ * while the page is open, and a stale count is simply a wrong one. So this
+ * skips `request` entirely rather than passing `revalidate: 0` through it and
+ * hoping nothing upstream reinstates a default.
+ */
+async function engagement(
+  method: "GET" | "POST",
+  endpoint: string,
+  body?: unknown,
+): Promise<BlogEngagement> {
+  const response = await fetch(`${API_URL}${endpoint}`, {
+    method,
+    cache: "no-store",
+    ...(body === undefined
+      ? {}
+      : {
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        }),
+  });
+  if (!response.ok) throw await readError(response, endpoint);
+  return (await response.json()) as BlogEngagement;
+}
+
 export const api = {
   getAbout: () =>
     degrade<About | null>("/about", null, { revalidate: REVALIDATE.profile }),
@@ -282,6 +315,106 @@ export const api = {
       { query: { limit: 200 }, revalidate: REVALIDATE.blog },
     );
     return page.items;
+  },
+
+  // --- Blog engagement -----------------------------------------------------
+  //
+  // These three run in the browser, not at build time. Post pages are static,
+  // so views and reactions are the one part of a post that cannot be baked in.
+  //
+  // `cache: "no-store"` on all three, and no `next.revalidate`: a cached view
+  // count is a wrong view count, and a cached POST is not a POST.
+
+  getEngagement: (slug: string): Promise<BlogEngagement> =>
+    engagement("GET", `/blogs/${encodeURIComponent(slug)}/engagement`),
+
+  /**
+   * Count a view. Safe to call on every mount.
+   *
+   * The API de-duplicates per reader per 24 hours, so a reload is a no-op
+   * server-side rather than an inflated number. The client guards too, but only
+   * as a courtesy — the guarantee is the API's.
+   */
+  recordView: (slug: string): Promise<BlogEngagement> =>
+    engagement("POST", `/blogs/${encodeURIComponent(slug)}/views`),
+
+  /** Set, change, or clear this reader's reaction. `null` clears it. */
+  setReaction: (
+    slug: string,
+    reaction: ReactionKind | null,
+  ): Promise<BlogEngagement> =>
+    engagement("POST", `/blogs/${encodeURIComponent(slug)}/reactions`, {
+      reaction,
+    }),
+
+  // --- Comments ------------------------------------------------------------
+  //
+  // Same reasoning as engagement: the post page is static, the thread is not.
+  // Both calls run in the browser and neither may be cached.
+
+  getComments: async (slug: string): Promise<CommentThread[]> => {
+    const response = await fetch(
+      `${API_URL}/blogs/${encodeURIComponent(slug)}/comments`,
+      { cache: "no-store" },
+    );
+    if (!response.ok) throw await readError(response, "/comments");
+    return (await response.json()) as CommentThread[];
+  },
+
+  /**
+   * Post a comment. Appears immediately — there is no approval step.
+   *
+   * `honeypot` is a field no human can see and therefore never fills in. It is
+   * sent as an empty string on every real submission; a value in it marks the
+   * caller as a bot, and the API answers 201 with `accepted: false` rather than
+   * an error, because telling a bot which field caught it is how it learns.
+   */
+  postComment: async (
+    slug: string,
+    input: {
+      author: string;
+      email?: string;
+      body: string;
+      parentId?: string | null;
+      honeypot?: string;
+    },
+  ): Promise<CommentPosted> => {
+    const response = await fetch(
+      `${API_URL}/blogs/${encodeURIComponent(slug)}/comments`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        body: JSON.stringify({
+          author: input.author,
+          email: input.email || null,
+          body: input.body,
+          parentId: input.parentId ?? null,
+          honeypot: input.honeypot ?? "",
+        }),
+      },
+    );
+    if (!response.ok) throw await readError(response, "/comments");
+    return (await response.json()) as CommentPosted;
+  },
+
+  /** Set, change, or clear this reader's reaction to one comment. */
+  reactToComment: async (
+    slug: string,
+    commentId: string,
+    reaction: ReactionKind | null,
+  ): Promise<PublicComment> => {
+    const response = await fetch(
+      `${API_URL}/blogs/${encodeURIComponent(slug)}/comments/${encodeURIComponent(commentId)}/reactions`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        body: JSON.stringify({ reaction }),
+      },
+    );
+    if (!response.ok) throw await readError(response, "/comments/reactions");
+    return (await response.json()) as PublicComment;
   },
 
   // --- Contact -------------------------------------------------------------
