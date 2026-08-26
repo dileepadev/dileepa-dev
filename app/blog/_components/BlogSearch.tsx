@@ -117,14 +117,12 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
       );
 
       const coverImage =
-        sortedPosts.find((p) => p.banner?.url || p.seo?.ogImage)?.banner
-          ?.url ??
+        sortedPosts.find((p) => p.banner?.url || p.seo?.ogImage)?.banner?.url ??
         sortedPosts.find((p) => p.seo?.ogImage)?.seo?.ogImage ??
         undefined;
 
       const description =
-        sortedPosts[0]?.description ??
-        `A multi-part series covering ${name}.`;
+        sortedPosts[0]?.description ?? `A multi-part series covering ${name}.`;
 
       groups.push({
         name,
@@ -139,7 +137,9 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
       });
     }
 
-    return groups.sort((a, b) => b.posts.length - a.posts.length || a.name.localeCompare(b.name));
+    return groups.sort(
+      (a, b) => b.posts.length - a.posts.length || a.name.localeCompare(b.name),
+    );
   }, [posts]);
 
   const q = query.toLowerCase().trim();
@@ -151,13 +151,21 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
     result.sort((a, b) => {
       switch (sortBy) {
         case "newest": {
-          const dateA = a.publishedDate ? new Date(a.publishedDate).getTime() : 0;
-          const dateB = b.publishedDate ? new Date(b.publishedDate).getTime() : 0;
+          const dateA = a.publishedDate
+            ? new Date(a.publishedDate).getTime()
+            : 0;
+          const dateB = b.publishedDate
+            ? new Date(b.publishedDate).getTime()
+            : 0;
           return dateB - dateA;
         }
         case "oldest": {
-          const dateA = a.publishedDate ? new Date(a.publishedDate).getTime() : 0;
-          const dateB = b.publishedDate ? new Date(b.publishedDate).getTime() : 0;
+          const dateA = a.publishedDate
+            ? new Date(a.publishedDate).getTime()
+            : 0;
+          const dateB = b.publishedDate
+            ? new Date(b.publishedDate).getTime()
+            : 0;
           return dateA - dateB;
         }
         case "title-asc":
@@ -212,7 +220,11 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
           }}
           className={cn("view-tab", viewMode === "all" && "is-active")}
         >
-          <BookOpen className="h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
+          <BookOpen
+            className="h-4 w-4 shrink-0"
+            strokeWidth={1.75}
+            aria-hidden="true"
+          />
           <span>All posts</span>
           <span className="view-tab-count">{posts.length}</span>
         </button>
@@ -226,7 +238,11 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
           }}
           className={cn("view-tab", viewMode === "series" && "is-active")}
         >
-          <Layers className="h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
+          <Layers
+            className="h-4 w-4 shrink-0"
+            strokeWidth={1.75}
+            aria-hidden="true"
+          />
           <span>Series</span>
           <span className="view-tab-count">{allSeries.length}</span>
         </button>
@@ -336,7 +352,11 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
                 onClick={() => setSelectedSeriesName(null)}
                 className="series-back-btn"
               >
-                <ArrowLeft className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden="true" />
+                <ArrowLeft
+                  className="h-4 w-4 shrink-0"
+                  strokeWidth={2}
+                  aria-hidden="true"
+                />
                 <span>All series</span>
               </button>
 
@@ -355,7 +375,9 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
                     {selectedSeries.posts.length === 1 ? "part" : "parts"}
                   </span>
                   <span>·</span>
-                  <span>{readingTime(selectedSeries.totalReadingTime)} total</span>
+                  <span>
+                    {readingTime(selectedSeries.totalReadingTime)} total
+                  </span>
                 </div>
 
                 {selectedSeries.tags.length > 0 && (
