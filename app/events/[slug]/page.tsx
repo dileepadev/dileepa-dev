@@ -13,6 +13,7 @@ import { Badge, Container, LinkButton, Section } from "@/components/ui";
 import { api } from "@/lib/api";
 import type { EventRecord } from "@/lib/api-types";
 import { SITE_CONFIG } from "@/lib/constants";
+import { jsonLd } from "@/lib/utils";
 import {
   formatDate,
   formatDuration,
@@ -114,7 +115,7 @@ export default async function EventPage({ params }: Params) {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(eventJsonLd(event)),
+            __html: jsonLd(eventJsonLd(event)),
           }}
         />
 
@@ -133,7 +134,11 @@ export default async function EventPage({ params }: Params) {
           <div>
             <dt className="sr-only">Date</dt>
             <dd className="flex items-center gap-2">
-              <Calendar className="h-4 w-4 shrink-0 text-fg-muted" strokeWidth={1.75} aria-hidden="true" />
+              <Calendar
+                className="h-4 w-4 shrink-0 text-fg-muted"
+                strokeWidth={1.75}
+                aria-hidden="true"
+              />
               <time dateTime={toDateAttribute(event.startAt)}>
                 {formatDate(event.startAt)}
               </time>
@@ -143,7 +148,11 @@ export default async function EventPage({ params }: Params) {
             <div>
               <dt className="sr-only">Location</dt>
               <dd className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 shrink-0 text-fg-muted" strokeWidth={1.75} aria-hidden="true" />
+                <MapPin
+                  className="h-4 w-4 shrink-0 text-fg-muted"
+                  strokeWidth={1.75}
+                  aria-hidden="true"
+                />
                 <span>
                   {[
                     event.location.venue,
@@ -160,7 +169,11 @@ export default async function EventPage({ params }: Params) {
             <div>
               <dt className="sr-only">Event</dt>
               <dd className="flex items-center gap-2">
-                <Building2 className="h-4 w-4 shrink-0 text-fg-muted" strokeWidth={1.75} aria-hidden="true" />
+                <Building2
+                  className="h-4 w-4 shrink-0 text-fg-muted"
+                  strokeWidth={1.75}
+                  aria-hidden="true"
+                />
                 <span>{event.host.name}</span>
               </dd>
             </div>
@@ -169,7 +182,11 @@ export default async function EventPage({ params }: Params) {
             <div>
               <dt className="sr-only">Audience</dt>
               <dd className="flex items-center gap-2">
-                <Users className="h-4 w-4 shrink-0 text-fg-muted" strokeWidth={1.75} aria-hidden="true" />
+                <Users
+                  className="h-4 w-4 shrink-0 text-fg-muted"
+                  strokeWidth={1.75}
+                  aria-hidden="true"
+                />
                 <span>{event.audienceSize} attendees</span>
               </dd>
             </div>
@@ -263,8 +280,15 @@ export default async function EventPage({ params }: Params) {
             <h2>Recordings</h2>
             <ul className="mt-4 space-y-2">
               {(event.recordings ?? []).map((recording) => (
-                <li key={recording.url} className="flex items-center gap-2 font-mono text-small">
-                  <Video className="h-4 w-4 shrink-0 text-brand" strokeWidth={1.75} aria-hidden="true" />
+                <li
+                  key={recording.url}
+                  className="flex items-center gap-2 font-mono text-small"
+                >
+                  <Video
+                    className="h-4 w-4 shrink-0 text-brand"
+                    strokeWidth={1.75}
+                    aria-hidden="true"
+                  />
                   <a
                     href={recording.url}
                     target="_blank"
@@ -288,7 +312,11 @@ export default async function EventPage({ params }: Params) {
           <section className="mt-12">
             <h2>Slides</h2>
             <p className="mt-4 flex items-center gap-2 font-mono text-small">
-              <Presentation className="h-4 w-4 shrink-0 text-brand" strokeWidth={1.75} aria-hidden="true" />
+              <Presentation
+                className="h-4 w-4 shrink-0 text-brand"
+                strokeWidth={1.75}
+                aria-hidden="true"
+              />
               <a
                 href={event.slides.url}
                 target="_blank"
