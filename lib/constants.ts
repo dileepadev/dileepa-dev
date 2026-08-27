@@ -144,27 +144,65 @@ export const SUBSECTIONS = {
 } as const;
 
 /**
- * What the four cards under About say.
+ * What the six cards under About say.
  *
- * These are the pillars, and they are told apart by label rather than by hue —
- * there is one accent colour and badges do not get to invent a second.
+ * These cover the main areas of work and activities: AI engineering,
+ * open source, public speaking, writing, videos, and community.
  */
 export const PILLARS = [
   {
+    key: "ai-engineering",
     title: "AI engineering",
-    description: "Agent architectures, orchestration, and evaluation.",
+    kicker: "Systems & agents",
+    description:
+      "Designing agent architectures, multi-model pipelines, and evaluation harnesses for production systems.",
+    href: "/#work",
+    linkText: "View work",
   },
   {
-    title: "Cloud and backend",
-    description: "APIs, serverless systems, and deployment infrastructure.",
+    key: "open-source",
+    title: "Open source projects",
+    kicker: "Tools & libraries",
+    description:
+      "Building developer tools, CLI utilities, and open architectures shared with the community.",
+    href: "/projects",
+    linkText: "Explore projects",
   },
   {
-    title: "Open source",
-    description: "Contributing to projects and mentoring other developers.",
+    key: "public-speaking",
+    title: "Public speaking",
+    kicker: "Talks & workshops",
+    description:
+      "Delivering technical keynotes, conference talks, and hands-on sessions across global stages.",
+    href: "/events",
+    linkText: "See events",
   },
   {
-    title: "Workshops and talks",
-    description: "Hands-on events for university and developer communities.",
+    key: "blogs",
+    title: "Blogs",
+    kicker: "Articles & guides",
+    description:
+      "Writing detailed breakdowns of agent systems, deployment patterns, and engineering post-mortems.",
+    href: "/blog",
+    linkText: "Read writing",
+  },
+  {
+    key: "videos",
+    title: "Videos",
+    kicker: "Walkthroughs & talks",
+    description:
+      "Producing concise walkthroughs covering cloud setup, API integrations, and developer tutorials.",
+    href: "/videos",
+    linkText: "Watch videos",
+  },
+  {
+    key: "community-volunteering",
+    title: "Community volunteering",
+    kicker: "Organising & mentoring",
+    description:
+      "Co-organising tech meetups, mentoring developers, and supporting regional user groups.",
+    href: "/communities",
+    linkText: "Meet communities",
   },
 ] as const;
 
