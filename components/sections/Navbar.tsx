@@ -140,9 +140,6 @@ export function Navbar() {
                         aria-current={isCurrent ? "true" : undefined}
                       >
                         <span>{link.label}</span>
-                        {isCurrent && (
-                          <span className="nav-active-dot" aria-hidden="true" />
-                        )}
                       </Link>
                     );
                   })}
@@ -167,9 +164,6 @@ export function Navbar() {
                         aria-current={isCurrent ? "page" : undefined}
                       >
                         <span>{link.label}</span>
-                        {isCurrent && (
-                          <span className="nav-active-dot" aria-hidden="true" />
-                        )}
                       </Link>
                     );
                   })}

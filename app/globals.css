@@ -628,7 +628,13 @@ pre {
 .nav-link[aria-current="page"] {
   color: var(--brand);
   font-weight: 500;
-  background: var(--surface-hover);
+  background: transparent;
+}
+
+.nav-link.is-active:hover,
+.nav-link[aria-current="true"]:hover,
+.nav-link[aria-current="page"]:hover {
+  color: var(--brand);
 }
 
 .nav-mobile-toggle {
@@ -725,7 +731,12 @@ pre {
 .nav-mobile-link.is-active,
 .nav-mobile-link[aria-current="true"] {
   color: var(--brand);
-  background: color-mix(in srgb, var(--brand) 10%, transparent);
+  background: transparent;
+}
+
+.nav-mobile-link.is-active:hover,
+.nav-mobile-link[aria-current="true"]:hover {
+  color: var(--brand);
 }
 
 .nav-mobile-divider {
@@ -763,7 +774,12 @@ pre {
 .nav-mobile-sublink.is-active,
 .nav-mobile-sublink[aria-current="page"] {
   color: var(--brand);
-  background: color-mix(in srgb, var(--brand) 10%, transparent);
+  background: transparent;
+}
+
+.nav-mobile-sublink.is-active:hover,
+.nav-mobile-sublink[aria-current="page"]:hover {
+  color: var(--brand);
 }
 
 .nav-active-dot {
