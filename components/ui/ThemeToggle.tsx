@@ -4,25 +4,73 @@ import { useTheme } from "next-themes";
 import { Moon, Sun } from "lucide-react";
 
 /**
- * No mounted flag and no effect.
+ * ThemeToggle
  *
- * The usual pattern renders a placeholder until an effect sets `mounted`,
- * because the server does not know the visitor's theme. That costs a render
- * pass and trips React 19's set-state-in-effect rule. Instead both icons are
- * always in the markup and CSS shows the right one, so the server and client
- * render identical HTML and there is nothing to reconcile.
+ * Provides instant, stutter-free theme switching with smooth View Transitions
+ * and synchronous fallback transitions.
  *
- * `resolvedTheme` is only read inside the click handler, by which point the
- * component is hydrated and the value is correct.
+ * Eliminates the frame-delay stutter of React 19 / next-themes by mutating
+ * the data-theme attribute on <html> synchronously during the transition,
+ * avoiding deferred useEffect rendering lag while keeping next-themes and
+ * localStorage fully synchronized.
  */
 export function ThemeToggle() {
   const { setTheme, resolvedTheme } = useTheme();
+
+  function handleToggle() {
+    const currentTheme =
+      (typeof document !== "undefined"
+        ? document.documentElement.getAttribute("data-theme")
+        : null) ||
+      resolvedTheme ||
+      "dark";
+    const nextTheme = currentTheme === "dark" ? "light" : "dark";
+
+    // 1. If View Transitions API is supported and reduced motion is not preferred,
+    // execute a compositor-driven cross-fade snapshot transition (60/120fps).
+    if (
+      typeof document !== "undefined" &&
+      "startViewTransition" in document &&
+      !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      document.startViewTransition(() => {
+        document.documentElement.setAttribute("data-theme", nextTheme);
+        setTheme(nextTheme);
+      });
+      return;
+    }
+
+    // 2. Synchronous fallback for browsers without View Transitions:
+    // Applies temporary .theme-transitioning class to synchronize all surface,
+    // text, and border changes smoothly across the DOM.
+    if (typeof document !== "undefined") {
+      const prefersReduced = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+
+      if (!prefersReduced) {
+        document.documentElement.classList.add("theme-transitioning");
+      }
+
+      document.documentElement.setAttribute("data-theme", nextTheme);
+      setTheme(nextTheme);
+
+      if (!prefersReduced) {
+        window.setTimeout(() => {
+          document.documentElement.classList.remove("theme-transitioning");
+        }, 240);
+      }
+      return;
+    }
+
+    setTheme(nextTheme);
+  }
 
   return (
     <button
       type="button"
       className="theme-toggle"
-      onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+      onClick={handleToggle}
       aria-label="Switch colour theme"
     >
       <Moon className="moon" size={16} strokeWidth={1.75} aria-hidden="true" />
