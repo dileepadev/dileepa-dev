@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { X } from "lucide-react";
 import {
   Button,
   Chip,
@@ -10,9 +9,9 @@ import {
   type FilterOption,
   Item,
   ItemList,
+  ListingControls,
+  type ActiveFilterItem,
   LoadMore,
-  SearchInput,
-  SortSelect,
   type SortOption,
 } from "@/components/ui";
 import type { Project } from "@/lib/api-types";
@@ -44,13 +43,9 @@ function formatPeriod(start?: string | null, end?: string | null): string {
 /**
  * ProjectSearch
  *
- * Implements an explicit, decoupled Search → Filter → Sort pipeline:
- * 1. Search: Queries relevant content (name, tagline, description, stack, role, status).
- * 2. Filter: Reduces results by criteria (Status, Date/Year, Tech stack) with independent removal and restoration.
- * 3. Sort: Reorders the filtered results without removing or adding items.
+ * Search -> Filter -> Sort pipeline across projects using universal ListingControls.
  */
 export function ProjectSearch({ projects }: { projects: Project[] }) {
-  // --- State ---
   const [query, setQuery] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   const [selectedYear, setSelectedYear] = useState<string | null>(null);
@@ -66,7 +61,7 @@ export function ProjectSearch({ projects }: { projects: Project[] }) {
     setVisibleCount(PROJECTS_PER_PAGE);
   }
 
-  // --- Dynamic Filter Options ---
+  // Filter options
   const statusOptions: FilterOption[] = useMemo(() => {
     const counts = new Map<string, number>();
     for (const project of projects) {
@@ -130,7 +125,7 @@ export function ProjectSearch({ projects }: { projects: Project[] }) {
       }));
   }, [projects]);
 
-  // --- Step 1: Search ---
+  // Step 1: Search
   const searchedProjects = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return projects;
@@ -147,15 +142,13 @@ export function ProjectSearch({ projects }: { projects: Project[] }) {
     });
   }, [projects, query]);
 
-  // --- Step 2: Filter ---
+  // Step 2: Filter
   const filteredProjects = useMemo(() => {
     return searchedProjects.filter((project) => {
-      // Status criteria
       if (selectedStatus && project.status !== selectedStatus) {
         return false;
       }
 
-      // Year/Date criteria
       if (selectedYear) {
         if (selectedYear === "ongoing") {
           if (project.period?.end && project.status !== "active") return false;
@@ -172,7 +165,6 @@ export function ProjectSearch({ projects }: { projects: Project[] }) {
         }
       }
 
-      // Tech stack criteria
       if (selectedStack) {
         const hasTech = (project.stack ?? []).some(
           (tech) => tech.toLowerCase() === selectedStack.toLowerCase(),
@@ -184,7 +176,7 @@ export function ProjectSearch({ projects }: { projects: Project[] }) {
     });
   }, [searchedProjects, selectedStatus, selectedYear, selectedStack]);
 
-  // --- Step 3: Sort ---
+  // Step 3: Sort
   const sortedProjects = useMemo(() => {
     const list = [...filteredProjects];
 
@@ -209,16 +201,14 @@ export function ProjectSearch({ projects }: { projects: Project[] }) {
         return list.sort((a, b) => b.name.localeCompare(a.name));
       case "default":
       default:
-        // Preserves original order from filtering
         return list;
     }
   }, [filteredProjects, sortBy]);
 
-  // --- Step 4: Paginate ---
+  // Step 4: Paginate
   const visibleProjects = sortedProjects.slice(0, visibleCount);
   const hasMore = visibleCount < sortedProjects.length;
 
-  // Active filter state tracking
   const hasActiveFilters = Boolean(
     query || selectedStatus || selectedYear || selectedStack,
   );
@@ -230,145 +220,88 @@ export function ProjectSearch({ projects }: { projects: Project[] }) {
     setSelectedStack(null);
   };
 
+  const activeFilters: ActiveFilterItem[] = useMemo(() => {
+    const list: ActiveFilterItem[] = [];
+    if (selectedStatus) {
+      list.push({
+        key: "status",
+        label: `Status: ${humanise(selectedStatus)}`,
+        onRemove: () => setSelectedStatus(null),
+      });
+    }
+    if (selectedYear) {
+      list.push({
+        key: "year",
+        label: `Date: ${selectedYear === "ongoing" ? "Ongoing" : selectedYear}`,
+        onRemove: () => setSelectedYear(null),
+      });
+    }
+    if (selectedStack) {
+      list.push({
+        key: "stack",
+        label: `Tech: ${selectedStack}`,
+        onRemove: () => setSelectedStack(null),
+      });
+    }
+    return list;
+  }, [selectedStatus, selectedYear, selectedStack]);
+
   return (
     <div className="space-y-6">
-      {/* 1. Search Bar */}
-      <div className="w-full">
-        <SearchInput
-          value={query}
-          onChange={setQuery}
-          placeholder="Search projects by name, description, stack, role…"
-          aria-label="Search projects"
-        />
-      </div>
-
-      {/* 2. Controls Toolbar: Filters on left, Sort on right */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
-        {/* Filter dropdowns */}
-        <div className="flex flex-wrap items-center gap-2">
-          {statusOptions.length > 0 && (
-            <FilterSelect
-              label="Status"
-              value={selectedStatus}
-              options={statusOptions}
-              onChange={setSelectedStatus}
-              allLabel="All status"
-            />
-          )}
-
-          {yearOptions.length > 0 && (
-            <FilterSelect
-              label="Date"
-              value={selectedYear}
-              options={yearOptions}
-              onChange={setSelectedYear}
-              allLabel="All dates"
-            />
-          )}
-
-          {stackOptions.length > 0 && (
-            <FilterSelect
-              label="Tech"
-              value={selectedStack}
-              options={stackOptions}
-              onChange={setSelectedStack}
-              allLabel="All stack"
-            />
-          )}
-        </div>
-
-        {/* Sort dropdown */}
-        <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
-          <SortSelect
-            value={sortBy}
-            options={SORT_OPTIONS}
-            onChange={setSortBy}
-            label="Sort projects"
-            aria-label="Sort projects"
-          />
-        </div>
-      </div>
-
-      {/* 3. Active Filters Pills Bar */}
-      {hasActiveFilters && (
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-1 font-mono text-small text-fg-muted">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-fg-muted/80 mr-1">Active:</span>
-
-            {query && (
-              <button
-                type="button"
-                onClick={() => setQuery("")}
-                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-sm border border-border-strong bg-bg-surface text-fg text-label hover:border-brand transition-colors cursor-pointer"
-                title="Clear search query"
-              >
-                <span>&ldquo;{query}&rdquo;</span>
-                <X className="h-3 w-3 text-fg-muted hover:text-fg" />
-              </button>
+      <ListingControls
+        query={query}
+        onQueryChange={setQuery}
+        searchPlaceholder="Search projects by name, description, stack, role…"
+        filters={
+          <>
+            {statusOptions.length > 0 && (
+              <FilterSelect
+                label="Status"
+                value={selectedStatus}
+                options={statusOptions}
+                onChange={setSelectedStatus}
+                allLabel="All status"
+              />
             )}
-
-            {selectedStatus && (
-              <button
-                type="button"
-                onClick={() => setSelectedStatus(null)}
-                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-sm border border-border-strong bg-bg-surface text-fg text-label hover:border-brand transition-colors cursor-pointer"
-                title="Remove status filter"
-              >
-                <span>Status: {humanise(selectedStatus)}</span>
-                <X className="h-3 w-3 text-fg-muted hover:text-fg" />
-              </button>
+            {yearOptions.length > 0 && (
+              <FilterSelect
+                label="Date"
+                value={selectedYear}
+                options={yearOptions}
+                onChange={setSelectedYear}
+                allLabel="All dates"
+              />
             )}
-
-            {selectedYear && (
-              <button
-                type="button"
-                onClick={() => setSelectedYear(null)}
-                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-sm border border-border-strong bg-bg-surface text-fg text-label hover:border-brand transition-colors cursor-pointer"
-                title="Remove date filter"
-              >
-                <span>
-                  Date: {selectedYear === "ongoing" ? "Ongoing" : selectedYear}
-                </span>
-                <X className="h-3 w-3 text-fg-muted hover:text-fg" />
-              </button>
+            {stackOptions.length > 0 && (
+              <FilterSelect
+                label="Tech"
+                value={selectedStack}
+                options={stackOptions}
+                onChange={setSelectedStack}
+                allLabel="All stack"
+              />
             )}
+          </>
+        }
+        sortBy={sortBy}
+        onSortChange={setSortBy}
+        sortOptions={SORT_OPTIONS}
+        sortLabel="Sort projects"
+        activeFilters={activeFilters}
+        onClearAll={clearAllFilters}
+        filteredCount={sortedProjects.length}
+        totalCount={projects.length}
+        itemNoun="Project"
+        itemPlural="Projects"
+      />
 
-            {selectedStack && (
-              <button
-                type="button"
-                onClick={() => setSelectedStack(null)}
-                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-sm border border-border-strong bg-bg-surface text-fg text-label hover:border-brand transition-colors cursor-pointer"
-                title="Remove tech stack filter"
-              >
-                <span>Tech: {selectedStack}</span>
-                <X className="h-3 w-3 text-fg-muted hover:text-fg" />
-              </button>
-            )}
-
-            <button
-              type="button"
-              onClick={clearAllFilters}
-              className="text-brand text-label underline underline-offset-4 hover:text-fg transition-colors cursor-pointer ml-1"
-            >
-              Clear all
-            </button>
-          </div>
-
-          <span className="text-fg-muted text-label shrink-0">
-            Showing <strong className="text-fg">{sortedProjects.length}</strong> of{" "}
-            {projects.length} Projects
-          </span>
-        </div>
-      )}
-
-      {/* 4. Results List or Graceful Empty State */}
       {sortedProjects.length === 0 ? (
         <div className="mt-8">
           <EmptyState
             title="No projects match your criteria"
             hint={
               hasActiveFilters
-                ? "Try removing some filters or clearing your search to see more projects."
+                ? "Try adjusting your search or filters to see more projects."
                 : "No projects are currently listed."
             }
           >

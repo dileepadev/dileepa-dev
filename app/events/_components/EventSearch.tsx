@@ -5,11 +5,13 @@ import {
   Badge,
   Button,
   EmptyState,
+  FilterSelect,
+  type FilterOption,
   Item,
   ItemList,
+  ListingControls,
+  type ActiveFilterItem,
   LoadMore,
-  SearchInput,
-  SortSelect,
   Subsection,
   type SortOption,
 } from "@/components/ui";
@@ -17,7 +19,11 @@ import type { EventRecord } from "@/lib/api-types";
 import { formatDate, humanise } from "@/lib/format";
 
 type EventSortKey =
-  "default" | "newest" | "oldest" | "title-asc" | "title-desc";
+  | "default"
+  | "newest"
+  | "oldest"
+  | "title-asc"
+  | "title-desc";
 
 const SORT_OPTIONS: SortOption<EventSortKey>[] = [
   { value: "default", label: "Default order" },
@@ -29,7 +35,7 @@ const SORT_OPTIONS: SortOption<EventSortKey>[] = [
 
 const EVENTS_PER_PAGE = 10;
 
-/** Client-side search, sorting, and progressive pagination across events. */
+/** Client-side search, filtering, sorting, and progressive pagination across events. */
 export function EventSearch({
   upcoming,
   completed,
@@ -37,41 +43,138 @@ export function EventSearch({
   upcoming: EventRecord[];
   completed: EventRecord[];
 }) {
+  const allEvents = useMemo(() => [...upcoming, ...completed], [upcoming, completed]);
+
   const [query, setQuery] = useState("");
+  const [selectedType, setSelectedType] = useState<string | null>(null);
+  const [selectedFormat, setSelectedFormat] = useState<string | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+  const [selectedYear, setSelectedYear] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<EventSortKey>("default");
   const [visibleCount, setVisibleCount] = useState(EVENTS_PER_PAGE);
   const [visiblePastCount, setVisiblePastCount] = useState(EVENTS_PER_PAGE);
 
-  // Reset pagination when search or sort changes
+  // Reset pagination when search, filter or sort changes
   const [prevFilterKey, setPrevFilterKey] = useState("");
-  const currentFilterKey = `${query}|${sortBy}`;
+  const currentFilterKey = `${query}|${selectedType}|${selectedFormat}|${selectedStatus}|${selectedYear}|${sortBy}`;
   if (prevFilterKey !== currentFilterKey) {
     setPrevFilterKey(currentFilterKey);
     setVisibleCount(EVENTS_PER_PAGE);
     setVisiblePastCount(EVENTS_PER_PAGE);
   }
 
-  const q = query.toLowerCase().trim();
+  // Dynamic filter options
+  const typeOptions: FilterOption[] = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const e of allEvents) {
+      if (e.type) {
+        counts.set(e.type, (counts.get(e.type) ?? 0) + 1);
+      }
+    }
+    return [...counts.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .map(([type, count]) => ({
+        value: type,
+        label: humanise(type),
+        count,
+      }));
+  }, [allEvents]);
 
-  const filteredUpcoming = useMemo(
-    () => (q ? upcoming.filter((e) => matches(e, q)) : upcoming),
-    [upcoming, q],
-  );
-  const filteredCompleted = useMemo(
-    () => (q ? completed.filter((e) => matches(e, q)) : completed),
-    [completed, q],
-  );
+  const formatOptions: FilterOption[] = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const e of allEvents) {
+      if (e.format) {
+        counts.set(e.format, (counts.get(e.format) ?? 0) + 1);
+      }
+    }
+    return [...counts.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .map(([format, count]) => ({
+        value: format,
+        label: humanise(format),
+        count,
+      }));
+  }, [allEvents]);
 
-  const total = upcoming.length + completed.length;
-  const shown = filteredUpcoming.length + filteredCompleted.length;
-  const hasFilter = q.length > 0;
+  const statusOptions: FilterOption[] = useMemo(() => {
+    let upcomingCount = 0;
+    let completedCount = 0;
+    for (const e of allEvents) {
+      if (e.status === "upcoming") upcomingCount++;
+      if (e.status === "completed") completedCount++;
+    }
+    const opts: FilterOption[] = [];
+    if (upcomingCount > 0) {
+      opts.push({ value: "upcoming", label: "Upcoming", count: upcomingCount });
+    }
+    if (completedCount > 0) {
+      opts.push({ value: "completed", label: "Completed", count: completedCount });
+    }
+    return opts;
+  }, [allEvents]);
 
-  // Custom unified sort across all matching events when not on default order
-  const customSortedEvents = useMemo(() => {
-    if (sortBy === "default") return null;
+  const yearOptions: FilterOption[] = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const e of allEvents) {
+      if (e.startAt) {
+        const year = new Date(e.startAt).getFullYear().toString();
+        if (!isNaN(Number(year))) {
+          counts.set(year, (counts.get(year) ?? 0) + 1);
+        }
+      }
+    }
+    return [...counts.entries()]
+      .sort((a, b) => Number(b[0]) - Number(a[0]))
+      .map(([year, count]) => ({
+        value: year,
+        label: year,
+        count,
+      }));
+  }, [allEvents]);
 
-    const merged = [...filteredUpcoming, ...filteredCompleted];
-    merged.sort((a, b) => {
+  // Step 1: Search
+  const searchedEvents = useMemo(() => {
+    const q = query.toLowerCase().trim();
+    if (!q) return allEvents;
+
+    return allEvents.filter((e) => matches(e, q));
+  }, [allEvents, query]);
+
+  // Step 2: Filter
+  const filteredEvents = useMemo(() => {
+    return searchedEvents.filter((e) => {
+      if (selectedType && e.type !== selectedType) return false;
+      if (selectedFormat && e.format !== selectedFormat) return false;
+      if (selectedStatus && e.status !== selectedStatus) return false;
+      if (selectedYear) {
+        const year = e.startAt ? new Date(e.startAt).getFullYear().toString() : null;
+        if (year !== selectedYear) return false;
+      }
+      return true;
+    });
+  }, [searchedEvents, selectedType, selectedFormat, selectedStatus, selectedYear]);
+
+  // Step 3: Sort
+  const sortedEvents = useMemo(() => {
+    const list = [...filteredEvents];
+
+    if (sortBy === "default") {
+      // Default: Upcoming soonest first, then completed most recent first
+      return list.sort((a, b) => {
+        if (a.status === "upcoming" && b.status !== "upcoming") return -1;
+        if (b.status === "upcoming" && a.status !== "upcoming") return 1;
+
+        const dateA = a.startAt ? new Date(a.startAt).getTime() : 0;
+        const dateB = b.startAt ? new Date(b.startAt).getTime() : 0;
+
+        if (a.status === "upcoming") {
+          return dateA - dateB; // Soonest upcoming first
+        }
+        return dateB - dateA; // Most recent past first
+      });
+    }
+
+    return list.sort((a, b) => {
       switch (sortBy) {
         case "newest": {
           const dateA = a.startAt ? new Date(a.startAt).getTime() : 0;
@@ -91,76 +194,148 @@ export function EventSearch({
           return 0;
       }
     });
+  }, [filteredEvents, sortBy]);
 
-    return merged;
-  }, [filteredUpcoming, filteredCompleted, sortBy]);
+  // Step 4: Paginate
+  const hasActiveFilters = Boolean(
+    query || selectedType || selectedFormat || selectedStatus || selectedYear,
+  );
 
-  const paginatedCustomEvents =
-    customSortedEvents?.slice(0, visibleCount) ?? [];
-  const paginatedPastEvents = filteredCompleted.slice(0, visiblePastCount);
+  const clearAllFilters = () => {
+    setQuery("");
+    setSelectedType(null);
+    setSelectedFormat(null);
+    setSelectedStatus(null);
+    setSelectedYear(null);
+  };
+
+  const activeFilters: ActiveFilterItem[] = useMemo(() => {
+    const list: ActiveFilterItem[] = [];
+    if (selectedStatus) {
+      list.push({
+        key: "status",
+        label: `Status: ${humanise(selectedStatus)}`,
+        onRemove: () => setSelectedStatus(null),
+      });
+    }
+    if (selectedType) {
+      list.push({
+        key: "type",
+        label: `Type: ${humanise(selectedType)}`,
+        onRemove: () => setSelectedType(null),
+      });
+    }
+    if (selectedFormat) {
+      list.push({
+        key: "format",
+        label: `Format: ${humanise(selectedFormat)}`,
+        onRemove: () => setSelectedFormat(null),
+      });
+    }
+    if (selectedYear) {
+      list.push({
+        key: "year",
+        label: `Year: ${selectedYear}`,
+        onRemove: () => setSelectedYear(null),
+      });
+    }
+    return list;
+  }, [selectedStatus, selectedType, selectedFormat, selectedYear]);
+
+  // If sorting is on default and no specific status filter was selected, we can preserve the clean Upcoming / Past section grouping!
+  const isDefaultView = sortBy === "default" && !selectedStatus;
+  const filteredUpcoming = useMemo(
+    () => sortedEvents.filter((e) => e.status === "upcoming"),
+    [sortedEvents],
+  );
+  const filteredCompleted = useMemo(
+    () => sortedEvents.filter((e) => e.status === "completed"),
+    [sortedEvents],
+  );
+  const paginatedCompleted = filteredCompleted.slice(0, visiblePastCount);
+
+  const paginatedUnified = sortedEvents.slice(0, visibleCount);
 
   return (
-    <>
-      <div className="list-toolbar">
-        <SearchInput
-          value={query}
-          onChange={setQuery}
-          placeholder="Search talks, venues, topics…"
-        />
-        <SortSelect
-          value={sortBy}
-          onChange={setSortBy}
-          options={SORT_OPTIONS}
-          label="Sort events"
-        />
-      </div>
+    <div className="space-y-6">
+      <ListingControls
+        query={query}
+        onQueryChange={setQuery}
+        searchPlaceholder="Search talks, workshops, venues, topics…"
+        filters={
+          <>
+            {statusOptions.length > 0 && (
+              <FilterSelect
+                label="Status"
+                value={selectedStatus}
+                options={statusOptions}
+                onChange={setSelectedStatus}
+                allLabel="All events"
+              />
+            )}
+            {typeOptions.length > 0 && (
+              <FilterSelect
+                label="Type"
+                value={selectedType}
+                options={typeOptions}
+                onChange={setSelectedType}
+                allLabel="All types"
+              />
+            )}
+            {formatOptions.length > 0 && (
+              <FilterSelect
+                label="Format"
+                value={selectedFormat}
+                options={formatOptions}
+                onChange={setSelectedFormat}
+                allLabel="All formats"
+              />
+            )}
+            {yearOptions.length > 0 && (
+              <FilterSelect
+                label="Year"
+                value={selectedYear}
+                options={yearOptions}
+                onChange={setSelectedYear}
+                allLabel="All years"
+              />
+            )}
+          </>
+        }
+        sortBy={sortBy}
+        onSortChange={setSortBy}
+        sortOptions={SORT_OPTIONS}
+        sortLabel="Sort events"
+        activeFilters={activeFilters}
+        onClearAll={clearAllFilters}
+        filteredCount={sortedEvents.length}
+        totalCount={allEvents.length}
+        itemNoun="Event"
+        itemPlural="Events"
+      />
 
-      {hasFilter && (
-        <div className="filter-status">
-          <span>
-            Showing {shown} of {total} {total === 1 ? "event" : "events"}
-          </span>
-          <button
-            type="button"
-            onClick={() => setQuery("")}
-            className="filter-reset-btn"
-          >
-            Clear filter
-          </button>
-        </div>
-      )}
-
-      {shown === 0 ? (
-        <div className="mt-10">
+      {sortedEvents.length === 0 ? (
+        <div className="mt-8">
           <EmptyState
-            title="No events match your search."
-            hint="Try a different keyword or clear the search filter."
+            title="No events match your criteria"
+            hint={
+              hasActiveFilters
+                ? "Try adjusting your search or filters to find what you're looking for."
+                : "No events are currently listed."
+            }
           >
-            {hasFilter && (
+            {hasActiveFilters && (
               <div className="mt-4 flex justify-center">
-                <Button variant="secondary" onClick={() => setQuery("")}>
-                  Clear filter
+                <Button variant="secondary" onClick={clearAllFilters}>
+                  Clear all filters
                 </Button>
               </div>
             )}
           </EmptyState>
         </div>
       ) : (
-        <div className="mt-8">
-          {customSortedEvents ? (
-            <>
-              <EventItems events={paginatedCustomEvents} />
-              <LoadMore
-                shown={paginatedCustomEvents.length}
-                total={customSortedEvents.length}
-                batchSize={EVENTS_PER_PAGE}
-                onLoadMore={() =>
-                  setVisibleCount((prev) => prev + EVENTS_PER_PAGE)
-                }
-                onShowAll={() => setVisibleCount(customSortedEvents.length)}
-              />
-            </>
-          ) : (
+        <div className="mt-6">
+          {isDefaultView ? (
             <>
               {filteredUpcoming.length > 0 && (
                 <Subsection title="Upcoming" note="Soonest first.">
@@ -170,9 +345,9 @@ export function EventSearch({
 
               {filteredCompleted.length > 0 && (
                 <Subsection title="Past" note="Most recent first.">
-                  <EventItems events={paginatedPastEvents} />
+                  <EventItems events={paginatedCompleted} />
                   <LoadMore
-                    shown={paginatedPastEvents.length}
+                    shown={paginatedCompleted.length}
                     total={filteredCompleted.length}
                     batchSize={EVENTS_PER_PAGE}
                     onLoadMore={() =>
@@ -185,10 +360,25 @@ export function EventSearch({
                 </Subsection>
               )}
             </>
+          ) : (
+            <>
+              <EventItems events={paginatedUnified} />
+              {visibleCount < sortedEvents.length && (
+                <LoadMore
+                  shown={paginatedUnified.length}
+                  total={sortedEvents.length}
+                  batchSize={EVENTS_PER_PAGE}
+                  onLoadMore={() =>
+                    setVisibleCount((prev) => prev + EVENTS_PER_PAGE)
+                  }
+                  onShowAll={() => setVisibleCount(sortedEvents.length)}
+                />
+              )}
+            </>
           )}
         </div>
       )}
-    </>
+    </div>
   );
 }
 
@@ -222,11 +412,11 @@ function EventItems({ events }: { events: EventRecord[] }) {
   );
 }
 
-/** Case-insensitive match against the fields a reader would search. */
 function matches(event: EventRecord, q: string): boolean {
   return (
     event.title.toLowerCase().includes(q) ||
     (event.summary ?? "").toLowerCase().includes(q) ||
+    (event.description ?? "").toLowerCase().includes(q) ||
     humanise(event.type).toLowerCase().includes(q) ||
     humanise(event.format).toLowerCase().includes(q) ||
     (event.location?.venue ?? "").toLowerCase().includes(q) ||

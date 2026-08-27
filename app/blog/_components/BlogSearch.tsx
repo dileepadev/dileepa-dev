@@ -1,17 +1,19 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import Link from "next/link";
-import { ArrowLeft, ArrowRight, Layers, BookOpen } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpen, Layers } from "lucide-react";
 import {
   Badge,
   Button,
   EmptyState,
+  FilterSelect,
+  type FilterOption,
   Item,
   ItemList,
+  ListingControls,
+  type ActiveFilterItem,
   LoadMore,
   SearchInput,
-  SortSelect,
   type SortOption,
 } from "@/components/ui";
 import { formatDate, readingTime, toDateAttribute } from "@/lib/format";
@@ -62,20 +64,23 @@ const SORT_OPTIONS: SortOption<BlogSortKey>[] = [
 const POSTS_PER_PAGE = 10;
 const SERIES_PER_PAGE = 6;
 
-/** Client-side search, sorting, series, and progressive pagination across blog posts. */
+/** Client-side search, filtering, sorting, series, and progressive pagination across blog posts. */
 export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
   const [viewMode, setViewMode] = useState<ViewMode>("all");
   const [selectedSeriesName, setSelectedSeriesName] = useState<string | null>(
     null,
   );
   const [query, setQuery] = useState("");
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [selectedYear, setSelectedYear] = useState<string | null>(null);
+  const [selectedSeriesFilter, setSelectedSeriesFilter] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<BlogSortKey>("newest");
   const [visibleCount, setVisibleCount] = useState(POSTS_PER_PAGE);
   const [visibleSeriesCount, setVisibleSeriesCount] = useState(SERIES_PER_PAGE);
 
   // Reset pagination when filter/sort/view state changes
   const [prevFilterKey, setPrevFilterKey] = useState("");
-  const currentFilterKey = `${query}|${sortBy}|${viewMode}`;
+  const currentFilterKey = `${query}|${selectedTag}|${selectedYear}|${selectedSeriesFilter}|${sortBy}|${viewMode}`;
   if (prevFilterKey !== currentFilterKey) {
     setPrevFilterKey(currentFilterKey);
     setVisibleCount(POSTS_PER_PAGE);
@@ -97,7 +102,6 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
     const groups: SeriesGroup[] = [];
 
     for (const [name, seriesPosts] of map.entries()) {
-      // Sort posts in series by order if available, else date
       const sortedPosts = [...seriesPosts].sort((a, b) => {
         const orderA = a.series?.order ?? 0;
         const orderB = b.series?.order ?? 0;
@@ -142,13 +146,83 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
     );
   }, [posts]);
 
+  // Dynamic filter options
+  const tagOptions: FilterOption[] = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const p of posts) {
+      for (const t of p.tags ?? []) {
+        counts.set(t, (counts.get(t) ?? 0) + 1);
+      }
+    }
+    return [...counts.entries()]
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .slice(0, 20)
+      .map(([tag, count]) => ({
+        value: tag,
+        label: tag,
+        count,
+      }));
+  }, [posts]);
+
+  const yearOptions: FilterOption[] = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const p of posts) {
+      if (p.publishedDate) {
+        const year = new Date(p.publishedDate).getFullYear().toString();
+        if (!isNaN(Number(year))) {
+          counts.set(year, (counts.get(year) ?? 0) + 1);
+        }
+      }
+    }
+    return [...counts.entries()]
+      .sort((a, b) => Number(b[0]) - Number(a[0]))
+      .map(([year, count]) => ({
+        value: year,
+        label: year,
+        count,
+      }));
+  }, [posts]);
+
+  const seriesFilterOptions: FilterOption[] = useMemo(() => {
+    return allSeries.map((s) => ({
+      value: s.name,
+      label: s.name,
+      count: s.posts.length,
+    }));
+  }, [allSeries]);
+
   const q = query.toLowerCase().trim();
 
-  // Filter & sort individual posts
-  const filteredAndSortedPosts = useMemo(() => {
-    const result = q ? posts.filter((p) => matchesPost(p, q)) : [...posts];
+  // Step 1: Search
+  const searchedPosts = useMemo(() => {
+    if (!q) return posts;
+    return posts.filter((p) => matchesPost(p, q));
+  }, [posts, q]);
 
-    result.sort((a, b) => {
+  // Step 2: Filter
+  const filteredPosts = useMemo(() => {
+    return searchedPosts.filter((p) => {
+      if (selectedTag && !(p.tags ?? []).includes(selectedTag)) {
+        return false;
+      }
+      if (selectedYear) {
+        const year = p.publishedDate
+          ? new Date(p.publishedDate).getFullYear().toString()
+          : null;
+        if (year !== selectedYear) return false;
+      }
+      if (selectedSeriesFilter && p.series?.name !== selectedSeriesFilter) {
+        return false;
+      }
+      return true;
+    });
+  }, [searchedPosts, selectedTag, selectedYear, selectedSeriesFilter]);
+
+  // Step 3: Sort
+  const sortedPosts = useMemo(() => {
+    const list = [...filteredPosts];
+
+    return list.sort((a, b) => {
       switch (sortBy) {
         case "newest": {
           const dateA = a.publishedDate
@@ -180,11 +254,9 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
           return 0;
       }
     });
+  }, [filteredPosts, sortBy]);
 
-    return result;
-  }, [posts, q, sortBy]);
-
-  // Filter series
+  // Filter series for series catalog
   const filteredSeries = useMemo(() => {
     if (!q) return allSeries;
     return allSeries.filter(
@@ -196,154 +268,212 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
     );
   }, [allSeries, q]);
 
-  // Selected series object (if in detailed series view)
   const selectedSeries = useMemo(() => {
     if (!selectedSeriesName) return null;
     return allSeries.find((s) => s.name === selectedSeriesName) ?? null;
   }, [allSeries, selectedSeriesName]);
 
-  const hasFilter = query.trim().length > 0;
-  const paginatedPosts = filteredAndSortedPosts.slice(0, visibleCount);
+  const paginatedPosts = sortedPosts.slice(0, visibleCount);
   const paginatedSeries = filteredSeries.slice(0, visibleSeriesCount);
 
+  const hasActiveFilters = Boolean(
+    query || selectedTag || selectedYear || selectedSeriesFilter,
+  );
+
+  const clearAllFilters = () => {
+    setQuery("");
+    setSelectedTag(null);
+    setSelectedYear(null);
+    setSelectedSeriesFilter(null);
+  };
+
+  const activeFilters: ActiveFilterItem[] = useMemo(() => {
+    const list: ActiveFilterItem[] = [];
+    if (selectedTag) {
+      list.push({
+        key: "tag",
+        label: `Tag: ${selectedTag}`,
+        onRemove: () => setSelectedTag(null),
+      });
+    }
+    if (selectedYear) {
+      list.push({
+        key: "year",
+        label: `Year: ${selectedYear}`,
+        onRemove: () => setSelectedYear(null),
+      });
+    }
+    if (selectedSeriesFilter) {
+      list.push({
+        key: "series",
+        label: `Series: ${selectedSeriesFilter}`,
+        onRemove: () => setSelectedSeriesFilter(null),
+      });
+    }
+    return list;
+  }, [selectedTag, selectedYear, selectedSeriesFilter]);
+
+  const viewTabsHeader = (
+    <div className="view-tabs" role="tablist" aria-label="Blog display mode">
+      <button
+        type="button"
+        role="tab"
+        aria-selected={viewMode === "all"}
+        onClick={() => {
+          setViewMode("all");
+          setSelectedSeriesName(null);
+        }}
+        className={cn("view-tab", viewMode === "all" && "is-active")}
+      >
+        <BookOpen
+          className="h-4 w-4 shrink-0"
+          strokeWidth={1.75}
+          aria-hidden="true"
+        />
+        <span>All posts</span>
+        <span className="view-tab-count">{posts.length}</span>
+      </button>
+
+      <button
+        type="button"
+        role="tab"
+        aria-selected={viewMode === "series"}
+        onClick={() => {
+          setViewMode("series");
+        }}
+        className={cn("view-tab", viewMode === "series" && "is-active")}
+      >
+        <Layers
+          className="h-4 w-4 shrink-0"
+          strokeWidth={1.75}
+          aria-hidden="true"
+        />
+        <span>Series</span>
+        <span className="view-tab-count">{allSeries.length}</span>
+      </button>
+    </div>
+  );
+
   return (
-    <div className="mt-8">
-      {/* View Switcher Tabs */}
-      <div className="view-tabs" role="tablist" aria-label="Blog display mode">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={viewMode === "all"}
-          onClick={() => {
-            setViewMode("all");
-            setSelectedSeriesName(null);
-          }}
-          className={cn("view-tab", viewMode === "all" && "is-active")}
-        >
-          <BookOpen
-            className="h-4 w-4 shrink-0"
-            strokeWidth={1.75}
-            aria-hidden="true"
-          />
-          <span>All posts</span>
-          <span className="view-tab-count">{posts.length}</span>
-        </button>
-
-        <button
-          type="button"
-          role="tab"
-          aria-selected={viewMode === "series"}
-          onClick={() => {
-            setViewMode("series");
-          }}
-          className={cn("view-tab", viewMode === "series" && "is-active")}
-        >
-          <Layers
-            className="h-4 w-4 shrink-0"
-            strokeWidth={1.75}
-            aria-hidden="true"
-          />
-          <span>Series</span>
-          <span className="view-tab-count">{allSeries.length}</span>
-        </button>
-      </div>
-
+    <div className="mt-8 space-y-6">
       {/* ALL POSTS VIEW */}
       {viewMode === "all" && (
         <>
-          <div className="list-toolbar">
-            <SearchInput
-              value={query}
-              onChange={setQuery}
-              placeholder="Search writing, tags, series…"
-            />
-            <SortSelect
-              value={sortBy}
-              onChange={setSortBy}
-              options={SORT_OPTIONS}
-              label="Sort posts"
-            />
-          </div>
+          <ListingControls
+            extraHeader={viewTabsHeader}
+            query={query}
+            onQueryChange={setQuery}
+            searchPlaceholder="Search writing, tags, topics, series…"
+            filters={
+              <>
+                {tagOptions.length > 0 && (
+                  <FilterSelect
+                    label="Tag"
+                    value={selectedTag}
+                    options={tagOptions}
+                    onChange={setSelectedTag}
+                    allLabel="All tags"
+                  />
+                )}
+                {yearOptions.length > 0 && (
+                  <FilterSelect
+                    label="Year"
+                    value={selectedYear}
+                    options={yearOptions}
+                    onChange={setSelectedYear}
+                    allLabel="All years"
+                  />
+                )}
+                {seriesFilterOptions.length > 0 && (
+                  <FilterSelect
+                    label="Series"
+                    value={selectedSeriesFilter}
+                    options={seriesFilterOptions}
+                    onChange={setSelectedSeriesFilter}
+                    allLabel="All series"
+                  />
+                )}
+              </>
+            }
+            sortBy={sortBy}
+            onSortChange={setSortBy}
+            sortOptions={SORT_OPTIONS}
+            sortLabel="Sort posts"
+            activeFilters={activeFilters}
+            onClearAll={clearAllFilters}
+            filteredCount={sortedPosts.length}
+            totalCount={posts.length}
+            itemNoun="Post"
+            itemPlural="Posts"
+          />
 
-          {hasFilter && (
-            <div className="filter-status">
-              <span>
-                Showing {filteredAndSortedPosts.length} of {posts.length}{" "}
-                {posts.length === 1 ? "post" : "posts"}
-              </span>
-              <button
-                type="button"
-                onClick={() => setQuery("")}
-                className="filter-reset-btn"
-              >
-                Clear filter
-              </button>
-            </div>
-          )}
-
-          <div className="mt-10">
-            {filteredAndSortedPosts.length === 0 ? (
+          {sortedPosts.length === 0 ? (
+            <div className="mt-8">
               <EmptyState
-                title="No posts match your search."
-                hint="Try a different keyword or clear the search filter."
+                title="No posts match your criteria"
+                hint={
+                  hasActiveFilters
+                    ? "Try adjusting your search or filters to see more posts."
+                    : "No posts are currently published."
+                }
               >
-                {hasFilter && (
+                {hasActiveFilters && (
                   <div className="mt-4 flex justify-center">
-                    <Button variant="secondary" onClick={() => setQuery("")}>
-                      Clear filter
+                    <Button variant="secondary" onClick={clearAllFilters}>
+                      Clear all filters
                     </Button>
                   </div>
                 )}
               </EmptyState>
-            ) : (
-              <>
-                <ItemList>
-                  {paginatedPosts.map((post) => (
-                    <Item
-                      key={post.slug}
-                      title={post.title}
-                      href={`/blog/${post.slug}`}
-                      description={post.description ?? undefined}
-                      meta={
-                        <>
-                          <time
-                            dateTime={toDateAttribute(post.publishedDate)}
-                            className="block"
-                          >
-                            {formatDate(post.publishedDate)}
-                          </time>
-                          <span className="block">
-                            {readingTime(post.readingTimeMinutes)}
-                          </span>
-                          {post.series && (
-                            <span className="block">{post.series.name}</span>
-                          )}
-                        </>
-                      }
-                    />
-                  ))}
-                </ItemList>
+            </div>
+          ) : (
+            <div className="mt-6">
+              <ItemList>
+                {paginatedPosts.map((post) => (
+                  <Item
+                    key={post.slug}
+                    title={post.title}
+                    href={`/blog/${post.slug}`}
+                    description={post.description ?? undefined}
+                    meta={
+                      <>
+                        <time
+                          dateTime={toDateAttribute(post.publishedDate)}
+                          className="block"
+                        >
+                          {formatDate(post.publishedDate)}
+                        </time>
+                        <span className="block">
+                          {readingTime(post.readingTimeMinutes)}
+                        </span>
+                        {post.series && (
+                          <span className="block">{post.series.name}</span>
+                        )}
+                      </>
+                    }
+                  />
+                ))}
+              </ItemList>
 
-                <LoadMore
-                  shown={paginatedPosts.length}
-                  total={filteredAndSortedPosts.length}
-                  batchSize={POSTS_PER_PAGE}
-                  onLoadMore={() =>
-                    setVisibleCount((prev) => prev + POSTS_PER_PAGE)
-                  }
-                  onShowAll={() =>
-                    setVisibleCount(filteredAndSortedPosts.length)
-                  }
-                />
-              </>
-            )}
-          </div>
+              <LoadMore
+                shown={paginatedPosts.length}
+                total={sortedPosts.length}
+                batchSize={POSTS_PER_PAGE}
+                onLoadMore={() =>
+                  setVisibleCount((prev) => prev + POSTS_PER_PAGE)
+                }
+                onShowAll={() => setVisibleCount(sortedPosts.length)}
+              />
+            </div>
+          )}
         </>
       )}
 
       {/* BLOG SERIES VIEW */}
       {viewMode === "series" && (
         <>
+          {viewTabsHeader}
+
           {selectedSeries ? (
             /* Selected Series Drilldown View */
             <div className="mt-4">
@@ -418,7 +548,7 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
           ) : (
             /* All Series Catalog */
             <>
-              <div className="list-toolbar">
+              <div className="w-full">
                 <SearchInput
                   value={query}
                   onChange={setQuery}
@@ -426,7 +556,7 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
                 />
               </div>
 
-              {hasFilter && (
+              {query.trim() && (
                 <div className="filter-status">
                   <span>
                     Showing {filteredSeries.length} of {allSeries.length}{" "}
@@ -443,83 +573,76 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
               )}
 
               {filteredSeries.length === 0 ? (
-                <div className="mt-10">
+                <div className="mt-8">
                   <EmptyState
                     title="No series match your search."
                     hint="Try searching for a different keyword or topic."
                   >
-                    {hasFilter && (
+                    {query && (
                       <div className="mt-4 flex justify-center">
-                        <Button
-                          variant="secondary"
-                          onClick={() => setQuery("")}
-                        >
-                          Clear filter
+                        <Button variant="secondary" onClick={() => setQuery("")}>
+                          Clear search
                         </Button>
                       </div>
                     )}
                   </EmptyState>
                 </div>
               ) : (
-                <>
-                  <div className="series-grid mt-8">
+                <div className="mt-8">
+                  <div className="series-grid">
                     {paginatedSeries.map((series) => (
-                      <article key={series.name} className="series-card">
-                        <div className="series-card-header">
-                          <div>
-                            <span className="font-mono text-label uppercase tracking-label text-brand">
-                              Series · {series.posts.length}{" "}
-                              {series.posts.length === 1 ? "post" : "posts"}
+                      <article
+                        key={series.name}
+                        onClick={() => setSelectedSeriesName(series.name)}
+                        className="series-card cursor-pointer"
+                        tabIndex={0}
+                        role="button"
+                        aria-label={`View series: ${series.name}`}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            setSelectedSeriesName(series.name);
+                          }
+                        }}
+                      >
+                        <div className="series-card-body">
+                          <div className="series-card-meta">
+                            <span className="series-card-count">
+                              {series.posts.length}{" "}
+                              {series.posts.length === 1 ? "part" : "parts"}
                             </span>
-                            <h2 className="series-card-title">{series.name}</h2>
+                            <span>·</span>
+                            <span>{readingTime(series.totalReadingTime)}</span>
                           </div>
-                          <span className="font-mono text-small text-fg-muted">
-                            {readingTime(series.totalReadingTime)} total
-                          </span>
-                        </div>
 
-                        {series.description && (
-                          <p className="series-card-desc">
-                            {series.description}
-                          </p>
-                        )}
+                          <h3 className="series-card-title">{series.name}</h3>
 
-                        {/* Series Posts Preview */}
-                        <div className="series-posts-list">
-                          {series.posts.map((post, idx) => (
-                            <div key={post.slug} className="series-post-row">
-                              <span className="series-post-num">
-                                {idx + 1}.
-                              </span>
-                              <Link
-                                href={`/blog/${post.slug}`}
-                                className="series-post-title"
-                              >
-                                {post.title}
-                              </Link>
+                          {series.description && (
+                            <p className="series-card-desc line-clamp-2">
+                              {series.description}
+                            </p>
+                          )}
+
+                          {series.tags.length > 0 && (
+                            <div className="series-card-tags">
+                              {series.tags.slice(0, 3).map((tag) => (
+                                <span key={tag} className="series-tag">
+                                  {tag}
+                                </span>
+                              ))}
                             </div>
-                          ))}
-                        </div>
+                          )}
 
-                        <div className="mt-6 flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-border">
-                          <div className="flex flex-wrap gap-2">
-                            {series.tags.map((tag) => (
-                              <Badge key={tag}>{tag}</Badge>
-                            ))}
+                          <div className="series-card-footer">
+                            <span className="series-card-link">
+                              <span>Read series</span>
+                              <ArrowRight
+                                className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1"
+                                strokeWidth={2}
+                                aria-hidden="true"
+                              />
+                            </span>
                           </div>
-
-                          <button
-                            type="button"
-                            onClick={() => setSelectedSeriesName(series.name)}
-                            className="view-all inline-flex items-center gap-1.5 font-mono text-small text-brand hover:underline cursor-pointer bg-transparent border-none p-0"
-                          >
-                            <span>View all {series.posts.length} parts</span>
-                            <ArrowRight
-                              className="h-3.5 w-3.5 shrink-0"
-                              strokeWidth={2}
-                              aria-hidden="true"
-                            />
-                          </button>
                         </div>
                       </article>
                     ))}
@@ -536,7 +659,7 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
                       setVisibleSeriesCount(filteredSeries.length)
                     }
                   />
-                </>
+                </div>
               )}
             </>
           )}
@@ -546,11 +669,12 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
   );
 }
 
+/** Case-insensitive search match across blog post title, description, tags, and series name. */
 function matchesPost(post: BlogPostSummary, q: string): boolean {
-  return (
-    post.title.toLowerCase().includes(q) ||
-    (post.description ?? "").toLowerCase().includes(q) ||
-    (post.tags ?? []).some((tag) => tag.toLowerCase().includes(q)) ||
-    (post.series?.name ?? "").toLowerCase().includes(q)
-  );
+  if (post.title.toLowerCase().includes(q)) return true;
+  if ((post.description ?? "").toLowerCase().includes(q)) return true;
+  if ((post.series?.name ?? "").toLowerCase().includes(q)) return true;
+  if ((post.tags ?? []).some((tag) => tag.toLowerCase().includes(q)))
+    return true;
+  return false;
 }

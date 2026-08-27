@@ -4,11 +4,13 @@ import { useState, useMemo } from "react";
 import {
   Button,
   EmptyState,
+  FilterSelect,
+  type FilterOption,
   Item,
   ItemList,
+  ListingControls,
+  type ActiveFilterItem,
   LoadMore,
-  SearchInput,
-  SortSelect,
   type SortOption,
 } from "@/components/ui";
 import type { Community } from "@/lib/api-types";
@@ -24,28 +26,66 @@ const SORT_OPTIONS: SortOption<CommunitySortKey>[] = [
 
 const COMMUNITIES_PER_PAGE = 10;
 
-/** Client-side search, sorting, and progressive pagination across communities. */
+/** Client-side search, filtering, sorting, and progressive pagination across communities. */
 export function CommunitySearch({ communities }: { communities: Community[] }) {
   const [query, setQuery] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<CommunitySortKey>("default");
   const [visibleCount, setVisibleCount] = useState(COMMUNITIES_PER_PAGE);
 
-  // Reset pagination when search or sort changes
+  // Reset pagination when search, filter or sort changes
   const [prevFilterKey, setPrevFilterKey] = useState("");
-  const currentFilterKey = `${query}|${sortBy}`;
+  const currentFilterKey = `${query}|${selectedStatus}|${sortBy}`;
   if (prevFilterKey !== currentFilterKey) {
     setPrevFilterKey(currentFilterKey);
     setVisibleCount(COMMUNITIES_PER_PAGE);
   }
 
-  const q = query.toLowerCase().trim();
+  // Filter options
+  const statusOptions: FilterOption[] = useMemo(() => {
+    let currentCount = 0;
+    let pastCount = 0;
 
-  const filteredAndSorted = useMemo(() => {
-    const result = q
-      ? communities.filter((c) => matches(c, q))
-      : [...communities];
+    for (const c of communities) {
+      if (c.current) {
+        currentCount++;
+      } else {
+        pastCount++;
+      }
+    }
 
-    result.sort((a, b) => {
+    const opts: FilterOption[] = [];
+    if (currentCount > 0) {
+      opts.push({ value: "current", label: "Current roles", count: currentCount });
+    }
+    if (pastCount > 0) {
+      opts.push({ value: "past", label: "Past roles", count: pastCount });
+    }
+    return opts;
+  }, [communities]);
+
+  // Step 1: Search
+  const searchedCommunities = useMemo(() => {
+    const q = query.toLowerCase().trim();
+    if (!q) return communities;
+
+    return communities.filter((c) => matches(c, q));
+  }, [communities, query]);
+
+  // Step 2: Filter
+  const filteredCommunities = useMemo(() => {
+    return searchedCommunities.filter((c) => {
+      if (selectedStatus === "current" && !c.current) return false;
+      if (selectedStatus === "past" && c.current) return false;
+      return true;
+    });
+  }, [searchedCommunities, selectedStatus]);
+
+  // Step 3: Sort
+  const sortedCommunities = useMemo(() => {
+    const list = [...filteredCommunities];
+
+    return list.sort((a, b) => {
       switch (sortBy) {
         case "current-first":
           if (a.current !== b.current) return a.current ? -1 : 1;
@@ -59,62 +99,81 @@ export function CommunitySearch({ communities }: { communities: Community[] }) {
           return (b.order ?? 0) - (a.order ?? 0);
       }
     });
+  }, [filteredCommunities, sortBy]);
 
-    return result;
-  }, [communities, q, sortBy]);
+  // Step 4: Paginate
+  const paginatedCommunities = sortedCommunities.slice(0, visibleCount);
+  const hasMore = visibleCount < sortedCommunities.length;
 
-  const hasFilter = query.trim().length > 0;
-  const paginatedCommunities = filteredAndSorted.slice(0, visibleCount);
+  const hasActiveFilters = Boolean(query || selectedStatus);
+
+  const clearAllFilters = () => {
+    setQuery("");
+    setSelectedStatus(null);
+  };
+
+  const activeFilters: ActiveFilterItem[] = useMemo(() => {
+    const list: ActiveFilterItem[] = [];
+    if (selectedStatus) {
+      list.push({
+        key: "status",
+        label: selectedStatus === "current" ? "Current roles" : "Past roles",
+        onRemove: () => setSelectedStatus(null),
+      });
+    }
+    return list;
+  }, [selectedStatus]);
 
   return (
-    <>
-      <div className="list-toolbar">
-        <SearchInput
-          value={query}
-          onChange={setQuery}
-          placeholder="Search communities, roles, topics…"
-        />
-        <SortSelect
-          value={sortBy}
-          onChange={setSortBy}
-          options={SORT_OPTIONS}
-          label="Sort communities"
-        />
-      </div>
+    <div className="space-y-6">
+      <ListingControls
+        query={query}
+        onQueryChange={setQuery}
+        searchPlaceholder="Search communities, roles, topics, periods…"
+        filters={
+          statusOptions.length > 0 && (
+            <FilterSelect
+              label="Status"
+              value={selectedStatus}
+              options={statusOptions}
+              onChange={setSelectedStatus}
+              allLabel="All roles"
+            />
+          )
+        }
+        sortBy={sortBy}
+        onSortChange={setSortBy}
+        sortOptions={SORT_OPTIONS}
+        sortLabel="Sort communities"
+        activeFilters={activeFilters}
+        onClearAll={clearAllFilters}
+        filteredCount={sortedCommunities.length}
+        totalCount={communities.length}
+        itemNoun="Community"
+        itemPlural="Communities"
+      />
 
-      {hasFilter && (
-        <div className="filter-status">
-          <span>
-            Showing {filteredAndSorted.length} of {communities.length}{" "}
-            {communities.length === 1 ? "community" : "communities"}
-          </span>
-          <button
-            type="button"
-            onClick={() => setQuery("")}
-            className="filter-reset-btn"
-          >
-            Clear filter
-          </button>
-        </div>
-      )}
-
-      {filteredAndSorted.length === 0 ? (
-        <div className="mt-10">
+      {sortedCommunities.length === 0 ? (
+        <div className="mt-8">
           <EmptyState
-            title="No communities match your search."
-            hint="Try a different keyword or clear the search filter."
+            title="No communities match your criteria"
+            hint={
+              hasActiveFilters
+                ? "Try adjusting your search or filters to find what you're looking for."
+                : "No communities are currently listed."
+            }
           >
-            {hasFilter && (
+            {hasActiveFilters && (
               <div className="mt-4 flex justify-center">
-                <Button variant="secondary" onClick={() => setQuery("")}>
-                  Clear filter
+                <Button variant="secondary" onClick={clearAllFilters}>
+                  Clear all filters
                 </Button>
               </div>
             )}
           </EmptyState>
         </div>
       ) : (
-        <div className="mt-8">
+        <div className="mt-6">
           <ItemList>
             {paginatedCommunities.map((community) => (
               <Item
@@ -135,18 +194,20 @@ export function CommunitySearch({ communities }: { communities: Community[] }) {
             ))}
           </ItemList>
 
-          <LoadMore
-            shown={paginatedCommunities.length}
-            total={filteredAndSorted.length}
-            batchSize={COMMUNITIES_PER_PAGE}
-            onLoadMore={() =>
-              setVisibleCount((prev) => prev + COMMUNITIES_PER_PAGE)
-            }
-            onShowAll={() => setVisibleCount(filteredAndSorted.length)}
-          />
+          {hasMore && (
+            <LoadMore
+              shown={paginatedCommunities.length}
+              total={sortedCommunities.length}
+              batchSize={COMMUNITIES_PER_PAGE}
+              onLoadMore={() =>
+                setVisibleCount((prev) => prev + COMMUNITIES_PER_PAGE)
+              }
+              onShowAll={() => setVisibleCount(sortedCommunities.length)}
+            />
+          )}
         </div>
       )}
-    </>
+    </div>
   );
 }
 
