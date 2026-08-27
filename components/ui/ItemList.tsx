@@ -1,7 +1,6 @@
 import { ReactNode } from "react";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
-import { PagePath } from "./PagePath";
 
 /**
  * The item list — communities, events, posts, videos.
@@ -16,7 +15,6 @@ export function ItemList({ children }: { children: ReactNode }) {
 export function Item({
   title,
   href,
-  path,
   external,
   description,
   meta,
@@ -25,7 +23,6 @@ export function Item({
 }: {
   title: string;
   href?: string;
-  path?: string;
   external?: boolean;
   description?: string;
   /** Mono, right-aligned on wide screens. Dates, formats, counts. */
@@ -34,20 +31,10 @@ export function Item({
   children?: ReactNode;
 }) {
   const isExternal = external ?? href?.startsWith("http");
-  const internalRoute =
-    !isExternal && href && !href.startsWith("/#") && !href.startsWith("#")
-      ? href
-      : undefined;
-  const displayPath = path ?? internalRoute;
 
   return (
     <article className="item">
       <div className="min-w-0">
-        {displayPath && (
-          <div className="mb-1">
-            <PagePath path={displayPath} />
-          </div>
-        )}
         <h3 className="flex items-center gap-2 flex-wrap">
           {icon && <span className="shrink-0">{icon}</span>}
           {href ? (
