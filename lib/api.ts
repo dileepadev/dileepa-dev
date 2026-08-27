@@ -36,7 +36,92 @@ import type {
   Video,
 } from "./api-types";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+/**
+ * Hosts where plaintext HTTP is the normal, correct thing.
+ */
+const LOCAL_HOSTS = new Set([
+  "localhost",
+  "127.0.0.1",
+  "[::1]",
+  "::1",
+  "host.docker.internal",
+]);
+
+/**
+ * `NEXT_PUBLIC_API_URL` as requests will actually use it.
+ *
+ * Two corrections, for mistakes that are nearly invisible in a dotenv file and
+ * total in effect:
+ *
+ * 1. **A trailing slash.** Every endpoint here starts with `/`, so
+ *    `https://api.dileepa.dev/` builds `https://api.dileepa.dev//projects`,
+ *    which the API 404s rather than collapsing. The site would render as
+ *    though every collection were empty, with nothing in the console to say
+ *    otherwise.
+ * 2. **`http://` to a remote host.** This value is inlined into the browser
+ *    bundle, so it is not only a plaintext hop — it is mixed content on an
+ *    HTTPS page, which browsers block outright. Every client-side fetch on the
+ *    blog (views, reactions, comments) would fail with no request sent.
+ *
+ * Corrected rather than thrown on: throwing here takes down every page over a
+ * one-character typo, and the safe value is not in doubt. `apiOrigin()` in
+ * next.config.ts derives the CSP `connect-src` from the same variable and
+ * normalises to an origin, so the policy agrees with this either way.
+ */
+function normalizeApiUrl(raw: string): string {
+  const trimmed = raw.trim().replace(/\/+$/, "");
+
+  let url: URL;
+  try {
+    url = new URL(trimmed);
+  } catch {
+    return trimmed;
+  }
+
+  if (url.protocol === "http:" && !LOCAL_HOSTS.has(url.hostname)) {
+    url.protocol = "https:";
+  }
+
+  return url.href.replace(/\/+$/, "");
+}
+
+const API_URL = normalizeApiUrl(
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000",
+);
+
+/**
+ * In the browser, returns the API base URL.
+ *
+ * In production and preview deployments on Vercel, requests talk directly to
+ * the API origin.
+ *
+ * During local development (localhost / 127.0.0.1) against a remote production
+ * API (e.g. `NEXT_PUBLIC_API_URL=https://api.dileepa.dev`), direct browser
+ * fetches are rejected by the remote API's CORS allowlist. Routing them through
+ * `/api/proxy` forwards them server-side from Next.js without CORS rejection.
+ */
+function getClientApiUrl(): string {
+  if (typeof window !== "undefined") {
+    const hostname = window.location.hostname;
+    const isLocal =
+      hostname === "localhost" ||
+      hostname === "127.0.0.1" ||
+      hostname.endsWith(".local") ||
+      hostname.startsWith("192.168.") ||
+      hostname.startsWith("10.") ||
+      hostname.startsWith("172.");
+
+    const apiIsRemote =
+      API_URL.startsWith("http") &&
+      !API_URL.includes("localhost") &&
+      !API_URL.includes("127.0.0.1");
+
+    if (isLocal && apiIsRemote) {
+      return "/api/proxy";
+    }
+  }
+  return API_URL;
+}
 
 /** How long a resource may be served stale, in seconds. */
 const REVALIDATE = {
@@ -214,7 +299,7 @@ async function engagement(
   endpoint: string,
   body?: unknown,
 ): Promise<BlogEngagement> {
-  const response = await fetch(`${API_URL}${endpoint}`, {
+  const response = await fetch(`${getClientApiUrl()}${endpoint}`, {
     method,
     cache: "no-store",
     ...(body === undefined
@@ -354,7 +439,7 @@ export const api = {
 
   getComments: async (slug: string): Promise<CommentThread[]> => {
     const response = await fetch(
-      `${API_URL}/blogs/${encodeURIComponent(slug)}/comments`,
+      `${getClientApiUrl()}/blogs/${encodeURIComponent(slug)}/comments`,
       { cache: "no-store" },
     );
     if (!response.ok) throw await readError(response, "/comments");
@@ -380,7 +465,7 @@ export const api = {
     },
   ): Promise<CommentPosted> => {
     const response = await fetch(
-      `${API_URL}/blogs/${encodeURIComponent(slug)}/comments`,
+      `${getClientApiUrl()}/blogs/${encodeURIComponent(slug)}/comments`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -405,7 +490,7 @@ export const api = {
     reaction: ReactionKind | null,
   ): Promise<PublicComment> => {
     const response = await fetch(
-      `${API_URL}/blogs/${encodeURIComponent(slug)}/comments/${encodeURIComponent(commentId)}/reactions`,
+      `${getClientApiUrl()}/blogs/${encodeURIComponent(slug)}/comments/${encodeURIComponent(commentId)}/reactions`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -420,7 +505,7 @@ export const api = {
   // --- Contact -------------------------------------------------------------
 
   sendMessage: async (data: ContactRequest): Promise<ContactResult> => {
-    const response = await fetch(`${API_URL}/contact`, {
+    const response = await fetch(`${getClientApiUrl()}/contact`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
