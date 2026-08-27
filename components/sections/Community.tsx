@@ -1,6 +1,5 @@
 import {
   Container,
-  Gallery,
   Item,
   ItemList,
   Section,
@@ -12,18 +11,17 @@ import type {
   BlogPost,
   Community,
   EventRecord,
-  GalleryPhoto,
   Video,
 } from "@/lib/api-types";
 import { SECTIONS, SUBSECTIONS } from "@/lib/constants";
 import { formatDate, formatMonth, readingTime } from "@/lib/format";
 
 /**
- * Community — communities, events, the event gallery, writing, videos.
+ * Community — communities, events, writing, videos.
  *
- * Five subsections rather than five sections. They are all the same activity
+ * Four subsections rather than four sections. They are all the same activity
  * seen from different angles, and giving each one a full section heading would
- * make the page claim five topics where there is one.
+ * make the page claim four topics where there is one.
  *
  * Each subsection renders the first few records and links to its full index. An
  * empty one returns nothing rather than an empty state: on the homepage a
@@ -33,13 +31,11 @@ import { formatDate, formatMonth, readingTime } from "@/lib/format";
 export function CommunitySection({
   communities,
   events,
-  gallery,
   posts,
   videos,
 }: {
   communities: Community[];
   events: EventRecord[];
-  gallery: GalleryPhoto[];
   posts: BlogPost[];
   videos: Video[];
 }) {
@@ -91,12 +87,6 @@ export function CommunitySection({
               ))}
             </ItemList>
             <ViewAll href="/events">All events</ViewAll>
-          </Subsection>
-        )}
-
-        {gallery.length > 0 && (
-          <Subsection id="gallery" {...SUBSECTIONS.gallery}>
-            <Gallery photos={gallery} />
           </Subsection>
         )}
 

@@ -476,7 +476,6 @@ export async function getHomepageData() {
     events,
     posts,
     videos,
-    gallery,
   ] = await Promise.all([
     api.getAbout(),
     api.getExperiences(),
@@ -487,7 +486,6 @@ export async function getHomepageData() {
     api.getEvents({ limit: 4 }),
     api.getBlogs({ limit: 4 }),
     api.getVideos(),
-    getGallery(12),
   ]);
 
   return {
@@ -500,6 +498,5 @@ export async function getHomepageData() {
     events,
     posts,
     videos,
-    gallery,
   };
 }

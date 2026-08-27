@@ -27,7 +27,6 @@ export default async function HomePage() {
     events,
     posts,
     videos,
-    gallery,
   } = await getHomepageData();
 
   return (
@@ -39,7 +38,6 @@ export default async function HomePage() {
       <CommunitySection
         communities={communities}
         events={events}
-        gallery={gallery}
         posts={posts}
         videos={videos}
       />
