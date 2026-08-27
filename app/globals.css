@@ -595,6 +595,7 @@ pre {
 }
 
 .nav-link {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -611,6 +612,23 @@ pre {
     color var(--dur) var(--ease),
     background-color var(--dur) var(--ease),
     transform var(--dur) var(--ease);
+}
+
+/* Sleek bottom accent underline indicator */
+.nav-link::after {
+  content: "";
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 18px;
+  height: 2px;
+  border-radius: var(--radius-pill);
+  background: var(--brand);
+  opacity: 0;
+  transition:
+    transform var(--dur) var(--ease),
+    opacity var(--dur) var(--ease);
 }
 
 .nav-link:hover {
@@ -631,10 +649,18 @@ pre {
   background: transparent;
 }
 
+.nav-link.is-active::after,
+.nav-link[aria-current="true"]::after,
+.nav-link[aria-current="page"]::after {
+  transform: translateX(-50%) scaleX(1);
+  opacity: 1;
+}
+
 .nav-link.is-active:hover,
 .nav-link[aria-current="true"]:hover,
 .nav-link[aria-current="page"]:hover {
   color: var(--brand);
+  background: var(--surface-hover);
 }
 
 .nav-mobile-toggle {
@@ -710,6 +736,7 @@ pre {
 }
 
 .nav-mobile-link {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -724,6 +751,23 @@ pre {
     color var(--dur) var(--ease);
 }
 
+.nav-mobile-link::after {
+  content: "";
+  position: absolute;
+  bottom: 2px;
+  left: var(--space-3);
+  width: 24px;
+  height: 2px;
+  border-radius: var(--radius-pill);
+  background: var(--brand);
+  transform: scaleX(0);
+  transform-origin: left;
+  opacity: 0;
+  transition:
+    transform var(--dur) var(--ease),
+    opacity var(--dur) var(--ease);
+}
+
 .nav-mobile-link:hover {
   background: var(--surface-hover);
 }
@@ -734,9 +778,16 @@ pre {
   background: transparent;
 }
 
+.nav-mobile-link.is-active::after,
+.nav-mobile-link[aria-current="true"]::after {
+  transform: scaleX(1);
+  opacity: 1;
+}
+
 .nav-mobile-link.is-active:hover,
 .nav-mobile-link[aria-current="true"]:hover {
   color: var(--brand);
+  background: var(--surface-hover);
 }
 
 .nav-mobile-divider {
@@ -752,6 +803,7 @@ pre {
 }
 
 .nav-mobile-sublink {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -766,6 +818,23 @@ pre {
     color var(--dur) var(--ease);
 }
 
+.nav-mobile-sublink::after {
+  content: "";
+  position: absolute;
+  bottom: 2px;
+  left: var(--space-3);
+  width: 20px;
+  height: 2px;
+  border-radius: var(--radius-pill);
+  background: var(--brand);
+  transform: scaleX(0);
+  transform-origin: left;
+  opacity: 0;
+  transition:
+    transform var(--dur) var(--ease),
+    opacity var(--dur) var(--ease);
+}
+
 .nav-mobile-sublink:hover {
   background: var(--surface-hover);
   color: var(--fg);
@@ -777,9 +846,16 @@ pre {
   background: transparent;
 }
 
+.nav-mobile-sublink.is-active::after,
+.nav-mobile-sublink[aria-current="page"]::after {
+  transform: scaleX(1);
+  opacity: 1;
+}
+
 .nav-mobile-sublink.is-active:hover,
 .nav-mobile-sublink[aria-current="page"]:hover {
   color: var(--brand);
+  background: var(--surface-hover);
 }
 
 .nav-active-dot {
