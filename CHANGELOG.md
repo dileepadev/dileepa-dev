@@ -18,6 +18,31 @@ platform design system. Content comes from FastAPI; post bodies come from Git.
 
 #### Added - v2.0.0
 
+- **Security headers on every response**, set in `next.config.ts` so the posture ships with the
+  code rather than with the host: a Content-Security-Policy, `X-Content-Type-Options`,
+  `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy` and `Strict-Transport-Security`.
+  The site previously sent none of them, while the API has carried a full set since v2.0.0.
+  `script-src` keeps `'unsafe-inline'` because Next inlines its hydration payload on every page
+  and Microsoft Clarity's loader is an inline bootstrap; removing it needs a per-request nonce,
+  which needs middleware on every route, which would make all 109 statically generated pages
+  dynamic. It still earns its place by naming the only three script origins the site may load
+  from. `connect-src` names the API by reading `NEXT_PUBLIC_API_URL`, so repointing the site
+  cannot leave the policy naming the old one. `Strict-Transport-Security` deliberately omits
+  `includeSubDomains` — `blog.dileepa.dev` is retired and resolves to a registrar forward with no
+  certificate, and the directive would be honoured there too.
+
+  **The policy differs in development, and only there.** React's development build calls `eval()`
+  to rebuild callstacks and drive other debugging features, hot module replacement is a WebSocket,
+  Turbopack serves some chunks from `blob:` URLs, and `@vercel/analytics` fetches a debug build
+  from `va.vercel-scripts.com` rather than the `/_vercel/…` path it uses in production. So
+  `'unsafe-eval'`, `blob:`, `ws:`/`wss:` and that one host are added when `NODE_ENV` is
+  `development` and never otherwise. React never calls `eval()` in a production build, so
+  production keeps the stricter policy and loses nothing by it.
+
+  Both policies were driven in a browser rather than reasoned about. Production: analytics loads,
+  `window.gtag` and `window.clarity` are both live, and nothing is blocked. Development: the
+  homepage, `/projects`, a project page, `/blog`, a post, `/events` and `/gallery` all report a
+  clean console.
 - **Post interactions** — a React · Comment · Share action bar under every article, with the
   counts summarised above it. Reactions (four kinds, one per reader, toggled by pressing the same
   one again), a view count de-duplicated per reader per 24 hours by the API, and comments with one
@@ -49,6 +74,12 @@ platform design system. Content comes from FastAPI; post bodies come from Git.
 
 #### Changed - v2.0.0
 
+- **The link-in-bio page moved from the footer to the Contact section.** `links.dileepa.dev` was
+  a row in the footer's Elsewhere column; Projects now occupies that slot, and the link sits
+  beside the contact address instead — which is where a reader is already looking for a way
+  through. Deliberately not `--brand`: the email above it is that surface's single accent, and a
+  second emerald link beside it is exactly the scattering the brand guide rules out. It takes the
+  muted body colour and the external arrow every outbound link on the site already gets.
 - **The layout reference is implemented, not approximated.** The 760px measure, the floating nav
   pill, the section rhythm, the entry and item grids, the subsection rule and the footer are
   reproduced in `app/globals.css` against the semantic tokens — because "the same layout" is a
@@ -127,6 +158,7 @@ platform design system. Content comes from FastAPI; post bodies come from Git.
 
 #### Removed - v2.0.0
 
+- **`X-Powered-By: Next.js`** — named the framework on every response, and nothing read it.
 - **Blog banners.** Posts carry no image of their own; anything a post shows is an ordinary
   Markdown image in the body. Photographs appear in exactly two places on this site — the hero
   portrait and the event gallery — and keeping that budget small is what makes a page of

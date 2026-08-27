@@ -50,8 +50,16 @@ wait on `api-dileepa-dev` reaching parity.
 - [x] **"passionate about" removed from `lib/constants.ts`** — it is on the banned list
 - [x] Section labels are words, not `01 /` numbers
 - [x] The hero display heading is the **tagline**, not the name
-- [ ] Audit: emerald appears once per surface, never scattered
-- [ ] Verify both themes against the guide's contrast pairings
+- [ ] Audit: emerald appears once per surface, never scattered. **Measured, not yet judged** —
+      counting elements whose computed `color` resolves to `--brand` gives 2 on `/projects` and
+      `/gallery`, 3–5 on `/events`, `/videos` and a post, 9 on `/blog` and 13 on `/`. Most are
+      inline prose links, which are not what the rule is about, so the number cannot settle it.
+      Needs an eye, not a script
+- [x] Verify both themes against the guide's contrast pairings — computed from the token sheet's
+      own values and every pairing meets or beats what §3 claims for it. Emerald Bright on Carbon
+      is 8.04:1 (claimed 7.7, AAA); Emerald Deep on Paper is 4.67:1 (claimed 4.7, AA); the
+      `--on-brand` fills are 6.03:1 and 4.67:1, both AA; body text is 18.04:1 and 17.34:1, AAA
+      either way
 - [x] Re-evaluate Framer Motion against the new tone — it was imported nowhere, so the answer was
       to drop the dependency rather than tune it. `prefers-reduced-motion` is honoured in
       `globals.css` and `brand-tokens.css`, which is where the motion actually lives
@@ -93,7 +101,10 @@ wait on `api-dileepa-dev` reaching parity.
 - [ ] **`/projects/[slug]` and `/events/[slug]` still serve their 404 as a client-rendered shell** —
       correct status, empty `<body>` until hydration. `dynamicParams` has to stay open there:
       both are published from the admin and must resolve without a rebuild. Revisit if Next
-      changes how an on-demand `notFound()` is streamed
+      changes how an on-demand `notFound()` is streamed. **Re-confirmed on Next 16.3.2**: with
+      scripts and styles stripped, `/blog/<missing>` and the root 404 both render 460 characters
+      of markup server-side, while `/projects/<missing>` and `/events/<missing>` render 0. The
+      status is correct in all four cases; only the body differs
 
 ### Post interactions ✅
 
@@ -181,6 +192,25 @@ Two same-site rules survive, and neither is optional:
       address** — that tool requires the old URLs to 301, and they do not. The host currently
       resolves to a registrar forward and has no certificate. **After the deployment**
 
+### Hardening
+
+- [x] **Security headers.** The site sent none — no CSP, no `nosniff`, no framing, referrer or
+      permissions policy — while the API has carried a full set since v2.0.0. They live in
+      `next.config.ts` so the posture ships with the code rather than with the host.
+      `Strict-Transport-Security` deliberately omits `includeSubDomains`: `blog.dileepa.dev` is
+      retired and currently resolves to a registrar forward with no certificate, and the
+      directive would be honoured for that host too, turning a forward into a connection failure.
+- [x] **The CSP is verified in a browser, not reasoned about.** `script-src` has to keep
+      `'unsafe-inline'` — Next inlines its hydration payload on every page and Clarity's loader
+      is an inline bootstrap, and removing it needs a per-request nonce, which needs middleware
+      on every route, which would make all 109 static pages dynamic. It still earns its place by
+      naming the only three script origins. Driven in headless Chromium against a production
+      build: `gtag/js`, `clarity.ms/tag`, `scripts.clarity.ms`, `google-analytics.com/g/collect`,
+      `i.clarity.ms/collect`, `c.clarity.ms` and `c.bing.com` all load, `window.gtag` and
+      `window.clarity` are both functions, and **no request is blocked**. `connect-src` names the
+      API by reading `NEXT_PUBLIC_API_URL`, so repointing the site cannot leave the policy behind
+- [x] `poweredByHeader: false` — `X-Powered-By: Next.js` was on every response and nothing reads it
+
 ### Testing
 
 - [x] `npm run lint`, `npm run typecheck` and `npm run build` all clean
@@ -196,11 +226,24 @@ Two same-site rules survive, and neither is optional:
 - [x] Both the dev server and the production build load content correctly — `local:../blog-dileepa-dev/posts`
       in development, the pinned SHA from GitHub in production, 18 posts either way
 - [ ] Repeat the 18-post check against `dileepa.dev` itself, once deployed
-- [ ] Both themes, on every new surface — a component that passes contrast in one can fail in the
-      other. Needs a browser
-- [ ] 375px width. Needs a browser
-- [ ] Keyboard navigation and visible focus rings on every interactive element. Needs a browser
-- [ ] Lighthouse ≥ 95 on all four categories — homepage, a blog post, an event detail page
+- [x] Both themes, on every new surface — driven in headless Chromium over `/`, `/blog`, a post,
+      `/events`, `/gallery`, `/projects`, `/videos` and `/communities`, at both 375px and 1280px,
+      computing every text node's contrast against its own resolved background. **Zero failures
+      in either theme.** The single flagged element is the `/` separator in the footer, which is
+      `aria-hidden` and decorative, so WCAG does not ask it to pass
+- [x] 375px width — same crawl. `document.scrollWidth` never exceeds `clientWidth` on any of the
+      eight surfaces in either theme, so nothing overflows horizontally
+- [x] Keyboard navigation and visible focus rings on every interactive element — tabbed through
+      each surface in both themes, reading the computed outline and box-shadow off
+      `document.activeElement` at every stop. 27–40 stops per page, **0 without a visible ring**
+- [ ] Lighthouse ≥ 95 on all four categories — homepage, a blog post, an event detail page.
+      **The target is not reachable as written, and the blocker is structural.** Accessibility
+      and SEO are 100 on all three pages. Best practices is 73, and `third-party-cookies` alone
+      carries weight 5 of the category's 26: with Microsoft Clarity and Google Analytics both
+      loading, the ceiling is **81 even if every other audit passes**. So this is a choice —
+      revise the target, or drop an analytics vendor — not a defect to fix. Performance measured
+      80/90/91 locally under Lighthouse's mobile throttling on `next start` with no CDN, which is
+      not the production shape; re-measure against `dileepa.dev` after the deployment
 - [ ] Social preview cards render on LinkedIn and X — **after the deployment**
 - [ ] Analytics reporting continuously through the rebuild — **after the deployment**
 
