@@ -314,9 +314,30 @@ html {
 body {
   min-height: 100dvh;
   text-rendering: optimizeLegibility;
-  transition:
-    background var(--dur) var(--ease),
-    color var(--dur) var(--ease);
+}
+
+/* ============================================================
+   RADIAL SPOTLIGHT THEME TRANSITION
+   ============================================================ */
+
+::view-transition-old(root) {
+  animation: none;
+  mix-blend-mode: normal;
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+  z-index: 9999;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
 }
 
 /* The 68ch cap from the token sheet stands, because the reference relies on
