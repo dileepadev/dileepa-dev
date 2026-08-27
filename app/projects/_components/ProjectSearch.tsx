@@ -14,7 +14,6 @@ import {
 } from "@/components/ui";
 import type { Project } from "@/lib/api-types";
 import { formatMonth, humanise } from "@/lib/format";
-import { cn } from "@/lib/utils";
 
 type ProjectSortKey =
   | "default"
@@ -198,8 +197,8 @@ export function ProjectSearch({ projects }: { projects: Project[] }) {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Controls Bar: Search & Sort */}
+    <>
+      {/* Controls Bar: Search & Filter Selects */}
       <div className="list-toolbar">
         <SearchInput
           value={query}
@@ -208,55 +207,23 @@ export function ProjectSearch({ projects }: { projects: Project[] }) {
           aria-label="Search projects"
         />
 
-        <div className="flex items-center gap-2">
-          <SortSelect
-            value={sortBy}
-            options={SORT_OPTIONS}
-            onChange={setSortBy}
-            label="Sort"
-            aria-label="Sort projects"
-          />
-        </div>
-      </div>
+        <div className="flex flex-wrap items-center gap-2">
+          {statusCounts.length > 0 && (
+            <SortSelect
+              value={selectedStatus ?? "all"}
+              options={[
+                { value: "all", label: "All status" },
+                ...statusCounts.map(([status, count]) => ({
+                  value: status,
+                  label: `${humanise(status)} (${count})`,
+                })),
+              ]}
+              onChange={(val) => setSelectedStatus(val === "all" ? null : val)}
+              label="Status"
+              aria-label="Filter by status"
+            />
+          )}
 
-      {/* Filter Row: Clean Status tabs on left, Date & Stack dropdowns on right */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border-hairline pb-4">
-        {/* Status segmented pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto">
-          <button
-            type="button"
-            onClick={() => setSelectedStatus(null)}
-            className={cn(
-              "px-3 py-1 text-small font-medium rounded-sm transition-colors cursor-pointer",
-              selectedStatus === null
-                ? "bg-brand text-on-brand"
-                : "text-fg-muted hover:text-fg hover:bg-surface-hover",
-            )}
-          >
-            All <span className="font-mono text-label opacity-75">{projects.length}</span>
-          </button>
-          {statusCounts.map(([status, count]) => (
-            <button
-              key={status}
-              type="button"
-              onClick={() =>
-                setSelectedStatus(selectedStatus === status ? null : status)
-              }
-              className={cn(
-                "px-3 py-1 text-small font-medium rounded-sm transition-colors cursor-pointer",
-                selectedStatus === status
-                  ? "bg-brand text-on-brand"
-                  : "text-fg-muted hover:text-fg hover:bg-surface-hover",
-              )}
-            >
-              {humanise(status)}{" "}
-              <span className="font-mono text-label opacity-75">{count}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* Date & Stack Selects */}
-        <div className="flex items-center gap-2">
           {yearCounts.length > 0 && (
             <SortSelect
               value={selectedYear ?? "all"}
@@ -264,7 +231,10 @@ export function ProjectSearch({ projects }: { projects: Project[] }) {
                 { value: "all", label: "All dates" },
                 ...yearCounts.map(([year, count]) => ({
                   value: year,
-                  label: year === "ongoing" ? `Ongoing (${count})` : `${year} (${count})`,
+                  label:
+                    year === "ongoing"
+                      ? `Ongoing (${count})`
+                      : `${year} (${count})`,
                 })),
               ]}
               onChange={(val) => setSelectedYear(val === "all" ? null : val)}
@@ -288,20 +258,27 @@ export function ProjectSearch({ projects }: { projects: Project[] }) {
               aria-label="Filter by technology"
             />
           )}
+
+          <SortSelect
+            value={sortBy}
+            options={SORT_OPTIONS}
+            onChange={setSortBy}
+            label="Sort"
+            aria-label="Sort projects"
+          />
         </div>
       </div>
 
-      {/* Active Filter Bar (shown only when filters or query exist) */}
+      {/* Filter status row (matching BlogSearch and EventSearch) */}
       {hasActiveFilters && (
-        <div className="flex items-center justify-between gap-4 font-mono text-small text-fg-muted">
+        <div className="filter-status">
           <span>
-            Showing <strong className="text-fg">{sorted.length}</strong> of{" "}
-            {projects.length} Projects
+            Showing {sorted.length} of {projects.length} Projects
           </span>
           <button
             type="button"
             onClick={clearFilters}
-            className="text-brand hover:underline cursor-pointer"
+            className="filter-reset-btn"
           >
             Clear filters
           </button>
@@ -310,7 +287,7 @@ export function ProjectSearch({ projects }: { projects: Project[] }) {
 
       {/* Results or Empty State */}
       {sorted.length === 0 ? (
-        <div className="mt-8">
+        <div className="mt-10">
           <EmptyState
             title="No projects match your search"
             hint={
@@ -320,7 +297,7 @@ export function ProjectSearch({ projects }: { projects: Project[] }) {
             }
           >
             {hasActiveFilters && (
-              <div className="mt-4">
+              <div className="mt-4 flex justify-center">
                 <Button variant="secondary" onClick={clearFilters}>
                   Clear filters
                 </Button>
@@ -329,7 +306,7 @@ export function ProjectSearch({ projects }: { projects: Project[] }) {
           </EmptyState>
         </div>
       ) : (
-        <div className="mt-6">
+        <div className="mt-10">
           <ItemList>
             {visibleProjects.map((project) => (
               <Item
@@ -376,6 +353,6 @@ export function ProjectSearch({ projects }: { projects: Project[] }) {
           )}
         </div>
       )}
-    </div>
+    </>
   );
 }

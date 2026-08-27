@@ -44,9 +44,7 @@ export default async function ProjectsPage() {
             <EmptyState {...EMPTY_STATES.projects} />
           </div>
         ) : (
-          <div className="mt-8">
-            <ProjectSearch projects={projects} />
-          </div>
+          <ProjectSearch projects={projects} />
         )}
       </Container>
     </Section>
