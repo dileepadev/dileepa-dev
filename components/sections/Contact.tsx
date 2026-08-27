@@ -54,6 +54,20 @@ export function Contact({ about }: { about: About | null }) {
           <span>{email}</span>
         </a>
 
+        {/* The link-in-bio page. It used to sit in the footer's Elsewhere
+            column, which Projects now occupies; here it is beside the address,
+            which is where a reader is already looking for a way through. */}
+        <p className="contact-links">
+          Social profiles and everything else:{" "}
+          <a
+            href={SITE_CONFIG.linksUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            links.dileepa.dev
+          </a>
+        </p>
+
         <form className="form" onSubmit={onSubmit}>
           <label>
             <span>

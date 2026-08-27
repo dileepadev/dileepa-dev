@@ -1392,6 +1392,32 @@ pre {
   text-underline-offset: 4px;
 }
 
+/* The link-in-bio line, under the contact address.
+
+   Deliberately not `--brand`: the email above it is this surface's single
+   accent, and a second emerald link beside it is exactly the scattering the
+   brand guide rules out. Muted body colour, and the external arrow every
+   outbound link on the site already gets. */
+.contact-links {
+  margin-top: var(--space-3);
+  font-size: var(--text-small);
+  line-height: var(--lh-small);
+  color: var(--fg-muted);
+}
+
+.contact-links a {
+  color: var(--fg);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--border-strong);
+  transition: text-decoration-color var(--dur) var(--ease);
+}
+
+.contact-links a:hover {
+  text-decoration-color: var(--fg);
+}
+
 .form {
   display: grid;
   grid-template-columns: 1fr 1fr;

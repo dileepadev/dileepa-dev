@@ -28,6 +28,10 @@ export const SITE_CONFIG = {
   author: "Dileepa Bandara",
   locale: "en_US",
   twitterHandle: "@dileepadev",
+  // The link-in-bio page. It left the footer when Projects took its place
+  // there, and is surfaced in the Contact section instead — a reader
+  // looking for somewhere to follow rather than somewhere to read.
+  linksUrl: "https://links.dileepa.dev",
   repository: "https://github.com/dileepadev/dileepa-dev",
   branch: "feat/v2.0.0",
   version: "2.0.0",
@@ -62,11 +66,11 @@ export const FOOTER_LINKS: { title: string; links: NavLink[] }[] = [
   {
     title: "Elsewhere",
     links: [
+      { label: "Projects", href: "/projects" },
       { label: "Communities", href: "/communities" },
       { label: "Events", href: "/events" },
       { label: "Videos", href: "/videos" },
       { label: "Blog", href: "/blog" },
-      { label: "Links", href: "https://links.dileepa.dev", isExternal: true },
     ],
   },
 ];
