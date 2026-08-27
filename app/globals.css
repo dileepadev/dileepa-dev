@@ -711,7 +711,7 @@ pre {
   border-radius: var(--radius);
   font-size: var(--text-body);
   font-weight: 500;
-  color: var(--fg);
+  color: var(--fg-muted);
   text-decoration: none;
   transition:
     background-color var(--dur) var(--ease),
@@ -720,6 +720,7 @@ pre {
 
 .nav-mobile-link:hover {
   background: var(--surface-hover);
+  color: var(--fg);
 }
 
 .nav-mobile-link.is-active,
