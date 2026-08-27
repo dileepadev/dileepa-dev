@@ -191,7 +191,8 @@ function hashOf(href: string): string {
 /**
  * Marks the section currently in view.
  *
- * Uses a dynamic IntersectionObserver with rootMargin tuned for smooth section detection.
+ * Tracks scroll position against each section boundary with a top offset to clear the sticky navbar.
+ * When the user is at the top of the page (Hero / #top), clears all active section highlights.
  */
 function useScrollSpy(enabled: boolean): string | null {
   const [active, setActive] = useState<string | null>(null);
@@ -199,23 +200,69 @@ function useScrollSpy(enabled: boolean): string | null {
   useEffect(() => {
     if (!enabled) return;
 
-    const sections = NAV_LINKS.map((link) =>
-      document.getElementById(hashOf(link.href)),
-    ).filter((el): el is HTMLElement => el !== null);
+    const sectionIds = NAV_LINKS.map((link) => hashOf(link.href));
 
-    if (sections.length === 0) return;
+    function updateActiveSection() {
+      const scrollY = window.scrollY;
+      const headerOffset = 100;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) setActive(entry.target.id);
+      // When in Hero / #top or near the top of the page, clear all navbar highlights
+      const firstSection = document.getElementById(sectionIds[0]);
+      if (!firstSection || scrollY < firstSection.offsetTop - 200) {
+        setActive((prev) => (prev !== null ? null : prev));
+        return;
+      }
+
+      // Check if user is scrolled to the very bottom of the document
+      if (
+        window.innerHeight + Math.round(scrollY) >=
+        document.documentElement.scrollHeight - 50
+      ) {
+        const lastId = sectionIds[sectionIds.length - 1];
+        setActive((prev) => (prev !== lastId ? lastId : prev));
+        return;
+      }
+
+      // Find the lowest section whose top is at or above the current scroll threshold
+      let currentSection: string | null = null;
+      for (const id of sectionIds) {
+        const el = document.getElementById(id);
+        if (el) {
+          const top = el.offsetTop - headerOffset;
+          if (scrollY >= top) {
+            currentSection = id;
+          }
         }
-      },
-      { rootMargin: "-30% 0px -55% 0px", threshold: 0 },
-    );
+      }
 
-    sections.forEach((section) => observer.observe(section));
-    return () => observer.disconnect();
+      setActive((prev) => (prev !== currentSection ? currentSection : prev));
+    }
+
+    // Run shortly after initial mount and scroll restoration
+    const rafInit = window.requestAnimationFrame(updateActiveSection);
+    const timer1 = window.setTimeout(updateActiveSection, 50);
+    const timer2 = window.setTimeout(updateActiveSection, 200);
+
+    let rafId: number | null = null;
+    function onScroll() {
+      if (rafId !== null) return;
+      rafId = window.requestAnimationFrame(() => {
+        updateActiveSection();
+        rafId = null;
+      });
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+
+    return () => {
+      window.cancelAnimationFrame(rafInit);
+      window.clearTimeout(timer1);
+      window.clearTimeout(timer2);
+      if (rafId !== null) window.cancelAnimationFrame(rafId);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
   }, [enabled]);
 
   return enabled ? active : null;
