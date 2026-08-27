@@ -5,6 +5,7 @@ import {
   Badge,
   Container,
   EmptyState,
+  PagePath,
   Section,
 } from "@/components/ui";
 import { api } from "@/lib/api";
@@ -38,6 +39,9 @@ export default async function BlogPage() {
       <Container>
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
+            <div className="mb-2">
+              <PagePath path="/blog" />
+            </div>
             <div className="section-label">Blog</div>
             <h1>Writing</h1>
           </div>

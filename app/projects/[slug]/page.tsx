@@ -3,7 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { ExternalLink, FileText, Globe } from "lucide-react";
 import { FaGithub } from "react-icons/fa6";
-import { Badge, Chip, Container, LinkButton, Section } from "@/components/ui";
+import { Badge, Chip, Container, LinkButton, PagePath, Section } from "@/components/ui";
 import { api } from "@/lib/api";
 import { SITE_CONFIG } from "@/lib/constants";
 import { formatMonth, humanise } from "@/lib/format";
@@ -59,6 +59,9 @@ export default async function ProjectPage({ params }: Params) {
   return (
     <Section>
       <Container>
+        <div className="mb-2">
+          <PagePath path={`/projects/${project.slug}`} />
+        </div>
         <div className="section-label">
           {humanise(project.status)}
           {project.period?.start &&

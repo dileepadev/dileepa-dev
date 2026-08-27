@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Container, EmptyState, Section } from "@/components/ui";
+import { Container, EmptyState, PagePath, Section } from "@/components/ui";
 import { api } from "@/lib/api";
 import { EMPTY_STATES } from "@/lib/constants";
 import { EventSearch } from "./_components/EventSearch";
@@ -28,6 +28,9 @@ export default async function EventsPage() {
       <Container>
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
+            <div className="mb-2">
+              <PagePath path="/events" />
+            </div>
             <div className="section-label">Events</div>
             <h1>Talks and workshops</h1>
           </div>

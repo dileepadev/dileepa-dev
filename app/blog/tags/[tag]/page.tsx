@@ -5,6 +5,7 @@ import {
   EmptyState,
   Item,
   ItemList,
+  PagePath,
   Section,
 } from "@/components/ui";
 import { api } from "@/lib/api";
@@ -39,6 +40,9 @@ export default async function TagPage({ params }: Params) {
   return (
     <Section>
       <Container>
+        <div className="mb-2">
+          <PagePath path={`/blog/tags/${tag}`} />
+        </div>
         <div className="section-label">Tag</div>
         <h1>{name}</h1>
         <p className="mt-4 text-fg-muted">

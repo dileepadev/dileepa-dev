@@ -5,6 +5,7 @@ import {
   EmptyState,
   Item,
   ItemList,
+  PagePath,
   Section,
 } from "@/components/ui";
 import { api } from "@/lib/api";
@@ -24,6 +25,9 @@ export default async function ProjectsPage() {
   return (
     <Section>
       <Container>
+        <div className="mb-2">
+          <PagePath path="/projects" />
+        </div>
         <div className="section-label">Projects</div>
         <h1>Things I have built</h1>
         <p className="section-intro">

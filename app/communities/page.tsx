@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Container, EmptyState, Section } from "@/components/ui";
+import { Container, EmptyState, PagePath, Section } from "@/components/ui";
 import { api } from "@/lib/api";
 import { CommunitySearch } from "./_components/CommunitySearch";
 
@@ -18,6 +18,9 @@ export default async function CommunitiesPage() {
       <Container>
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
+            <div className="mb-2">
+              <PagePath path="/communities" />
+            </div>
             <div className="section-label">Communities</div>
             <h1>Communities</h1>
           </div>

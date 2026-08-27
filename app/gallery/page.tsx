@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Container, EmptyState, Gallery, Section } from "@/components/ui";
+import { Container, EmptyState, Gallery, PagePath, Section } from "@/components/ui";
 import { getGallery } from "@/lib/api";
 import { EMPTY_STATES } from "@/lib/constants";
 
@@ -23,6 +23,9 @@ export default async function GalleryPage() {
   return (
     <Section>
       <Container>
+        <div className="mb-2">
+          <PagePath path="/gallery" />
+        </div>
         <div className="section-label">Gallery</div>
         <h1>Event photographs</h1>
         <p className="section-intro">

@@ -16,3 +16,4 @@ export { SortSelect, type SortOption } from "./SortSelect";
 export { BackToTop } from "./BackToTop";
 export { LoadMore } from "./LoadMore";
 export { ImageLightbox } from "./ImageLightbox";
+export { PagePath } from "./PagePath";

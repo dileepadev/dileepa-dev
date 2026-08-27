@@ -9,7 +9,7 @@ import {
   Users,
   Video,
 } from "lucide-react";
-import { Badge, Container, LinkButton, Section } from "@/components/ui";
+import { Badge, Container, LinkButton, PagePath, Section } from "@/components/ui";
 import { api } from "@/lib/api";
 import type { EventRecord } from "@/lib/api-types";
 import { SITE_CONFIG } from "@/lib/constants";
@@ -118,6 +118,10 @@ export default async function EventPage({ params }: Params) {
             __html: jsonLd(eventJsonLd(event)),
           }}
         />
+
+        <div className="mb-3">
+          <PagePath path={`/events/${event.slug}`} />
+        </div>
 
         <div className="flex flex-wrap items-center gap-2">
           <Badge>{humanise(event.type)}</Badge>

@@ -11,7 +11,7 @@ import {
   TableOfContents,
 } from "@/components/blog";
 import { mdxComponents } from "@/components/mdx";
-import { Badge, Container, Section } from "@/components/ui";
+import { Badge, Container, PagePath, Section } from "@/components/ui";
 import { api } from "@/lib/api";
 import type { BlogPost } from "@/lib/api-types";
 import { getPostContent } from "@/lib/content";
@@ -144,6 +144,9 @@ export default async function BlogPostPage({ params }: Params) {
         />
 
         <header className="max-w-3xl">
+          <div className="mb-2">
+            <PagePath path={`/blog/${post.slug}`} />
+          </div>
           <div className="section-label">
             <Link
               href="/blog"

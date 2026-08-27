@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Container, EmptyState, Section } from "@/components/ui";
+import { Container, EmptyState, PagePath, Section } from "@/components/ui";
 import { api } from "@/lib/api";
 import { VideoSearch } from "./_components/VideoSearch";
 
@@ -25,6 +25,9 @@ export default async function VideosPage() {
       <Container>
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
+            <div className="mb-2">
+              <PagePath path="/videos" />
+            </div>
             <div className="section-label">Videos</div>
             <h1>Walkthroughs and talks</h1>
           </div>
