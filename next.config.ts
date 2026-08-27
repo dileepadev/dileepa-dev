@@ -1,6 +1,131 @@
 import type { NextConfig } from "next";
 
+/**
+ * The origin the browser talks to the API on.
+ *
+ * Post interactions — views, reactions, comments — are fetched in the browser
+ * rather than at build time, so the API is a real `connect-src` and not just a
+ * server-side dependency. Derived from the same variable the client reads, so
+ * pointing the site at a different API cannot leave the policy behind naming
+ * the old one.
+ */
+function apiOrigin(): string {
+  const configured = process.env.NEXT_PUBLIC_API_URL;
+  if (!configured) return "";
+  try {
+    return new URL(configured).origin;
+  } catch {
+    return "";
+  }
+}
+
+/**
+ * Security headers.
+ *
+ * The API has carried these since v2.0.0; the site carried none, so every one
+ * of them was absent on every page. They live here rather than in host
+ * configuration so the posture ships with the code.
+ *
+ * `Strict-Transport-Security` deliberately omits `includeSubDomains`.
+ * `blog.dileepa.dev` is retired and resolves to a registrar forward with no
+ * certificate, and the directive would be honoured for that host too — turning
+ * a redirect into a connection failure.
+ *
+ * `'unsafe-inline'` on `script-src` is not optional here: Next inlines its
+ * hydration payload on every page, and Microsoft Clarity's loader is an inline
+ * bootstrap. Removing it needs a per-request nonce, which needs middleware on
+ * every route, which would make all 109 statically generated pages dynamic.
+ * The directive still earns its place — it blocks an injected
+ * `<script src="https://…">` from anywhere not named below.
+ *
+ * **Development needs three things production must never get**, so they are
+ * added only when `next dev` is the thing running:
+ *
+ * - `'unsafe-eval'` — React's development build calls `eval()` to rebuild
+ *   callstacks across environments and for other debugging features. Without
+ *   it the console fills with "eval() is not supported in this environment".
+ *   React never calls `eval()` in a production build, so production keeps the
+ *   stricter policy and loses nothing.
+ * - `ws:` and `wss:` on `connect-src` — hot module replacement is a WebSocket.
+ * - `blob:` on `script-src` and `worker-src` — Turbopack loads some chunks as
+ *   blob-backed workers.
+ * - `https://va.vercel-scripts.com` — `@vercel/analytics` and
+ *   `@vercel/speed-insights` fetch a *debug* build from that host when they
+ *   detect development. In production both load from `/_vercel/…` on this
+ *   origin, which `'self'` already covers, so the host never appears in the
+ *   production policy.
+ *
+ * This is the one place the policy differs between environments, and it is
+ * gated on `NODE_ENV` rather than on a flag someone can forget to unset.
+ */
+function securityHeaders() {
+  const api = apiOrigin();
+  const isDev = process.env.NODE_ENV === "development";
+  const analyticsScripts = [
+    "https://www.googletagmanager.com",
+    "https://www.clarity.ms",
+    "https://scripts.clarity.ms",
+  ];
+  const analyticsConnect = [
+    "https://*.google-analytics.com",
+    "https://*.analytics.google.com",
+    "https://*.googletagmanager.com",
+    "https://*.clarity.ms",
+    "https://c.bing.com",
+  ];
+  const analyticsImages = [
+    "https://*.google-analytics.com",
+    "https://*.googletagmanager.com",
+    "https://*.clarity.ms",
+    "https://c.bing.com",
+  ];
+
+  // Development-only. See the note above: React's dev build needs eval(),
+  // HMR is a WebSocket, and Turbopack serves some chunks from blob: URLs.
+  const devScript = isDev
+    ? " 'unsafe-eval' blob: https://va.vercel-scripts.com"
+    : "";
+  const devConnect = isDev ? " ws: wss:" : "";
+
+  const csp = [
+    "default-src 'self'",
+    `script-src 'self' 'unsafe-inline'${devScript} ${analyticsScripts.join(" ")}`,
+    "style-src 'self' 'unsafe-inline'",
+    // next/font self-hosts Manrope and JetBrains Mono, so no font CDN appears.
+    "font-src 'self' data:",
+    `img-src 'self' data: blob: https://res.cloudinary.com ${analyticsImages.join(" ")}`,
+    `connect-src 'self'${devConnect} ${api} ${analyticsConnect.join(" ")}`
+      .replace(/\s+/g, " ")
+      .trim(),
+    `worker-src 'self'${isDev ? " blob:" : ""}`,
+    // Google Tag Manager loads a frame for some tag types. Named rather than
+    // left open so nothing else can frame into the page.
+    "frame-src 'self' https://www.googletagmanager.com",
+    "frame-ancestors 'none'",
+    "form-action 'self'",
+    "base-uri 'none'",
+    "object-src 'none'",
+    "upgrade-insecure-requests",
+  ].join("; ");
+
+  return [
+    { key: "X-Content-Type-Options", value: "nosniff" },
+    { key: "X-Frame-Options", value: "DENY" },
+    { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+    {
+      key: "Permissions-Policy",
+      value:
+        "accelerometer=(), camera=(), geolocation=(), microphone=(), payment=()",
+    },
+    { key: "Strict-Transport-Security", value: "max-age=31536000" },
+    { key: "Content-Security-Policy", value: csp },
+  ];
+}
+
 const nextConfig: NextConfig = {
+  // `X-Powered-By: Next.js` names the framework and its presence on every
+  // response is free reconnaissance. Nothing reads it.
+  poweredByHeader: false,
   // Source of truth: dileepadev/docs/architecture/redirects.md. If that file
   // and this list disagree, that file is right.
   async redirects() {
@@ -47,6 +172,9 @@ const nextConfig: NextConfig = {
         pathname: "/**",
       },
     ],
+  },
+  async headers() {
+    return [{ source: "/:path*", headers: securityHeaders() }];
   },
 };
 
