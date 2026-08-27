@@ -64,6 +64,31 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Which deployment this admin session is pointed at
+         * @description Environment, version, and database — with credentials stripped.
+         *
+         *     `/version` answers the same "which environment" question but is public and
+         *     therefore deliberately thin. This carries the one field `/version` cannot:
+         *     `database`, which is fine to show a signed-in admin and not fine to hand
+         *     an anonymous caller for free, since it names the Atlas cluster.
+         */
+        get: operations["system_status_status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/auth/login": {
         parameters: {
             query?: never;
@@ -1043,6 +1068,85 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/maintenance/database": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Where this API is pointed, and what a copy would move
+         * @description Both databases, their document counts, and whether a copy can run.
+         *
+         *     Reported before anything is offered, because the one question worth
+         *     answering before a destructive action is "which database am I about to
+         *     empty" — and the answer should not be inferred from which tab is open.
+         */
+        get: operations["database_status_maintenance_database_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/maintenance/database/clear": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Empty this database
+         * @description Remove every document from the collections this API owns.
+         *
+         *     `delete_many` rather than `drop`: the collection and its indexes survive, so
+         *     the next write is validated the same way it would have been before. Dropping
+         *     and letting `ensure_indexes` rebuild on the next restart would leave a
+         *     window where a duplicate slug inserts cleanly.
+         */
+        post: operations["clear_database_maintenance_database_clear_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/maintenance/database/copy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Replace this database's contents with the source's
+         * @description Copy the source into this database, one collection at a time.
+         *
+         *     `_id`s are preserved, so a document keeps the identity it has in the
+         *     source and every reference to it survives the copy — which is what makes
+         *     the result testable against the same URLs.
+         *
+         *     Not a transaction. Each collection is emptied and refilled in turn, so an
+         *     interruption leaves the earlier collections copied and the later ones
+         *     untouched. That is acceptable here in a way it would not be in production:
+         *     the fix is to run it again, and the whole point of the target is that
+         *     nothing depends on its contents.
+         */
+        post: operations["copy_database_maintenance_database_copy_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api-links": {
         parameters: {
             query?: never;
@@ -1524,6 +1628,41 @@ export interface components {
             public_id?: string | null;
         };
         /**
+         * CollectionCount
+         * @description How many documents a collection holds on each side.
+         */
+        CollectionCount: {
+            /** Name */
+            name: string;
+            /** Source */
+            source?: number | null;
+            /**
+             * Target
+             * @default 0
+             */
+            target: number;
+            /**
+             * Included
+             * @default true
+             */
+            included: boolean;
+        };
+        /** CollectionResult */
+        CollectionResult: {
+            /** Name */
+            name: string;
+            /**
+             * Removed
+             * @default 0
+             */
+            removed: number;
+            /**
+             * Copied
+             * @default 0
+             */
+            copied: number;
+        };
+        /**
          * Comment
          * @description What an admin sees: everything stored.
          */
@@ -1771,6 +1910,33 @@ export interface components {
             message: string;
             /** Id */
             id?: string | null;
+        };
+        /** DatabaseStatus */
+        DatabaseStatus: {
+            /** Environment */
+            environment: string;
+            /** Target */
+            target: string;
+            /** Source */
+            source?: string | null;
+            /**
+             * Sourceconfigured
+             * @default false
+             */
+            sourceConfigured: boolean;
+            /**
+             * Cancopy
+             * @default false
+             */
+            canCopy: boolean;
+            /** Blockedreason */
+            blockedReason?: string | null;
+            /** Confirmationphrase */
+            confirmationPhrase: string;
+            /** Collections */
+            collections?: components["schemas"]["CollectionCount"][];
+            /** Excluded */
+            excluded?: string[];
         };
         /** DeleteResult */
         DeleteResult: {
@@ -2352,6 +2518,43 @@ export interface components {
             light: string;
             /** Dark */
             dark: string;
+        };
+        /**
+         * MaintenanceRequest
+         * @description The confirmation, which must match `DatabaseStatus.confirmation_phrase`.
+         *
+         *     Typing the database name back is the same friction `scripts/_common.py`
+         *     imposes on a production write, for the same reason: a yes/no prompt is
+         *     answered by reflex, and naming the thing requires having read the line
+         *     above it.
+         */
+        MaintenanceRequest: {
+            /** Confirm */
+            confirm: string;
+        };
+        /** MaintenanceResult */
+        MaintenanceResult: {
+            /**
+             * Action
+             * @enum {string}
+             */
+            action: "copy" | "clear";
+            /** Target */
+            target: string;
+            /** Source */
+            source?: string | null;
+            /** Collections */
+            collections?: components["schemas"]["CollectionResult"][];
+            /**
+             * Documentsremoved
+             * @default 0
+             */
+            documentsRemoved: number;
+            /**
+             * Documentscopied
+             * @default 0
+             */
+            documentsCopied: number;
         };
         /** Metric */
         Metric: {
@@ -2964,6 +3167,32 @@ export interface components {
              */
             isHost: boolean;
         };
+        /**
+         * SystemStatus
+         * @description What the admin dashboard's header shows: where this session is pointed.
+         *
+         *     Admin-only and unrelated to `/maintenance/*` — this is read-only, tells a
+         *     signed-in session which deployment it is actually talking to, and is
+         *     registered in every environment rather than only outside production. A
+         *     session pointed at `api.dileepa.dev` should see "production" here just as
+         *     plainly as one pointed at a local API sees "development".
+         *
+         *     `database` is the credential-free label — see `database_label` in
+         *     `app/core/config.py`. Nothing that reaches this model can be used to open a
+         *     connection.
+         */
+        SystemStatus: {
+            /** Environment */
+            environment: string;
+            /** Version */
+            version: string;
+            /** Database */
+            database: string;
+            /** Docsenabled */
+            docsEnabled: boolean;
+            /** Maintenanceavailable */
+            maintenanceAvailable: boolean;
+        };
         /** TokenPair */
         TokenPair: {
             /** Access Token */
@@ -3279,6 +3508,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Version"];
+                };
+            };
+        };
+    };
+    system_status_status_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SystemStatus"];
                 };
             };
         };
@@ -5538,6 +5787,92 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["UploadDeleted"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    database_status_maintenance_database_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DatabaseStatus"];
+                };
+            };
+        };
+    };
+    clear_database_maintenance_database_clear_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MaintenanceRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MaintenanceResult"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    copy_database_maintenance_database_copy_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MaintenanceRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MaintenanceResult"];
                 };
             };
             /** @description Validation Error */

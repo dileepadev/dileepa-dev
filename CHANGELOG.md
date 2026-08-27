@@ -112,6 +112,16 @@ platform design system. Content comes from FastAPI; post bodies come from Git.
 
 #### Fixed - v2.0.0
 
+- **`NEXT_PUBLIC_API_URL` was used verbatim, so two near-invisible dotenv mistakes would have
+  broken every request.** A trailing slash builds `https://api.dileepa.dev//projects`, which the
+  API 404s rather than collapsing — the site would render as though every collection were empty,
+  with nothing in the console to say otherwise. And because this value is inlined into the browser
+  bundle, an `http://` host is not merely a plaintext hop but mixed content on an HTTPS page,
+  which browsers block outright: every client-side fetch on the blog — views, reactions, comments
+  — would fail with no request sent. `normalizeApiUrl` in `lib/api.ts` strips trailing slashes and
+  upgrades remote `http://` to `https://`, leaving `localhost` alone where plaintext is correct.
+  The committed values were already right; this makes them not have to be.
+
 - **A collection response is checked before it is unwrapped.** v1 returned a bare array from its
   collection endpoints, and reading `.items` off one yields `undefined` — with the crash landing
   wherever the caller first maps over it, which is a stack trace pointing at a page component for
