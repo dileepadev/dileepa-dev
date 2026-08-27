@@ -8,9 +8,9 @@ const PILLAR_ICONS = {
   "ai-engineering": Cpu,
   "open-source": Code2,
   "public-speaking": Presentation,
-  blogs: BookOpen,
-  videos: Video,
-  "community-volunteering": Users,
+  "technical-writing": BookOpen,
+  "technical-videos": Video,
+  "community-building": Users,
 } as const;
 
 /**

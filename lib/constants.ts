@@ -155,37 +155,37 @@ export const PILLARS = [
     key: "ai-engineering",
     title: "AI engineering",
     description:
-      "Building multi-agent systems, orchestrating LLM workflows, and deploying evaluation pipelines for production applications.",
+      "Building multi-agent systems, orchestrating LLM workflows, and designing evaluation pipelines for production applications.",
   },
   {
     key: "open-source",
-    title: "Open source projects",
+    title: "Open source",
     description:
-      "Authoring developer tools, maintaining open repositories, and contributing to community-driven libraries.",
+      "Building developer tools, publishing open-source projects, and sharing implementations for AI and software engineering.",
   },
   {
     key: "public-speaking",
     title: "Public speaking",
     description:
-      "Presenting at conferences and meetups, delivering keynotes, and running hands-on technical workshops.",
+      "Speaking at conferences and meetups, leading technical workshops, and sharing lessons from building AI systems.",
   },
   {
-    key: "blogs",
-    title: "Blogs",
+    key: "technical-writing",
+    title: "Technical writing",
     description:
-      "Writing in-depth technical articles on agent architectures, software engineering practices, and production lessons.",
+      "Writing about agent architectures, software engineering practices, and lessons learned from building AI systems in production.",
   },
   {
-    key: "videos",
-    title: "Videos",
+    key: "technical-videos",
+    title: "Technical videos",
     description:
-      "Producing walkthroughs, technical tutorials, and recorded sessions on cloud infrastructure and AI systems.",
+      "Creating technical walkthroughs, tutorials, and sessions on AI systems, software engineering, and cloud infrastructure.",
   },
   {
-    key: "community-volunteering",
-    title: "Community volunteering",
+    key: "community-building",
+    title: "Community building",
     description:
-      "Organising technical meetups, mentoring emerging engineers, and volunteering across local and regional communities.",
+      "Organising technical meetups, mentoring engineers, and creating spaces for people to learn and build.",
   },
 ] as const;
 
