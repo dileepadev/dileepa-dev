@@ -35,9 +35,9 @@ export default async function EventsPage() {
             <h1>Talks and workshops</h1>
           </div>
           {total > 0 && (
-            <div className="font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1">
-              <span className="font-medium text-fg">{total}</span>{" "}
-              {total === 1 ? "event" : "events"}
+            <div className="inline-flex items-center gap-1.5 font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1">
+              <span className="font-medium text-fg">{total}</span>
+              <span>{total === 1 ? "Event" : "Events"}</span>
             </div>
           )}
         </div>

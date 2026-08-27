@@ -46,7 +46,7 @@ export default async function TagPage({ params }: Params) {
         <div className="section-label">Tag</div>
         <h1>{name}</h1>
         <p className="mt-4 text-fg-muted">
-          {posts.length} {posts.length === 1 ? "post" : "posts"}.{" "}
+          {posts.length} {posts.length === 1 ? "Post" : "Posts"}.{" "}
           <Link href="/blog" className="text-brand">
             All posts
           </Link>
