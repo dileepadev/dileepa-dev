@@ -610,8 +610,6 @@ pre {
   transition:
     color var(--dur) var(--ease),
     background-color var(--dur) var(--ease),
-    border-color var(--dur) var(--ease),
-    box-shadow var(--dur) var(--ease),
     transform var(--dur) var(--ease);
 }
 
@@ -625,23 +623,12 @@ pre {
   transform: scale(0.96);
 }
 
-/* Luminous emerald capsule pill active state */
 .nav-link.is-active,
 .nav-link[aria-current="true"],
 .nav-link[aria-current="page"] {
   color: var(--brand);
   font-weight: 500;
-  background: color-mix(in srgb, var(--brand) 10%, var(--bg-surface));
-  border-color: color-mix(in srgb, var(--brand) 28%, transparent);
-  box-shadow: 0 1px 2px color-mix(in srgb, var(--brand) 12%, transparent);
-}
-
-.nav-link.is-active:hover,
-.nav-link[aria-current="true"]:hover,
-.nav-link[aria-current="page"]:hover {
-  color: var(--brand);
-  background: color-mix(in srgb, var(--brand) 15%, var(--bg-surface));
-  border-color: color-mix(in srgb, var(--brand) 40%, transparent);
+  background: var(--surface-hover);
 }
 
 .nav-mobile-toggle {
@@ -722,15 +709,12 @@ pre {
   justify-content: space-between;
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius);
-  border: var(--hairline) solid transparent;
   font-size: var(--text-body);
   font-weight: 500;
   color: var(--fg);
   text-decoration: none;
   transition:
     background-color var(--dur) var(--ease),
-    border-color var(--dur) var(--ease),
-    box-shadow var(--dur) var(--ease),
     color var(--dur) var(--ease);
 }
 
@@ -741,16 +725,8 @@ pre {
 .nav-mobile-link.is-active,
 .nav-mobile-link[aria-current="true"] {
   color: var(--brand);
-  background: color-mix(in srgb, var(--brand) 10%, var(--bg-surface));
-  border-color: color-mix(in srgb, var(--brand) 28%, transparent);
-  box-shadow: 0 1px 2px color-mix(in srgb, var(--brand) 12%, transparent);
-}
-
-.nav-mobile-link.is-active:hover,
-.nav-mobile-link[aria-current="true"]:hover {
-  color: var(--brand);
-  background: color-mix(in srgb, var(--brand) 15%, var(--bg-surface));
-  border-color: color-mix(in srgb, var(--brand) 40%, transparent);
+  font-weight: 500;
+  background: var(--surface-hover);
 }
 
 .nav-mobile-divider {
@@ -771,15 +747,12 @@ pre {
   justify-content: space-between;
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius);
-  border: var(--hairline) solid transparent;
   font-size: var(--text-small);
   font-weight: 500;
   color: var(--fg-muted);
   text-decoration: none;
   transition:
     background-color var(--dur) var(--ease),
-    border-color var(--dur) var(--ease),
-    box-shadow var(--dur) var(--ease),
     color var(--dur) var(--ease);
 }
 
@@ -791,16 +764,8 @@ pre {
 .nav-mobile-sublink.is-active,
 .nav-mobile-sublink[aria-current="page"] {
   color: var(--brand);
-  background: color-mix(in srgb, var(--brand) 10%, var(--bg-surface));
-  border-color: color-mix(in srgb, var(--brand) 28%, transparent);
-  box-shadow: 0 1px 2px color-mix(in srgb, var(--brand) 12%, transparent);
-}
-
-.nav-mobile-sublink.is-active:hover,
-.nav-mobile-sublink[aria-current="page"]:hover {
-  color: var(--brand);
-  background: color-mix(in srgb, var(--brand) 15%, var(--bg-surface));
-  border-color: color-mix(in srgb, var(--brand) 40%, transparent);
+  font-weight: 500;
+  background: var(--surface-hover);
 }
 
 .nav-active-dot {
