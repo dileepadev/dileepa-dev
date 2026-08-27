@@ -13,6 +13,7 @@ export { NotFoundPage } from "./NotFoundPage";
 export { Gallery } from "./Gallery";
 export { SearchInput } from "./SearchInput";
 export { SortSelect, type SortOption } from "./SortSelect";
+export { FilterSelect, type FilterOption } from "./FilterSelect";
 export { BackToTop } from "./BackToTop";
 export { LoadMore } from "./LoadMore";
 export { ImageLightbox } from "./ImageLightbox";
