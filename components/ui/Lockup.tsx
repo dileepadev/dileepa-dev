@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 /**
@@ -14,14 +17,32 @@ import { cn } from "@/lib/utils";
  */
 export function Lockup({
   className,
-  href = "/",
+  href = "/#top",
 }: {
   className?: string;
   href?: string;
 }) {
+  const pathname = usePathname();
+
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (
+      pathname === "/" &&
+      (href === "/" || href === "/#top" || href === "#top")
+    ) {
+      e.preventDefault();
+      const topEl = document.getElementById("top");
+      if (topEl) {
+        topEl.scrollIntoView({ behavior: "smooth" });
+      } else {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }
+  };
+
   return (
     <Link
       href={href}
+      onClick={handleClick}
       aria-label="dileepadev — home"
       className={cn("lockup", className)}
     >

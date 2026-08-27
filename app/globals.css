@@ -486,6 +486,10 @@ pre {
   scroll-margin-top: 80px;
 }
 
+#top {
+  scroll-margin-top: 80px;
+}
+
 /* --- Logo lockup -------------------------------------------------------- */
 
 /* The token sheet draws the mark italic at 700 with a `margin-left`; the
@@ -2259,6 +2263,10 @@ pre {
 
   .section {
     padding: var(--space-12) 0;
+    scroll-margin-top: 72px;
+  }
+
+  #top {
     scroll-margin-top: 72px;
   }
 
