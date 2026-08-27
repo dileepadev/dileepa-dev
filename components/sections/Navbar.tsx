@@ -67,7 +67,7 @@ export function Navbar() {
       <Container>
         <div ref={navRef} className="nav-wrapper">
           <div className="nav">
-            <Lockup href="/#top" />
+            <Lockup href="/" />
 
             <div className="nav-right">
               {/* Desktop links */}

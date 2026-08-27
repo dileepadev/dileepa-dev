@@ -2305,7 +2305,15 @@ pre {
   }
 
   .hero-side {
-    justify-content: flex-start;
+    justify-content: center;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .hero-id {
+    margin: 0 auto;
+    align-items: center;
+    text-align: center;
   }
 
   .entry,

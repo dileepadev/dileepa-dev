@@ -68,8 +68,8 @@ export function Hero({ about }: { about: About | null }) {
           </div>
 
           {portrait && (
-            <aside className="hero-side">
-              <div className="hero-id">
+            <aside className="hero-side w-full flex justify-center">
+              <div className="hero-id mx-auto">
                 <Image
                   className="portrait"
                   src={portrait}
