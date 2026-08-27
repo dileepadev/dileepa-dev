@@ -3,7 +3,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import {
-  BackToTop,
   pickReadNext,
   PostInteractions,
   ReadNext,
@@ -238,8 +237,6 @@ export default async function BlogPostPage({ params }: Params) {
             <TableOfContents headings={headings} />
           </aside>
         </div>
-
-        <BackToTop />
       </Container>
     </Section>
   );

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
-  BackToTop,
   Badge,
   Container,
   EmptyState,
@@ -46,9 +45,9 @@ export default async function BlogPage() {
             <h1>Writing</h1>
           </div>
           {posts.length > 0 && (
-            <div className="font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1">
-              <span className="font-medium text-fg">{posts.length}</span>{" "}
-              {posts.length === 1 ? "post" : "posts"}
+            <div className="inline-flex items-center gap-1.5 font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1">
+              <span className="font-medium text-fg">{posts.length}</span>
+              <span>{posts.length === 1 ? "Post" : "Posts"}</span>
             </div>
           )}
         </div>
@@ -84,8 +83,6 @@ export default async function BlogPage() {
         ) : (
           <BlogSearch posts={posts} />
         )}
-
-        <BackToTop />
       </Container>
     </Section>
   );

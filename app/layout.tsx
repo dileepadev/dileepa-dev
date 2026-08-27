@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { JetBrains_Mono, Manrope } from "next/font/google";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { Footer, Navbar } from "@/components/sections";
+import { BackToTop } from "@/components/ui";
 import { api } from "@/lib/api";
 import { Toaster } from "react-hot-toast";
 import { Analytics } from "@vercel/analytics/next";
@@ -186,6 +187,7 @@ export default async function RootLayout({
               },
             }}
           />
+          <BackToTop />
         </ThemeProvider>
         <Analytics />
         <SpeedInsights />
