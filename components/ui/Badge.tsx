@@ -47,7 +47,7 @@ export function Chip({
         "chip inline-block rounded-sm border border-border-strong bg-bg-surface",
         "px-3 py-1 font-mono text-label/[1] tracking-[0.01em] text-fg-muted",
         "transition-[background-color,border-color,color] duration-[160ms] ease-brand",
-        "hover:border-brand hover:bg-surface-hover hover:text-fg cursor-pointer",
+        "hover:border-brand hover:bg-surface-hover hover:text-fg cursor-default",
         className,
       )}
     >

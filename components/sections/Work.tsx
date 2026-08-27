@@ -1,4 +1,5 @@
 import {
+  Chip,
   Container,
   Entry,
   EntryList,
@@ -48,13 +49,15 @@ export function Work({
                 orgUrl={item.url || undefined}
                 description={item.description}
               >
-                {/* {(item.technologies ?? []).length > 0 && (
-                  <div className="stack">
+                {(item.technologies ?? []).length > 0 && (
+                  <ul className="mt-3 flex flex-wrap gap-1.5">
                     {(item.technologies ?? []).map((tech) => (
-                      <span key={tech}>{tech}</span>
+                      <li key={tech}>
+                        <Chip>{tech}</Chip>
+                      </li>
                     ))}
-                  </div>
-                )} */}
+                  </ul>
+                )}
               </Entry>
             ))}
           </EntryList>
