@@ -1,12 +1,4 @@
-import {
-  ArrowUpRight,
-  BookOpen,
-  Code2,
-  Cpu,
-  Presentation,
-  Users,
-  Video,
-} from "lucide-react";
+import { BookOpen, Code2, Cpu, Presentation, Users, Video } from "lucide-react";
 import { Card, Container, Section, SectionHeading } from "@/components/ui";
 import type { About as AboutData } from "@/lib/api-types";
 import { PILLARS, SECTIONS } from "@/lib/constants";
@@ -26,8 +18,8 @@ const PILLAR_ICONS = {
  *
  * `description[0]` is the section heading and the rest is the prose beneath it,
  * so the whole block is one field in the admin rather than a heading and a body
- * that can drift apart. The six cards represent the core areas of work and
- * activity across engineering, open source, speaking, writing, video, and community.
+ * that can drift apart. The six cards show what Dileepa does across AI engineering,
+ * open source, speaking, writing, videos, and community volunteering.
  */
 export function About({ about }: { about: AboutData | null }) {
   const copy = splitParagraphs(about?.description);
@@ -54,37 +46,17 @@ export function About({ about }: { about: AboutData | null }) {
             const Icon =
               PILLAR_ICONS[pillar.key as keyof typeof PILLAR_ICONS] ?? Cpu;
             return (
-              <Card
-                key={pillar.key}
-                href={pillar.href}
-                className="card group flex flex-col justify-between"
-              >
+              <Card key={pillar.key} className="card flex flex-col">
                 <div>
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border-strong bg-bg text-brand transition-colors group-hover:border-brand/40 group-hover:bg-bg-raised">
-                      <Icon
-                        className="h-4.5 w-4.5"
-                        strokeWidth={1.75}
-                        aria-hidden="true"
-                      />
-                    </div>
-                    <span className="font-mono text-label text-fg-muted">
-                      {pillar.kicker}
-                    </span>
+                  <div className="mb-4 inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border-strong bg-bg text-brand">
+                    <Icon
+                      className="h-4.5 w-4.5"
+                      strokeWidth={1.75}
+                      aria-hidden="true"
+                    />
                   </div>
-
-                  <h3 className="mt-4 transition-colors group-hover:text-brand">
-                    {pillar.title}
-                  </h3>
+                  <h3>{pillar.title}</h3>
                   <p>{pillar.description}</p>
-                </div>
-
-                <div className="mt-6 flex items-center justify-between border-t border-border-hairline pt-4 font-mono text-label text-fg-muted transition-colors group-hover:text-brand">
-                  <span>{pillar.linkText}</span>
-                  <ArrowUpRight
-                    className="h-3.5 w-3.5 transition-transform duration-150 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                    aria-hidden="true"
-                  />
                 </div>
               </Card>
             );
