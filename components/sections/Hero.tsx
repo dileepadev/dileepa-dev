@@ -33,7 +33,7 @@ export function Hero({ about }: { about: About | null }) {
     about?.taglineDescription?.trim() ||
     paragraphs(about?.description)[1] ||
     "";
-  const portrait = portraitUrl(about?.images);
+  const portrait = portraitUrl(about?.images) || "/profile/v2.webp";
 
   const links = about?.links;
   const socials = SOCIAL_ICONS.map((icon) => ({
