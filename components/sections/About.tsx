@@ -1,4 +1,4 @@
-import { BookOpen, Code2, Cpu, Presentation, Users, Video } from "lucide-react";
+import { BookOpen, Code2, Cpu, Mic, Users, Video } from "lucide-react";
 import { Card, Container, Section, SectionHeading } from "@/components/ui";
 import type { About as AboutData } from "@/lib/api-types";
 import { PILLARS, SECTIONS } from "@/lib/constants";
@@ -7,7 +7,7 @@ import { paragraphs as splitParagraphs } from "@/lib/format";
 const PILLAR_ICONS = {
   "ai-engineering": Cpu,
   "open-source": Code2,
-  "public-speaking": Presentation,
+  "public-speaking": Mic,
   "technical-writing": BookOpen,
   "technical-videos": Video,
   "community-building": Users,

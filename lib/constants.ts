@@ -85,23 +85,24 @@ export const FOOTER_LINKS: { title: string; links: NavLink[] }[] = [
 export const SECTIONS = {
   about: {
     label: "About",
-    title: "An engineer who builds systems and can explain them to a room.",
+    title: "An engineer who builds systems and explains them to a room.",
   },
   work: {
     label: "Work",
     title: "Where I have worked",
-    intro: "Roles across AI engineering, backend development, and mobile.",
+    intro:
+      "Roles spanning AI engineering, software development, and building production systems.",
   },
   education: {
     label: "Education",
     title: "Academic background",
-    intro: "Where I studied and what I came out with.",
+    intro: "Where I studied and what I learned along the way.",
   },
   community: {
     label: "Community",
-    title: "Teaching, speaking, writing",
+    title: "Speaking, writing, building",
     intro:
-      "The other half of the work — running workshops, organising events, and writing down what I learn.",
+      "Sharing ideas, bringing developers together, and contributing to the tech community.",
   },
   contact: {
     label: "Contact",
@@ -115,31 +116,32 @@ export const SECTIONS = {
 export const SUBSECTIONS = {
   tools: {
     title: "Tools I reach for",
-    note: "The stack I am currently productive in, not everything I have touched.",
+    note: "The tools behind the systems, experiments, and products I build.",
   },
   projects: {
     title: "Open source projects",
-    note: "Projects I keep running, and the ones I have contributed to.",
+    note: "Projects I build, maintain, and contribute to.",
   },
   communities: {
     title: "Communities",
-    note: "Groups I organise with or volunteer for.",
+    note: "Communities I organise with, contribute to, or volunteer for.",
   },
   events: {
     title: "Events",
-    note: "Talks and workshops I have delivered, most recent first.",
+    note: "Talks and workshops I've delivered, with the most recent first.",
   },
   gallery: {
     title: "Event gallery",
-    note: "Photographs from the rooms these were delivered in.",
+    note: "Moments from events, talks, and workshops I've joined.",
   },
+
   blogs: {
     title: "Blog",
-    note: "Notes on agent frameworks and what breaks in production.",
+    note: "Notes I write on AI systems, engineering, and production.",
   },
   videos: {
     title: "Videos",
-    note: "Short walkthroughs, mostly Azure setup and OpenAI basics.",
+    note: "Walkthroughs I create on AI systems and software engineering.",
   },
 } as const;
 
@@ -155,13 +157,13 @@ export const PILLARS = [
     key: "ai-engineering",
     title: "AI engineering",
     description:
-      "Building multi-agent systems, orchestrating LLM workflows, and designing evaluation pipelines for production applications.",
+      "Building agentic systems, orchestrating LLM workflows, and designing evaluation pipelines for production applications.",
   },
   {
     key: "open-source",
     title: "Open source",
     description:
-      "Building developer tools, publishing open-source projects, and sharing implementations for AI and software engineering.",
+      "Developing tools, contributing to projects, and sharing technical implementations across AI and software engineering.",
   },
   {
     key: "public-speaking",
@@ -173,19 +175,19 @@ export const PILLARS = [
     key: "technical-writing",
     title: "Technical writing",
     description:
-      "Writing about agent architectures, software engineering practices, and lessons learned from building AI systems in production.",
+      "Writing about agentic systems, engineering practices, and lessons from building AI in production.",
   },
   {
     key: "technical-videos",
     title: "Technical videos",
     description:
-      "Creating technical walkthroughs, tutorials, and sessions on AI systems, software engineering, and cloud infrastructure.",
+      "Creating technical tutorials and walkthroughs on AI systems, software engineering, and cloud infrastructure.",
   },
   {
     key: "community-building",
     title: "Community building",
     description:
-      "Organising technical meetups, mentoring engineers, and creating spaces for people to learn and build.",
+      "Organising technical meetups, mentoring engineers, and creating spaces for people and AI agents to learn and build.",
   },
 ] as const;
 
