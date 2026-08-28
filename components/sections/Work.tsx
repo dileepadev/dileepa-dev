@@ -85,8 +85,34 @@ export function Work({
                     title={project.name}
                     href={`/projects/${project.slug}`}
                     description={project.tagline || project.description}
-                    meta={humanise(project.status)}
-                  />
+                    meta={
+                      <>
+                        {project.status === "active" ? (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium border border-brand/30 bg-brand/10 text-brand">
+                            <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" aria-hidden="true" />
+                            <span>Active</span>
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-mono text-fg-muted border border-border-strong bg-bg-surface">
+                            {humanise(project.status)}
+                          </span>
+                        )}
+                        {project.role && (
+                          <span className="font-medium text-fg">{project.role}</span>
+                        )}
+                      </>
+                    }
+                  >
+                    {(project.stack ?? []).length > 0 && (
+                      <ul className="flex flex-wrap gap-1.5 mt-2">
+                        {(project.stack ?? []).slice(0, 4).map((tech) => (
+                          <li key={tech}>
+                            <Chip>{tech}</Chip>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </Item>
                 ))}
               </ItemList>
               <ViewAll href="/projects">All projects</ViewAll>

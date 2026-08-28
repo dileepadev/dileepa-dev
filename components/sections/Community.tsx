@@ -1,3 +1,4 @@
+import { Calendar, Clock, MapPin } from "lucide-react";
 import {
   Container,
   Item,
@@ -14,7 +15,13 @@ import type {
   Video,
 } from "@/lib/api-types";
 import { SECTIONS, SUBSECTIONS } from "@/lib/constants";
-import { formatDate, formatMonth, readingTime } from "@/lib/format";
+import {
+  formatDate,
+  formatMonth,
+  humanise,
+  readingTime,
+  videoDuration,
+} from "@/lib/format";
 
 /**
  * Community — communities, events, writing, videos.
@@ -55,8 +62,25 @@ export function CommunitySection({
                   description={community.description}
                   meta={
                     <>
-                      <span className="block">{community.role}</span>
-                      <span className="block">{community.period}</span>
+                      {community.current ? (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium border border-brand/30 bg-brand/10 text-brand">
+                          <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" aria-hidden="true" />
+                          <span>Current</span>
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-mono text-fg-muted border border-border-strong bg-bg-surface">
+                          Past role
+                        </span>
+                      )}
+                      {community.role && (
+                        <span className="font-medium text-fg">{community.role}</span>
+                      )}
+                      {community.period && (
+                        <span className="inline-flex items-center gap-1.5 text-fg-muted">
+                          <Calendar className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
+                          <span>{community.period}</span>
+                        </span>
+                      )}
                     </>
                   }
                 />
@@ -77,9 +101,27 @@ export function CommunitySection({
                   description={event.summary}
                   meta={
                     <>
-                      <span className="block">{formatDate(event.startAt)}</span>
-                      <span className="block">
-                        {event.location?.venue ?? "Online"}
+                      {event.status === "upcoming" ? (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium border border-brand/30 bg-brand/10 text-brand">
+                          <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" aria-hidden="true" />
+                          <span>Upcoming</span>
+                        </span>
+                      ) : event.status === "cancelled" ? (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-mono text-error border border-error/30 bg-error/10">
+                          Cancelled
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-mono text-fg-muted border border-border-strong bg-bg-surface">
+                          Past event
+                        </span>
+                      )}
+                      <span className="inline-flex items-center gap-1.5 text-fg font-medium">
+                        <Calendar className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
+                        <span>{formatDate(event.startAt)}</span>
+                      </span>
+                      <span className="inline-flex items-center gap-1.5 text-fg-muted">
+                        <MapPin className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
+                        <span>{event.location?.venue ?? humanise(event.format)}</span>
                       </span>
                     </>
                   }
@@ -101,11 +143,15 @@ export function CommunitySection({
                   description={post.description}
                   meta={
                     <>
-                      <span className="block">
-                        {formatDate(post.publishedDate)}
-                      </span>
-                      <span className="block">
-                        {readingTime(post.readingTimeMinutes)}
+                      {post.publishedDate && (
+                        <span className="inline-flex items-center gap-1.5 text-fg font-medium">
+                          <Calendar className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
+                          <span>{formatDate(post.publishedDate)}</span>
+                        </span>
+                      )}
+                      <span className="inline-flex items-center gap-1.5 text-fg-muted">
+                        <Clock className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
+                        <span>{readingTime(post.readingTimeMinutes)}</span>
                       </span>
                     </>
                   }
@@ -125,7 +171,22 @@ export function CommunitySection({
                   title={video.title}
                   href={video.link}
                   description={video.description || undefined}
-                  meta={formatMonth(video.date)}
+                  meta={
+                    <>
+                      {video.date && (
+                        <span className="inline-flex items-center gap-1.5 text-fg font-medium">
+                          <Calendar className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
+                          <span>{formatMonth(video.date)}</span>
+                        </span>
+                      )}
+                      {video.durationSeconds && (
+                        <span className="inline-flex items-center gap-1.5 text-fg-muted">
+                          <Clock className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
+                          <span>{videoDuration(video.durationSeconds)}</span>
+                        </span>
+                      )}
+                    </>
+                  }
                 />
               ))}
             </ItemList>
