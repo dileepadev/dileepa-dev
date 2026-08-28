@@ -175,68 +175,72 @@ export function NotFoundVisual() {
 
       {/* Main Terminal Viewport */}
       {activeTab === "terminal" ? (
-        <div className="p-4 sm:p-5 font-mono text-xs space-y-4">
-          {/* Big ASCII 404 Display */}
-          <div className="p-3 rounded bg-bg border border-border-strong/70 text-brand select-none overflow-x-auto">
-            <pre className="text-[0.625rem] sm:text-xs leading-[1.15] font-bold">
-              {ASCII_404_BANNER}
-            </pre>
+        <div className="min-h-[390px] sm:h-[390px] p-4 sm:p-5 font-mono text-xs flex flex-col justify-between gap-3">
+          <div className="space-y-3">
+            {/* Big ASCII 404 Display */}
+            <div className="p-2.5 rounded bg-bg border border-border-strong/70 text-brand select-none overflow-x-auto">
+              <pre className="text-[0.625rem] sm:text-xs leading-[1.15] font-bold">
+                {ASCII_404_BANNER}
+              </pre>
+            </div>
+
+            {/* Animated ASCII Radar */}
+            <div className="p-2.5 rounded bg-bg border border-border-strong/70 overflow-hidden relative">
+              <pre className="text-[0.6875rem] leading-[1.25] text-fg select-none whitespace-pre">
+                {RADAR_FRAMES[frameIndex]}
+              </pre>
+
+              {isPinging && (
+                <div className="absolute inset-0 bg-brand/10 flex items-center justify-center pointer-events-none transition-opacity">
+                  <span className="text-brand font-bold text-xs animate-pulse">
+                    (( PING SIGNAL BROADCASTED ))
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Animated ASCII Radar */}
-          <div className="p-3 rounded bg-bg border border-border-strong/70 overflow-hidden relative">
-            <pre className="text-[0.6875rem] leading-[1.25] text-fg select-none whitespace-pre">
-              {RADAR_FRAMES[frameIndex]}
-            </pre>
-
-            {isPinging && (
-              <div className="absolute inset-0 bg-brand/10 flex items-center justify-center pointer-events-none transition-opacity">
-                <span className="text-brand font-bold text-xs animate-pulse">
-                  (( PING SIGNAL BROADCASTED ))
-                </span>
+          <div>
+            {/* Status Telemetry */}
+            <div className="text-[0.6875rem] text-fg-muted space-y-1 pt-2 border-t border-border-strong/40">
+              <div className="flex items-center justify-between">
+                <span>SCAN TARGET:</span>
+                <span className="text-fg font-medium">UNRESOLVED_PATH</span>
               </div>
-            )}
-          </div>
+              <div className="flex items-center justify-between">
+                <span>PROBE STATUS:</span>
+                <span className="text-brand font-medium">LISTENING (404)</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>PINGS SENT:</span>
+                <span className="text-fg">{pingCount}</span>
+              </div>
+            </div>
 
-          {/* Status Telemetry */}
-          <div className="text-[0.6875rem] text-fg-muted space-y-1 pt-1 border-t border-border-strong/40">
-            <div className="flex items-center justify-between">
-              <span>SCAN TARGET:</span>
-              <span className="text-fg font-medium">UNRESOLVED_PATH</span>
+            {/* Interactive Ping Control */}
+            <div className="pt-2.5 flex items-center justify-between gap-3">
+              <button
+                type="button"
+                onClick={handlePing}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm font-mono text-xs font-medium bg-bg border border-border-strong hover:border-brand hover:text-brand transition-colors cursor-pointer"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-brand animate-ping" />
+                <span>Ping sector</span>
+              </button>
+              <span className="text-[0.6875rem] text-fg-muted">
+                Press to ping lost route
+              </span>
             </div>
-            <div className="flex items-center justify-between">
-              <span>PROBE STATUS:</span>
-              <span className="text-brand font-medium">LISTENING (404)</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span>PINGS SENT:</span>
-              <span className="text-fg">{pingCount}</span>
-            </div>
-          </div>
-
-          {/* Interactive Ping Control */}
-          <div className="pt-2 flex items-center justify-between gap-3">
-            <button
-              type="button"
-              onClick={handlePing}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm font-mono text-xs font-medium bg-bg border border-border-strong hover:border-brand hover:text-brand transition-colors cursor-pointer"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-brand animate-ping" />
-              <span>Ping sector</span>
-            </button>
-            <span className="text-[0.6875rem] text-fg-muted">
-              Press to ping lost route
-            </span>
           </div>
         </div>
       ) : (
         /* Operator Photo & ASCII Converter View */
-        <div className="p-4 sm:p-5 font-mono text-xs space-y-4">
-          <div className="flex flex-col sm:flex-row gap-4 items-center sm:items-start">
+        <div className="min-h-[390px] sm:h-[390px] p-4 sm:p-5 font-mono text-xs flex flex-col justify-between gap-3">
+          <div className="flex flex-col sm:flex-row gap-3.5 items-center sm:items-start">
             {/* Portrait Frame */}
             <div className="relative w-36 h-36 shrink-0 rounded-sm border border-border-strong overflow-hidden bg-bg flex items-center justify-center">
               {isAsciiPhotoActive && asciiPortrait.length > 0 ? (
-                <div className="w-full h-full p-1.5 flex items-center justify-center bg-bg select-none overflow-hidden">
+                <div className="w-full h-full p-1 flex items-center justify-center bg-bg select-none overflow-hidden">
                   <pre className="text-[0.34rem] leading-[0.38rem] text-brand tracking-tighter">
                     {asciiPortrait.join("\n")}
                   </pre>
@@ -277,16 +281,19 @@ export function NotFoundVisual() {
             </div>
 
             {/* Operator Telemetry Dossier */}
-            <div className="space-y-2 flex-1 min-w-0 text-[0.6875rem]">
-              <div className="p-2 rounded bg-bg border border-border-strong/70 space-y-1">
-                <div className="text-fg font-medium text-xs">
-                  Dileepa Bandara
+            <div className="space-y-2 flex-1 min-w-0 text-[0.6875rem] w-full">
+              <div className="p-2.5 rounded bg-bg border border-border-strong/70 space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-fg font-medium text-xs">Dileepa Bandara</span>
+                  <span className="text-[0.625rem] px-1.5 py-0.5 rounded bg-brand/10 text-brand border border-brand/30">
+                    Active
+                  </span>
                 </div>
                 <div className="text-brand">OPERATOR // AI ENGINEER</div>
                 <div className="text-fg-muted pt-1 border-t border-border-strong/40">
-                  ASSIGNMENT: Route recovery &amp; 404 assistance
+                  CALLSIGN: dileepadev
                 </div>
-                <div className="text-fg-muted">STATUS: Active in sector</div>
+                <div className="text-fg-muted">MISSION: Route recovery</div>
               </div>
 
               {/* Mode Toggle Button */}
@@ -295,15 +302,21 @@ export function NotFoundVisual() {
                 onClick={() => setIsAsciiPhotoActive((v) => !v)}
                 className="w-full text-center px-2.5 py-1.5 rounded-sm font-mono text-xs font-medium border border-border-strong bg-bg hover:border-brand hover:text-brand transition-colors cursor-pointer"
               >
-                {isAsciiPhotoActive
-                  ? "View photo"
-                  : "Convert to ASCII"}
+                {isAsciiPhotoActive ? "View photo" : "Convert to ASCII"}
               </button>
             </div>
           </div>
 
-          <div className="text-[0.6875rem] text-fg-muted pt-2 border-t border-border-strong/40">
-            Official operator portrait. Switch between high-resolution photograph and real-time ASCII matrix rendering.
+          {/* Diagnostics Log box */}
+          <div className="p-2.5 rounded bg-bg border border-border-strong/70 text-[0.6875rem] space-y-1">
+            <div className="text-fg-muted font-medium">DIAGNOSTICS LOG:</div>
+            <div className="text-brand">&gt; SYSTEM: Route index mismatch</div>
+            <div className="text-fg-muted">&gt; RECOMMENDATION: Explore sitemap tree</div>
+          </div>
+
+          <div className="text-[0.6875rem] text-fg-muted pt-2 border-t border-border-strong/40 flex items-center justify-between">
+            <span>OPERATOR ID // V2.0</span>
+            <span>STATUS: READY</span>
           </div>
         </div>
       )}
