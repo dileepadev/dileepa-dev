@@ -13,7 +13,17 @@ import {
   ZoomIn,
   Briefcase,
   Building2,
+  Globe,
+  Link2,
 } from "lucide-react";
+import {
+  FaFacebook,
+  FaGithub,
+  FaInstagram,
+  FaLinkedin,
+  FaXTwitter,
+  FaYoutube,
+} from "@/components/icons/SocialIcons";
 import {
   Badge,
   Button,
@@ -24,7 +34,6 @@ import {
 } from "@/components/ui";
 import type { About, Experience } from "@/lib/api-types";
 import { SITE_CONFIG } from "@/lib/constants";
-import { SOCIAL_ICONS } from "@/lib/social-icons";
 
 interface ProfilePhoto {
   id: string;
@@ -151,12 +160,90 @@ export function ProfileClient({ about, experiences }: ProfileClientProps) {
   );
 
   const links = about?.links;
-  const socials = SOCIAL_ICONS.map((icon) => ({
-    ...icon,
-    href: links?.[icon.key],
-  })).filter((icon): icon is typeof icon & { href: string } =>
-    Boolean(icon.href),
-  );
+
+  const verificationChannels = [
+    {
+      key: "github",
+      name: "GitHub",
+      badge: "Code & tools",
+      handler: "github.com/dileepadev",
+      url: links?.github || "https://github.com/dileepadev",
+      copyValue: links?.github || "https://github.com/dileepadev",
+      icon: FaGithub,
+    },
+    {
+      key: "linkedin",
+      name: "LinkedIn",
+      badge: "Professional",
+      handler: "linkedin.com/in/dileepabandara",
+      url: links?.linkedin || "https://linkedin.com/in/dileepabandara",
+      copyValue: links?.linkedin || "https://linkedin.com/in/dileepabandara",
+      icon: FaLinkedin,
+    },
+    {
+      key: "xtwitter",
+      name: "X (Twitter)",
+      badge: "Updates & notes",
+      handler: "@dileepadev",
+      url: links?.xtwitter || "https://x.com/dileepadev",
+      copyValue: links?.xtwitter || "https://x.com/dileepadev",
+      icon: FaXTwitter,
+    },
+    {
+      key: "youtube",
+      name: "YouTube",
+      badge: "Walkthroughs",
+      handler: "youtube.com/@dileepadev",
+      url: links?.youtube || "https://youtube.com/@dileepadev",
+      copyValue: links?.youtube || "https://youtube.com/@dileepadev",
+      icon: FaYoutube,
+    },
+    {
+      key: "facebook",
+      name: "Facebook",
+      badge: "Community",
+      handler: "facebook.com/dileepadev",
+      url: links?.facebook || "https://facebook.com/dileepadev",
+      copyValue: links?.facebook || "https://facebook.com/dileepadev",
+      icon: FaFacebook,
+    },
+    {
+      key: "instagram",
+      name: "Instagram",
+      badge: "Moments & stories",
+      handler: "instagram.com/dileepadev",
+      url: links?.instagram || "https://instagram.com/dileepadev",
+      copyValue: links?.instagram || "https://instagram.com/dileepadev",
+      icon: FaInstagram,
+    },
+    {
+      key: "email",
+      name: "Email (Direct)",
+      badge: "Speaker booking",
+      handler: SITE_CONFIG.email,
+      url: `mailto:${SITE_CONFIG.email}`,
+      copyValue: SITE_CONFIG.email,
+      icon: Mail,
+    },
+    {
+      key: "website",
+      name: "Website",
+      badge: "Canonical",
+      handler: "dileepa.dev",
+      url: SITE_CONFIG.url,
+      copyValue: SITE_CONFIG.url,
+      icon: Globe,
+    },
+    {
+      key: "links",
+      name: "Links directory",
+      badge: "Link-in-bio",
+      handler: "links.dileepa.dev",
+      url: SITE_CONFIG.linksUrl,
+      copyValue: SITE_CONFIG.linksUrl,
+      icon: Link2,
+    },
+  ];
 
   return (
     <div className="space-y-16">
@@ -457,38 +544,84 @@ export function ProfileClient({ about, experiences }: ProfileClientProps) {
         </div>
       </div>
 
-      {/* Socials and Links for Organizers */}
-      <div className="p-6 sm:p-8 rounded-lg border border-border-strong bg-bg-surface">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2">
-            <h2 className="text-lg sm:text-xl font-bold text-fg">
-              Connect &amp; verify credentials
-            </h2>
-            <p className="text-small text-fg-muted max-w-xl">
-              Official profiles, code repositories, recorded walkthroughs, and bio links to cite in your event material.
-            </p>
-          </div>
+      {/* Connect & Verify Credentials Section */}
+      <div className="space-y-6">
+        <div>
+          <div className="section-label">Verification</div>
+          <h2>Connect &amp; verify credentials</h2>
+          <p className="mt-2 text-fg-muted">
+            Official profiles, code repositories, recorded walkthroughs, and bio links to cite in your event material.
+          </p>
+        </div>
 
-          {socials.length > 0 && (
-            <div className="flex items-center gap-2 flex-wrap">
-              {socials.map((item) => {
-                const Icon = item.icon;
-                return (
+        <div className="rounded-lg border border-border-strong bg-bg-surface overflow-hidden divide-y divide-border-strong/60 shadow-xs">
+          {verificationChannels.map((item) => {
+            const Icon = item.icon;
+            const isCopied = copiedKey === item.key;
+
+            return (
+              <div
+                key={item.key}
+                className="p-4 sm:px-6 sm:py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-surface-hover/40 transition-colors"
+              >
+                {/* Left: Icon, Platform Name, Handler / Link */}
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <div className="w-9 h-9 rounded-md border border-border-strong bg-bg flex items-center justify-center text-fg shrink-0">
+                    <Icon className="h-4.5 w-4.5 text-fg" aria-hidden="true" />
+                  </div>
+
+                  <div className="min-w-0 space-y-0.5">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-sm font-bold text-fg">
+                        {item.name}
+                      </span>
+                      {item.badge && (
+                        <span className="text-[0.625rem] font-mono px-1.5 py-0.5 rounded bg-brand/10 text-brand border border-brand/20">
+                          {item.badge}
+                        </span>
+                      )}
+                    </div>
+                    <div className="font-mono text-xs text-fg-muted truncate">
+                      {item.handler}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right: Open & Copy action buttons */}
+                <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
                   <a
-                    key={item.label}
-                    href={item.href}
+                    href={item.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded border border-border-strong bg-bg hover:border-brand hover:text-brand text-fg-muted transition-colors font-mono text-xs"
+                    className="btn btn--secondary !h-8 !px-3 text-xs inline-flex items-center gap-1.5"
+                    title={`Open ${item.name} in new tab`}
                   >
-                    <Icon className="h-4 w-4" />
-                    <span>{item.label}</span>
-                    <ExternalLink className="h-3 w-3 opacity-60" />
+                    <span>Open</span>
+                    <ExternalLink className="h-3 w-3 text-fg-muted" aria-hidden="true" />
                   </a>
-                );
-              })}
-            </div>
-          )}
+
+                  <button
+                    type="button"
+                    onClick={() => handleCopy(item.key, item.copyValue)}
+                    className="btn btn--secondary !h-8 !px-3 text-xs inline-flex items-center gap-1.5"
+                    title={`Copy ${item.name} link`}
+                  >
+                    {isCopied ? (
+                      <>
+                        <Check className="h-3 w-3 text-brand" aria-hidden="true" />
+                        <span className="text-brand">Copied</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-3 w-3 text-fg-muted" aria-hidden="true" />
+                        <span>Copy</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
