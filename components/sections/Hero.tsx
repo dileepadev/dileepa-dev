@@ -114,6 +114,7 @@ export function Hero({ about }: { about: About | null }) {
                   height={260}
                   sizes="260px"
                   priority
+                  fetchPriority="high"
                 />
                 <div className="mt-4">
                   <div className="hero-name">{name}</div>

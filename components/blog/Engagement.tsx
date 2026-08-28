@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Check, Eye, Link2, MessageSquare, Share2 } from "lucide-react";
-import { FaLinkedin, FaXTwitter } from "react-icons/fa6";
+import { FaLinkedin, FaXTwitter } from "@/components/icons/SocialIcons";
 import { api } from "@/lib/api";
 import type { BlogEngagement, ReactionKind } from "@/lib/api-types";
 import { ReactionPicker, ReactionSummary, totalReactions } from "./reactions";

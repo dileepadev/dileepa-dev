@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { GitBranch } from "lucide-react";
-import { FaGithub } from "react-icons/fa6";
+import { FaGithub } from "@/components/icons/SocialIcons";
 import { Container, Lockup } from "@/components/ui";
 import { FOOTER_LINKS, SITE_CONFIG } from "@/lib/constants";
 import { SOCIAL_ICONS } from "@/lib/social-icons";

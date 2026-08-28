@@ -4,8 +4,8 @@
   "description": "AI engineer building AI systems and the community.",
   "start_url": "/",
   "display": "standalone",
-  "theme_color": "#0D0D0D",
-  "background_color": "#0D0D0D",
+  "theme_color": "#050505",
+  "background_color": "#050505",
   "icons": [
     {
       "src": "/android-icon-36x36.png",

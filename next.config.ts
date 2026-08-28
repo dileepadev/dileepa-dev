@@ -161,6 +161,7 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
+    formats: ["image/avif", "image/webp"],
     // Cloudinary and nothing else. Every image the platform serves goes through
     // POST /uploads, so a second host here would mean an image had bypassed the
     // one path that holds the credentials.

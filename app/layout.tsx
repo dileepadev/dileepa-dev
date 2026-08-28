@@ -10,6 +10,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import MicrosoftClarity from "@/components/analytics/MicrosoftClarity";
 import { SITE_CONFIG } from "@/lib/constants";
+import { portrait as portraitUrl } from "@/lib/format";
 import "./globals.css";
 
 // Three weights, which is the whole scale: 400 body, 500 UI and labels, 700
@@ -153,6 +154,30 @@ export default async function RootLayout({
   // reads. The fetch is deduplicated by Next's cache, so this costs nothing.
   const about = await api.getAbout();
 
+  const personSchema = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: SITE_CONFIG.name,
+    url: SITE_CONFIG.url,
+    jobTitle: "AI Engineer",
+    sameAs: [
+      about?.links?.github,
+      about?.links?.linkedin,
+      about?.links?.xtwitter,
+      about?.links?.youtube,
+    ].filter(Boolean),
+    image: portraitUrl(about?.images) || undefined,
+    description: SITE_CONFIG.description,
+  };
+
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: SITE_CONFIG.name,
+    url: SITE_CONFIG.url,
+    description: SITE_CONFIG.description,
+  };
+
   return (
     // The font variables belong on <html>, not <body>: globals.css builds
     // --font-sans out of them at :root, and a custom property that is only
@@ -163,6 +188,26 @@ export default async function RootLayout({
       className={`${manrope.variable} ${jetbrainsMono.variable}`}
       suppressHydrationWarning
     >
+      <head>
+        <link
+          rel="preconnect"
+          href="https://res.cloudinary.com"
+          crossOrigin="anonymous"
+        />
+        <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(personSchema),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(websiteSchema),
+          }}
+        />
+      </head>
       <body className="antialiased">
         <ThemeProvider>
           <a
@@ -189,8 +234,12 @@ export default async function RootLayout({
           />
           <BackToTop />
         </ThemeProvider>
-        <Analytics />
-        <SpeedInsights />
+        {process.env.VERCEL && (
+          <>
+            <Analytics />
+            <SpeedInsights />
+          </>
+        )}
         <GoogleAnalytics />
         <MicrosoftClarity />
       </body>
