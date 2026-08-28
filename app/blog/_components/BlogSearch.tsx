@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { ArrowLeft, ArrowRight, BookOpen, Layers } from "lucide-react";
+import { ArrowLeft, ArrowRight, Bookmark, BookOpen, Calendar, Clock, Layers } from "lucide-react";
 import {
   Badge,
   Button,
+  Chip,
   EmptyState,
   FilterSelect,
   type FilterOption,
@@ -437,21 +438,37 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
                     description={post.description ?? undefined}
                     meta={
                       <>
-                        <time
-                          dateTime={toDateAttribute(post.publishedDate)}
-                          className="block"
-                        >
-                          {formatDate(post.publishedDate)}
-                        </time>
-                        <span className="block">
-                          {readingTime(post.readingTimeMinutes)}
+                        {post.publishedDate && (
+                          <span className="inline-flex items-center gap-1.5 text-fg font-medium">
+                            <Calendar className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
+                            <time dateTime={toDateAttribute(post.publishedDate)}>
+                              {formatDate(post.publishedDate)}
+                            </time>
+                          </span>
+                        )}
+                        <span className="inline-flex items-center gap-1.5 text-fg-muted">
+                          <Clock className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
+                          <span>{readingTime(post.readingTimeMinutes)}</span>
                         </span>
                         {post.series && (
-                          <span className="block">{post.series.name}</span>
+                          <span className="inline-flex items-center gap-1 text-xs font-mono px-2 py-0.5 rounded border border-brand/25 bg-brand/5 text-brand max-w-[200px] truncate">
+                            <Bookmark className="h-2.5 w-2.5 shrink-0" aria-hidden="true" />
+                            <span className="truncate">{post.series.name}</span>
+                          </span>
                         )}
                       </>
                     }
-                  />
+                  >
+                    {(post.tags ?? []).length > 0 && (
+                      <ul className="flex flex-wrap gap-1.5 mt-2">
+                        {(post.tags ?? []).slice(0, 4).map((tag) => (
+                          <li key={tag}>
+                            <Chip className="text-[0.75rem] py-0.5 px-2">{tag}</Chip>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </Item>
                 ))}
               </ItemList>
 
@@ -529,14 +546,17 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
                       description={post.description ?? undefined}
                       meta={
                         <>
-                          <time
-                            dateTime={toDateAttribute(post.publishedDate)}
-                            className="block"
-                          >
-                            {formatDate(post.publishedDate)}
-                          </time>
-                          <span className="block">
-                            {readingTime(post.readingTimeMinutes)}
+                          {post.publishedDate && (
+                            <span className="inline-flex items-center gap-1.5 text-fg font-medium">
+                              <Calendar className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
+                              <time dateTime={toDateAttribute(post.publishedDate)}>
+                                {formatDate(post.publishedDate)}
+                              </time>
+                            </span>
+                          )}
+                          <span className="inline-flex items-center gap-1.5 text-fg-muted">
+                            <Clock className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
+                            <span>{readingTime(post.readingTimeMinutes)}</span>
                           </span>
                         </>
                       }
