@@ -15,6 +15,15 @@ import {
   type SortOption,
 } from "@/components/ui";
 import type { Community } from "@/lib/api-types";
+import {
+  buildFacets,
+  compareNumber,
+  compareText,
+  type FacetSpec,
+  matchesTokens,
+  searchTokens,
+  toOptions,
+} from "@/lib/listing";
 
 type CommunitySortKey = "default" | "current-first" | "name-asc" | "name-desc";
 
@@ -26,6 +35,22 @@ const SORT_OPTIONS: SortOption<CommunitySortKey>[] = [
 ];
 
 const COMMUNITIES_PER_PAGE = 10;
+
+const STATUS_LABELS: Record<string, string> = {
+  current: "Current roles",
+  past: "Past roles",
+};
+
+/**
+ * The filterable dimensions, and how a community is filed under each.
+ *
+ * `current` is a boolean on the record rather than a string, so it is projected
+ * onto the two values the dropdown offers — which keeps the count beside an
+ * option and the rows it yields on one rule instead of two.
+ */
+const FACETS: FacetSpec<Community>[] = [
+  { key: "status", values: (community) => [community.current ? "current" : "past"] },
+];
 
 /** Client-side search, filtering, sorting, and progressive pagination across communities. */
 export function CommunitySearch({ communities }: { communities: Community[] }) {
@@ -42,45 +67,37 @@ export function CommunitySearch({ communities }: { communities: Community[] }) {
     setVisibleCount(COMMUNITIES_PER_PAGE);
   }
 
-  // Filter options
-  const statusOptions: FilterOption[] = useMemo(() => {
-    let currentCount = 0;
-    let pastCount = 0;
-
-    for (const c of communities) {
-      if (c.current) {
-        currentCount++;
-      } else {
-        pastCount++;
-      }
-    }
-
-    const opts: FilterOption[] = [];
-    if (currentCount > 0) {
-      opts.push({ value: "current", label: "Current roles", count: currentCount });
-    }
-    if (pastCount > 0) {
-      opts.push({ value: "past", label: "Past roles", count: pastCount });
-    }
-    return opts;
-  }, [communities]);
-
   // Step 1: Search
   const searchedCommunities = useMemo(() => {
-    const q = query.toLowerCase().trim();
-    if (!q) return communities;
+    const tokens = searchTokens(query);
+    if (tokens.length === 0) return communities;
 
-    return communities.filter((c) => matches(c, q));
+    return communities.filter((c) =>
+      matchesTokens(
+        [c.name, c.role, c.description, c.period, STATUS_LABELS[c.current ? "current" : "past"]],
+        tokens,
+      ),
+    );
   }, [communities, query]);
 
-  // Step 2: Filter
-  const filteredCommunities = useMemo(() => {
-    return searchedCommunities.filter((c) => {
-      if (selectedStatus === "current" && !c.current) return false;
-      if (selectedStatus === "past" && c.current) return false;
-      return true;
-    });
-  }, [searchedCommunities, selectedStatus]);
+  // Step 2: Filter, counting each dimension against the rest
+  const { counts, matched: filteredCommunities } = useMemo(
+    () => buildFacets(searchedCommunities, FACETS, { status: selectedStatus }),
+    [searchedCommunities, selectedStatus],
+  );
+
+  const statusOptions: FilterOption[] = useMemo(
+    () =>
+      toOptions(counts.status, {
+        label: (value) => STATUS_LABELS[value] ?? value,
+        // "Current roles" before "Past roles" — the order a reader expects, and
+        // one a count-first ordering would flip as soon as the past outnumbers
+        // the present.
+        order: "label",
+        keep: selectedStatus,
+      }),
+    [counts.status, selectedStatus],
+  );
 
   // Step 3: Sort
   const sortedCommunities = useMemo(() => {
@@ -90,14 +107,14 @@ export function CommunitySearch({ communities }: { communities: Community[] }) {
       switch (sortBy) {
         case "current-first":
           if (a.current !== b.current) return a.current ? -1 : 1;
-          return (b.order ?? 0) - (a.order ?? 0);
+          return compareNumber(a.order, b.order, "desc") || compareText(a.name, b.name);
         case "name-asc":
-          return a.name.localeCompare(b.name);
+          return compareText(a.name, b.name);
         case "name-desc":
-          return b.name.localeCompare(a.name);
+          return compareText(b.name, a.name);
         case "default":
         default:
-          return (b.order ?? 0) - (a.order ?? 0);
+          return compareNumber(a.order, b.order, "desc") || compareText(a.name, b.name);
       }
     });
   }, [filteredCommunities, sortBy]);
@@ -106,7 +123,7 @@ export function CommunitySearch({ communities }: { communities: Community[] }) {
   const paginatedCommunities = sortedCommunities.slice(0, visibleCount);
   const hasMore = visibleCount < sortedCommunities.length;
 
-  const hasActiveFilters = Boolean(query || selectedStatus);
+  const hasActiveFilters = Boolean(query.trim() || selectedStatus);
 
   const clearAllFilters = () => {
     setQuery("");
@@ -118,7 +135,7 @@ export function CommunitySearch({ communities }: { communities: Community[] }) {
     if (selectedStatus) {
       list.push({
         key: "status",
-        label: selectedStatus === "current" ? "Current roles" : "Past roles",
+        label: STATUS_LABELS[selectedStatus] ?? selectedStatus,
         onRemove: () => setSelectedStatus(null),
       });
     }
@@ -223,14 +240,5 @@ export function CommunitySearch({ communities }: { communities: Community[] }) {
         </div>
       )}
     </div>
-  );
-}
-
-function matches(community: Community, q: string): boolean {
-  return (
-    community.name.toLowerCase().includes(q) ||
-    (community.role ?? "").toLowerCase().includes(q) ||
-    (community.description ?? "").toLowerCase().includes(q) ||
-    (community.period ?? "").toLowerCase().includes(q)
   );
 }

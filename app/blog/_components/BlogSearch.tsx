@@ -18,6 +18,17 @@ import {
   type SortOption,
 } from "@/components/ui";
 import { formatDate, readingTime, toDateAttribute } from "@/lib/format";
+import {
+  buildFacets,
+  compareDate,
+  compareNumber,
+  compareText,
+  type FacetSpec,
+  matchesTokens,
+  searchTokens,
+  toOptions,
+  yearOf,
+} from "@/lib/listing";
 import { cn } from "@/lib/utils";
 
 export interface BlogPostSummary {
@@ -65,6 +76,13 @@ const SORT_OPTIONS: SortOption<BlogSortKey>[] = [
 const POSTS_PER_PAGE = 10;
 const SERIES_PER_PAGE = 6;
 
+/** The filterable dimensions, and how a blog post is filed under each. */
+const FACETS: FacetSpec<BlogPostSummary>[] = [
+  { key: "tag", values: (p) => p.tags ?? [] },
+  { key: "year", values: (p) => [yearOf(p.publishedDate)] },
+  { key: "series", values: (p) => [p.series?.name] },
+];
+
 /** Client-side search, filtering, sorting, series, and progressive pagination across blog posts. */
 export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
   const [viewMode, setViewMode] = useState<ViewMode>("all");
@@ -107,9 +125,7 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
         const orderA = a.series?.order ?? 0;
         const orderB = b.series?.order ?? 0;
         if (orderA !== orderB) return orderA - orderB;
-        const dateA = a.publishedDate ? new Date(a.publishedDate).getTime() : 0;
-        const dateB = b.publishedDate ? new Date(b.publishedDate).getTime() : 0;
-        return dateA - dateB;
+        return compareDate(a.publishedDate, b.publishedDate, "oldest");
       });
 
       const totalReadingTime = sortedPosts.reduce(
@@ -143,131 +159,101 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
     }
 
     return groups.sort(
-      (a, b) => b.posts.length - a.posts.length || a.name.localeCompare(b.name),
+      (a, b) => b.posts.length - a.posts.length || compareText(a.name, b.name),
     );
   }, [posts]);
 
-  // Dynamic filter options
-  const tagOptions: FilterOption[] = useMemo(() => {
-    const counts = new Map<string, number>();
-    for (const p of posts) {
-      for (const t of p.tags ?? []) {
-        counts.set(t, (counts.get(t) ?? 0) + 1);
-      }
-    }
-    return [...counts.entries()]
-      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-      .slice(0, 20)
-      .map(([tag, count]) => ({
-        value: tag,
-        label: tag,
-        count,
-      }));
-  }, [posts]);
-
-  const yearOptions: FilterOption[] = useMemo(() => {
-    const counts = new Map<string, number>();
-    for (const p of posts) {
-      if (p.publishedDate) {
-        const year = new Date(p.publishedDate).getFullYear().toString();
-        if (!isNaN(Number(year))) {
-          counts.set(year, (counts.get(year) ?? 0) + 1);
-        }
-      }
-    }
-    return [...counts.entries()]
-      .sort((a, b) => Number(b[0]) - Number(a[0]))
-      .map(([year, count]) => ({
-        value: year,
-        label: year,
-        count,
-      }));
-  }, [posts]);
-
-  const seriesFilterOptions: FilterOption[] = useMemo(() => {
-    return allSeries.map((s) => ({
-      value: s.name,
-      label: s.name,
-      count: s.posts.length,
-    }));
-  }, [allSeries]);
-
-  const q = query.toLowerCase().trim();
-
   // Step 1: Search
   const searchedPosts = useMemo(() => {
-    if (!q) return posts;
-    return posts.filter((p) => matchesPost(p, q));
-  }, [posts, q]);
+    const tokens = searchTokens(query);
+    if (tokens.length === 0) return posts;
 
-  // Step 2: Filter
-  const filteredPosts = useMemo(() => {
-    return searchedPosts.filter((p) => {
-      if (selectedTag && !(p.tags ?? []).includes(selectedTag)) {
-        return false;
-      }
-      if (selectedYear) {
-        const year = p.publishedDate
-          ? new Date(p.publishedDate).getFullYear().toString()
-          : null;
-        if (year !== selectedYear) return false;
-      }
-      if (selectedSeriesFilter && p.series?.name !== selectedSeriesFilter) {
-        return false;
-      }
-      return true;
-    });
-  }, [searchedPosts, selectedTag, selectedYear, selectedSeriesFilter]);
+    return posts.filter((p) =>
+      matchesTokens(
+        [
+          p.title,
+          p.description,
+          p.series?.name,
+          ...(p.tags ?? []),
+          yearOf(p.publishedDate),
+        ],
+        tokens,
+      ),
+    );
+  }, [posts, query]);
+
+  // Step 2: Filter, counting each dimension against the rest
+  const { counts, matched: filteredPosts } = useMemo(
+    () =>
+      buildFacets(searchedPosts, FACETS, {
+        tag: selectedTag,
+        year: selectedYear,
+        series: selectedSeriesFilter,
+      }),
+    [searchedPosts, selectedTag, selectedYear, selectedSeriesFilter],
+  );
+
+  const tagOptions: FilterOption[] = useMemo(
+    () => toOptions(counts.tag, { limit: 20, keep: selectedTag }),
+    [counts.tag, selectedTag],
+  );
+
+  const yearOptions: FilterOption[] = useMemo(
+    () => toOptions(counts.year, { order: "year", keep: selectedYear }),
+    [counts.year, selectedYear],
+  );
+
+  const seriesFilterOptions: FilterOption[] = useMemo(
+    () => toOptions(counts.series, { keep: selectedSeriesFilter }),
+    [counts.series, selectedSeriesFilter],
+  );
 
   // Step 3: Sort
   const sortedPosts = useMemo(() => {
     const list = [...filteredPosts];
 
-    return list.sort((a, b) => {
-      switch (sortBy) {
-        case "newest": {
-          const dateA = a.publishedDate
-            ? new Date(a.publishedDate).getTime()
-            : 0;
-          const dateB = b.publishedDate
-            ? new Date(b.publishedDate).getTime()
-            : 0;
-          return dateB - dateA;
-        }
-        case "oldest": {
-          const dateA = a.publishedDate
-            ? new Date(a.publishedDate).getTime()
-            : 0;
-          const dateB = b.publishedDate
-            ? new Date(b.publishedDate).getTime()
-            : 0;
-          return dateA - dateB;
-        }
-        case "title-asc":
-          return a.title.localeCompare(b.title);
-        case "title-desc":
-          return b.title.localeCompare(a.title);
-        case "read-time-asc":
-          return (a.readingTimeMinutes ?? 0) - (b.readingTimeMinutes ?? 0);
-        case "read-time-desc":
-          return (b.readingTimeMinutes ?? 0) - (a.readingTimeMinutes ?? 0);
-        default:
-          return 0;
-      }
-    });
+    switch (sortBy) {
+      case "newest":
+        return list.sort((a, b) =>
+          compareDate(a.publishedDate, b.publishedDate, "newest"),
+        );
+      case "oldest":
+        return list.sort((a, b) =>
+          compareDate(a.publishedDate, b.publishedDate, "oldest"),
+        );
+      case "title-asc":
+        return list.sort((a, b) => compareText(a.title, b.title));
+      case "title-desc":
+        return list.sort((a, b) => compareText(b.title, a.title));
+      case "read-time-asc":
+        return list.sort((a, b) =>
+          compareNumber(a.readingTimeMinutes, b.readingTimeMinutes, "asc"),
+        );
+      case "read-time-desc":
+        return list.sort((a, b) =>
+          compareNumber(a.readingTimeMinutes, b.readingTimeMinutes, "desc"),
+        );
+      default:
+        return list;
+    }
   }, [filteredPosts, sortBy]);
 
   // Filter series for series catalog
   const filteredSeries = useMemo(() => {
-    if (!q) return allSeries;
-    return allSeries.filter(
-      (s) =>
-        s.name.toLowerCase().includes(q) ||
-        (s.description ?? "").toLowerCase().includes(q) ||
-        s.tags.some((t) => t.toLowerCase().includes(q)) ||
-        s.posts.some((p) => p.title.toLowerCase().includes(q)),
+    const tokens = searchTokens(query);
+    if (tokens.length === 0) return allSeries;
+    return allSeries.filter((s) =>
+      matchesTokens(
+        [
+          s.name,
+          s.description,
+          ...s.tags,
+          ...s.posts.map((p) => p.title),
+        ],
+        tokens,
+      ),
     );
-  }, [allSeries, q]);
+  }, [allSeries, query]);
 
   const selectedSeries = useMemo(() => {
     if (!selectedSeriesName) return null;
@@ -278,7 +264,7 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
   const paginatedSeries = filteredSeries.slice(0, visibleSeriesCount);
 
   const hasActiveFilters = Boolean(
-    query || selectedTag || selectedYear || selectedSeriesFilter,
+    query.trim() || selectedTag || selectedYear || selectedSeriesFilter,
   );
 
   const clearAllFilters = () => {
@@ -687,14 +673,4 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
       )}
     </div>
   );
-}
-
-/** Case-insensitive search match across blog post title, description, tags, and series name. */
-function matchesPost(post: BlogPostSummary, q: string): boolean {
-  if (post.title.toLowerCase().includes(q)) return true;
-  if ((post.description ?? "").toLowerCase().includes(q)) return true;
-  if ((post.series?.name ?? "").toLowerCase().includes(q)) return true;
-  if ((post.tags ?? []).some((tag) => tag.toLowerCase().includes(q)))
-    return true;
-  return false;
 }

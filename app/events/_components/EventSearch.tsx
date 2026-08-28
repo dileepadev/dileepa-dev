@@ -26,6 +26,16 @@ import {
 } from "@/components/ui";
 import type { EventRecord } from "@/lib/api-types";
 import { formatDate, humanise } from "@/lib/format";
+import {
+  buildFacets,
+  compareDate,
+  compareText,
+  type FacetSpec,
+  matchesTokens,
+  searchTokens,
+  toOptions,
+  yearOf,
+} from "@/lib/listing";
 
 type EventSortKey =
   | "default"
@@ -43,6 +53,14 @@ const SORT_OPTIONS: SortOption<EventSortKey>[] = [
 ];
 
 const EVENTS_PER_PAGE = 10;
+
+/** The filterable dimensions, and how an event is filed under each. */
+const FACETS: FacetSpec<EventRecord>[] = [
+  { key: "type", values: (e) => [e.type] },
+  { key: "format", values: (e) => [e.format] },
+  { key: "status", values: (e) => [e.status] },
+  { key: "year", values: (e) => [yearOf(e.startAt)] },
+];
 
 /** Client-side search, filtering, sorting, and progressive pagination across events. */
 export function EventSearch({
@@ -72,96 +90,64 @@ export function EventSearch({
     setVisiblePastCount(EVENTS_PER_PAGE);
   }
 
-  // Dynamic filter options
-  const typeOptions: FilterOption[] = useMemo(() => {
-    const counts = new Map<string, number>();
-    for (const e of allEvents) {
-      if (e.type) {
-        counts.set(e.type, (counts.get(e.type) ?? 0) + 1);
-      }
-    }
-    return [...counts.entries()]
-      .sort((a, b) => b[1] - a[1])
-      .map(([type, count]) => ({
-        value: type,
-        label: humanise(type),
-        count,
-      }));
-  }, [allEvents]);
-
-  const formatOptions: FilterOption[] = useMemo(() => {
-    const counts = new Map<string, number>();
-    for (const e of allEvents) {
-      if (e.format) {
-        counts.set(e.format, (counts.get(e.format) ?? 0) + 1);
-      }
-    }
-    return [...counts.entries()]
-      .sort((a, b) => b[1] - a[1])
-      .map(([format, count]) => ({
-        value: format,
-        label: humanise(format),
-        count,
-      }));
-  }, [allEvents]);
-
-  const statusOptions: FilterOption[] = useMemo(() => {
-    let upcomingCount = 0;
-    let completedCount = 0;
-    for (const e of allEvents) {
-      if (e.status === "upcoming") upcomingCount++;
-      if (e.status === "completed") completedCount++;
-    }
-    const opts: FilterOption[] = [];
-    if (upcomingCount > 0) {
-      opts.push({ value: "upcoming", label: "Upcoming", count: upcomingCount });
-    }
-    if (completedCount > 0) {
-      opts.push({ value: "completed", label: "Completed", count: completedCount });
-    }
-    return opts;
-  }, [allEvents]);
-
-  const yearOptions: FilterOption[] = useMemo(() => {
-    const counts = new Map<string, number>();
-    for (const e of allEvents) {
-      if (e.startAt) {
-        const year = new Date(e.startAt).getFullYear().toString();
-        if (!isNaN(Number(year))) {
-          counts.set(year, (counts.get(year) ?? 0) + 1);
-        }
-      }
-    }
-    return [...counts.entries()]
-      .sort((a, b) => Number(b[0]) - Number(a[0]))
-      .map(([year, count]) => ({
-        value: year,
-        label: year,
-        count,
-      }));
-  }, [allEvents]);
-
   // Step 1: Search
   const searchedEvents = useMemo(() => {
-    const q = query.toLowerCase().trim();
-    if (!q) return allEvents;
+    const tokens = searchTokens(query);
+    if (tokens.length === 0) return allEvents;
 
-    return allEvents.filter((e) => matches(e, q));
+    return allEvents.filter((e) =>
+      matchesTokens(
+        [
+          e.title,
+          e.summary,
+          e.description,
+          e.type,
+          humanise(e.type),
+          e.format,
+          humanise(e.format),
+          e.status,
+          humanise(e.status),
+          e.location?.venue,
+          e.location?.city,
+          e.location?.country,
+          yearOf(e.startAt),
+        ],
+        tokens,
+      ),
+    );
   }, [allEvents, query]);
 
-  // Step 2: Filter
-  const filteredEvents = useMemo(() => {
-    return searchedEvents.filter((e) => {
-      if (selectedType && e.type !== selectedType) return false;
-      if (selectedFormat && e.format !== selectedFormat) return false;
-      if (selectedStatus && e.status !== selectedStatus) return false;
-      if (selectedYear) {
-        const year = e.startAt ? new Date(e.startAt).getFullYear().toString() : null;
-        if (year !== selectedYear) return false;
-      }
-      return true;
-    });
-  }, [searchedEvents, selectedType, selectedFormat, selectedStatus, selectedYear]);
+  // Step 2: Filter, counting each dimension against the rest
+  const { counts, matched: filteredEvents } = useMemo(
+    () =>
+      buildFacets(searchedEvents, FACETS, {
+        type: selectedType,
+        format: selectedFormat,
+        status: selectedStatus,
+        year: selectedYear,
+      }),
+    [searchedEvents, selectedType, selectedFormat, selectedStatus, selectedYear],
+  );
+
+  const typeOptions: FilterOption[] = useMemo(
+    () => toOptions(counts.type, { label: humanise, keep: selectedType }),
+    [counts.type, selectedType],
+  );
+
+  const formatOptions: FilterOption[] = useMemo(
+    () => toOptions(counts.format, { label: humanise, keep: selectedFormat }),
+    [counts.format, selectedFormat],
+  );
+
+  const statusOptions: FilterOption[] = useMemo(
+    () => toOptions(counts.status, { label: humanise, keep: selectedStatus }),
+    [counts.status, selectedStatus],
+  );
+
+  const yearOptions: FilterOption[] = useMemo(
+    () => toOptions(counts.year, { order: "year", keep: selectedYear }),
+    [counts.year, selectedYear],
+  );
 
   // Step 3: Sort
   const sortedEvents = useMemo(() => {
@@ -173,41 +159,30 @@ export function EventSearch({
         if (a.status === "upcoming" && b.status !== "upcoming") return -1;
         if (b.status === "upcoming" && a.status !== "upcoming") return 1;
 
-        const dateA = a.startAt ? new Date(a.startAt).getTime() : 0;
-        const dateB = b.startAt ? new Date(b.startAt).getTime() : 0;
-
         if (a.status === "upcoming") {
-          return dateA - dateB; // Soonest upcoming first
+          return compareDate(a.startAt, b.startAt, "oldest");
         }
-        return dateB - dateA; // Most recent past first
+        return compareDate(a.startAt, b.startAt, "newest");
       });
     }
 
-    return list.sort((a, b) => {
-      switch (sortBy) {
-        case "newest": {
-          const dateA = a.startAt ? new Date(a.startAt).getTime() : 0;
-          const dateB = b.startAt ? new Date(b.startAt).getTime() : 0;
-          return dateB - dateA;
-        }
-        case "oldest": {
-          const dateA = a.startAt ? new Date(a.startAt).getTime() : 0;
-          const dateB = b.startAt ? new Date(b.startAt).getTime() : 0;
-          return dateA - dateB;
-        }
-        case "title-asc":
-          return a.title.localeCompare(b.title);
-        case "title-desc":
-          return b.title.localeCompare(a.title);
-        default:
-          return 0;
-      }
-    });
+    switch (sortBy) {
+      case "newest":
+        return list.sort((a, b) => compareDate(a.startAt, b.startAt, "newest"));
+      case "oldest":
+        return list.sort((a, b) => compareDate(a.startAt, b.startAt, "oldest"));
+      case "title-asc":
+        return list.sort((a, b) => compareText(a.title, b.title));
+      case "title-desc":
+        return list.sort((a, b) => compareText(b.title, a.title));
+      default:
+        return list;
+    }
   }, [filteredEvents, sortBy]);
 
   // Step 4: Paginate
   const hasActiveFilters = Boolean(
-    query || selectedType || selectedFormat || selectedStatus || selectedYear,
+    query.trim() || selectedType || selectedFormat || selectedStatus || selectedYear,
   );
 
   const clearAllFilters = () => {
@@ -459,17 +434,5 @@ function EventItems({ events }: { events: EventRecord[] }) {
         </Item>
       ))}
     </ItemList>
-  );
-}
-
-function matches(event: EventRecord, q: string): boolean {
-  return (
-    event.title.toLowerCase().includes(q) ||
-    (event.summary ?? "").toLowerCase().includes(q) ||
-    (event.description ?? "").toLowerCase().includes(q) ||
-    humanise(event.type).toLowerCase().includes(q) ||
-    humanise(event.format).toLowerCase().includes(q) ||
-    (event.location?.venue ?? "").toLowerCase().includes(q) ||
-    (event.location?.city ?? "").toLowerCase().includes(q)
   );
 }

@@ -16,7 +16,16 @@ import {
   type SortOption,
 } from "@/components/ui";
 import type { Project } from "@/lib/api-types";
-import { formatMonth, humanise } from "@/lib/format";
+import { formatMonth, humanise, year } from "@/lib/format";
+import {
+  buildFacets,
+  compareDate,
+  compareText,
+  type FacetSpec,
+  matchesTokens,
+  searchTokens,
+  toOptions,
+} from "@/lib/listing";
 
 type ProjectSortKey =
   | "default"
@@ -34,6 +43,43 @@ const SORT_OPTIONS: SortOption<ProjectSortKey>[] = [
 ];
 
 const PROJECTS_PER_PAGE = 10;
+
+/** The synthetic date value for a project that has not finished. */
+const ONGOING = "ongoing";
+
+/** A project with no end, or one still marked active, is still running. */
+function isOngoing(project: Project): boolean {
+  return !project.period?.end || project.status === "active";
+}
+
+/**
+ * The filterable dimensions, and how a project is filed under each.
+ *
+ * A project spanning 2023–2025 is filed under all three years so a searcher
+ * looking for work active in 2024 finds it, rather than only matching the
+ * boundary endpoints.
+ */
+const FACETS: FacetSpec<Project>[] = [
+  { key: "status", values: (project) => [project.status] },
+  {
+    key: "date",
+    values: (project) => {
+      const startYear = year(project.period?.start);
+      const endYear =
+        year(project.period?.end) ??
+        (isOngoing(project) ? new Date().getUTCFullYear() : startYear);
+      const result: (string | null)[] = [isOngoing(project) ? ONGOING : null];
+      if (startYear !== null) {
+        const end = endYear ?? startYear;
+        for (let y = startYear; y <= end; y++) {
+          result.push(String(y));
+        }
+      }
+      return result;
+    },
+  },
+  { key: "stack", values: (project) => project.stack ?? [] },
+];
 
 function formatPeriod(start?: string | null, end?: string | null): string {
   const from = formatMonth(start);
@@ -62,144 +108,77 @@ export function ProjectSearch({ projects }: { projects: Project[] }) {
     setVisibleCount(PROJECTS_PER_PAGE);
   }
 
-  // Filter options
-  const statusOptions: FilterOption[] = useMemo(() => {
-    const counts = new Map<string, number>();
-    for (const project of projects) {
-      if (project.status) {
-        counts.set(project.status, (counts.get(project.status) ?? 0) + 1);
-      }
-    }
-    return [...counts.entries()]
-      .sort((a, b) => b[1] - a[1])
-      .map(([status, count]) => ({
-        value: status,
-        label: humanise(status),
-        count,
-      }));
-  }, [projects]);
-
-  const yearOptions: FilterOption[] = useMemo(() => {
-    const counts = new Map<string, number>();
-    let ongoingCount = 0;
-
-    for (const project of projects) {
-      if (!project.period?.end || project.status === "active") {
-        ongoingCount++;
-      }
-      if (project.period?.start) {
-        const startYear = new Date(project.period.start).getFullYear().toString();
-        if (!isNaN(Number(startYear))) {
-          counts.set(startYear, (counts.get(startYear) ?? 0) + 1);
-        }
-      }
-    }
-
-    const sortedYears = [...counts.entries()]
-      .sort((a, b) => Number(b[0]) - Number(a[0]))
-      .map(([year, count]) => ({
-        value: year,
-        label: year,
-        count,
-      }));
-
-    if (ongoingCount > 0) {
-      return [{ value: "ongoing", label: "Ongoing", count: ongoingCount }, ...sortedYears];
-    }
-    return sortedYears;
-  }, [projects]);
-
-  const stackOptions: FilterOption[] = useMemo(() => {
-    const counts = new Map<string, number>();
-    for (const project of projects) {
-      for (const tech of project.stack ?? []) {
-        counts.set(tech, (counts.get(tech) ?? 0) + 1);
-      }
-    }
-    return [...counts.entries()]
-      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-      .slice(0, 20)
-      .map(([tech, count]) => ({
-        value: tech,
-        label: tech,
-        count,
-      }));
-  }, [projects]);
-
   // Step 1: Search
   const searchedProjects = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return projects;
+    const tokens = searchTokens(query);
+    if (tokens.length === 0) return projects;
 
-    return projects.filter((project) => {
-      return (
-        project.name.toLowerCase().includes(q) ||
-        project.tagline?.toLowerCase().includes(q) ||
-        project.description?.toLowerCase().includes(q) ||
-        project.role?.toLowerCase().includes(q) ||
-        project.status?.toLowerCase().includes(q) ||
-        (project.stack ?? []).some((tech) => tech.toLowerCase().includes(q))
-      );
-    });
+    return projects.filter((project) =>
+      matchesTokens(
+        [
+          project.name,
+          project.tagline,
+          project.description,
+          project.role,
+          // Both forms of the status: the row shows "In progress" while the
+          // record holds `in_progress`, and a reader types what they can see.
+          project.status,
+          humanise(project.status),
+          ...(project.stack ?? []),
+        ],
+        tokens,
+      ),
+    );
   }, [projects, query]);
 
-  // Step 2: Filter
-  const filteredProjects = useMemo(() => {
-    return searchedProjects.filter((project) => {
-      if (selectedStatus && project.status !== selectedStatus) {
-        return false;
-      }
+  // Step 2: Filter, counting each dimension against the rest
+  const { counts, matched: filteredProjects } = useMemo(
+    () =>
+      buildFacets(searchedProjects, FACETS, {
+        status: selectedStatus,
+        date: selectedYear,
+        stack: selectedStack,
+      }),
+    [searchedProjects, selectedStatus, selectedYear, selectedStack],
+  );
 
-      if (selectedYear) {
-        if (selectedYear === "ongoing") {
-          if (project.period?.end && project.status !== "active") return false;
-        } else {
-          const startYear = project.period?.start
-            ? new Date(project.period.start).getFullYear().toString()
-            : null;
-          const endYear = project.period?.end
-            ? new Date(project.period.end).getFullYear().toString()
-            : null;
-          if (startYear !== selectedYear && endYear !== selectedYear) {
-            return false;
-          }
-        }
-      }
+  const statusOptions: FilterOption[] = useMemo(
+    () => toOptions(counts.status, { label: humanise, keep: selectedStatus }),
+    [counts.status, selectedStatus],
+  );
 
-      if (selectedStack) {
-        const hasTech = (project.stack ?? []).some(
-          (tech) => tech.toLowerCase() === selectedStack.toLowerCase(),
-        );
-        if (!hasTech) return false;
-      }
+  const yearOptions: FilterOption[] = useMemo(
+    () =>
+      toOptions(counts.date, {
+        label: (value) => (value === ONGOING ? "Ongoing" : value),
+        order: "year",
+        keep: selectedYear,
+      }),
+    [counts.date, selectedYear],
+  );
 
-      return true;
-    });
-  }, [searchedProjects, selectedStatus, selectedYear, selectedStack]);
+  const stackOptions: FilterOption[] = useMemo(
+    () => toOptions(counts.stack, { limit: 20, keep: selectedStack }),
+    [counts.stack, selectedStack],
+  );
 
   // Step 3: Sort
   const sortedProjects = useMemo(() => {
     const list = [...filteredProjects];
 
     switch (sortBy) {
-      case "newest": {
-        return list.sort((a, b) => {
-          const dateA = a.period?.start ? new Date(a.period.start).getTime() : 0;
-          const dateB = b.period?.start ? new Date(b.period.start).getTime() : 0;
-          return dateB - dateA;
-        });
-      }
-      case "oldest": {
-        return list.sort((a, b) => {
-          const dateA = a.period?.start ? new Date(a.period.start).getTime() : 0;
-          const dateB = b.period?.start ? new Date(b.period.start).getTime() : 0;
-          return dateA - dateB;
-        });
-      }
+      case "newest":
+        return list.sort((a, b) =>
+          compareDate(a.period?.start, b.period?.start, "newest"),
+        );
+      case "oldest":
+        return list.sort((a, b) =>
+          compareDate(a.period?.start, b.period?.start, "oldest"),
+        );
       case "name-asc":
-        return list.sort((a, b) => a.name.localeCompare(b.name));
+        return list.sort((a, b) => compareText(a.name, b.name));
       case "name-desc":
-        return list.sort((a, b) => b.name.localeCompare(a.name));
+        return list.sort((a, b) => compareText(b.name, a.name));
       case "default":
       default:
         return list;
@@ -211,7 +190,7 @@ export function ProjectSearch({ projects }: { projects: Project[] }) {
   const hasMore = visibleCount < sortedProjects.length;
 
   const hasActiveFilters = Boolean(
-    query || selectedStatus || selectedYear || selectedStack,
+    query.trim() || selectedStatus || selectedYear || selectedStack,
   );
 
   const clearAllFilters = () => {
@@ -233,7 +212,7 @@ export function ProjectSearch({ projects }: { projects: Project[] }) {
     if (selectedYear) {
       list.push({
         key: "year",
-        label: `Date: ${selectedYear === "ongoing" ? "Ongoing" : selectedYear}`,
+        label: `Date: ${selectedYear === ONGOING ? "Ongoing" : selectedYear}`,
         onRemove: () => setSelectedYear(null),
       });
     }

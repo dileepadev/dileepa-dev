@@ -16,6 +16,16 @@ import {
 } from "@/components/ui";
 import type { Video } from "@/lib/api-types";
 import { formatDate, videoDuration } from "@/lib/format";
+import {
+  buildFacets,
+  compareDate,
+  compareText,
+  type FacetSpec,
+  matchesTokens,
+  searchTokens,
+  toOptions,
+  yearOf,
+} from "@/lib/listing";
 
 type VideoSortKey = "newest" | "oldest" | "title-asc" | "title-desc";
 
@@ -27,6 +37,11 @@ const SORT_OPTIONS: SortOption<VideoSortKey>[] = [
 ];
 
 const VIDEOS_PER_PAGE = 10;
+
+/** The filterable dimensions, and how a video is filed under each. */
+const FACETS: FacetSpec<Video>[] = [
+  { key: "year", values: (video) => [yearOf(video.date)] },
+];
 
 /** Client-side search, filtering, sorting, and progressive pagination across videos. */
 export function VideoSearch({ videos }: { videos: Video[] }) {
@@ -43,48 +58,26 @@ export function VideoSearch({ videos }: { videos: Video[] }) {
     setVisibleCount(VIDEOS_PER_PAGE);
   }
 
-  // Filter options: unique years
-  const yearOptions: FilterOption[] = useMemo(() => {
-    const counts = new Map<string, number>();
-    for (const v of videos) {
-      if (v.date) {
-        const year = new Date(v.date).getFullYear().toString();
-        if (!isNaN(Number(year))) {
-          counts.set(year, (counts.get(year) ?? 0) + 1);
-        }
-      }
-    }
-    return [...counts.entries()]
-      .sort((a, b) => Number(b[0]) - Number(a[0]))
-      .map(([year, count]) => ({
-        value: year,
-        label: year,
-        count,
-      }));
-  }, [videos]);
-
   // Step 1: Search
   const searchedVideos = useMemo(() => {
-    const q = query.toLowerCase().trim();
-    if (!q) return videos;
+    const tokens = searchTokens(query);
+    if (tokens.length === 0) return videos;
 
-    return videos.filter(
-      (v) =>
-        v.title.toLowerCase().includes(q) ||
-        (v.description ?? "").toLowerCase().includes(q),
+    return videos.filter((v) =>
+      matchesTokens([v.title, v.description, formatDate(v.date)], tokens),
     );
   }, [videos, query]);
 
-  // Step 2: Filter
-  const filteredVideos = useMemo(() => {
-    return searchedVideos.filter((v) => {
-      if (selectedYear) {
-        const year = v.date ? new Date(v.date).getFullYear().toString() : null;
-        if (year !== selectedYear) return false;
-      }
-      return true;
-    });
-  }, [searchedVideos, selectedYear]);
+  // Step 2: Filter, counting each dimension against the rest
+  const { counts, matched: filteredVideos } = useMemo(
+    () => buildFacets(searchedVideos, FACETS, { year: selectedYear }),
+    [searchedVideos, selectedYear],
+  );
+
+  const yearOptions: FilterOption[] = useMemo(
+    () => toOptions(counts.year, { order: "year", keep: selectedYear }),
+    [counts.year, selectedYear],
+  );
 
   // Step 3: Sort
   const sortedVideos = useMemo(() => {
@@ -92,20 +85,14 @@ export function VideoSearch({ videos }: { videos: Video[] }) {
 
     return list.sort((a, b) => {
       switch (sortBy) {
-        case "newest": {
-          const dateA = a.date ? new Date(a.date).getTime() : 0;
-          const dateB = b.date ? new Date(b.date).getTime() : 0;
-          return dateB - dateA;
-        }
-        case "oldest": {
-          const dateA = a.date ? new Date(a.date).getTime() : 0;
-          const dateB = b.date ? new Date(b.date).getTime() : 0;
-          return dateA - dateB;
-        }
+        case "newest":
+          return compareDate(a.date, b.date, "newest");
+        case "oldest":
+          return compareDate(a.date, b.date, "oldest");
         case "title-asc":
-          return a.title.localeCompare(b.title);
+          return compareText(a.title, b.title);
         case "title-desc":
-          return b.title.localeCompare(a.title);
+          return compareText(b.title, a.title);
         default:
           return 0;
       }
@@ -116,7 +103,7 @@ export function VideoSearch({ videos }: { videos: Video[] }) {
   const paginatedVideos = sortedVideos.slice(0, visibleCount);
   const hasMore = visibleCount < sortedVideos.length;
 
-  const hasActiveFilters = Boolean(query || selectedYear);
+  const hasActiveFilters = Boolean(query.trim() || selectedYear);
 
   const clearAllFilters = () => {
     setQuery("");

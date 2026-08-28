@@ -47,7 +47,13 @@ export function FilterSelect({
   const isActive = value !== null && value !== "";
   const selectedOption = options.find((opt) => opt.value === value);
 
-  const displayValue = selectedOption ? selectedOption.label : allLabel;
+  // A value with no matching option still has to name itself: falling back to
+  // `allLabel` would render "Tag: All tags" beside a lit active dot.
+  const displayValue = selectedOption
+    ? selectedOption.label
+    : isActive
+      ? value
+      : allLabel;
 
   // Options with "All" prepended
   const allItems: FilterOption[] = [

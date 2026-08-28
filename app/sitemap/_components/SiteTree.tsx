@@ -20,6 +20,7 @@ import {
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { matchesTokens, searchTokens } from "@/lib/listing";
 
 export interface TreeNode {
   id: string;
@@ -76,14 +77,13 @@ function getNodeIcon(node: TreeNode, isOpen: boolean) {
   }
 }
 
-function filterNode(node: TreeNode, query: string): TreeNode | null {
-  const q = query.toLowerCase();
-  const nameMatches = node.name.toLowerCase().includes(q);
-  const pathMatches = node.path.toLowerCase().includes(q);
-  const titleMatches = Boolean(node.title?.toLowerCase().includes(q));
-  const badgeMatches = Boolean(node.badge?.toLowerCase().includes(q));
+function filterNode(node: TreeNode, tokens: string[]): TreeNode | null {
+  if (tokens.length === 0) return node;
 
-  const isSelfMatch = nameMatches || pathMatches || titleMatches || badgeMatches;
+  const isSelfMatch = matchesTokens(
+    [node.name, node.path, node.title, node.badge],
+    tokens,
+  );
 
   if (!node.children || node.children.length === 0) {
     return isSelfMatch ? node : null;
@@ -91,7 +91,7 @@ function filterNode(node: TreeNode, query: string): TreeNode | null {
 
   const matchingChildren: TreeNode[] = [];
   for (const child of node.children) {
-    const matched = filterNode(child, query);
+    const matched = filterNode(child, tokens);
     if (matched) matchingChildren.push(matched);
   }
 
@@ -216,12 +216,13 @@ export function SiteTree({ tree, totalRoutes }: SiteTreeProps) {
     "root/blog/tags": false,
   });
 
-  const searchActive = query.trim().length > 0;
+  const tokens = useMemo(() => searchTokens(query), [query]);
+  const searchActive = tokens.length > 0;
 
   const filteredTree = useMemo(() => {
     if (!searchActive) return tree;
-    return filterNode(tree, query) ?? { ...tree, children: [] };
-  }, [tree, query, searchActive]);
+    return filterNode(tree, tokens) ?? { ...tree, children: [] };
+  }, [tree, tokens, searchActive]);
 
   const visibleCount = useMemo(() => {
     return countNodes(filteredTree);
