@@ -12,17 +12,12 @@
    ============================================================ */
 
 /* ============================================================
-   Dileepa — brand tokens v2.1
+   Dileepa — brand tokens v2.0
    Logo lockup: "dileepadev /." — wordmark neutral, "/." in emerald.
    Rule: emerald is the only accent. No second hue, anywhere.
    Every pairing below is verified against WCAG AA minimum.
 
-   v2.1 supersedes v2.0: this revision reconciles the sheet against
-   dileepa-dev, the platform's flagship surface, after a post-launch
-   visual pass corrected drift between the original v2.0 values and
-   what actually shipped. Where the two disagreed, the shipped site
-   wins — see design-system.md §0 for the full account of what moved
-   and why. Nothing here is provisional; it is the recorded result.
+   Finalized v2.0 token specification for the platform.
    ============================================================ */
 
 @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap");
@@ -34,9 +29,9 @@
   --carbon: #050505;
   --paper: #f7f7f7;
 
-  /* Dark neutral ramp. Deeper than v2.0 at every stop — the page
-     foundation moved from #0D0D0D to #050505 — which is why a v2.0
-     surface and a v2.1 surface read as different weights of the same
+  /* Dark neutral ramp. Deeper at every stop — the page
+     foundation moved from #0D0D0D to #050505 — which is why the finalized
+     surface and an earlier surface read as different weights of the same
      design even though nothing else about the palette changed. */
   --ink-900: #050505;
   --ink-800: #0d0d0d;

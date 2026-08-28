@@ -12,8 +12,8 @@ import { cn } from "@/lib/utils";
  * anchor's `aria-label` and the mark itself is hidden from assistive tech.
  *
  * The dot is an `::after` on `.mark` so the pair reads as `/.` and not `/ .`.
- * The `.lockup` wrapper is what carries the reference's spacing and upright
- * 600 mark; without it the token sheet's italic 700 variant applies.
+ * The `.lockup` wrapper carries the reference's spacing and upright 700 mark
+ * conforming strictly to the brand weight scale (400, 500, 700 only).
  */
 export function Lockup({
   className,
