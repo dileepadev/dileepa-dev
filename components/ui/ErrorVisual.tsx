@@ -6,38 +6,54 @@ import { Check, Copy, Mail, RotateCcw, Terminal, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const OSCILLOSCOPE_FRAMES = [
-  ` [ CIRCUIT: FAULT ]   SYSTEM: SSR_RENDER
- ┌────────────────┐   STATUS: 500_HALT
- │ ~~~/\\_/\\~~~~~~ │   HEARTBEAT: INTERRUPT
- └────────────────┘   TRACE: FAULT_DETECTED`,
-  ` [ CIRCUIT: FAULT ]   SYSTEM: SSR_RENDER
- ┌────────────────┐   STATUS: 500_HALT
- │ ~~~~\\_/\\_/~~~~ │   HEARTBEAT: RESAMPLING
- └────────────────┘   TRACE: ISOLATING_NODE`,
-  ` [ CIRCUIT: FAULT ]   SYSTEM: SSR_RENDER
- ┌────────────────┐   STATUS: 500_HALT
- │ ~~~~~~~\\_/\\_~~ │   HEARTBEAT: DAMPED_WAVE
- └────────────────┘   TRACE: MEMORY_GUARDED`,
-  ` [ CIRCUIT: FAULT ]   SYSTEM: SSR_RENDER
- ┌────────────────┐   STATUS: 500_HALT
- │ ~~/\\_/\\_~~~~~~ │   HEARTBEAT: PROBE_SENT
- └────────────────┘   TRACE: RUNTIME_RETRY`,
-  ` [ CIRCUIT: FAULT ]   SYSTEM: SSR_RENDER
- ┌────────────────┐   STATUS: 500_HALT
- │ ~~~~~/\\_/\\~~~~ │   HEARTBEAT: VOLTAGE_OFF
- └────────────────┘   TRACE: CIRCUIT_TRIPPED`,
-  ` [ CIRCUIT: FAULT ]   SYSTEM: SSR_RENDER
- ┌────────────────┐   STATUS: 500_HALT
- │ ~~~~~~~/\\_/\\~~ │   HEARTBEAT: HOLDING_RUN
- └────────────────┘   TRACE: RESET_READY...`,
-  ` [ CIRCUIT: FAULT ]   SYSTEM: SSR_RENDER
- ┌────────────────┐   STATUS: 500_HALT
- │ \\_/\\_~~~~~~~~~ │   HEARTBEAT: DRAIN_CYCLE
- └────────────────┘   TRACE: CLEANUP_DONE`,
-  ` [ CIRCUIT: FAULT ]   SYSTEM: SSR_RENDER
- ┌────────────────┐   STATUS: 500_HALT
- │ ~~~\\_/\\_/\\~~~~ │   HEARTBEAT: RE-ARMED
- └────────────────┘   TRACE: STANDBY_IDLE`,
+  ` [ CIRCUIT: FAULT ]
+ SYSTEM: SSR_RENDER_PIPELINE
+ ┌────────────────┐
+ │ ~~~/\\_/\\~~~~~~ │
+ └────────────────┘
+ HEARTBEAT: INTERRUPT`,
+  ` [ CIRCUIT: FAULT ]
+ SYSTEM: SSR_RENDER_PIPELINE
+ ┌────────────────┐
+ │ ~~~~\\_/\\_/~~~~ │
+ └────────────────┘
+ HEARTBEAT: RESAMPLING`,
+  ` [ CIRCUIT: FAULT ]
+ SYSTEM: SSR_RENDER_PIPELINE
+ ┌────────────────┐
+ │ ~~~~~~~\\_/\\_~~ │
+ └────────────────┘
+ HEARTBEAT: DAMPED_WAVE`,
+  ` [ CIRCUIT: FAULT ]
+ SYSTEM: SSR_RENDER_PIPELINE
+ ┌────────────────┐
+ │ ~~/\\_/\\_~~~~~~ │
+ └────────────────┘
+ HEARTBEAT: PROBE_SENT`,
+  ` [ CIRCUIT: FAULT ]
+ SYSTEM: SSR_RENDER_PIPELINE
+ ┌────────────────┐
+ │ ~~~~~/\\_/\\~~~~ │
+ └────────────────┘
+ HEARTBEAT: VOLTAGE_OFF`,
+  ` [ CIRCUIT: FAULT ]
+ SYSTEM: SSR_RENDER_PIPELINE
+ ┌────────────────┐
+ │ ~~~~~~~/\\_/\\~~ │
+ └────────────────┘
+ HEARTBEAT: HOLDING_RUN`,
+  ` [ CIRCUIT: FAULT ]
+ SYSTEM: SSR_RENDER_PIPELINE
+ ┌────────────────┐
+ │ \\_/\\_~~~~~~~~~ │
+ └────────────────┘
+ HEARTBEAT: DRAIN_CYCLE`,
+  ` [ CIRCUIT: FAULT ]
+ SYSTEM: SSR_RENDER_PIPELINE
+ ┌────────────────┐
+ │ ~~~\\_/\\_/\\~~~~ │
+ └────────────────┘
+ HEARTBEAT: RE-ARMED`,
 ];
 
 const ASCII_500_BANNER = `
@@ -182,15 +198,15 @@ export function ErrorVisual({ error, reset }: ErrorVisualProps) {
         <div className="min-h-[390px] sm:h-[390px] p-4 sm:p-5 font-mono text-xs flex flex-col justify-between gap-3">
           <div className="space-y-3">
             {/* ASCII 500 Banner */}
-            <div className="p-2.5 rounded bg-bg border border-border-strong/70 text-brand select-none overflow-x-auto">
-              <pre className="text-[0.625rem] sm:text-xs leading-[1.15] font-bold">
+            <div className="p-2.5 rounded bg-bg border border-border-strong/70 text-brand select-none overflow-hidden">
+              <pre className="text-[0.625rem] sm:text-xs leading-[1.15] font-bold whitespace-pre">
                 {ASCII_500_BANNER}
               </pre>
             </div>
 
             {/* Animated Circuit Oscilloscope */}
             <div className="p-2.5 rounded bg-bg border border-border-strong/70 overflow-hidden relative">
-              <pre className="text-[0.6875rem] leading-[1.25] text-fg select-none whitespace-pre">
+              <pre className="text-[0.6875rem] leading-[1.3] text-fg select-none whitespace-pre">
                 {OSCILLOSCOPE_FRAMES[frameIndex]}
               </pre>
 

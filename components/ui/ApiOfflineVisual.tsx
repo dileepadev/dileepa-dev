@@ -13,39 +13,56 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+// Single-column frames — no trailing annotation on the same line
 const UPLINK_FRAMES = [
-  ` [ UPLINK PROBE ]    TARGET: api.dileepa.dev
- ┌────────────────┐   STATUS: 503_DISCONNECTED
- │ >>----x------- │   ROUTE: /api/v1/health
- └────────────────┘   PACKET: SYN_SENT (TIMEOUT)`,
-  ` [ UPLINK PROBE ]    TARGET: api.dileepa.dev
- ┌────────────────┐   STATUS: 503_DISCONNECTED
- │ ---->>--x----- │   ROUTE: /api/v1/health
- └────────────────┘   PACKET: NO_ROUTE_HOST`,
-  ` [ UPLINK PROBE ]    TARGET: api.dileepa.dev
- ┌────────────────┐   STATUS: 503_DISCONNECTED
- │ ------>>x----- │   ROUTE: /api/v1/health
- └────────────────┘   PACKET: ECONNREFUSED`,
-  ` [ UPLINK PROBE ]    TARGET: api.dileepa.dev
- ┌────────────────┐   STATUS: 503_DISCONNECTED
- │ --------x<<<<- │   ROUTE: /api/v1/health
- └────────────────┘   PACKET: RETRY_BACKOFF`,
-  ` [ UPLINK PROBE ]    TARGET: api.dileepa.dev
- ┌────────────────┐   STATUS: 503_DISCONNECTED
- │ >>----x------- │   ROUTE: /api/v1/health
- └────────────────┘   PACKET: PROBING_FALLBACK`,
-  ` [ UPLINK PROBE ]    TARGET: api.dileepa.dev
- ┌────────────────┐   STATUS: 503_DISCONNECTED
- │ ---->>----x--- │   ROUTE: /api/v1/health
- └────────────────┘   PACKET: CIRCUIT_OPEN`,
-  ` [ UPLINK PROBE ]    TARGET: api.dileepa.dev
- ┌────────────────┐   STATUS: 503_DISCONNECTED
- │ ------>>--x--- │   ROUTE: /api/v1/health
- └────────────────┘   PACKET: GATEWAY_STANDBY`,
-  ` [ UPLINK PROBE ]    TARGET: api.dileepa.dev
- ┌────────────────┐   STATUS: 503_DISCONNECTED
- │ -------->>x--- │   ROUTE: /api/v1/health
- └────────────────┘   PACKET: NEXT_CYCLE_IN_3s`,
+  ` [ UPLINK PROBE ]
+ TARGET: api.dileepa.dev
+ ┌────────────────┐
+ │ >>----x------- │
+ └────────────────┘
+ PACKET: SYN_SENT (TIMEOUT)`,
+  ` [ UPLINK PROBE ]
+ TARGET: api.dileepa.dev
+ ┌────────────────┐
+ │ ---->>--x----- │
+ └────────────────┘
+ PACKET: NO_ROUTE_HOST`,
+  ` [ UPLINK PROBE ]
+ TARGET: api.dileepa.dev
+ ┌────────────────┐
+ │ ------>>x----- │
+ └────────────────┘
+ PACKET: ECONNREFUSED`,
+  ` [ UPLINK PROBE ]
+ TARGET: api.dileepa.dev
+ ┌────────────────┐
+ │ --------x<<<<- │
+ └────────────────┘
+ PACKET: RETRY_BACKOFF`,
+  ` [ UPLINK PROBE ]
+ TARGET: api.dileepa.dev
+ ┌────────────────┐
+ │ >>----x------- │
+ └────────────────┘
+ PACKET: PROBING_FALLBACK`,
+  ` [ UPLINK PROBE ]
+ TARGET: api.dileepa.dev
+ ┌────────────────┐
+ │ ---->>----x--- │
+ └────────────────┘
+ PACKET: CIRCUIT_OPEN`,
+  ` [ UPLINK PROBE ]
+ TARGET: api.dileepa.dev
+ ┌────────────────┐
+ │ ------>>--x--- │
+ └────────────────┘
+ PACKET: GATEWAY_STANDBY`,
+  ` [ UPLINK PROBE ]
+ TARGET: api.dileepa.dev
+ ┌────────────────┐
+ │ -------->>x--- │
+ └────────────────┘
+ PACKET: NEXT_CYCLE_IN_3s`,
 ];
 
 const ASCII_503_BANNER = `
@@ -76,7 +93,6 @@ export function ApiOfflineVisual() {
     setProbeResult(null);
 
     try {
-      // Test the local API proxy or public health check
       const res = await fetch("/api/proxy/health", {
         method: "GET",
         headers: { Accept: "application/json" },
@@ -166,23 +182,23 @@ export function ApiOfflineVisual() {
       {activeTab === "uplink" ? (
         <div className="min-h-[390px] sm:h-[390px] p-4 sm:p-5 font-mono text-xs flex flex-col justify-between gap-3">
           <div className="space-y-3">
-            {/* Big ASCII 503 Banner */}
-            <div className="p-2.5 rounded bg-bg border border-border-strong/70 text-brand select-none overflow-x-auto">
-              <pre className="text-[0.625rem] sm:text-xs leading-[1.15] font-bold">
+            {/* Big ASCII 503 Banner — overflow-hidden, no side scroll */}
+            <div className="p-2.5 rounded bg-bg border border-border-strong/70 text-brand select-none overflow-hidden">
+              <pre className="text-[0.625rem] sm:text-xs leading-[1.15] font-bold whitespace-pre">
                 {ASCII_503_BANNER}
               </pre>
             </div>
 
             {/* Animated ASCII Network Uplink */}
             <div className="p-2.5 rounded bg-bg border border-border-strong/70 overflow-hidden relative">
-              <pre className="text-[0.6875rem] leading-[1.25] text-fg select-none whitespace-pre">
+              <pre className="text-[0.6875rem] leading-[1.3] text-fg select-none whitespace-pre">
                 {UPLINK_FRAMES[frameIndex]}
               </pre>
 
               {isProbing && (
                 <div className="absolute inset-0 bg-brand/15 flex items-center justify-center pointer-events-none transition-opacity">
                   <span className="text-brand font-bold text-xs animate-pulse">
-                    (( TRANSMITTING HEALTH CHECK BEAM ))
+                    (( HEALTH CHECK BEAM ))
                   </span>
                 </div>
               )}
@@ -193,16 +209,16 @@ export function ApiOfflineVisual() {
             {/* Uplink Telemetry */}
             <div className="text-[0.6875rem] text-fg-muted space-y-1 pt-2 border-t border-border-strong/40">
               <div className="flex items-center justify-between">
-                <span>GATEWAY ORIGIN:</span>
-                <span className="text-fg font-medium">https://api.dileepa.dev</span>
+                <span>GATEWAY:</span>
+                <span className="text-fg font-medium truncate ml-2">api.dileepa.dev</span>
               </div>
               <div className="flex items-center justify-between">
-                <span>CONNECTION STATE:</span>
+                <span>STATE:</span>
                 <span className="text-brand font-medium">503_DISCONNECTED</span>
               </div>
               <div className="flex items-center justify-between">
-                <span>PROBE RESPONSE:</span>
-                <span className="text-fg font-medium">
+                <span>PROBE:</span>
+                <span className="text-fg font-medium truncate ml-2">
                   {probeResult || "AWAITING USER PROBE"}
                 </span>
               </div>
@@ -228,7 +244,7 @@ export function ApiOfflineVisual() {
                 {copiedStatus ? (
                   <>
                     <Check className="h-3 w-3 text-brand" />
-                    <span className="text-brand">Copied status</span>
+                    <span className="text-brand">Copied</span>
                   </>
                 ) : (
                   <>
