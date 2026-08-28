@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { Calendar } from "lucide-react";
 import {
   Button,
   EmptyState,
@@ -183,10 +184,24 @@ export function CommunitySearch({ communities }: { communities: Community[] }) {
                 description={community.description}
                 meta={
                   <>
-                    <span className="block">{community.role}</span>
-                    <span className="block">{community.period}</span>
-                    {community.current && (
-                      <span className="block text-brand">Current</span>
+                    {community.current ? (
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium border border-brand/30 bg-brand/10 text-brand">
+                        <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" aria-hidden="true" />
+                        <span>Current</span>
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-mono text-fg-muted border border-border-strong bg-bg-surface">
+                        Past role
+                      </span>
+                    )}
+                    {community.role && (
+                      <span className="font-medium text-fg">{community.role}</span>
+                    )}
+                    {community.period && (
+                      <span className="inline-flex items-center gap-1.5 text-fg-muted">
+                        <Calendar className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
+                        <span>{community.period}</span>
+                      </span>
                     )}
                   </>
                 }
