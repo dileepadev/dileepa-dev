@@ -1,0 +1,976 @@
+import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import {
+  ArrowRight,
+  CheckCircle2,
+  Code2,
+  ExternalLink,
+  XCircle,
+} from "lucide-react";
+import {
+  Container,
+  PagePath,
+  Section,
+  Subsection,
+  Lockup,
+  Button,
+  LinkButton,
+  Badge,
+  Chip,
+  StatusBadge,
+} from "@/components/ui";
+import { getHomepageData, getGallery } from "@/lib/api";
+import { PAGES, SITE_CONFIG } from "@/lib/constants";
+import { portrait as getPortraitUrl } from "@/lib/format";
+import {
+  ColorSwatch,
+  CopySnippetButton,
+} from "./_components/BrandInteractive";
+
+export const metadata: Metadata = {
+  title: PAGES.brand.meta.title,
+  description: PAGES.brand.meta.description,
+  alternates: { canonical: `${SITE_CONFIG.url}/brand` },
+};
+
+export const revalidate = 900;
+
+export default async function BrandPage() {
+  const [{ about }, galleryPhotos] = await Promise.all([
+    getHomepageData(),
+    getGallery(4),
+  ]);
+
+  const portraitUrl = getPortraitUrl(about?.images) || "/profile/v2.webp";
+  const transparentPortrait = "/profile/v2-transparent.png";
+  const name = about?.name || SITE_CONFIG.name;
+  const role = about?.title || "Software Engineer";
+
+  const fullLockupSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 32" height="32" fill="none">
+  <text x="0" y="24" font-family="Manrope, system-ui, sans-serif" font-size="20" font-weight="500" letter-spacing="-0.02em" fill="#f1f1f1">dileepadev</text>
+  <text x="118" y="24" font-family="Manrope, system-ui, sans-serif" font-size="20" font-weight="700" fill="#23b888">/</text>
+  <circle cx="131" cy="22" r="2.5" fill="#23b888" />
+</svg>`;
+
+  const reducedMarkSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" fill="none">
+  <rect width="32" height="32" rx="6" fill="#0d0d0d" stroke="#1f1f1f" stroke-width="1" />
+  <text x="10" y="22" font-family="Manrope, system-ui, sans-serif" font-size="20" font-weight="700" fill="#23b888">/</text>
+  <circle cx="21" cy="20" r="2" fill="#23b888" />
+</svg>`;
+
+  const cssTokensSnippet = `:root {
+  /* Brand accent stops */
+  --emerald-bright: #23b888; /* WCAG AAA on Carbon (7.7:1) */
+  --emerald-deep: #087f5b;   /* WCAG AA on Paper (4.7:1) */
+
+  /* Dark foundation */
+  --carbon: #050505;
+  --ink-900: #050505;
+  --ink-800: #0d0d0d;
+  --ink-700: #141414;
+  --ink-600: #1f1f1f;
+  --ink-500: #2e2e2e;
+  --ink-400: #8d8d8d;
+  --ink-100: #f1f1f1;
+
+  /* Light foundation */
+  --paper: #f7f7f7;
+  --paper-0: #ffffff;
+  --paper-50: #f7f7f7;
+  --paper-200: #e3e3e3;
+  --paper-300: #d2d2d2;
+  --paper-400: #6a6a6a;
+  --paper-900: #131313;
+
+  /* Typography */
+  --font-sans: "Manrope", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
+  --font-weights: 400, 500, 700; /* No 600 */
+
+  /* Spatial */
+  --control-h: 40px;
+  --container-max: 1020px;
+}`;
+
+  return (
+    <div className="space-y-12 pb-16">
+      {/* Page Header */}
+      <Section>
+        <Container>
+          <div className="mb-2">
+            <PagePath path="/brand" />
+          </div>
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div>
+              <div className="section-label">{PAGES.brand.label}</div>
+              <h1>{PAGES.brand.title}</h1>
+            </div>
+            <div className="inline-flex items-center gap-1.5 font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1 transition-colors hover:border-brand">
+              <span className="font-medium text-fg">v2.0</span>
+              <span>Design system</span>
+            </div>
+          </div>
+          <p className="section-intro max-w-2xl">{PAGES.brand.intro}</p>
+
+          {/* Quick-jump Anchor Bar */}
+          <nav
+            aria-label="Brand reference sections"
+            className="mt-6 flex items-center gap-2 overflow-x-auto pb-2 text-xs font-mono border-b border-border-strong/60"
+          >
+            <a
+              href="#mark"
+              className="px-2.5 py-1 rounded-sm bg-bg-surface text-fg hover:text-brand border border-border-strong transition-colors shrink-0"
+            >
+              #mark
+            </a>
+            <a
+              href="#colors"
+              className="px-2.5 py-1 rounded-sm bg-bg-surface text-fg hover:text-brand border border-border-strong transition-colors shrink-0"
+            >
+              #colors
+            </a>
+            <a
+              href="#typography"
+              className="px-2.5 py-1 rounded-sm bg-bg-surface text-fg hover:text-brand border border-border-strong transition-colors shrink-0"
+            >
+              #typography
+            </a>
+            <a
+              href="#portrait"
+              className="px-2.5 py-1 rounded-sm bg-bg-surface text-fg hover:text-brand border border-border-strong transition-colors shrink-0"
+            >
+              #portrait-and-media
+            </a>
+            <a
+              href="#components"
+              className="px-2.5 py-1 rounded-sm bg-bg-surface text-fg hover:text-brand border border-border-strong transition-colors shrink-0"
+            >
+              #ui-components
+            </a>
+            <a
+              href="#voice"
+              className="px-2.5 py-1 rounded-sm bg-bg-surface text-fg hover:text-brand border border-border-strong transition-colors shrink-0"
+            >
+              #voice-and-copy
+            </a>
+            <a
+              href="#tokens"
+              className="px-2.5 py-1 rounded-sm bg-bg-surface text-fg hover:text-brand border border-border-strong transition-colors shrink-0"
+            >
+              #tokens-code
+            </a>
+          </nav>
+        </Container>
+      </Section>
+
+      {/* 1. The Mark & Lockup */}
+      <section id="mark" className="scroll-mt-16">
+        <Container>
+          <div className="section-head mb-6">
+            <div className="section-label">Identity</div>
+            <h2 className="section-title">The mark and logo lockup</h2>
+            <p className="section-intro">
+              The platform lockup is an understated developer identity: a
+              neutral wordmark paired with an upright emerald terminal prompt
+              and dot.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Primary Lockup Showcase */}
+            <div className="p-6 rounded-lg border border-border-strong bg-bg-surface flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between text-xs font-mono text-fg-muted mb-6">
+                  <span>Primary lockup</span>
+                  <span className="text-brand">Default</span>
+                </div>
+                <div className="py-8 flex items-center justify-center border border-border-strong/60 rounded bg-bg">
+                  <div className="scale-125 sm:scale-150 transform">
+                    <Lockup href="#mark" />
+                  </div>
+                </div>
+                <div className="mt-4 space-y-2 text-xs font-mono text-fg-muted">
+                  <div className="flex justify-between border-b border-border-strong/40 pb-1">
+                    <span>Wordmark font</span>
+                    <span className="text-fg">Manrope Medium (500)</span>
+                  </div>
+                  <div className="flex justify-between border-b border-border-strong/40 pb-1">
+                    <span>Wordmark color</span>
+                    <span className="text-fg">Neutral (var(--fg))</span>
+                  </div>
+                  <div className="flex justify-between border-b border-border-strong/40 pb-1">
+                    <span>Mark slash & dot</span>
+                    <span className="text-brand">Emerald (var(--brand))</span>
+                  </div>
+                  <div className="flex justify-between pb-1">
+                    <span>Mark weight</span>
+                    <span className="text-fg">Bold (700), upright</span>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-6 pt-4 border-t border-border-strong flex justify-end">
+                <CopySnippetButton
+                  text={fullLockupSvg}
+                  label="Copy lockup SVG"
+                />
+              </div>
+            </div>
+
+            {/* Reduced Mark Showcase */}
+            <div className="p-6 rounded-lg border border-border-strong bg-bg-surface flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between text-xs font-mono text-fg-muted mb-6">
+                  <span>Reduced mark</span>
+                  <span>Square placements</span>
+                </div>
+                <div className="py-8 flex items-center justify-center border border-border-strong/60 rounded bg-bg">
+                  <div className="w-16 h-16 rounded-md border border-border-strong bg-bg-surface flex items-center justify-center font-sans font-bold text-2xl text-brand">
+                    <span>/.</span>
+                  </div>
+                </div>
+                <div className="mt-4 space-y-2 text-xs font-mono text-fg-muted">
+                  <div className="flex justify-between border-b border-border-strong/40 pb-1">
+                    <span>Role</span>
+                    <span className="text-fg">Favicon, avatar, stamp</span>
+                  </div>
+                  <div className="flex justify-between border-b border-border-strong/40 pb-1">
+                    <span>Character</span>
+                    <span className="text-brand">/. (terminal closer)</span>
+                  </div>
+                  <div className="flex justify-between border-b border-border-strong/40 pb-1">
+                    <span>Min width</span>
+                    <span className="text-fg">24px</span>
+                  </div>
+                  <div className="flex justify-between pb-1">
+                    <span>Forbidden</span>
+                    <span className="text-error">No neural-net / AI clichés</span>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-6 pt-4 border-t border-border-strong flex justify-end">
+                <CopySnippetButton
+                  text={reducedMarkSvg}
+                  label="Copy mark SVG"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Do's and Don'ts */}
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-4 rounded-sm border border-brand/40 bg-brand/5">
+              <div className="flex items-center gap-2 font-mono text-xs font-bold text-brand mb-2">
+                <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
+                <span>Mark rules — do</span>
+              </div>
+              <ul className="text-xs text-fg-muted space-y-1.5 list-disc list-inside">
+                <li>Wordmark stays neutral; emerald is reserved for the mark `/.`</li>
+                <li>Set mark upright at weight 700 (bold), never italic</li>
+                <li>Maintain minimum clear space equal to the wordmark cap-height</li>
+                <li>Write all brand text in sentence case</li>
+              </ul>
+            </div>
+
+            <div className="p-4 rounded-sm border border-error/40 bg-error/5">
+              <div className="flex items-center gap-2 font-mono text-xs font-bold text-error mb-2">
+                <XCircle className="h-4 w-4" aria-hidden="true" />
+                <span>Mark rules — don&apos;t</span>
+              </div>
+              <ul className="text-xs text-fg-muted space-y-1.5 list-disc list-inside">
+                <li>Never color the wordmark in emerald</li>
+                <li>Never apply gradients, drop shadows, or outlines</li>
+                <li>Never use AI visual clichés: brains, robots, or circuit trees</li>
+                <li>Never use Title Case or ALL-CAPS in logo copy</li>
+              </ul>
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* 2. Color System & Contrast */}
+      <section id="colors" className="scroll-mt-16">
+        <Container>
+          <div className="section-head mb-6">
+            <div className="section-label">Palette</div>
+            <h2 className="section-title">Color system and contrast</h2>
+            <p className="section-intro">
+              Emerald is the single accent. Everything else is neutral. The
+              contrast between emerald and deep carbon or crisp paper carries
+              the brand.
+            </p>
+          </div>
+
+          {/* Emerald Stops */}
+          <Subsection title="Accent stops">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+              <ColorSwatch
+                name="Emerald Bright"
+                token="--emerald-bright"
+                hex="#23B888"
+                role="Primary accent on dark (Carbon) surfaces. Links, buttons, tags."
+                contrast="8.0:1 on Carbon (#050505)"
+                contrastBadge="WCAG AAA"
+                bgHex="#23B888"
+                textHex="#050505"
+              />
+              <ColorSwatch
+                name="Emerald Deep"
+                token="--emerald-deep"
+                hex="#087F5B"
+                role="Primary accent on light (Paper) surfaces. Links, buttons, tags."
+                contrast="4.7:1 on Paper (#F7F7F7)"
+                contrastBadge="WCAG AA"
+                bgHex="#087F5B"
+                textHex="#ffffff"
+              />
+            </div>
+          </Subsection>
+
+          {/* Palette Proportions */}
+          <div className="p-4 rounded-lg border border-border-strong bg-bg-surface mb-8">
+            <div className="flex items-center justify-between text-xs font-mono text-fg-muted mb-2">
+              <span>Palette proportion budget</span>
+              <span className="text-brand">Deliberate accent</span>
+            </div>
+            <div className="h-4 w-full rounded overflow-hidden flex font-mono text-[0.625rem] text-bg font-bold">
+              <div
+                style={{ width: "85%" }}
+                className="bg-fg-muted flex items-center justify-center truncate"
+                title="85% Neutrals"
+              >
+                Neutrals 85%
+              </div>
+              <div
+                style={{ width: "14%" }}
+                className="bg-brand flex items-center justify-center truncate text-bg"
+                title="14% Emerald"
+              >
+                14%
+              </div>
+              <div
+                style={{ width: "1%" }}
+                className="bg-error"
+                title="1% Functional"
+              />
+            </div>
+            <p className="mt-2 text-xs text-fg-muted">
+              Emerald appears <strong>once per surface</strong> as an intentional
+              focal point. Scattering emerald links, chips, and icons dilutes
+              visual hierarchy.
+            </p>
+          </div>
+
+          {/* Dark Neutrals Ramp */}
+          <Subsection title="Dark ramp (Carbon foundation)">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-8">
+              <ColorSwatch
+                name="Carbon"
+                token="--ink-900 / --carbon"
+                hex="#050505"
+                role="Canvas page foundation in dark theme."
+                bgHex="#050505"
+                borderHex="#1f1f1f"
+                textHex="#f1f1f1"
+              />
+              <ColorSwatch
+                name="Surface"
+                token="--ink-800 / --bg-surface"
+                hex="#0D0D0D"
+                role="Card and section background."
+                bgHex="#0D0D0D"
+                borderHex="#2e2e2e"
+                textHex="#f1f1f1"
+              />
+              <ColorSwatch
+                name="Raised"
+                token="--ink-700 / --bg-raised"
+                hex="#141414"
+                role="Raised surface, code blocks."
+                bgHex="#141414"
+                borderHex="#2e2e2e"
+                textHex="#f1f1f1"
+              />
+              <ColorSwatch
+                name="Divider"
+                token="--ink-600 / --border"
+                hex="#1F1F1F"
+                role="Structural rules, section borders."
+                bgHex="#1F1F1F"
+                borderHex="#2e2e2e"
+                textHex="#f1f1f1"
+              />
+              <ColorSwatch
+                name="Edge strong"
+                token="--ink-500 / --border-strong"
+                hex="#2E2E2E"
+                role="Card borders, control boundaries."
+                bgHex="#2E2E2E"
+                borderHex="#8d8d8d"
+                textHex="#f1f1f1"
+              />
+              <ColorSwatch
+                name="Text muted"
+                token="--ink-400 / --fg-muted"
+                hex="#8D8D8D"
+                role="Secondary metadata and subtitles (6.1:1)."
+                contrastBadge="WCAG AAA"
+                bgHex="#8D8D8D"
+                textHex="#050505"
+              />
+              <ColorSwatch
+                name="Text primary"
+                token="--ink-100 / --fg"
+                hex="#F1F1F1"
+                role="Headings and primary body copy (18:1)."
+                contrastBadge="WCAG AAA"
+                bgHex="#F1F1F1"
+                textHex="#050505"
+              />
+            </div>
+          </Subsection>
+
+          {/* Light Neutrals Ramp */}
+          <Subsection title="Light ramp (Paper foundation)">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-8">
+              <ColorSwatch
+                name="Pure Paper"
+                token="--paper-0"
+                hex="#FFFFFF"
+                role="Raised cards in light mode."
+                bgHex="#FFFFFF"
+                borderHex="#d2d2d2"
+                textHex="#131313"
+              />
+              <ColorSwatch
+                name="Paper Ground"
+                token="--paper-50 / --paper"
+                hex="#F7F7F7"
+                role="Canvas page foundation in light theme."
+                bgHex="#F7F7F7"
+                borderHex="#d2d2d2"
+                textHex="#131313"
+              />
+              <ColorSwatch
+                name="Paper Rule"
+                token="--paper-200"
+                hex="#E3E3E3"
+                role="Structural dividing lines in light mode."
+                bgHex="#E3E3E3"
+                borderHex="#d2d2d2"
+                textHex="#131313"
+              />
+              <ColorSwatch
+                name="Paper Edge"
+                token="--paper-300"
+                hex="#D2D2D2"
+                role="Component boundaries in light mode."
+                bgHex="#D2D2D2"
+                borderHex="#6a6a6a"
+                textHex="#131313"
+              />
+              <ColorSwatch
+                name="Paper Muted"
+                token="--paper-400"
+                hex="#6A6A6A"
+                role="Secondary text on light mode (5.1:1)."
+                contrastBadge="WCAG AA"
+                bgHex="#6A6A6A"
+                textHex="#ffffff"
+              />
+              <ColorSwatch
+                name="Paper Primary"
+                token="--paper-900"
+                hex="#131313"
+                role="Primary headings and text on light mode."
+                contrastBadge="WCAG AAA"
+                bgHex="#131313"
+                textHex="#ffffff"
+              />
+            </div>
+          </Subsection>
+
+          {/* Functional colors */}
+          <Subsection title="Functional & state colors">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
+              <ColorSwatch
+                name="Success"
+                token="--success"
+                hex="#23B888 / #087F5B"
+                role="Reuses emerald accent — no new hue needed."
+                bgHex="#23B888"
+                textHex="#050505"
+              />
+              <ColorSwatch
+                name="Error"
+                token="--error"
+                hex="#E5484D / #C4292E"
+                role="Alert states, validation errors (5.2:1)."
+                contrastBadge="WCAG AA"
+                bgHex="#E5484D"
+                textHex="#ffffff"
+              />
+              <ColorSwatch
+                name="Warning"
+                token="--warning"
+                hex="#D97706 / #B45309"
+                role="Strictly UI warning states, never a brand accent."
+                contrastBadge="WCAG AA"
+                bgHex="#D97706"
+                textHex="#ffffff"
+              />
+            </div>
+          </Subsection>
+
+          {/* Contrast & Forbidden Pairings */}
+          <div className="p-4 rounded-lg border border-border-strong bg-bg-surface">
+            <div className="font-mono text-xs font-bold text-fg mb-3">
+              Verified contrast & forbidden pairings
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono">
+              <div className="space-y-2">
+                <div className="text-fg-muted font-medium">
+                  Allowed pairings:
+                </div>
+                <div className="flex items-center justify-between p-2 rounded bg-bg border border-border">
+                  <span>Emerald Bright on Carbon</span>
+                  <span className="text-brand font-medium">8.0:1 (AAA)</span>
+                </div>
+                <div className="flex items-center justify-between p-2 rounded bg-bg border border-border">
+                  <span>Emerald Deep on Paper</span>
+                  <span className="text-brand font-medium">4.7:1 (AA)</span>
+                </div>
+                <div className="flex items-center justify-between p-2 rounded bg-bg border border-border">
+                  <span>Primary text on Carbon</span>
+                  <span className="text-brand font-medium">18.0:1 (AAA)</span>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="text-error font-medium">
+                  Forbidden pairings (never ship):
+                </div>
+                <div className="flex items-center justify-between p-2 rounded bg-error/10 border border-error/30">
+                  <span>Emerald Deep on Carbon</span>
+                  <span className="text-error font-medium">4.1:1 (Fail)</span>
+                </div>
+                <div className="flex items-center justify-between p-2 rounded bg-error/10 border border-error/30">
+                  <span>Emerald Bright on Paper</span>
+                  <span className="text-error font-medium">2.4:1 (Fail)</span>
+                </div>
+                <div className="p-2 text-fg-muted text-[0.6875rem]">
+                  Never use light accent on light background, nor dark accent on
+                  dark background.
+                </div>
+              </div>
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* 3. Typography & Scale */}
+      <section id="typography" className="scroll-mt-16">
+        <Container>
+          <div className="section-head mb-6">
+            <div className="section-label">Typography</div>
+            <h2 className="section-title">Typefaces and typographic scale</h2>
+            <p className="section-intro">
+              Two families: Manrope for display and UI, JetBrains Mono for code
+              and data. Weights 400, 500, and 700 only — no 600.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+            <div className="p-5 rounded-lg border border-border-strong bg-bg-surface">
+              <div className="flex items-center justify-between text-xs font-mono text-fg-muted mb-2">
+                <span>Display & UI typeface</span>
+                <span className="text-brand">Manrope</span>
+              </div>
+              <div className="font-sans text-3xl font-bold text-fg mb-3">
+                Manrope
+              </div>
+              <p className="text-xs text-fg-muted leading-relaxed">
+                Geometric enough to convey engineering rigor, with subtle human
+                curves. Used for all headings, navigation, button labels, and
+                narrative body copy.
+              </p>
+              <div className="mt-4 pt-3 border-t border-border-strong/50 font-mono text-[0.6875rem] text-fg-muted">
+                Weights: 400 (regular) · 500 (medium) · 700 (bold)
+              </div>
+            </div>
+
+            <div className="p-5 rounded-lg border border-border-strong bg-bg-surface">
+              <div className="flex items-center justify-between text-xs font-mono text-fg-muted mb-2">
+                <span>Code & Data typeface</span>
+                <span className="text-brand">JetBrains Mono</span>
+              </div>
+              <div className="font-mono text-3xl font-bold text-fg mb-3">
+                JetBrains Mono
+              </div>
+              <p className="text-xs text-fg-muted leading-relaxed">
+                Legible at small sizes, designed for technical reading. Used for
+                source code, dates, terminal commands, metadata chips, and
+                numerical values.
+              </p>
+              <div className="mt-4 pt-3 border-t border-border-strong/50 font-mono text-[0.6875rem] text-fg-muted">
+                Weights: 400 (regular) · 500 (medium)
+              </div>
+            </div>
+          </div>
+
+          {/* Live Scale Showcase */}
+          <div className="rounded-lg border border-border-strong bg-bg-surface divide-y divide-border-strong">
+            <div className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-[180px_1fr] md:items-baseline gap-2 sm:gap-6">
+              <div className="font-mono text-xs text-fg-muted shrink-0">
+                Display · 44px / 1.1 · 700
+              </div>
+              <div className="font-sans text-4xl sm:text-display font-bold tracking-tight text-fg">
+                Building AI systems
+              </div>
+            </div>
+
+            <div className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-[180px_1fr] md:items-baseline gap-2 sm:gap-6">
+              <div className="font-mono text-xs text-fg-muted shrink-0">
+                H1 · 36px / 1.15 · 700
+              </div>
+              <div className="font-sans text-3xl sm:text-h1 font-bold tracking-tight text-fg">
+                Engineering in production
+              </div>
+            </div>
+
+            <div className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-[180px_1fr] md:items-baseline gap-2 sm:gap-6">
+              <div className="font-mono text-xs text-fg-muted shrink-0">
+                H2 · 22px / 1.3 · 700
+              </div>
+              <div className="font-sans text-h2 font-bold tracking-tight text-fg">
+                Section titles and key milestones
+              </div>
+            </div>
+
+            <div className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-[180px_1fr] md:items-baseline gap-2 sm:gap-6">
+              <div className="font-mono text-xs text-fg-muted shrink-0">
+                H3 · 18px / 1.35 · 500
+              </div>
+              <div className="font-sans text-h3 font-medium text-fg">
+                Subsection headings and article card titles
+              </div>
+            </div>
+
+            <div className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-[180px_1fr] md:items-baseline gap-2 sm:gap-6">
+              <div className="font-mono text-xs text-fg-muted shrink-0">
+                Body · 16px / 1.65 · 400
+              </div>
+              <div className="font-sans text-base text-fg leading-relaxed max-w-[68ch]">
+                Clear technical notes on what I build, what went wrong along the
+                way, and how systems perform under load.
+              </div>
+            </div>
+
+            <div className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-[180px_1fr] md:items-baseline gap-2 sm:gap-6">
+              <div className="font-mono text-xs text-fg-muted shrink-0">
+                Small · 14px / 1.55 · 400
+              </div>
+              <div className="font-mono text-small text-fg-muted">
+                JetBrains Mono captions, dates, and terminal outputs.
+              </div>
+            </div>
+
+            <div className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-[180px_1fr] md:items-baseline gap-2 sm:gap-6">
+              <div className="font-mono text-xs text-fg-muted shrink-0">
+                Label · 12px / 1.45 · 500
+              </div>
+              <div className="font-mono text-xs text-fg-muted uppercase tracking-wider">
+                Section labels, badges, and status chips
+              </div>
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* 4. Imagery & Portrait */}
+      <section id="portrait" className="scroll-mt-16">
+        <Container>
+          <div className="section-head mb-6">
+            <div className="section-label">Media</div>
+            <h2 className="section-title">Portrait and photography guidelines</h2>
+            <p className="section-intro">
+              The image budget is strictly two locations: the hero portrait and
+              the event gallery. That is the entire image budget for the platform.
+            </p>
+          </div>
+
+          {/* Portrait fields */}
+          <Subsection title="The three portrait field grounds">
+            <p className="text-xs text-fg-muted mb-4">
+              The official hero portrait for {name} ({role}) sits on verified neutral fields to guarantee contrast
+              and prevent visual clash across platform crops.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+              {/* Field 1: Default */}
+              <div className="p-4 rounded-lg border border-border-strong bg-bg-surface flex flex-col items-center text-center">
+                <div
+                  className="w-44 h-44 rounded-sm border border-border-strong overflow-hidden flex items-center justify-center mb-3"
+                  style={{ backgroundColor: "#D2D2D2" }}
+                >
+                  <Image
+                    src={transparentPortrait || portraitUrl}
+                    alt={`${name} portrait on default field`}
+                    width={176}
+                    height={176}
+                    className="object-contain w-full h-full"
+                  />
+                </div>
+                <div className="font-mono text-xs font-medium text-fg">
+                  portrait-field (#D2D2D2)
+                </div>
+                <div className="text-[0.75rem] text-fg-muted mt-1">
+                  Default field for platform crops (re-uses paper-300).
+                </div>
+              </div>
+
+              {/* Field 2: On Dark */}
+              <div className="p-4 rounded-lg border border-border-strong bg-bg-surface flex flex-col items-center text-center">
+                <div
+                  className="w-44 h-44 rounded-sm border border-border-strong overflow-hidden flex items-center justify-center mb-3"
+                  style={{ backgroundColor: "#F1F1F1" }}
+                >
+                  <Image
+                    src={transparentPortrait || portraitUrl}
+                    alt={`${name} portrait on dark swap`}
+                    width={176}
+                    height={176}
+                    className="object-contain w-full h-full"
+                  />
+                </div>
+                <div className="font-mono text-xs font-medium text-fg">
+                  portrait-on-dark (#F1F1F1)
+                </div>
+                <div className="text-[0.75rem] text-fg-muted mt-1">
+                  Swap-in field on Carbon surfaces (re-uses ink-100).
+                </div>
+              </div>
+
+              {/* Field 3: On Light */}
+              <div className="p-4 rounded-lg border border-border-strong bg-bg-surface flex flex-col items-center text-center">
+                <div
+                  className="w-44 h-44 rounded-sm border border-border-strong overflow-hidden flex items-center justify-center mb-3"
+                  style={{ backgroundColor: "#6A6A6A" }}
+                >
+                  <Image
+                    src={transparentPortrait || portraitUrl}
+                    alt={`${name} portrait on light swap`}
+                    width={176}
+                    height={176}
+                    className="object-contain w-full h-full"
+                  />
+                </div>
+                <div className="font-mono text-xs font-medium text-fg">
+                  portrait-on-light (#6A6A6A)
+                </div>
+                <div className="text-[0.75rem] text-fg-muted mt-1">
+                  Swap-in field on Paper surfaces (re-uses paper-400).
+                </div>
+              </div>
+            </div>
+          </Subsection>
+
+          {/* Event Gallery Context */}
+          {galleryPhotos.length > 0 && (
+            <Subsection title="Event gallery photography">
+              <p className="text-xs text-fg-muted mb-4">
+                The only other photograph surface on the website. Authentic,
+                documentary captures from delivered workshops and talks.
+              </p>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {galleryPhotos.map((photo, i) => (
+                  <div
+                    key={photo.url || i}
+                    className="group relative aspect-4/3 rounded overflow-hidden border border-border-strong bg-bg-surface"
+                  >
+                    <Image
+                      src={photo.url}
+                      alt={photo.caption || photo.eventTitle || "Event photo"}
+                      fill
+                      sizes="(max-width: 640px) 50vw, 25vw"
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-bg/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-2 flex items-end">
+                      <span className="font-mono text-[0.625rem] text-fg truncate">
+                        {photo.eventTitle}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Subsection>
+          )}
+        </Container>
+      </section>
+
+      {/* 5. UI Components & Patterns */}
+      <section id="components" className="scroll-mt-16">
+        <Container>
+          <div className="section-head mb-6">
+            <div className="section-label">Components</div>
+            <h2 className="section-title">UI components and spatial rules</h2>
+            <p className="section-intro">
+              Universal control height of 40px, container width capped at
+              1020px, and hairline borders.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            {/* Buttons Showcase */}
+            <div className="p-5 rounded-lg border border-border-strong bg-bg-surface space-y-4">
+              <div className="flex items-center justify-between text-xs font-mono text-fg-muted">
+                <span>Button variants (`Button`, `LinkButton`)</span>
+                <span className="text-brand">40px height</span>
+              </div>
+              <div className="flex flex-wrap items-center gap-3">
+                <Button variant="primary">
+                  Primary button
+                </Button>
+                <Button variant="secondary">
+                  Secondary button
+                </Button>
+                <LinkButton href="#mark" variant="secondary">
+                  <span>Link button</span>
+                  <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                </LinkButton>
+                <Button variant="primary" disabled>
+                  Disabled
+                </Button>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono text-fg-muted pt-3 border-t border-border-strong/40">
+                <div>
+                  <span className="text-fg font-medium">.btn--primary:</span> Solid emerald fill (`var(--brand-fill)`), dark text (`var(--on-brand)`).
+                </div>
+                <div>
+                  <span className="text-fg font-medium">.btn--secondary:</span> Transparent, border (`var(--border-strong)`), hover surface.
+                </div>
+              </div>
+            </div>
+
+            {/* Badges & Chips Showcase */}
+            <div className="p-5 rounded-lg border border-border-strong bg-bg-surface space-y-4">
+              <div className="text-xs font-mono text-fg-muted">
+                Badges and chip indicators (`Badge`, `Chip`, `StatusBadge`)
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <StatusBadge>Available for work</StatusBadge>
+                <Badge variant="filled">Active</Badge>
+                <Badge>Upcoming</Badge>
+                <Chip>Agent Framework</Chip>
+                <Chip>v2.0</Chip>
+              </div>
+              <div className="font-mono text-[0.6875rem] text-fg-muted pt-2 border-t border-border-strong/40">
+                Font: JetBrains Mono (Chip) / Manrope (Badge) · Size: 12px · Tracking: 0.01em
+              </div>
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* 6. Voice & Banned Words */}
+      <section id="voice" className="scroll-mt-16">
+        <Container>
+          <div className="section-head mb-6">
+            <div className="section-label">Voice</div>
+            <h2 className="section-title">Tone of voice and prohibited copy</h2>
+            <p className="section-intro">
+              Direct, technical, and understated. Speak as an engineer explaining
+              real systems to peers. Avoid hyperbole and empty buzzwords.
+            </p>
+          </div>
+
+          <div className="p-5 rounded-lg border border-error/30 bg-bg-surface">
+            <div className="flex items-center gap-2 font-mono text-xs font-bold text-error mb-4">
+              <XCircle className="h-4 w-4" aria-hidden="true" />
+              <span>Banned terms in all content and copy</span>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
+              {[
+                "passionate about",
+                "leveraging",
+                "cutting-edge",
+                "revolutionize",
+                "game-changing",
+                "unlock",
+                "seamless",
+                "AI enthusiast",
+                "thought leader",
+                "journey",
+                "humbled to announce",
+                "10x",
+              ].map((term) => (
+                <div
+                  key={term}
+                  className="px-2.5 py-1.5 rounded bg-error/10 border border-error/20 font-mono text-xs text-error flex items-center justify-between"
+                >
+                  <span className="line-through">{term}</span>
+                  <span className="text-[0.625rem] text-error/80">✗</span>
+                </div>
+              ))}
+            </div>
+            <p className="mt-4 text-xs text-fg-muted">
+              Never use vague marketing filler. Describe the architecture, the
+              failures, and the concrete outcome plainly.
+            </p>
+          </div>
+        </Container>
+      </section>
+
+      {/* 7. Quick Reference & CSS Tokens */}
+      <section id="tokens" className="scroll-mt-16">
+        <Container>
+          <div className="section-head mb-6">
+            <div className="section-label">Tokens</div>
+            <h2 className="section-title">Design tokens quick reference</h2>
+            <p className="section-intro">
+              Canonical tokens as defined in `docs/brand-tokens.css` and
+              `DESIGN.md`.
+            </p>
+          </div>
+
+          <div className="rounded-lg border border-border-strong bg-bg-surface p-4 sm:p-6">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2 font-mono text-xs text-fg-muted">
+                <Code2 className="h-4 w-4 text-brand" aria-hidden="true" />
+                <span>brand-tokens.css</span>
+              </div>
+              <CopySnippetButton
+                text={cssTokensSnippet}
+                label="Copy CSS variables"
+              />
+            </div>
+            <pre className="p-4 rounded border border-border-strong/60 bg-bg overflow-x-auto font-mono text-xs text-fg-muted leading-relaxed">
+              <code>{cssTokensSnippet}</code>
+            </pre>
+
+            <div className="mt-6 pt-4 border-t border-border-strong flex items-center justify-between flex-wrap gap-4 text-xs font-mono text-fg-muted">
+              <div>Canonical specification: DESIGN.md & docs/brand-guide.md</div>
+              <div className="flex items-center gap-3">
+                <Link
+                  href="/sitemap"
+                  className="hover:text-brand transition-colors inline-flex items-center gap-1"
+                >
+                  <span>Sitemap</span>
+                  <ArrowRight className="h-3 w-3" aria-hidden="true" />
+                </Link>
+                <a
+                  href={SITE_CONFIG.repository}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-brand transition-colors inline-flex items-center gap-1"
+                >
+                  <span>GitHub</span>
+                  <ExternalLink className="h-3 w-3" aria-hidden="true" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </Container>
+      </section>
+    </div>
+  );
+}
