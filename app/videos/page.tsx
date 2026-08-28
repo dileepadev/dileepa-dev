@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { Container, EmptyState, PagePath, Section } from "@/components/ui";
 import { api } from "@/lib/api";
+import { EMPTY_STATES, PAGES } from "@/lib/constants";
 import { VideoSearch } from "./_components/VideoSearch";
 
 export const metadata: Metadata = {
-  title: "Videos",
-  description: "Short walkthroughs and recorded talks, hosted on YouTube.",
+  title: PAGES.videos.meta.title,
+  description: PAGES.videos.meta.description,
   alternates: { canonical: "/videos" },
 };
 
@@ -28,8 +29,8 @@ export default async function VideosPage() {
             <div className="mb-2">
               <PagePath path="/videos" />
             </div>
-            <div className="section-label">Videos</div>
-            <h1>Walkthroughs and talks</h1>
+            <div className="section-label">{PAGES.videos.label}</div>
+            <h1>{PAGES.videos.title}</h1>
           </div>
           {total > 0 && (
             <div className="inline-flex items-center gap-1.5 font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1 transition-colors duration-150 hover:border-brand hover:bg-surface-hover hover:text-fg cursor-default">
@@ -39,16 +40,10 @@ export default async function VideosPage() {
           )}
         </div>
 
-        <p className="section-intro">
-          Short walkthroughs, mostly Azure setup and OpenAI basics. Each one
-          opens on YouTube.
-        </p>
+        <p className="section-intro">{PAGES.videos.intro}</p>
 
         {videos.length === 0 ? (
-          <EmptyState
-            title="No videos are listed yet."
-            hint="Recordings appear here once they are added in the admin."
-          />
+          <EmptyState {...EMPTY_STATES.videos} />
         ) : (
           <VideoSearch videos={videos} />
         )}

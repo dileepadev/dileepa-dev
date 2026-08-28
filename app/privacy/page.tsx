@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Container, PagePath, Section } from "@/components/ui";
-import { SITE_CONFIG } from "@/lib/constants";
+import { PAGES, SITE_CONFIG } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy",
-  description:
-    "How your information is collected, used, and protected when you visit dileepa.dev or interact with its forms and comments.",
+  title: PAGES.privacy.meta.title,
+  description: PAGES.privacy.meta.description,
   alternates: { canonical: "/privacy" },
 };
 
@@ -17,12 +16,9 @@ export default function PrivacyPolicyPage() {
         <div className="mb-2">
           <PagePath path="/privacy" />
         </div>
-        <div className="section-label">Legal</div>
-        <h1>Privacy policy</h1>
-        <p className="section-intro">
-          A clear, straightforward explanation of what data is collected, how it
-          is handled, and why.
-        </p>
+        <div className="section-label">{PAGES.privacy.label}</div>
+        <h1>{PAGES.privacy.title}</h1>
+        <p className="section-intro">{PAGES.privacy.intro}</p>
 
         <div className="font-mono text-label text-fg-muted mt-2 mb-8">
           Last updated: August 2026

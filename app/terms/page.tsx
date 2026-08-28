@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Container, PagePath, Section } from "@/components/ui";
-import { SITE_CONFIG } from "@/lib/constants";
+import { PAGES, SITE_CONFIG } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: "Terms of Service",
-  description:
-    "Terms and conditions for using dileepa.dev, reading its articles, and participating in comments and interactive features.",
+  title: PAGES.terms.meta.title,
+  description: PAGES.terms.meta.description,
   alternates: { canonical: "/terms" },
 };
 
@@ -17,12 +16,9 @@ export default function TermsOfServicePage() {
         <div className="mb-2">
           <PagePath path="/terms" />
         </div>
-        <div className="section-label">Legal</div>
-        <h1>Terms of service</h1>
-        <p className="section-intro">
-          The basic rules and guidelines governing the use of this website, its
-          content, and its interactive tools.
-        </p>
+        <div className="section-label">{PAGES.terms.label}</div>
+        <h1>{PAGES.terms.title}</h1>
+        <p className="section-intro">{PAGES.terms.intro}</p>
 
         <div className="font-mono text-label text-fg-muted mt-2 mb-8">
           Last updated: August 2026

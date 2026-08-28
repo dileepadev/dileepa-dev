@@ -6,12 +6,12 @@ import {
   Section,
 } from "@/components/ui";
 import { api } from "@/lib/api";
-import { EMPTY_STATES } from "@/lib/constants";
+import { EMPTY_STATES, PAGES } from "@/lib/constants";
 import { BlogSearch } from "./_components/BlogSearch";
 
 export const metadata: Metadata = {
-  title: "Blog",
-  description: "Notes on what I build, and what went wrong on the way.",
+  title: PAGES.blog.meta.title,
+  description: PAGES.blog.meta.description,
   alternates: {
     canonical: "/blog",
     types: { "application/rss+xml": "/blog/rss.xml" },
@@ -29,8 +29,8 @@ export default async function BlogPage() {
             <div className="mb-2">
               <PagePath path="/blog" />
             </div>
-            <div className="section-label">Blog</div>
-            <h1>Writing</h1>
+            <div className="section-label">{PAGES.blog.label}</div>
+            <h1>{PAGES.blog.title}</h1>
           </div>
           {posts.length > 0 && (
             <div className="inline-flex items-center gap-1.5 font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1 transition-colors duration-150 hover:border-brand hover:bg-surface-hover hover:text-fg cursor-default">
@@ -41,7 +41,7 @@ export default async function BlogPage() {
         </div>
 
         <p className="section-intro">
-          Notes on what I build, and what went wrong on the way.{" "}
+          {PAGES.blog.intro}{" "}
           <a href="/blog/rss.xml" className="text-brand">
             RSS
           </a>

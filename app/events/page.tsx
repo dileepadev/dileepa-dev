@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import { Container, EmptyState, PagePath, Section } from "@/components/ui";
 import { api } from "@/lib/api";
-import { EMPTY_STATES } from "@/lib/constants";
+import { EMPTY_STATES, PAGES } from "@/lib/constants";
 import { EventSearch } from "./_components/EventSearch";
 
 export const metadata: Metadata = {
-  title: "Events",
-  description:
-    "Talks, workshops and webinars, with slides and recordings where they exist.",
+  title: PAGES.events.meta.title,
+  description: PAGES.events.meta.description,
   alternates: { canonical: "/events" },
 };
 
@@ -31,8 +30,8 @@ export default async function EventsPage() {
             <div className="mb-2">
               <PagePath path="/events" />
             </div>
-            <div className="section-label">Events</div>
-            <h1>Talks and workshops</h1>
+            <div className="section-label">{PAGES.events.label}</div>
+            <h1>{PAGES.events.title}</h1>
           </div>
           {total > 0 && (
             <div className="inline-flex items-center gap-1.5 font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1 transition-colors duration-150 hover:border-brand hover:bg-surface-hover hover:text-fg cursor-default">
@@ -42,10 +41,7 @@ export default async function EventsPage() {
           )}
         </div>
 
-        <p className="section-intro">
-          Events I have delivered at meetups, conferences and online. Slides and
-          recordings are linked where they exist.
-        </p>
+        <p className="section-intro">{PAGES.events.intro}</p>
 
         {empty ? (
           <EmptyState {...EMPTY_STATES.events} />

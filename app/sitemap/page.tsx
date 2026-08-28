@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import { Container, PagePath, Section } from "@/components/ui";
 import { api } from "@/lib/api";
-import { SITE_CONFIG } from "@/lib/constants";
+import { PAGES, SITE_CONFIG } from "@/lib/constants";
 import { SiteTree, type TreeNode } from "./_components/SiteTree";
 
 export const metadata: Metadata = {
-  title: "Site Tree & Architecture — Dileepa Bandara",
-  description:
-    "Interactive directory tree of all routes, pages, articles, projects, and resources across dileepa.dev.",
+  title: PAGES.sitemap.meta.title,
+  description: PAGES.sitemap.meta.description,
   alternates: { canonical: `${SITE_CONFIG.url}/sitemap` },
 };
 
@@ -247,8 +246,8 @@ export default async function SitemapPage() {
             <div className="mb-2">
               <PagePath path="/sitemap" />
             </div>
-            <div className="section-label">Architecture</div>
-            <h1>Site tree & routes</h1>
+            <div className="section-label">{PAGES.sitemap.label}</div>
+            <h1>{PAGES.sitemap.title}</h1>
           </div>
           {totalRoutes > 0 && (
             <div className="inline-flex items-center gap-1.5 font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1 transition-colors duration-150 hover:border-brand hover:bg-surface-hover hover:text-fg cursor-default">
@@ -257,9 +256,7 @@ export default async function SitemapPage() {
             </div>
           )}
         </div>
-        <p className="section-intro">
-          A visual directory of every published page, post, project, and resource across dileepa.dev.
-        </p>
+        <p className="section-intro">{PAGES.sitemap.intro}</p>
 
         <div className="mt-8">
           <SiteTree tree={tree} totalRoutes={totalRoutes} />
