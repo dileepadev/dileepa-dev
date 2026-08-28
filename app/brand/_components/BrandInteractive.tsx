@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Check, Copy } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -161,3 +162,121 @@ export function CopySnippetButton({
     </button>
   );
 }
+
+export function SocialCardPreview() {
+  const [platform, setPlatform] = useState<"twitter" | "linkedin">("twitter");
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyUrl = async () => {
+    try {
+      await navigator.clipboard.writeText("https://dileepa.dev/og.png");
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Ignore clipboard failure
+    }
+  };
+
+  return (
+    <div className="rounded-lg border border-border-strong bg-bg-surface overflow-hidden shadow-xs">
+      {/* Platform toggle bar */}
+      <div className="flex items-center justify-between px-4 py-3 bg-bg border-b border-border-strong text-xs font-mono">
+        <span className="text-fg font-medium">Social Card Simulator</span>
+        <div className="flex items-center rounded border border-border-strong overflow-hidden text-[0.6875rem]">
+          <button
+            type="button"
+            onClick={() => setPlatform("twitter")}
+            className={cn(
+              "px-2.5 py-1 transition-colors cursor-pointer",
+              platform === "twitter"
+                ? "bg-brand text-bg font-medium"
+                : "bg-bg-surface text-fg-muted hover:text-fg hover:bg-surface-hover",
+            )}
+          >
+            Twitter / X
+          </button>
+          <button
+            type="button"
+            onClick={() => setPlatform("linkedin")}
+            className={cn(
+              "px-2.5 py-1 transition-colors cursor-pointer border-l border-border-strong",
+              platform === "linkedin"
+                ? "bg-brand text-bg font-medium"
+                : "bg-bg-surface text-fg-muted hover:text-fg hover:bg-surface-hover",
+            )}
+          >
+            LinkedIn / Slack
+          </button>
+        </div>
+      </div>
+
+      {/* Preview container */}
+      <div className="p-4 sm:p-6 bg-bg flex justify-center">
+        <div className="w-full max-w-xl rounded-xl border border-border-strong bg-bg-surface overflow-hidden shadow-md">
+          {/* OG Image */}
+          <div className="relative aspect-[1200/630] w-full bg-carbon overflow-hidden">
+            <Image
+              src="/og.png"
+              alt="Dileepa Bandara Open Graph Preview"
+              width={1200}
+              height={630}
+              className="w-full h-full object-cover"
+              priority
+            />
+          </div>
+
+          {/* Social feed metadata preview */}
+          {platform === "twitter" ? (
+            <div className="p-3.5 bg-bg-surface border-t border-border-strong space-y-1">
+              <div className="font-mono text-[0.6875rem] text-fg-muted uppercase">
+                dileepa.dev
+              </div>
+              <div className="font-medium text-sm text-fg truncate">
+                Dileepa Bandara — AI engineer
+              </div>
+              <p className="text-xs text-fg-muted line-clamp-1">
+                AI engineer. Building AI systems and the community around them.
+              </p>
+            </div>
+          ) : (
+            <div className="p-3.5 bg-bg-surface border-t border-border-strong space-y-0.5">
+              <div className="font-bold text-sm text-fg truncate">
+                Dileepa Bandara — AI engineer
+              </div>
+              <div className="font-mono text-xs text-fg-muted">
+                dileepa.dev · 2 min read
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Action Footer */}
+      <div className="px-4 py-3 bg-bg-surface border-t border-border-strong flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+        <div className="flex items-center gap-2 text-fg-muted">
+          <span>Dimensions: 1200 × 630 px</span>
+          <span>·</span>
+          <span>Ratio: 1.91:1</span>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <a
+            href="/og.png"
+            download="dileepa-dev-og.png"
+            className="btn btn--secondary !h-7 !px-2.5 text-xs inline-flex items-center gap-1.5"
+          >
+            Download image
+          </a>
+          <button
+            type="button"
+            onClick={handleCopyUrl}
+            className="btn btn--secondary !h-7 !px-2.5 text-xs inline-flex items-center gap-1.5"
+          >
+            {copied ? "Copied URL!" : "Copy image URL"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+

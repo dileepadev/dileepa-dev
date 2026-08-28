@@ -26,6 +26,7 @@ import { portrait as getPortraitUrl } from "@/lib/format";
 import {
   ColorSwatch,
   CopySnippetButton,
+  SocialCardPreview,
 } from "./_components/BrandInteractive";
 
 export const metadata: Metadata = {
@@ -35,6 +36,142 @@ export const metadata: Metadata = {
 };
 
 export const revalidate = 900;
+
+const FAVICONS = [
+  {
+    label: "Browser tab (default)",
+    dimensions: "16 × 16 px",
+    filename: "favicon-16x16.png",
+    src: "/favicon-16x16.png",
+    size: 16,
+    target: "Standard browser tab icon for Chrome, Safari, and Edge.",
+  },
+  {
+    label: "Browser tab (retina)",
+    dimensions: "32 × 32 px",
+    filename: "favicon-32x32.png",
+    src: "/favicon-32x32.png",
+    size: 32,
+    target: "High-DPI retina display browser tabs.",
+  },
+  {
+    label: "Desktop shortcut",
+    dimensions: "96 × 96 px",
+    filename: "favicon-96x96.png",
+    src: "/favicon-96x96.png",
+    size: 96,
+    target: "OS desktop bookmark shortcut and browser favorites.",
+  },
+  {
+    label: "Apple touch icon",
+    dimensions: "180 × 180 px",
+    filename: "apple-icon-180x180.png",
+    src: "/apple-icon-180x180.png",
+    size: 180,
+    target: "iOS home screen web clip on iPhone and iPad.",
+  },
+  {
+    label: "Android PWA icon",
+    dimensions: "192 × 192 px",
+    filename: "android-icon-192x192.png",
+    src: "/android-icon-192x192.png",
+    size: 192,
+    target: "Android Chrome home screen and progressive web app install.",
+  },
+  {
+    label: "PWA splash & maskable",
+    dimensions: "512 × 512 px",
+    filename: "android-icon-512x512.png",
+    src: "/android-icon-512x512.png",
+    size: 512,
+    target: "PWA splash screen launch icon and adaptive maskable icon.",
+  },
+  {
+    label: "Legacy ICO",
+    dimensions: "Multi-size",
+    filename: "favicon.ico",
+    src: "/favicon.ico",
+    size: 32,
+    target: "Root fallback for legacy browsers and web crawlers.",
+  },
+];
+
+const METADATA_ENDPOINTS = [
+  {
+    path: "/manifest.json",
+    type: "Web Manifest",
+    description:
+      "PWA configuration declaring application name, standalone display mode, and icon manifest.",
+  },
+  {
+    path: "/browserconfig.xml",
+    type: "Windows Tile",
+    description:
+      "Windows 8/10/11 Start screen pin tiles and brand accent configuration.",
+  },
+  {
+    path: "/sitemap.xml",
+    type: "XML Sitemap",
+    description:
+      "Machine-readable index of all 123 static pages, articles, projects, and events with lastmod timestamps.",
+  },
+  {
+    path: "/robots.txt",
+    type: "Robots",
+    description:
+      "Search crawler directives permitting indexation and declaring sitemap location.",
+  },
+  {
+    path: "/llms.txt",
+    type: "AI Context Index",
+    description:
+      "Standard plaintext reference describing dileepadev for AI models and autonomous agents.",
+  },
+  {
+    path: "/blog/rss.xml",
+    type: "RSS 2.0 Feed",
+    description:
+      "Full-text syndication feed of published engineering articles for RSS readers.",
+  },
+];
+
+const metadataSnippet = `export const metadata: Metadata = {
+  metadataBase: new URL("https://dileepa.dev"),
+  title: {
+    default: "Dileepa Bandara — AI engineer",
+    template: "%s · Dileepa Bandara",
+  },
+  description: "AI engineer. Building AI systems and the community around them.",
+  alternates: { canonical: "/" },
+  manifest: "/manifest.json",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-96x96.png", sizes: "96x96", type: "image/png" },
+      { url: "/android-icon-192x192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-icon-180x180.png", sizes: "180x180", type: "image/png" }],
+    other: [{ rel: "mask-icon", url: "/android-icon-512x512.png" }],
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://dileepa.dev",
+    title: "Dileepa Bandara — AI engineer",
+    description: "AI engineer. Building AI systems and the community around them.",
+    siteName: "Dileepa Bandara",
+    images: [{ url: "/og.png", width: 1200, height: 630, type: "image/png" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Dileepa Bandara — AI engineer",
+    description: "AI engineer. Building AI systems and the community around them.",
+    creator: "@dileepadev",
+    images: [{ url: "/og.png", width: 1200, height: 630, type: "image/png" }],
+  },
+};`;
 
 export default async function BrandPage() {
   const [{ about }, galleryPhotos] = await Promise.all([
@@ -141,6 +278,12 @@ export default async function BrandPage() {
               className="px-2.5 py-1 rounded-sm bg-bg-surface text-fg hover:text-brand border border-border-strong transition-colors shrink-0"
             >
               #portrait-and-media
+            </a>
+            <a
+              href="#metadata"
+              className="px-2.5 py-1 rounded-sm bg-bg-surface text-fg hover:text-brand border border-border-strong transition-colors shrink-0"
+            >
+              #metadata-and-assets
             </a>
             <a
               href="#components"
@@ -807,7 +950,137 @@ export default async function BrandPage() {
         </Container>
       </section>
 
-      {/* 5. UI Components & Patterns */}
+      {/* 5. Favicons, Open Graph & Platform Metadata */}
+      <section id="metadata" className="scroll-mt-16">
+        <Container>
+          <div className="section-head mb-6">
+            <div className="section-label">Identity / Assets</div>
+            <h2 className="section-title">Favicons, Open Graph and metadata</h2>
+            <p className="section-intro">
+              The platform&apos;s favicon suite, social card previews, web app manifest, and discovery feeds.
+            </p>
+          </div>
+
+          {/* Favicons Suite */}
+          <Subsection
+            title="Favicon suite"
+            note="The favicon is the circular portrait, not the reduced mark (decided in brand guide §3.2)."
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
+              {FAVICONS.map((icon) => (
+                <div
+                  key={icon.filename}
+                  className="rounded-lg border border-border-strong bg-bg-surface p-4 flex flex-col justify-between gap-3 shadow-xs hover:border-brand/40 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded border border-border-strong bg-bg flex items-center justify-center p-1 shrink-0 overflow-hidden">
+                      <Image
+                        src={icon.src}
+                        alt={icon.label}
+                        width={icon.size}
+                        height={icon.size}
+                        className="object-contain max-h-full max-w-full"
+                      />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="font-bold text-xs text-fg truncate">
+                        {icon.label}
+                      </div>
+                      <div className="font-mono text-[0.6875rem] text-brand">
+                        {icon.dimensions}
+                      </div>
+                    </div>
+                  </div>
+
+                  <p className="text-[0.6875rem] text-fg-muted leading-relaxed">
+                    {icon.target}
+                  </p>
+
+                  <div className="pt-2 border-t border-border-strong/60 flex items-center justify-between text-[0.6875rem] font-mono">
+                    <span className="text-fg-muted truncate">{icon.filename}</span>
+                    <a
+                      href={icon.src}
+                      download={icon.filename}
+                      className="text-brand hover:underline font-medium ml-2 shrink-0"
+                    >
+                      Download
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Subsection>
+
+          {/* Social Open Graph (OG) Card */}
+          <Subsection
+            title="Open Graph & social card"
+            note="1200×630 px master image rendered with carbon theme styling and canonical brand lockup."
+          >
+            <div className="mb-8">
+              <SocialCardPreview />
+            </div>
+          </Subsection>
+
+          {/* Platform Discovery & Crawlers */}
+          <Subsection
+            title="Platform metadata & crawlers"
+            note="Search engines, AI agent crawlers, and platform syndication feeds configured on dileepa.dev."
+          >
+            <div className="rounded-lg border border-border-strong bg-bg-surface overflow-hidden divide-y divide-border-strong/60 shadow-xs mb-8">
+              {METADATA_ENDPOINTS.map((ep) => (
+                <div
+                  key={ep.path}
+                  className="p-4 sm:px-6 sm:py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-surface-hover/30 transition-colors"
+                >
+                  <div className="space-y-0.5 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-mono text-xs font-bold text-fg">
+                        {ep.path}
+                      </span>
+                      <span className="text-[0.625rem] font-mono px-1.5 py-0.2 rounded bg-brand/10 text-brand border border-brand/20">
+                        {ep.type}
+                      </span>
+                    </div>
+                    <p className="text-xs text-fg-muted">
+                      {ep.description}
+                    </p>
+                  </div>
+
+                  <a
+                    href={ep.path}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn--secondary !h-7 !px-2.5 text-xs inline-flex items-center gap-1 shrink-0 self-end sm:self-auto font-mono"
+                  >
+                    <span>Inspect</span>
+                    <ExternalLink className="h-3 w-3 text-fg-muted" aria-hidden="true" />
+                  </a>
+                </div>
+              ))}
+            </div>
+          </Subsection>
+
+          {/* Production HTML Head & Next.js Metadata Snippet */}
+          <Subsection
+            title="Production metadata specification"
+            note="Canonical Next.js Metadata configuration powering search rankings, social unfurls, and theme colors."
+          >
+            <div className="space-y-3 mb-8">
+              <div className="flex justify-end">
+                <CopySnippetButton
+                  text={metadataSnippet}
+                  label="Copy meta snippet"
+                />
+              </div>
+              <pre className="p-4 rounded border border-border-strong/60 bg-bg overflow-x-auto font-mono text-xs text-fg-muted leading-relaxed">
+                <code>{metadataSnippet}</code>
+              </pre>
+            </div>
+          </Subsection>
+        </Container>
+      </section>
+
+      {/* 6. UI Components & Patterns */}
       <section id="components" className="scroll-mt-16">
         <Container>
           <div className="section-head mb-6">
@@ -871,7 +1144,7 @@ export default async function BrandPage() {
         </Container>
       </section>
 
-      {/* 6. Voice & Banned Words */}
+      {/* 7. Voice & Banned Words */}
       <section id="voice" className="scroll-mt-16">
         <Container>
           <div className="section-head mb-6">
@@ -920,7 +1193,7 @@ export default async function BrandPage() {
         </Container>
       </section>
 
-      {/* 7. Quick Reference & CSS Tokens */}
+      {/* 8. Quick Reference & CSS Tokens */}
       <section id="tokens" className="scroll-mt-16">
         <Container>
           <div className="section-head mb-6">
