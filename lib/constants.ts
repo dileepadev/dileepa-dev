@@ -346,6 +346,18 @@ export const PAGES = {
     intro:
       "A living visual reference for the dileepadev identity — colors, typography, mark, photography, and UI patterns.",
   },
+
+  profile: {
+    meta: {
+      title: "Speaker profile & media kit",
+      description:
+        "Official speaker biographies, high-resolution headshots, current role, contact details, and keynote topics for event organizers.",
+    },
+    label: "Speaker kit",
+    title: "Speaker profile & media kit",
+    intro:
+      "A dedicated reference for event organizers, conference committees, and podcast hosts. Includes official bios, photos with instant download, and credentials.",
+  },
 } as const;
 
 export interface PageSummary {
@@ -424,6 +436,15 @@ export const PAGES_LIST: PageSummary[] = [
     intro: PAGES.brand.intro,
     description: PAGES.brand.meta.description,
     badge: "Reference",
+  },
+  {
+    key: "profile",
+    path: "/profile",
+    label: PAGES.profile.label,
+    title: PAGES.profile.title,
+    intro: PAGES.profile.intro,
+    description: PAGES.profile.meta.description,
+    badge: "Speaker kit",
   },
   {
     key: "sitemap",

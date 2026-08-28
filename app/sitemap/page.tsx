@@ -192,6 +192,14 @@ export default async function SitemapPage() {
         badge: "Reference",
       },
       {
+        id: "root/profile",
+        name: "profile",
+        path: "/profile",
+        title: PAGES.profile.title,
+        type: "page",
+        badge: "Speaker kit",
+      },
+      {
         id: "root/sitemap",
         name: "sitemap",
         path: "/sitemap",
