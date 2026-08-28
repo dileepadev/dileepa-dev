@@ -176,7 +176,7 @@ function TreeBranch({
 
         {/* Badge / Type tag */}
         {node.badge && (
-          <span className="ml-auto inline-flex items-center px-2 py-0.2 rounded text-[0.6875rem] font-mono text-fg-muted border border-border-strong bg-bg shrink-0">
+          <span className="ml-auto inline-flex items-center px-2 py-0.5 rounded text-[0.6875rem] font-mono text-fg-muted border border-border-strong bg-bg shrink-0 transition-colors duration-150 hover:border-brand hover:bg-surface-hover hover:text-fg cursor-default">
             {node.badge}
           </span>
         )}

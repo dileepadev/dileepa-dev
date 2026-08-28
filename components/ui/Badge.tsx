@@ -20,11 +20,11 @@ export function Badge({
   return (
     <span
       className={cn(
-        "badge inline-block rounded-sm border px-3 py-1 text-label font-medium tracking-[0.01em]",
+        "badge inline-block rounded-sm border px-3 py-1 text-label font-medium tracking-[0.01em] cursor-default",
         "transition-[background-color,border-color,color] duration-[160ms] ease-brand",
         variant === "filled"
           ? "badge-filled border-transparent bg-brand-fill text-on-brand"
-          : "border-border-strong bg-bg-surface text-fg-muted hover:border-brand hover:bg-surface-hover hover:text-fg cursor-default",
+          : "border-border-strong bg-bg-surface text-fg-muted hover:border-brand hover:bg-surface-hover hover:text-fg",
         className,
       )}
     >

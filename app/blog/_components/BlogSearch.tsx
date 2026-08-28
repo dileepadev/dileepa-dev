@@ -630,11 +630,11 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
                           )}
 
                           {series.tags.length > 0 && (
-                            <div className="series-card-tags">
+                            <div className="flex flex-wrap gap-1.5 mt-3">
                               {series.tags.slice(0, 3).map((tag) => (
-                                <span key={tag} className="series-tag">
+                                <Chip key={tag} className="text-[0.75rem] py-0.5 px-2">
                                   {tag}
-                                </span>
+                                </Chip>
                               ))}
                             </div>
                           )}

@@ -406,17 +406,32 @@ textarea:disabled {
   cursor: not-allowed;
 }
 
-/* Badges when interactive */
+/* Badges and chips: atomic UI tokens with clean default arrow cursor */
+.badge,
+.chip,
+.stack span,
+.hero-status-pill {
+  cursor: default;
+}
+
+/* Badges and chips: pointer when interactive buttons or direct links */
 a > .badge,
-a .badge,
-button .badge {
+a > .chip,
+a.badge,
+a.chip,
+button > .badge,
+button > .chip,
+button .badge,
+button .chip {
   cursor: pointer;
 }
 
 a:hover > .badge:not(.badge-filled),
-a:hover .badge:not(.badge-filled),
+a:hover > .chip,
 button:hover > .badge:not(.badge-filled),
-button:hover .badge:not(.badge-filled) {
+button:hover .badge:not(.badge-filled),
+button:hover > .chip,
+button:hover .chip {
   border-color: var(--brand);
   background-color: var(--surface-hover);
   color: var(--fg);
@@ -948,6 +963,17 @@ pre {
   font-size: var(--text-small);
   font-weight: 500;
   color: var(--fg-muted);
+  cursor: default;
+  transition:
+    border-color var(--dur) var(--ease),
+    background-color var(--dur) var(--ease),
+    color var(--dur) var(--ease);
+}
+
+.hero-status-pill:hover {
+  border-color: var(--brand);
+  background-color: var(--surface-hover);
+  color: var(--fg);
 }
 
 .hero-status-dot {
@@ -1157,6 +1183,7 @@ pre {
   border: var(--hairline) solid var(--border-strong);
   border-radius: var(--radius-sm);
   padding: var(--space-2) var(--space-3);
+  cursor: default;
   transition:
     background var(--dur) var(--ease),
     border-color var(--dur) var(--ease),

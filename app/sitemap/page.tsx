@@ -234,11 +234,21 @@ export default async function SitemapPage() {
   return (
     <Section>
       <Container>
-        <div className="mb-2">
-          <PagePath path="/sitemap" />
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <div className="mb-2">
+              <PagePath path="/sitemap" />
+            </div>
+            <div className="section-label">Architecture</div>
+            <h1>Site tree & routes</h1>
+          </div>
+          {totalRoutes > 0 && (
+            <div className="inline-flex items-center gap-1.5 font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1 transition-colors duration-150 hover:border-brand hover:bg-surface-hover hover:text-fg cursor-default">
+              <span className="font-medium text-fg">{totalRoutes}</span>
+              <span>Routes</span>
+            </div>
+          )}
         </div>
-        <div className="section-label">Architecture</div>
-        <h1>Site tree & routes</h1>
         <p className="section-intro">
           A visual directory of every published page, post, project, and resource across dileepa.dev.
         </p>
