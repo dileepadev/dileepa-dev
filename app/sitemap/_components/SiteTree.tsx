@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import {
+  AlertCircle,
   ArrowRight,
   Calendar,
   ChevronDown,
@@ -38,7 +39,8 @@ export interface TreeNode {
     | "event"
     | "tag"
     | "feed"
-    | "system";
+    | "system"
+    | "error";
   badge?: string;
   children?: TreeNode[];
   isExternal?: boolean;
@@ -74,6 +76,8 @@ function getNodeIcon(node: TreeNode, isOpen: boolean) {
       return <Rss className="h-3.5 w-3.5 text-brand shrink-0" aria-hidden="true" />;
     case "system":
       return <FileCode className="h-3.5 w-3.5 text-fg-muted shrink-0" aria-hidden="true" />;
+    case "error":
+      return <AlertCircle className="h-3.5 w-3.5 text-error shrink-0" aria-hidden="true" />;
     default:
       return <FileText className="h-3.5 w-3.5 text-fg-muted shrink-0" aria-hidden="true" />;
   }

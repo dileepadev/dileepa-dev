@@ -358,6 +358,30 @@ export const PAGES = {
     intro:
       "A dedicated reference for event organizers, conference committees, and podcast hosts. Includes official bios, photos with instant download, and credentials.",
   },
+
+  notFound: {
+    meta: {
+      title: "Page not found (404)",
+      description:
+        "The requested resource or page could not be located on dileepa.dev.",
+    },
+    label: "System",
+    title: "Not found (404)",
+    intro:
+      "Fallback route rendered when a path does not exist. Features interactive radar telemetry and operator ID.",
+  },
+
+  error500: {
+    meta: {
+      title: "Runtime fault (500)",
+      description:
+        "Server-side render error boundary and recovery diagnostic unit on dileepa.dev.",
+    },
+    label: "System",
+    title: "Runtime fault (500)",
+    intro:
+      "Runtime fault boundary rendered when a render pipeline fails. Features oscilloscope wave telemetry and node reboot.",
+  },
 } as const;
 
 export interface PageSummary {
@@ -472,5 +496,23 @@ export const PAGES_LIST: PageSummary[] = [
     intro: PAGES.terms.intro,
     description: PAGES.terms.meta.description,
     badge: "Legal",
+  },
+  {
+    key: "notFound",
+    path: "/404",
+    label: PAGES.notFound.label,
+    title: PAGES.notFound.title,
+    intro: PAGES.notFound.intro,
+    description: PAGES.notFound.meta.description,
+    badge: "404",
+  },
+  {
+    key: "error500",
+    path: "/500",
+    label: PAGES.error500.label,
+    title: PAGES.error500.title,
+    intro: PAGES.error500.intro,
+    description: PAGES.error500.meta.description,
+    badge: "500",
   },
 ];

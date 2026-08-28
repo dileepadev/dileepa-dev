@@ -247,6 +247,38 @@ export default async function SitemapPage() {
         type: "system",
         badge: "TXT",
       },
+      {
+        id: "root/manifest",
+        name: "manifest.json",
+        path: "/manifest.json",
+        title: "Web App Manifest (PWA config & icon suite)",
+        type: "system",
+        badge: "JSON",
+      },
+      {
+        id: "root/browserconfig",
+        name: "browserconfig.xml",
+        path: "/browserconfig.xml",
+        title: "Windows Start Screen tile configuration",
+        type: "system",
+        badge: "XML",
+      },
+      {
+        id: "root/404",
+        name: "404",
+        path: "/404",
+        title: PAGES.notFound.title,
+        type: "error",
+        badge: "404",
+      },
+      {
+        id: "root/500",
+        name: "500",
+        path: "/500",
+        title: PAGES.error500.title,
+        type: "error",
+        badge: "500",
+      },
     ],
   };
 
