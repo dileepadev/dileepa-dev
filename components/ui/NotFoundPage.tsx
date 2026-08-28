@@ -9,6 +9,8 @@ interface NotFoundPageProps {
   children: ReactNode;
   /** The section this page belongs to, offered alongside the homepage. */
   back?: { href: string; label: string };
+  /** An optional visual or interactive panel beside the message. */
+  aside?: ReactNode;
 }
 
 /**
@@ -21,19 +23,37 @@ interface NotFoundPageProps {
  * page bails to the client, which ships a 404 with an empty `<body>`. They
  * share this component so four copies of the same markup cannot drift.
  */
-export function NotFoundPage({ heading, children, back }: NotFoundPageProps) {
+export function NotFoundPage({
+  heading,
+  children,
+  back,
+  aside,
+}: NotFoundPageProps) {
   return (
     <Section>
       <Container>
-        <div className="section-label">404</div>
-        <h1>{heading}</h1>
-        <p className="mt-4 text-fg-muted">{children}</p>
-        <div className="mt-8 flex flex-wrap gap-3">
-          <LinkButton href="/">Go to the homepage</LinkButton>
-          {back && (
-            <LinkButton href={back.href} variant="secondary">
-              {back.label}
-            </LinkButton>
+        <div
+          className={
+            aside
+              ? "grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center"
+              : undefined
+          }
+        >
+          <div className={aside ? "lg:col-span-6 xl:col-span-7 min-w-0" : undefined}>
+            <div className="section-label">404</div>
+            <h1>{heading}</h1>
+            <p className="mt-4 text-fg-muted">{children}</p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <LinkButton href="/">Go to the homepage</LinkButton>
+              {back && (
+                <LinkButton href={back.href} variant="secondary">
+                  {back.label}
+                </LinkButton>
+              )}
+            </div>
+          </div>
+          {aside && (
+            <div className="lg:col-span-6 xl:col-span-5 min-w-0">{aside}</div>
           )}
         </div>
       </Container>
