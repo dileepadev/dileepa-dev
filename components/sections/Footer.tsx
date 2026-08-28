@@ -94,6 +94,15 @@ export function Footer({ about }: { about?: About | null }) {
           </span>
           <div className="footer-meta">
             <Link
+              href="/brand"
+              className={cn(isLinkActive("/brand") && "is-active text-brand")}
+            >
+              Brand
+            </Link>
+            <span className="text-border-strong" aria-hidden="true">
+              /
+            </span>
+            <Link
               href="/privacy"
               className={cn(isLinkActive("/privacy") && "is-active text-brand")}
             >

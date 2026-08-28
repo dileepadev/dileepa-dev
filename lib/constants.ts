@@ -334,6 +334,18 @@ export const PAGES = {
     intro:
       "The rules and guidelines for using this website, its content, and interactive features.",
   },
+
+  brand: {
+    meta: {
+      title: "Brand & design reference",
+      description:
+        "Living visual design system, color tokens, typography scale, logo mark, and portrait guidelines for dileepadev.",
+    },
+    label: "Identity",
+    title: "Brand & design reference",
+    intro:
+      "A living visual reference for the dileepadev identity — colors, typography, mark, photography, and UI patterns.",
+  },
 } as const;
 
 export interface PageSummary {
@@ -403,6 +415,15 @@ export const PAGES_LIST: PageSummary[] = [
     intro: PAGES.gallery.intro,
     description: PAGES.gallery.meta.description,
     badge: "Gallery",
+  },
+  {
+    key: "brand",
+    path: "/brand",
+    label: PAGES.brand.label,
+    title: PAGES.brand.title,
+    intro: PAGES.brand.intro,
+    description: PAGES.brand.meta.description,
+    badge: "Reference",
   },
   {
     key: "sitemap",

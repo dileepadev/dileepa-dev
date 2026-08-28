@@ -166,7 +166,7 @@ function TreeBranch({
           href={node.path}
           className="inline-flex items-baseline gap-2 flex-wrap min-w-0 text-fg hover:text-brand transition-colors"
         >
-          <span className="font-semibold text-fg group-hover:text-brand transition-colors">
+          <span className="font-medium text-fg group-hover:text-brand transition-colors">
             {node.name}
           </span>
           {node.title && (
@@ -316,7 +316,7 @@ export function SiteTree({ tree, totalRoutes, pagesList }: SiteTreeProps) {
                 className={cn(
                   "px-2.5 py-1.5 transition-colors cursor-pointer border-r border-border-strong",
                   viewMode === "tree"
-                    ? "bg-brand text-bg font-semibold"
+                    ? "bg-brand text-bg font-medium"
                     : "bg-bg-surface hover:bg-surface-hover hover:text-brand text-fg-muted",
                 )}
               >
@@ -328,7 +328,7 @@ export function SiteTree({ tree, totalRoutes, pagesList }: SiteTreeProps) {
                 className={cn(
                   "px-2.5 py-1.5 transition-colors cursor-pointer",
                   viewMode === "pages"
-                    ? "bg-brand text-bg font-semibold"
+                    ? "bg-brand text-bg font-medium"
                     : "bg-bg-surface hover:bg-surface-hover hover:text-brand text-fg-muted",
                 )}
               >
@@ -339,7 +339,7 @@ export function SiteTree({ tree, totalRoutes, pagesList }: SiteTreeProps) {
 
           <div className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-sm border border-border-strong bg-bg-surface font-mono text-xs text-fg-muted">
             <Layers className="h-3.5 w-3.5 text-brand" aria-hidden="true" />
-            <span className="font-semibold text-fg">
+            <span className="font-medium text-fg">
               {viewMode === "pages"
                 ? searchActive
                   ? filteredPages.length
@@ -411,7 +411,7 @@ export function SiteTree({ tree, totalRoutes, pagesList }: SiteTreeProps) {
               >
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-2">
-                    <span className="font-mono text-xs font-semibold text-brand">
+                    <span className="font-mono text-xs font-medium text-brand">
                       {page.path}
                     </span>
                     <span className="inline-flex items-center px-2 py-0.5 rounded text-[0.6875rem] font-mono text-fg-muted border border-border-strong bg-bg-surface shrink-0">

@@ -184,6 +184,14 @@ export default async function SitemapPage() {
         badge: "Page",
       },
       {
+        id: "root/brand",
+        name: "brand",
+        path: "/brand",
+        title: PAGES.brand.title,
+        type: "page",
+        badge: "Reference",
+      },
+      {
         id: "root/sitemap",
         name: "sitemap",
         path: "/sitemap",
