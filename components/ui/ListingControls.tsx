@@ -124,7 +124,7 @@ export function ListingControls<TSort extends string>({
               <button
                 type="button"
                 onClick={() => onQueryChange("")}
-                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-sm border border-border-strong bg-bg-surface text-fg text-label hover:border-brand transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-sm border border-border-strong bg-bg-surface text-fg text-label hover:border-brand hover:bg-surface-hover transition-colors cursor-pointer"
                 title="Clear search query"
               >
                 <span>&ldquo;{query.trim()}&rdquo;</span>
@@ -137,7 +137,7 @@ export function ListingControls<TSort extends string>({
                 key={filter.key}
                 type="button"
                 onClick={filter.onRemove}
-                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-sm border border-border-strong bg-bg-surface text-fg text-label hover:border-brand transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-sm border border-border-strong bg-bg-surface text-fg text-label hover:border-brand hover:bg-surface-hover transition-colors cursor-pointer"
                 title={`Remove ${filter.label}`}
               >
                 <span>{filter.label}</span>

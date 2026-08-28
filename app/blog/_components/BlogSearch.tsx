@@ -451,7 +451,7 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
                           <span>{readingTime(post.readingTimeMinutes)}</span>
                         </span>
                         {post.series && (
-                          <span className="inline-flex items-center gap-1 text-xs font-mono px-2 py-0.5 rounded border border-brand/25 bg-brand/5 text-brand max-w-[200px] truncate">
+                          <span className="inline-flex items-center gap-1 text-xs font-mono px-2 py-0.5 rounded border border-brand/25 bg-brand/5 text-brand max-w-[200px] truncate transition-colors duration-150 hover:border-brand hover:bg-brand/15 cursor-default">
                             <Bookmark className="h-2.5 w-2.5 shrink-0" aria-hidden="true" />
                             <span className="truncate">{post.series.name}</span>
                           </span>

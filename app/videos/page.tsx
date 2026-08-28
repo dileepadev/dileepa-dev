@@ -32,7 +32,7 @@ export default async function VideosPage() {
             <h1>Walkthroughs and talks</h1>
           </div>
           {total > 0 && (
-            <div className="inline-flex items-center gap-1.5 font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1">
+            <div className="inline-flex items-center gap-1.5 font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1 transition-colors duration-150 hover:border-brand hover:bg-surface-hover hover:text-fg cursor-default">
               <span className="font-medium text-fg">{total}</span>
               <span>{total === 1 ? "Video" : "Videos"}</span>
             </div>

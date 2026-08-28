@@ -24,7 +24,7 @@ export function Badge({
         "transition-[background-color,border-color,color] duration-[160ms] ease-brand",
         variant === "filled"
           ? "badge-filled border-transparent bg-brand-fill text-on-brand"
-          : "border-border-strong bg-bg-surface text-fg-muted",
+          : "border-border-strong bg-bg-surface text-fg-muted hover:border-brand hover:bg-surface-hover hover:text-fg cursor-default",
         className,
       )}
     >

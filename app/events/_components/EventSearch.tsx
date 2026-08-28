@@ -1,7 +1,15 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Calendar, Globe, Layers, MapPin, PlayCircle } from "lucide-react";
+import {
+  Calendar,
+  Globe,
+  History,
+  Layers,
+  MapPin,
+  PlayCircle,
+  Sparkles,
+} from "lucide-react";
 import {
   Badge,
   Button,
@@ -339,13 +347,21 @@ export function EventSearch({
           {isDefaultView ? (
             <>
               {filteredUpcoming.length > 0 && (
-                <Subsection title="Upcoming" note="Soonest first.">
+                <Subsection
+                  title="Upcoming"
+                  note="Soonest first."
+                  icon={<Sparkles className="h-4 w-4" />}
+                >
                   <EventItems events={filteredUpcoming} />
                 </Subsection>
               )}
 
               {filteredCompleted.length > 0 && (
-                <Subsection title="Past" note="Most recent first.">
+                <Subsection
+                  title="Past"
+                  note="Most recent first."
+                  icon={<History className="h-4 w-4" />}
+                >
                   <EventItems events={paginatedCompleted} />
                   <LoadMore
                     shown={paginatedCompleted.length}
@@ -395,16 +411,16 @@ function EventItems({ events }: { events: EventRecord[] }) {
           meta={
             <>
               {event.status === "upcoming" ? (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium border border-brand/30 bg-brand/10 text-brand">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium border border-brand/30 bg-brand/10 text-brand transition-colors duration-150 hover:border-brand hover:bg-brand/20 cursor-default">
                   <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" aria-hidden="true" />
                   <span>Upcoming</span>
                 </span>
               ) : event.status === "cancelled" ? (
-                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-mono text-error border border-error/30 bg-error/10">
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-mono text-error border border-error/30 bg-error/10 transition-colors duration-150 hover:border-error/60 hover:bg-error/20 cursor-default">
                   Cancelled
                 </span>
               ) : (
-                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-mono text-fg-muted border border-border-strong bg-bg-surface">
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-mono text-fg-muted border border-border-strong bg-bg-surface transition-colors duration-150 hover:border-brand hover:bg-surface-hover hover:text-fg cursor-default">
                   Past event
                 </span>
               )}

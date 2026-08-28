@@ -45,7 +45,7 @@ export default async function BlogPage() {
             <h1>Writing</h1>
           </div>
           {posts.length > 0 && (
-            <div className="inline-flex items-center gap-1.5 font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1">
+            <div className="inline-flex items-center gap-1.5 font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1 transition-colors duration-150 hover:border-brand hover:bg-surface-hover hover:text-fg cursor-default">
               <span className="font-medium text-fg">{posts.length}</span>
               <span>{posts.length === 1 ? "Post" : "Posts"}</span>
             </div>

@@ -1,4 +1,12 @@
-import { Calendar, Clock, MapPin } from "lucide-react";
+import {
+  Calendar,
+  Clock,
+  MapPin,
+  Mic,
+  PenLine,
+  Users,
+  Video as VideoIcon,
+} from "lucide-react";
 import {
   Container,
   Item,
@@ -26,14 +34,9 @@ import {
 /**
  * Community — communities, events, writing, videos.
  *
- * Four subsections rather than four sections. They are all the same activity
- * seen from different angles, and giving each one a full section heading would
- * make the page claim four topics where there is one.
- *
- * Each subsection renders the first few records and links to its full index. An
- * empty one returns nothing rather than an empty state: on the homepage a
- * missing block is quieter than a box explaining its own absence, and the index
- * pages carry the empty states instead.
+ * Each subsection is an `ItemList` with up to four items and a `ViewAll`
+ * link pointing at the collection route. The events subsection uses the
+ * next three events from the list, which comes pre-sorted from the API.
  */
 export function CommunitySection({
   communities,
@@ -46,13 +49,24 @@ export function CommunitySection({
   posts: BlogPost[];
   videos: Video[];
 }) {
+  const hasContent =
+    communities.length > 0 ||
+    events.length > 0 ||
+    posts.length > 0 ||
+    videos.length > 0;
+
+  if (!hasContent) return null;
+
   return (
     <Section id="community">
       <Container>
         <SectionHeading {...SECTIONS.community} />
 
         {communities.length > 0 && (
-          <Subsection {...SUBSECTIONS.communities}>
+          <Subsection
+            {...SUBSECTIONS.communities}
+            icon={<Users className="h-4 w-4" />}
+          >
             <ItemList>
               {communities.slice(0, 4).map((community) => (
                 <Item
@@ -63,12 +77,12 @@ export function CommunitySection({
                   meta={
                     <>
                       {community.current ? (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium border border-brand/30 bg-brand/10 text-brand">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium border border-brand/30 bg-brand/10 text-brand transition-colors duration-150 hover:border-brand hover:bg-brand/20 cursor-default">
                           <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" aria-hidden="true" />
                           <span>Current</span>
                         </span>
                       ) : (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-mono text-fg-muted border border-border-strong bg-bg-surface">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-mono text-fg-muted border border-border-strong bg-bg-surface transition-colors duration-150 hover:border-brand hover:bg-surface-hover hover:text-fg cursor-default">
                           Past role
                         </span>
                       )}
@@ -91,7 +105,10 @@ export function CommunitySection({
         )}
 
         {events.length > 0 && (
-          <Subsection {...SUBSECTIONS.events}>
+          <Subsection
+            {...SUBSECTIONS.events}
+            icon={<Mic className="h-4 w-4" />}
+          >
             <ItemList>
               {events.map((event) => (
                 <Item
@@ -102,16 +119,16 @@ export function CommunitySection({
                   meta={
                     <>
                       {event.status === "upcoming" ? (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium border border-brand/30 bg-brand/10 text-brand">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium border border-brand/30 bg-brand/10 text-brand transition-colors duration-150 hover:border-brand hover:bg-brand/20 cursor-default">
                           <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" aria-hidden="true" />
                           <span>Upcoming</span>
                         </span>
                       ) : event.status === "cancelled" ? (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-mono text-error border border-error/30 bg-error/10">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-mono text-error border border-error/30 bg-error/10 transition-colors duration-150 hover:border-error/60 hover:bg-error/20 cursor-default">
                           Cancelled
                         </span>
                       ) : (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-mono text-fg-muted border border-border-strong bg-bg-surface">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-mono text-fg-muted border border-border-strong bg-bg-surface transition-colors duration-150 hover:border-brand hover:bg-surface-hover hover:text-fg cursor-default">
                           Past event
                         </span>
                       )}
@@ -133,7 +150,10 @@ export function CommunitySection({
         )}
 
         {posts.length > 0 && (
-          <Subsection {...SUBSECTIONS.blogs}>
+          <Subsection
+            {...SUBSECTIONS.blogs}
+            icon={<PenLine className="h-4 w-4" />}
+          >
             <ItemList>
               {posts.map((post) => (
                 <Item
@@ -163,7 +183,10 @@ export function CommunitySection({
         )}
 
         {videos.length > 0 && (
-          <Subsection {...SUBSECTIONS.videos}>
+          <Subsection
+            {...SUBSECTIONS.videos}
+            icon={<VideoIcon className="h-4 w-4" />}
+          >
             <ItemList>
               {videos.slice(0, 4).map((video) => (
                 <Item
