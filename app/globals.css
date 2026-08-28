@@ -1220,6 +1220,7 @@ pre {
   position: relative;
   display: inline-flex;
   align-items: center;
+  gap: var(--space-2);
   margin-bottom: var(--space-3);
   padding-left: var(--space-3);
   color: var(--fg);
@@ -1229,12 +1230,11 @@ pre {
   letter-spacing: var(--track-label);
 }
 
-/* The accent rule is what ranks a subsection below a section, and it is the
-   one accent in the block. It was drawing Emerald Deep — the stop the brand
-   names as the one hard failure on Carbon — under a 12px glow in
-   rgb(40 183 135), which is not a brand value at all: a fourth green, on a
-   page allowed one. `--brand` flips per theme and needs no glow to be seen. */
-.subsection-title::before {
+.subsection-title.has-icon {
+  padding-left: 0;
+}
+
+.subsection-title:not(.has-icon)::before {
   content: "";
   position: absolute;
   left: 0;
@@ -1244,6 +1244,13 @@ pre {
   border-radius: var(--radius-pill);
   transform: translateY(-50%);
   background: var(--brand);
+}
+
+.subsection-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--brand);
 }
 
 /* Supporting text under a label sat at 0.96rem while the label above it sat at

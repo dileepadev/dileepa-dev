@@ -59,16 +59,25 @@ export function Subsection({
   id,
   title,
   note,
+  icon,
   children,
 }: {
   id?: string;
   title: string;
   note?: string;
+  icon?: ReactNode;
   children: ReactNode;
 }) {
   return (
     <div id={id} className="subsection">
-      <div className="subsection-title">{title}</div>
+      <div className={cn("subsection-title", icon && "has-icon")}>
+        {icon && (
+          <span className="subsection-icon shrink-0 text-brand" aria-hidden="true">
+            {icon}
+          </span>
+        )}
+        <span>{title}</span>
+      </div>
       {note && <p className="subsection-note">{note}</p>}
       {children}
     </div>
