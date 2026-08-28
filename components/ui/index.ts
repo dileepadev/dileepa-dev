@@ -12,6 +12,7 @@ export { EmptyState } from "./EmptyState";
 export { NotFoundPage } from "./NotFoundPage";
 export { NotFoundVisual } from "./NotFoundVisual";
 export { ErrorVisual } from "./ErrorVisual";
+export { ApiOfflineVisual } from "./ApiOfflineVisual";
 export { Gallery } from "./Gallery";
 export { SearchInput } from "./SearchInput";
 export { SortSelect, type SortOption } from "./SortSelect";

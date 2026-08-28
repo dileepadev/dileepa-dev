@@ -279,6 +279,14 @@ export default async function SitemapPage() {
         type: "error",
         badge: "500",
       },
+      {
+        id: "root/503",
+        name: "503",
+        path: "/503",
+        title: PAGES.apiOffline.title,
+        type: "error",
+        badge: "503",
+      },
     ],
   };
 

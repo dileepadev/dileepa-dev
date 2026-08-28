@@ -382,6 +382,18 @@ export const PAGES = {
     intro:
       "Runtime fault boundary rendered when a render pipeline fails. Features oscilloscope wave telemetry and node reboot.",
   },
+
+  apiOffline: {
+    meta: {
+      title: "API service unavailable (503)",
+      description:
+        "Upstream API connection status and fallback diagnostics on dileepa.dev.",
+    },
+    label: "System",
+    title: "API unavailable (503)",
+    intro:
+      "Fallback route displayed when the upstream API (api.dileepa.dev) is unreachable or disconnected.",
+  },
 } as const;
 
 export interface PageSummary {
@@ -514,5 +526,14 @@ export const PAGES_LIST: PageSummary[] = [
     intro: PAGES.error500.intro,
     description: PAGES.error500.meta.description,
     badge: "500",
+  },
+  {
+    key: "apiOffline",
+    path: "/503",
+    label: PAGES.apiOffline.label,
+    title: PAGES.apiOffline.title,
+    intro: PAGES.apiOffline.intro,
+    description: PAGES.apiOffline.meta.description,
+    badge: "503",
   },
 ];
