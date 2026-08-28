@@ -51,12 +51,6 @@ export default function ApiOfflinePage() {
               <LinkButton href="/sitemap" variant="secondary">
                 Explore sitemap
               </LinkButton>
-              <LinkButton href="/brand" variant="secondary">
-                Brand reference
-              </LinkButton>
-              <LinkButton href="/profile" variant="secondary">
-                Speaker profile
-              </LinkButton>
             </div>
           </div>
 
