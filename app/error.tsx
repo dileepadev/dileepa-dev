@@ -11,7 +11,9 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error(error);
+    if (error && error.digest !== "0x500_TELEMETRY_DEMO") {
+      console.error(error);
+    }
   }, [error]);
 
   return (
