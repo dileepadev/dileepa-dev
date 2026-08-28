@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { Calendar, Globe, Layers, MapPin, PlayCircle } from "lucide-react";
 import {
   Badge,
   Button,
@@ -393,18 +394,51 @@ function EventItems({ events }: { events: EventRecord[] }) {
           description={event.summary}
           meta={
             <>
-              <span className="block">{formatDate(event.startAt)}</span>
-              <span className="block">{humanise(event.format)}</span>
+              {event.status === "upcoming" ? (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium border border-brand/30 bg-brand/10 text-brand">
+                  <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" aria-hidden="true" />
+                  <span>Upcoming</span>
+                </span>
+              ) : event.status === "cancelled" ? (
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-mono text-error border border-error/30 bg-error/10">
+                  Cancelled
+                </span>
+              ) : (
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-mono text-fg-muted border border-border-strong bg-bg-surface">
+                  Past event
+                </span>
+              )}
+              <span className="inline-flex items-center gap-1.5 text-fg font-medium">
+                <Calendar className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
+                <span>{formatDate(event.startAt)}</span>
+              </span>
+              <span className="inline-flex items-center gap-1.5 text-fg-muted">
+                {event.format === "in_person" ? (
+                  <MapPin className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
+                ) : event.format === "online" ? (
+                  <Globe className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
+                ) : (
+                  <Layers className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
+                )}
+                <span>{humanise(event.format)}</span>
+              </span>
               {(event.recordings ?? []).length > 0 && (
-                <span className="block">Recording</span>
+                <span className="inline-flex items-center gap-1 text-xs text-brand font-medium">
+                  <PlayCircle className="h-3 w-3 shrink-0" aria-hidden="true" />
+                  <span>Recording</span>
+                </span>
               )}
             </>
           }
         >
           <div className="flex flex-wrap items-center gap-2">
             <Badge>{humanise(event.type)}</Badge>
-            {event.status === "cancelled" && <Badge>Cancelled</Badge>}
-            {event.location?.venue && <Badge>{event.location.venue}</Badge>}
+            {event.location?.venue && (
+              <Badge className="inline-flex items-center gap-1">
+                <MapPin className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
+                <span>{event.location.venue}</span>
+              </Badge>
+            )}
           </div>
         </Item>
       ))}
