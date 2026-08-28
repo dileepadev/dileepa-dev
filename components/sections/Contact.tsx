@@ -7,10 +7,14 @@ import { Container, Section, SectionHeading } from "@/components/ui";
 import { api, ApiError } from "@/lib/api";
 import type { About } from "@/lib/api-types";
 import { SECTIONS, SITE_CONFIG } from "@/lib/constants";
+import { paragraphs } from "@/lib/format";
 
 export function Contact({ about }: { about: About | null }) {
   const [sending, setSending] = useState(false);
   const email = about?.links?.email || SITE_CONFIG.email;
+  const connectParagraphs = paragraphs(about?.connect);
+  const intro = connectParagraphs[0] ?? SECTIONS.contact.intro;
+  const additionalCopy = connectParagraphs.slice(1);
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -43,16 +47,37 @@ export function Contact({ about }: { about: About | null }) {
   return (
     <Section id="contact">
       <Container>
-        <SectionHeading {...SECTIONS.contact} />
+        <SectionHeading
+          label={SECTIONS.contact.label}
+          title={SECTIONS.contact.title}
+          intro={intro}
+        />
 
-        <a className="contact-email" href={`mailto:${email}`}>
-          <Mail
-            className="h-4 w-4 shrink-0"
-            strokeWidth={1.75}
-            aria-hidden="true"
-          />
-          <span>{email}</span>
-        </a>
+        {additionalCopy.length > 0 && (
+          <div className="section-copy section-intro -mt-2 mb-6">
+            {additionalCopy.map((p, i) => (
+              <p key={i}>{p}</p>
+            ))}
+          </div>
+        )}
+
+        <div className="flex items-center gap-3 flex-wrap">
+          <a className="contact-email" href={`mailto:${email}`}>
+            <Mail
+              className="h-4 w-4 shrink-0"
+              strokeWidth={1.75}
+              aria-hidden="true"
+            />
+            <span>{email}</span>
+          </a>
+
+          {about?.status && (
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium border border-brand/30 bg-brand/10 text-brand">
+              <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" aria-hidden="true" />
+              <span>{about.status}</span>
+            </span>
+          )}
+        </div>
 
         {/* The link-in-bio page. It used to sit in the footer's Elsewhere
             column, which Projects now occupies; here it is beside the address,
