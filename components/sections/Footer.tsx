@@ -93,6 +93,24 @@ export function Footer({ about }: { about?: About | null }) {
             © {new Date().getFullYear()} {SITE_CONFIG.author}
           </span>
           <div className="footer-meta">
+            <Link
+              href="/privacy"
+              className={cn(isLinkActive("/privacy") && "is-active text-brand")}
+            >
+              Privacy
+            </Link>
+            <span className="text-border-strong" aria-hidden="true">
+              /
+            </span>
+            <Link
+              href="/terms"
+              className={cn(isLinkActive("/terms") && "is-active text-brand")}
+            >
+              Terms
+            </Link>
+            <span className="text-border-strong" aria-hidden="true">
+              /
+            </span>
             <a
               href={SITE_CONFIG.repository}
               target="_blank"
