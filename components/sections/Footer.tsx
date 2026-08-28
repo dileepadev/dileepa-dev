@@ -111,6 +111,15 @@ export function Footer({ about }: { about?: About | null }) {
             <span className="text-border-strong" aria-hidden="true">
               /
             </span>
+            <Link
+              href="/sitemap"
+              className={cn(isLinkActive("/sitemap") && "is-active text-brand")}
+            >
+              Sitemap
+            </Link>
+            <span className="text-border-strong" aria-hidden="true">
+              /
+            </span>
             <a
               href={SITE_CONFIG.repository}
               target="_blank"
