@@ -39,11 +39,29 @@ export function Item({
           {icon && <span className="shrink-0">{icon}</span>}
           {href ? (
             isExternal ? (
-              <a href={href} target="_blank" rel="noopener noreferrer">
-                {title}
+              <a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-1.5"
+              >
+                <span>{title}</span>
+                <ArrowUpRight
+                  className="h-3.5 w-3.5 shrink-0 text-fg-muted transition-all duration-150 group-hover:text-brand group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                  aria-hidden="true"
+                />
               </a>
             ) : (
-              <Link href={href}>{title}</Link>
+              <Link
+                href={href}
+                className="group inline-flex items-center gap-1.5"
+              >
+                <span>{title}</span>
+                <ArrowRight
+                  className="h-3.5 w-3.5 shrink-0 text-fg-muted transition-all duration-150 group-hover:text-brand group-hover:translate-x-1"
+                  aria-hidden="true"
+                />
+              </Link>
             )
           ) : (
             title

@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { ArrowUpRight } from "lucide-react";
 
 /**
  * The entry list — experience and education.
@@ -37,8 +38,17 @@ export function Entry({
       <div className="min-w-0">
         <div className="entry-org">
           {orgUrl ? (
-            <a href={orgUrl} target="_blank" rel="noopener noreferrer">
-              {org}
+            <a
+              href={orgUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex items-center gap-1.5 hover:text-brand"
+            >
+              <span>{org}</span>
+              <ArrowUpRight
+                className="h-3.5 w-3.5 shrink-0 text-brand/70 transition-transform duration-150 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-brand"
+                aria-hidden="true"
+              />
             </a>
           ) : (
             org
