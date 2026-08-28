@@ -185,6 +185,14 @@ export default async function SitemapPage() {
         badge: "Page",
       },
       {
+        id: "root/sitemap",
+        name: "sitemap",
+        path: "/sitemap",
+        title: "Site tree & architecture",
+        type: "page",
+        badge: "Page",
+      },
+      {
         id: "root/privacy",
         name: "privacy",
         path: "/privacy",
