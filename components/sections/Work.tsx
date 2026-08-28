@@ -1,3 +1,4 @@
+import { FolderGit2, Terminal } from "lucide-react";
 import {
   Chip,
   Container,
@@ -29,9 +30,10 @@ export function Work({
   tools: Tool[];
   projects: Project[];
 }) {
-  if (experiences.length === 0 && tools.length === 0 && projects.length === 0) {
-    return null;
-  }
+  const hasContent =
+    experiences.length > 0 || tools.length > 0 || projects.length > 0;
+
+  if (!hasContent) return null;
 
   return (
     <Section id="work">
@@ -48,24 +50,17 @@ export function Work({
                 org={item.company}
                 orgUrl={item.url || undefined}
                 description={item.description}
-              >
-                {(item.technologies ?? []).length > 0 && (
-                  <ul className="mt-3 flex flex-wrap gap-1.5">
-                    {(item.technologies ?? []).map((tech) => (
-                      <li key={tech}>
-                        <Chip>{tech}</Chip>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </Entry>
+              />
             ))}
           </EntryList>
         )}
 
         {tools.length > 0 && (
           <div className="mt-12">
-            <Subsection {...SUBSECTIONS.tools}>
+            <Subsection
+              {...SUBSECTIONS.tools}
+              icon={<Terminal className="h-4 w-4" />}
+            >
               <div className="stack">
                 {tools.map((tool) => (
                   <span key={tool.id}>{tool.name}</span>
@@ -77,7 +72,10 @@ export function Work({
 
         {projects.length > 0 && (
           <div className="mt-12">
-            <Subsection {...SUBSECTIONS.projects}>
+            <Subsection
+              {...SUBSECTIONS.projects}
+              icon={<FolderGit2 className="h-4 w-4" />}
+            >
               <ItemList>
                 {projects.map((project) => (
                   <Item
@@ -88,12 +86,12 @@ export function Work({
                     meta={
                       <>
                         {project.status === "active" ? (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium border border-brand/30 bg-brand/10 text-brand">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium border border-brand/30 bg-brand/10 text-brand transition-colors duration-150 hover:border-brand hover:bg-brand/20 cursor-default">
                             <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" aria-hidden="true" />
                             <span>Active</span>
                           </span>
                         ) : (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-mono text-fg-muted border border-border-strong bg-bg-surface">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-mono text-fg-muted border border-border-strong bg-bg-surface transition-colors duration-150 hover:border-brand hover:bg-surface-hover hover:text-fg cursor-default">
                             {humanise(project.status)}
                           </span>
                         )}
