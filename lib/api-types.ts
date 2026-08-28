@@ -26,7 +26,9 @@ export type Experience = Schemas["Experience"];
 export type Education = Schemas["Education"];
 export type Tool = Schemas["Tool"];
 export type Community = Schemas["Community"];
-export type Video = Schemas["Video"];
+export type Video = Schemas["Video"] & {
+  durationSeconds?: number | null;
+};
 export type Project = Schemas["Project"];
 export type EventRecord = Schemas["Event"];
 export type BlogPost = Schemas["BlogPost"];

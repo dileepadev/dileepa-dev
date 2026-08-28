@@ -35,6 +35,7 @@ import type {
   Tool,
   Video,
 } from "./api-types";
+import { getYouTubeDuration } from "./youtube";
 
 /**
  * Hosts where plaintext HTTP is the normal, correct thing.
@@ -328,7 +329,16 @@ export const api = {
 
   getCommunities: () => degradePage<Community>("/communities"),
 
-  getVideos: () => degradePage<Video>("/videos"),
+  getVideos: async (): Promise<Video[]> => {
+    const videos = await degradePage<Video>("/videos");
+    if (videos.length === 0) return [];
+    return Promise.all(
+      videos.map(async (v) => {
+        const durationSeconds = await getYouTubeDuration(v.link);
+        return { ...v, durationSeconds };
+      }),
+    );
+  },
 
   // --- Projects ------------------------------------------------------------
 
