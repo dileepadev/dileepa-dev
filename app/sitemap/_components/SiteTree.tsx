@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { matchesTokens, searchTokens } from "@/lib/listing";
+import type { PageSummary } from "@/lib/constants";
 
 export interface TreeNode {
   id: string;
@@ -46,6 +47,7 @@ export interface TreeNode {
 interface SiteTreeProps {
   tree: TreeNode;
   totalRoutes: number;
+  pagesList?: PageSummary[];
 }
 
 function getNodeIcon(node: TreeNode, isOpen: boolean) {
@@ -206,8 +208,9 @@ function TreeBranch({
   );
 }
 
-export function SiteTree({ tree, totalRoutes }: SiteTreeProps) {
+export function SiteTree({ tree, totalRoutes, pagesList }: SiteTreeProps) {
   const [query, setQuery] = useState("");
+  const [viewMode, setViewMode] = useState<"tree" | "pages">("tree");
   const [openMap, setOpenMap] = useState<Record<string, boolean>>({
     root: true,
     "root/projects": true,
@@ -227,6 +230,24 @@ export function SiteTree({ tree, totalRoutes }: SiteTreeProps) {
   const visibleCount = useMemo(() => {
     return countNodes(filteredTree);
   }, [filteredTree]);
+
+  const filteredPages = useMemo(() => {
+    if (!pagesList) return [];
+    if (!searchActive) return pagesList;
+    return pagesList.filter((page) =>
+      matchesTokens(
+        [
+          page.path,
+          page.label,
+          page.title,
+          page.intro,
+          page.description,
+          page.badge,
+        ],
+        tokens,
+      ),
+    );
+  }, [pagesList, tokens, searchActive]);
 
   function toggleOpen(id: string) {
     setOpenMap((prev) => ({
@@ -253,7 +274,7 @@ export function SiteTree({ tree, totalRoutes }: SiteTreeProps) {
 
   return (
     <div className="space-y-6">
-      {/* Controls: Search, stats & expand/collapse */}
+      {/* Controls: Search, view mode, stats & expand/collapse */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
         {/* Search input */}
         <div className="relative flex-1 max-w-md">
@@ -265,7 +286,11 @@ export function SiteTree({ tree, totalRoutes }: SiteTreeProps) {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Filter routes or slugs… (e.g. agent, blog, projects)"
+            placeholder={
+              viewMode === "pages"
+                ? "Filter pages… (e.g. blog, projects, legal)"
+                : "Filter routes or slugs… (e.g. agent, blog, projects)"
+            }
             className="w-full pl-9 pr-8 py-2 font-mono text-small rounded-sm border border-border-strong bg-bg-surface text-fg placeholder:text-fg-muted focus:border-brand focus:outline-none transition-colors"
           />
           {query && (
@@ -282,52 +307,150 @@ export function SiteTree({ tree, totalRoutes }: SiteTreeProps) {
 
         {/* Actions & counter */}
         <div className="flex items-center gap-2.5 flex-wrap">
+          {/* View mode switcher */}
+          {pagesList && pagesList.length > 0 && (
+            <div className="inline-flex items-center rounded-sm border border-border-strong overflow-hidden text-xs font-mono">
+              <button
+                type="button"
+                onClick={() => setViewMode("tree")}
+                className={cn(
+                  "px-2.5 py-1.5 transition-colors cursor-pointer border-r border-border-strong",
+                  viewMode === "tree"
+                    ? "bg-brand text-bg font-semibold"
+                    : "bg-bg-surface hover:bg-surface-hover hover:text-brand text-fg-muted",
+                )}
+              >
+                Tree view
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode("pages")}
+                className={cn(
+                  "px-2.5 py-1.5 transition-colors cursor-pointer",
+                  viewMode === "pages"
+                    ? "bg-brand text-bg font-semibold"
+                    : "bg-bg-surface hover:bg-surface-hover hover:text-brand text-fg-muted",
+                )}
+              >
+                Pages list
+              </button>
+            </div>
+          )}
+
           <div className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-sm border border-border-strong bg-bg-surface font-mono text-xs text-fg-muted">
             <Layers className="h-3.5 w-3.5 text-brand" aria-hidden="true" />
             <span className="font-semibold text-fg">
-              {searchActive ? visibleCount : totalRoutes}
+              {viewMode === "pages"
+                ? searchActive
+                  ? filteredPages.length
+                  : (pagesList?.length ?? 0)
+                : searchActive
+                  ? visibleCount
+                  : totalRoutes}
             </span>
-            <span>{searchActive ? "matched" : "routes"}</span>
+            <span>
+              {viewMode === "pages"
+                ? searchActive
+                  ? "matched"
+                  : "pages"
+                : searchActive
+                  ? "matched"
+                  : "routes"}
+            </span>
           </div>
 
-          <div className="inline-flex items-center rounded-sm border border-border-strong overflow-hidden text-xs font-mono">
-            <button
-              type="button"
-              onClick={expandAll}
-              className="px-2.5 py-1.5 bg-bg-surface hover:bg-surface-hover hover:text-brand text-fg-muted transition-colors cursor-pointer border-r border-border-strong"
-            >
-              Expand all
-            </button>
-            <button
-              type="button"
-              onClick={collapseAll}
-              className="px-2.5 py-1.5 bg-bg-surface hover:bg-surface-hover hover:text-brand text-fg-muted transition-colors cursor-pointer"
-            >
-              Collapse all
-            </button>
-          </div>
+          {viewMode === "tree" && (
+            <div className="inline-flex items-center rounded-sm border border-border-strong overflow-hidden text-xs font-mono">
+              <button
+                type="button"
+                onClick={expandAll}
+                className="px-2.5 py-1.5 bg-bg-surface hover:bg-surface-hover hover:text-brand text-fg-muted transition-colors cursor-pointer border-r border-border-strong"
+              >
+                Expand all
+              </button>
+              <button
+                type="button"
+                onClick={collapseAll}
+                className="px-2.5 py-1.5 bg-bg-surface hover:bg-surface-hover hover:text-brand text-fg-muted transition-colors cursor-pointer"
+              >
+                Collapse all
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Tree container styled like a developer console / code file */}
+      {/* Content container styled like a developer console */}
       <div className="rounded-lg border border-border-strong bg-bg-surface p-4 sm:p-6 overflow-x-auto shadow-sm">
         <div className="mb-4 pb-3 border-b border-border-strong/60 flex items-center justify-between font-mono text-xs text-fg-muted">
           <span className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-brand animate-pulse" aria-hidden="true" />
-            <span>dileepa.dev route tree</span>
+            <span
+              className="h-2 w-2 rounded-full bg-brand animate-pulse"
+              aria-hidden="true"
+            />
+            <span>
+              {viewMode === "pages"
+                ? "dileepa.dev standalone pages"
+                : "dileepa.dev route tree"}
+            </span>
           </span>
-          <span>HTTP GET / App Router</span>
+          <span>
+            {viewMode === "pages"
+              ? `${filteredPages.length} pages`
+              : "HTTP GET / App Router"}
+          </span>
         </div>
 
-        {/* The interactive tree */}
-        <div className="min-w-[480px]">
-          <TreeBranch
-            node={filteredTree}
-            openMap={openMap}
-            toggleOpen={toggleOpen}
-            searchActive={searchActive}
-          />
-        </div>
+        {viewMode === "pages" ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {filteredPages.map((page) => (
+              <Link
+                key={page.key}
+                href={page.path}
+                className="group flex flex-col justify-between p-4 rounded-sm border border-border-strong bg-bg hover:border-brand transition-colors"
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <span className="font-mono text-xs font-semibold text-brand">
+                      {page.path}
+                    </span>
+                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[0.6875rem] font-mono text-fg-muted border border-border-strong bg-bg-surface shrink-0">
+                      {page.badge}
+                    </span>
+                  </div>
+                  <h3 className="font-medium text-fg group-hover:text-brand transition-colors text-sm">
+                    {page.title}
+                  </h3>
+                  <p className="mt-1 text-fg-muted text-xs line-clamp-2">
+                    {page.intro || page.description}
+                  </p>
+                </div>
+                <div className="mt-3 pt-2 border-t border-border-strong/40 flex items-center justify-between text-xs font-mono text-fg-muted group-hover:text-brand">
+                  <span>Visit page</span>
+                  <ArrowRight
+                    className="h-3.5 w-3.5 shrink-0 transition-transform group-hover:translate-x-1"
+                    aria-hidden="true"
+                  />
+                </div>
+              </Link>
+            ))}
+            {filteredPages.length === 0 && (
+              <div className="col-span-full py-8 text-center font-mono text-xs text-fg-muted">
+                No pages matched &ldquo;{query}&rdquo;
+              </div>
+            )}
+          </div>
+        ) : (
+          /* The interactive tree */
+          <div className="min-w-[480px]">
+            <TreeBranch
+              node={filteredTree}
+              openMap={openMap}
+              toggleOpen={toggleOpen}
+              searchActive={searchActive}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

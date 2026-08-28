@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Container, PagePath, Section } from "@/components/ui";
 import { api } from "@/lib/api";
-import { PAGES, SITE_CONFIG } from "@/lib/constants";
+import { PAGES, PAGES_LIST, SITE_CONFIG } from "@/lib/constants";
 import { SiteTree, type TreeNode } from "./_components/SiteTree";
 
 export const metadata: Metadata = {
@@ -89,7 +89,7 @@ export default async function SitemapPage() {
         id: "root/projects",
         name: "projects",
         path: "/projects",
-        title: "Things I have built",
+        title: PAGES.projects.title,
         type: "folder",
         badge: `${projects.length} projects`,
         children: projects.map((proj) => ({
@@ -105,7 +105,7 @@ export default async function SitemapPage() {
         id: "root/events",
         name: "events",
         path: "/events",
-        title: "Talks and workshops",
+        title: PAGES.events.title,
         type: "folder",
         badge: `${events.length} events`,
         children: events.map((ev) => ({
@@ -121,7 +121,7 @@ export default async function SitemapPage() {
         id: "root/blog",
         name: "blog",
         path: "/blog",
-        title: "Writing and notes",
+        title: PAGES.blog.title,
         type: "folder",
         badge: `${posts.length} posts`,
         children: [
@@ -163,7 +163,7 @@ export default async function SitemapPage() {
         id: "root/communities",
         name: "communities",
         path: "/communities",
-        title: "Communities & technical meetups",
+        title: PAGES.communities.title,
         type: "page",
         badge: "Page",
       },
@@ -171,7 +171,7 @@ export default async function SitemapPage() {
         id: "root/videos",
         name: "videos",
         path: "/videos",
-        title: "Recorded walkthroughs and talks",
+        title: PAGES.videos.title,
         type: "page",
         badge: "Page",
       },
@@ -179,7 +179,7 @@ export default async function SitemapPage() {
         id: "root/gallery",
         name: "gallery",
         path: "/gallery",
-        title: "Event photographs",
+        title: PAGES.gallery.title,
         type: "page",
         badge: "Page",
       },
@@ -187,7 +187,7 @@ export default async function SitemapPage() {
         id: "root/sitemap",
         name: "sitemap",
         path: "/sitemap",
-        title: "Site tree & architecture",
+        title: PAGES.sitemap.title,
         type: "page",
         badge: "Page",
       },
@@ -195,7 +195,7 @@ export default async function SitemapPage() {
         id: "root/privacy",
         name: "privacy",
         path: "/privacy",
-        title: "Privacy Policy",
+        title: PAGES.privacy.title,
         type: "page",
         badge: "Legal",
       },
@@ -203,7 +203,7 @@ export default async function SitemapPage() {
         id: "root/terms",
         name: "terms",
         path: "/terms",
-        title: "Terms of Service",
+        title: PAGES.terms.title,
         type: "page",
         badge: "Legal",
       },
@@ -220,6 +220,14 @@ export default async function SitemapPage() {
         name: "robots.txt",
         path: "/robots.txt",
         title: "Crawler & Search Engine Rules",
+        type: "system",
+        badge: "TXT",
+      },
+      {
+        id: "root/llms",
+        name: "llms.txt",
+        path: "/llms.txt",
+        title: "LLM & AI Agent Context File",
         type: "system",
         badge: "TXT",
       },
@@ -259,7 +267,11 @@ export default async function SitemapPage() {
         <p className="section-intro">{PAGES.sitemap.intro}</p>
 
         <div className="mt-8">
-          <SiteTree tree={tree} totalRoutes={totalRoutes} />
+          <SiteTree
+            tree={tree}
+            totalRoutes={totalRoutes}
+            pagesList={PAGES_LIST}
+          />
         </div>
       </Container>
     </Section>

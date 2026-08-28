@@ -229,103 +229,6 @@ export const EMPTY_STATES = {
  * Keeping titles, headings, and descriptions in one place guarantees consistent
  * voice (sentence case, no banned buzzwords) and single-source maintainability.
  */
-// export const PAGES = {
-//   blog: {
-//     meta: {
-//       title: "Blog",
-//       description: "Notes on what I build, and what went wrong on the way.",
-//     },
-//     label: "Blog",
-//     title: "Writing",
-//     intro: "Notes on what I build, and what went wrong on the way.",
-//   },
-//   projects: {
-//     meta: {
-//       title: "Projects",
-//       description:
-//         "Things I have built and keep running, with a write-up for each.",
-//     },
-//     label: "Projects",
-//     title: "Things I have built",
-//     intro:
-//       "Each one has a longer write-up: what it does, what it is made of, and what I would do differently.",
-//   },
-//   events: {
-//     meta: {
-//       title: "Events",
-//       description:
-//         "Talks, workshops and webinars, with slides and recordings where they exist.",
-//     },
-//     label: "Events",
-//     title: "Talks and workshops",
-//     intro:
-//       "Events I have delivered at meetups, conferences and online. Slides and recordings are linked where they exist.",
-//   },
-//   communities: {
-//     meta: {
-//       title: "Communities",
-//       description: "Tech communities I organise with or contribute to.",
-//     },
-//     label: "Communities",
-//     title: "Communities",
-//     intro: "Groups I organise with or contribute to, and what I do in each.",
-//   },
-//   videos: {
-//     meta: {
-//       title: "Videos",
-//       description: "Short walkthroughs and recorded talks, hosted on YouTube.",
-//     },
-//     label: "Videos",
-//     title: "Walkthroughs and talks",
-//     intro:
-//       "Short walkthroughs, mostly Azure setup and OpenAI basics. Each one opens on YouTube.",
-//   },
-//   gallery: {
-//     meta: {
-//       title: "Event gallery",
-//       description:
-//         "Photographs from the talks and workshops I have delivered, newest first.",
-//     },
-//     label: "Gallery",
-//     title: "Event photographs",
-//     intro:
-//       "Photographs from the rooms these talks and workshops were delivered in, newest first. Each one links to the event it came from.",
-//   },
-//   sitemap: {
-//     meta: {
-//       title: "Site tree & architecture",
-//       description:
-//         "Interactive directory tree of all routes, pages, articles, projects, and resources across dileepa.dev.",
-//     },
-//     label: "Architecture",
-//     title: "Site tree & routes",
-//     intro:
-//       "A visual directory of every published page, post, project, and resource across dileepa.dev.",
-//   },
-//   privacy: {
-//     meta: {
-//       title: "Privacy policy",
-//       description:
-//         "How your information is collected, used, and protected when you visit dileepa.dev or interact with its forms and comments.",
-//     },
-//     label: "Legal",
-//     title: "Privacy policy",
-//     intro:
-//       "A clear, straightforward explanation of what data is collected, how it is handled, and why.",
-//   },
-//   terms: {
-//     meta: {
-//       title: "Terms of service",
-//       description:
-//         "Terms and conditions for using dileepa.dev, reading its articles, and participating in comments and interactive features.",
-//     },
-//     label: "Legal",
-//     title: "Terms of service",
-//     intro:
-//       "The basic rules and guidelines governing the use of this website, its content, and its interactive tools.",
-//   },
-// } as const;
-
 export const PAGES = {
   blog: {
     meta: {
@@ -432,3 +335,100 @@ export const PAGES = {
       "The rules and guidelines for using this website, its content, and interactive features.",
   },
 } as const;
+
+export interface PageSummary {
+  key: keyof typeof PAGES;
+  path: string;
+  label: string;
+  title: string;
+  intro: string;
+  description: string;
+  badge: string;
+}
+
+/**
+ * Ordered list of all standalone pages across the site.
+ */
+export const PAGES_LIST: PageSummary[] = [
+  {
+    key: "projects",
+    path: "/projects",
+    label: PAGES.projects.label,
+    title: PAGES.projects.title,
+    intro: PAGES.projects.intro,
+    description: PAGES.projects.meta.description,
+    badge: "Projects",
+  },
+  {
+    key: "events",
+    path: "/events",
+    label: PAGES.events.label,
+    title: PAGES.events.title,
+    intro: PAGES.events.intro,
+    description: PAGES.events.meta.description,
+    badge: "Events",
+  },
+  {
+    key: "blog",
+    path: "/blog",
+    label: PAGES.blog.label,
+    title: PAGES.blog.title,
+    intro: PAGES.blog.intro,
+    description: PAGES.blog.meta.description,
+    badge: "Blog",
+  },
+  {
+    key: "communities",
+    path: "/communities",
+    label: PAGES.communities.label,
+    title: PAGES.communities.title,
+    intro: PAGES.communities.intro,
+    description: PAGES.communities.meta.description,
+    badge: "Community",
+  },
+  {
+    key: "videos",
+    path: "/videos",
+    label: PAGES.videos.label,
+    title: PAGES.videos.title,
+    intro: PAGES.videos.intro,
+    description: PAGES.videos.meta.description,
+    badge: "Videos",
+  },
+  {
+    key: "gallery",
+    path: "/gallery",
+    label: PAGES.gallery.label,
+    title: PAGES.gallery.title,
+    intro: PAGES.gallery.intro,
+    description: PAGES.gallery.meta.description,
+    badge: "Gallery",
+  },
+  {
+    key: "sitemap",
+    path: "/sitemap",
+    label: PAGES.sitemap.label,
+    title: PAGES.sitemap.title,
+    intro: PAGES.sitemap.intro,
+    description: PAGES.sitemap.meta.description,
+    badge: "Architecture",
+  },
+  {
+    key: "privacy",
+    path: "/privacy",
+    label: PAGES.privacy.label,
+    title: PAGES.privacy.title,
+    intro: PAGES.privacy.intro,
+    description: PAGES.privacy.meta.description,
+    badge: "Legal",
+  },
+  {
+    key: "terms",
+    path: "/terms",
+    label: PAGES.terms.label,
+    title: PAGES.terms.title,
+    intro: PAGES.terms.intro,
+    description: PAGES.terms.meta.description,
+    badge: "Legal",
+  },
+];
