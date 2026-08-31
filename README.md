@@ -7,9 +7,10 @@ Welcome to my personal website project, hosted at [dileepa.dev](https://dileepa.
 - [dileepa.dev](#dileepadev)
   - [Table of Contents](#table-of-contents)
   - [Tools and Technologies](#tools-and-technologies)
-  - [Captured Media](#captured-media)
   - [Sections](#sections)
+    - [Blog posts](#blog-posts)
   - [The terminal rendering](#the-terminal-rendering)
+    - [The boot sequence](#the-boot-sequence)
   - [Getting Started](#getting-started)
     - [Prerequisites](#prerequisites)
     - [Installation](#installation)
@@ -43,10 +44,6 @@ Welcome to my personal website project, hosted at [dileepa.dev](https://dileepa.
 - **Image Optimization:** [Next.js Image](https://nextjs.org/docs/api-reference/next/image)
 - **API Communication:** [api.dileepa.dev](https://api.dileepa.dev/)
 - **Icons:** [React Icons](https://react-icons.github.io/react-icons)
-
-## Captured Media
-
-![Dileepa Bandara](https://dileepadev.github.io/images/dileepa-dev/preview-1.3.0.png)
 
 ## Sections
 
