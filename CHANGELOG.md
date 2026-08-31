@@ -11,12 +11,28 @@ Changes are organized into the following categories:
 
 ## [Unreleased]
 
-### 2.0.0 — in progress on `feat/v2.0.0`
+Unreleased changes go here.
 
-The site absorbs the blog, gains projects and an event gallery, and is rebuilt against the
-platform design system. Content comes from FastAPI; post bodies come from Git.
+## [v2.0.0] - 2026-08-31
 
-#### Added - v2.0.0
+> [!NOTE]
+> The site absorbs the blog, gains projects and an event gallery, and is rebuilt against the platform design system. Content comes from FastAPI; post bodies come from Git.
+
+### Added - v2.0.0
+
+- **The About cards, the speaker biographies and the speaking topics are served by the API.**
+  Three blocks of copy that were constants in `lib/constants.ts` and
+  `app/profile/_components/ProfileClient.tsx`: the six cards under the About section
+  (`GET /pillars`), the two pre-approved bios on the speaker kit (`shortBio` and `fullBio` on the
+  about record), and the sessions and talks beside them (`GET /speaking-topics`). Rewording any of
+  them was a pull request and a deploy; it is a save in the admin now.
+
+  **The constants stay, as the fallback.** Each block renders from the API where the API has
+  anything and from the compiled-in copy where it does not — so the page reads the same before the
+  collections are seeded as after, and an outage costs the section its editability rather than its
+  content. A card's icon is a name from a closed set the spec declares, resolved to an imported
+  component by an exhaustive map in `components/sections/About.tsx`; a name a newer API serves and
+  this build does not know draws the default rather than nothing.
 
 - **Security headers on every response**, set in `next.config.ts` so the posture ships with the
   code rather than with the host: a Content-Security-Policy, `X-Content-Type-Options`,
@@ -72,7 +88,7 @@ platform design system. Content comes from FastAPI; post bodies come from Git.
 - `NEXT_PUBLIC_SITE_URL`, so canonical URLs, the sitemap and the RSS feed are composed from the
   origin the app is actually served from.
 
-#### Changed - v2.0.0
+### Changed - v2.0.0
 
 - **The link-in-bio page moved from the footer to the Contact section.** `links.dileepa.dev` was
   a row in the footer's Elsewhere column; Projects now occupies that slot, and the link sits
@@ -110,7 +126,7 @@ platform design system. Content comes from FastAPI; post bodies come from Git.
   `next.config.ts`, which is Cloudinary and nothing else. Routing them through it would make a
   post fail the build for citing a screenshot from someone else's documentation.
 
-#### Fixed - v2.0.0
+### Fixed - v2.0.0
 
 - **`NEXT_PUBLIC_API_URL` was used verbatim, so two near-invisible dotenv mistakes would have
   broken every request.** A trailing slash builds `https://api.dileepa.dev//projects`, which the
@@ -166,7 +182,7 @@ platform design system. Content comes from FastAPI; post bodies come from Git.
   and `app/events/[slug]` each have a `not-found.tsx` naming what is missing, sharing one
   `NotFoundPage` component with the root one so four copies cannot drift.
 
-#### Removed - v2.0.0
+### Removed - v2.0.0
 
 - **`X-Powered-By: Next.js`** — named the framework on every response, and nothing read it.
 - **Blog banners.** Posts carry no image of their own; anything a post shows is an ordinary
@@ -310,7 +326,8 @@ platform design system. Content comes from FastAPI; post bodies come from Git.
 <!-- v0.0.1 -->
 
 [Unreleased]: https://github.com/dileepadev/dileepa-dev/branches
-[v1.0.0]: https://github.com/dileepadev/dileepa-dev/releases/tag/v1.0.0
-[v1.1.0]: https://github.com/dileepadev/dileepa-dev/releases/tag/v1.1.0
-[v1.2.0]: https://github.com/dileepadev/dileepa-dev/releases/tag/v1.2.0
+[v2.0.0]: https://github.com/dileepadev/dileepa-dev/releases/tag/v2.0.0
 [v1.3.0]: https://github.com/dileepadev/dileepa-dev/releases/tag/v1.3.0
+[v1.2.0]: https://github.com/dileepadev/dileepa-dev/releases/tag/v1.2.0
+[v1.1.0]: https://github.com/dileepadev/dileepa-dev/releases/tag/v1.1.0
+[v1.0.0]: https://github.com/dileepadev/dileepa-dev/releases/tag/v1.0.0

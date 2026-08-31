@@ -152,39 +152,53 @@ export const SUBSECTIONS = {
  * open-source projects, public speaking, technical writing, videos,
  * and community volunteering.
  */
+/**
+ * The fallback for the six About cards.
+ *
+ * They are served by `GET /pillars` now, so this list is only what renders when
+ * that call comes back empty — an API outage, or a deployment where the
+ * collection has not been seeded yet. `icon` names the same closed set the API
+ * does; `components/sections/About.tsx` resolves it either way.
+ */
 export const PILLARS = [
   {
     key: "ai-engineering",
+    icon: "cpu",
     title: "AI engineering",
     description:
       "Building agentic systems, orchestrating LLM workflows, and designing evaluation pipelines for production applications.",
   },
   {
     key: "open-source",
+    icon: "code",
     title: "Open source",
     description:
       "Developing tools, contributing to projects, and sharing technical implementations across AI and software engineering.",
   },
   {
     key: "public-speaking",
+    icon: "mic",
     title: "Public speaking",
     description:
       "Speaking at conferences and meetups, leading technical workshops, and sharing lessons from building AI systems.",
   },
   {
     key: "technical-writing",
+    icon: "book",
     title: "Technical writing",
     description:
       "Writing about agentic systems, engineering practices, and lessons from building AI in production.",
   },
   {
     key: "technical-videos",
+    icon: "video",
     title: "Technical videos",
     description:
       "Creating technical tutorials and walkthroughs on AI systems, software engineering, and cloud infrastructure.",
   },
   {
     key: "community-building",
+    icon: "users",
     title: "Community building",
     description:
       "Organising technical meetups, mentoring engineers, and creating spaces for people and AI agents to learn and build.",

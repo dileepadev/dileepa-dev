@@ -32,7 +32,7 @@ import {
   LinkButton,
   StatusBadge,
 } from "@/components/ui";
-import type { About, Experience } from "@/lib/api-types";
+import type { About, Experience, SpeakingTopic } from "@/lib/api-types";
 import { SITE_CONFIG } from "@/lib/constants";
 
 interface ProfilePhoto {
@@ -90,7 +90,15 @@ const PROFILE_PHOTOS: ProfilePhoto[] = [
   },
 ];
 
-const SPEAKING_TOPICS = [
+/**
+ * The fallback for the sessions and talks below.
+ *
+ * The list is served by `GET /speaking-topics` now, so this is what renders
+ * when that call comes back empty. Same reasoning as `PILLARS` in
+ * `lib/constants.ts`: an outage should cost the section its editability, not
+ * its content — an organiser reading this page needs to see the talks.
+ */
+const SPEAKING_TOPICS: { title: string; summary: string }[] = [
   {
     title: "Building production AI agents & multi-agent frameworks",
     summary:
@@ -113,6 +121,7 @@ const SPEAKING_TOPICS = [
   },
 ];
 
+/** The fallbacks for the two biographies. `about.shortBio` / `about.fullBio` win. */
 const SHORT_BIO =
   "Dileepa Bandara is an AI engineer building agentic systems, production LLM pipelines, and the developer communities around them. He speaks and leads technical workshops on AI architectures, multi-agent orchestration, and cloud infrastructure.";
 
@@ -122,11 +131,34 @@ const FULL_BIO =
 interface ProfileClientProps {
   about: About | null;
   experiences: Experience[];
+  speakingTopics?: SpeakingTopic[];
 }
 
-export function ProfileClient({ about, experiences }: ProfileClientProps) {
+export function ProfileClient({
+  about,
+  experiences,
+  speakingTopics = [],
+}: ProfileClientProps) {
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [lightboxPhoto, setLightboxPhoto] = useState<ProfilePhoto | null>(null);
+
+  // The API's copy wins wherever it has any, so the page is edited from the
+  // admin rather than from a pull request. The constants above are what an
+  // organiser sees if the API answers with nothing.
+  const shortBio = about?.shortBio || SHORT_BIO;
+  const fullBio = about?.fullBio || FULL_BIO;
+  const topics =
+    speakingTopics.length > 0
+      ? speakingTopics.map((topic) => ({
+          key: topic.id,
+          title: topic.title,
+          summary: topic.summary,
+        }))
+      : SPEAKING_TOPICS.map((topic) => ({
+          key: topic.title,
+          title: topic.title,
+          summary: topic.summary,
+        }));
 
   const currentRole = experiences[0]?.title || about?.title || "AI Engineer";
   const currentCompany =
@@ -346,7 +378,7 @@ export function ProfileClient({ about, experiences }: ProfileClientProps) {
                 </span>
               </div>
               <p className="text-fg text-small leading-relaxed">
-                {SHORT_BIO}
+                {shortBio}
               </p>
             </div>
 
@@ -356,7 +388,7 @@ export function ProfileClient({ about, experiences }: ProfileClientProps) {
               </span>
               <Button
                 variant="secondary"
-                onClick={() => handleCopy("short-bio", SHORT_BIO)}
+                onClick={() => handleCopy("short-bio", shortBio)}
               >
                 {copiedKey === "short-bio" ? (
                   <>
@@ -385,7 +417,7 @@ export function ProfileClient({ about, experiences }: ProfileClientProps) {
                 </span>
               </div>
               <p className="text-fg text-small leading-relaxed">
-                {FULL_BIO}
+                {fullBio}
               </p>
             </div>
 
@@ -395,7 +427,7 @@ export function ProfileClient({ about, experiences }: ProfileClientProps) {
               </span>
               <Button
                 variant="secondary"
-                onClick={() => handleCopy("full-bio", FULL_BIO)}
+                onClick={() => handleCopy("full-bio", fullBio)}
               >
                 {copiedKey === "full-bio" ? (
                   <>
@@ -524,8 +556,8 @@ export function ProfileClient({ about, experiences }: ProfileClientProps) {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {SPEAKING_TOPICS.map((topic, index) => (
-            <Card key={index} className="p-5 flex flex-col justify-between">
+          {topics.map((topic, index) => (
+            <Card key={topic.key} className="p-5 flex flex-col justify-between">
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <span className="w-6 h-6 rounded-full bg-brand/10 text-brand border border-brand/30 inline-flex items-center justify-center font-mono text-xs font-bold">

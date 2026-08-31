@@ -536,6 +536,150 @@ export interface paths {
         patch: operations["update_videos_videos__identifier__patch"];
         trace?: never;
     };
+    "/pillars": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List pillars
+         * @description List pillars. Public callers see published records only.
+         */
+        get: operations["list_pillars_pillars_get"];
+        put?: never;
+        /**
+         * Create a pillar
+         * @description Create a pillar.
+         */
+        post: operations["create_pillars_pillars_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/pillars/order": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Reorder pillars
+         * @description Set the order of several pillars in one request. Higher values sort first.
+         */
+        patch: operations["reorder_pillars_pillars_order_patch"];
+        trace?: never;
+    };
+    "/pillars/{identifier}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get a pillar
+         * @description Get one pillar by id.
+         */
+        get: operations["get_pillars_pillars__identifier__get"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete a pillar
+         * @description Delete a pillar.
+         */
+        delete: operations["delete_pillars_pillars__identifier__delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Update a pillar
+         * @description Update a pillar. Only the fields sent are changed.
+         */
+        patch: operations["update_pillars_pillars__identifier__patch"];
+        trace?: never;
+    };
+    "/speaking-topics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List speaking topics
+         * @description List speaking topics. Public callers see published records only.
+         */
+        get: operations["list_speaking_topics_speaking_topics_get"];
+        put?: never;
+        /**
+         * Create a speaking topic
+         * @description Create a speaking topic.
+         */
+        post: operations["create_speaking_topics_speaking_topics_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/speaking-topics/order": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Reorder speaking topics
+         * @description Set the order of several speaking topics in one request. Higher values sort first.
+         */
+        patch: operations["reorder_speaking_topics_speaking_topics_order_patch"];
+        trace?: never;
+    };
+    "/speaking-topics/{identifier}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get a speaking topic
+         * @description Get one speaking topic by id.
+         */
+        get: operations["get_speaking_topics_speaking_topics__identifier__get"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete a speaking topic
+         * @description Delete a speaking topic.
+         */
+        delete: operations["delete_speaking_topics_speaking_topics__identifier__delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Update a speaking topic
+         * @description Update a speaking topic. Only the fields sent are changed.
+         */
+        patch: operations["update_speaking_topics_speaking_topics__identifier__patch"];
+        trace?: never;
+    };
     "/projects": {
         parameters: {
             query?: never;
@@ -1005,7 +1149,7 @@ export interface paths {
         put?: never;
         /**
          * Send a message through the contact form
-         * @description Deliver a contact-form message by email.
+         * @description Deliver a contact-form message by email and persist it to the database.
          *
          *     `request` and `response` are unused by the handler but required by slowapi:
          *     it reads the caller's address off the request and writes the rate-limit
@@ -1195,6 +1339,10 @@ export interface components {
             location?: string | null;
             /** Description */
             description?: string[];
+            /** Shortbio */
+            shortBio?: string | null;
+            /** Fullbio */
+            fullBio?: string | null;
             /** Status */
             status?: string | null;
             images?: components["schemas"]["AboutImages-Output"];
@@ -1216,6 +1364,10 @@ export interface components {
             location?: string | null;
             /** Description */
             description?: string[] | null;
+            /** Short Bio */
+            short_bio?: string | null;
+            /** Full Bio */
+            full_bio?: string | null;
             /** Status */
             status?: string | null;
             images: components["schemas"]["AboutImages-Input"];
@@ -1298,6 +1450,10 @@ export interface components {
             location?: string | null;
             /** Description */
             description?: string[] | null;
+            /** Short Bio */
+            short_bio?: string | null;
+            /** Full Bio */
+            full_bio?: string | null;
             /** Status */
             status?: string | null;
             images?: components["schemas"]["AboutImages-Input"] | null;
@@ -2661,10 +2817,38 @@ export interface components {
             /** Offset */
             offset: number;
         };
+        /** Page[Pillar] */
+        Page_Pillar_: {
+            /** Items */
+            items: components["schemas"]["Pillar"][];
+            /**
+             * Total
+             * @description Matching documents, ignoring limit and offset
+             */
+            total: number;
+            /** Limit */
+            limit: number;
+            /** Offset */
+            offset: number;
+        };
         /** Page[Project] */
         Page_Project_: {
             /** Items */
             items: components["schemas"]["Project"][];
+            /**
+             * Total
+             * @description Matching documents, ignoring limit and offset
+             */
+            total: number;
+            /** Limit */
+            limit: number;
+            /** Offset */
+            offset: number;
+        };
+        /** Page[SpeakingTopic] */
+        Page_SpeakingTopic_: {
+            /** Items */
+            items: components["schemas"]["SpeakingTopic"][];
             /**
              * Total
              * @description Matching documents, ignoring limit and offset
@@ -2749,6 +2933,79 @@ export interface components {
              * @default 0
              */
             order: number;
+        };
+        /** Pillar */
+        Pillar: {
+            /** Id */
+            id: string;
+            /** Createdat */
+            createdAt?: string | null;
+            /** Updatedat */
+            updatedAt?: string | null;
+            /**
+             * Published
+             * @default true
+             */
+            published: boolean;
+            /**
+             * Order
+             * @description Priority. Higher values sort first.
+             * @default 0
+             */
+            order: number;
+            /** Meta */
+            meta?: {
+                [key: string]: unknown;
+            };
+            /** Title */
+            title: string;
+            /**
+             * Description
+             * @default
+             */
+            description: string;
+            /**
+             * Icon
+             * @default cpu
+             * @enum {string}
+             */
+            icon: "cpu" | "code" | "mic" | "book" | "video" | "users" | "sparkles" | "rocket" | "terminal" | "pen" | "globe" | "graduation-cap";
+        };
+        /** PillarCreate */
+        PillarCreate: {
+            /** Title */
+            title: string;
+            /** Description */
+            description: string;
+            /**
+             * Icon
+             * @default cpu
+             * @enum {string}
+             */
+            icon: "cpu" | "code" | "mic" | "book" | "video" | "users" | "sparkles" | "rocket" | "terminal" | "pen" | "globe" | "graduation-cap";
+            /**
+             * Order
+             * @default 0
+             */
+            order: number;
+            /**
+             * Published
+             * @default true
+             */
+            published: boolean;
+        };
+        /** PillarUpdate */
+        PillarUpdate: {
+            /** Title */
+            title?: string | null;
+            /** Description */
+            description?: string | null;
+            /** Icon */
+            icon?: ("cpu" | "code" | "mic" | "book" | "video" | "users" | "sparkles" | "rocket" | "terminal" | "pen" | "globe" | "graduation-cap") | null;
+            /** Order */
+            order?: number | null;
+            /** Published */
+            published?: boolean | null;
         };
         /** Project */
         Project: {
@@ -3166,6 +3423,65 @@ export interface components {
              * @default false
              */
             isHost: boolean;
+        };
+        /** SpeakingTopic */
+        SpeakingTopic: {
+            /** Id */
+            id: string;
+            /** Createdat */
+            createdAt?: string | null;
+            /** Updatedat */
+            updatedAt?: string | null;
+            /**
+             * Published
+             * @default true
+             */
+            published: boolean;
+            /**
+             * Order
+             * @description Priority. Higher values sort first.
+             * @default 0
+             */
+            order: number;
+            /** Meta */
+            meta?: {
+                [key: string]: unknown;
+            };
+            /** Title */
+            title: string;
+            /**
+             * Summary
+             * @default
+             */
+            summary: string;
+        };
+        /** SpeakingTopicCreate */
+        SpeakingTopicCreate: {
+            /** Title */
+            title: string;
+            /** Summary */
+            summary: string;
+            /**
+             * Order
+             * @default 0
+             */
+            order: number;
+            /**
+             * Published
+             * @default true
+             */
+            published: boolean;
+        };
+        /** SpeakingTopicUpdate */
+        SpeakingTopicUpdate: {
+            /** Title */
+            title?: string | null;
+            /** Summary */
+            summary?: string | null;
+            /** Order */
+            order?: number | null;
+            /** Published */
+            published?: boolean | null;
         };
         /**
          * SystemStatus
@@ -4691,6 +5007,398 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Video"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_pillars_pillars_get: {
+        parameters: {
+            query?: {
+                published?: boolean | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_Pillar_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_pillars_pillars_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PillarCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Pillar"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reorder_pillars_pillars_order_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReorderRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReorderResult"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_pillars_pillars__identifier__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                identifier: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Pillar"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_pillars_pillars__identifier__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                identifier: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeleteResult"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_pillars_pillars__identifier__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                identifier: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PillarUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Pillar"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_speaking_topics_speaking_topics_get: {
+        parameters: {
+            query?: {
+                published?: boolean | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_SpeakingTopic_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_speaking_topics_speaking_topics_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SpeakingTopicCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SpeakingTopic"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reorder_speaking_topics_speaking_topics_order_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReorderRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReorderResult"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_speaking_topics_speaking_topics__identifier__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                identifier: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SpeakingTopic"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_speaking_topics_speaking_topics__identifier__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                identifier: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeleteResult"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_speaking_topics_speaking_topics__identifier__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                identifier: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SpeakingTopicUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SpeakingTopic"];
                 };
             };
             /** @description Validation Error */

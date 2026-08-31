@@ -31,8 +31,10 @@ import type {
   Experience,
   GalleryPhoto,
   Page,
+  Pillar,
   Project,
   ReactionKind,
+  SpeakingTopic,
   Tool,
   Video,
 } from "./api-types";
@@ -365,6 +367,14 @@ export const api = {
 
   getCommunities: () => degradePage<Community>("/communities"),
 
+  getPillars: () =>
+    degradePage<Pillar>("/pillars", { revalidate: REVALIDATE.profile }),
+
+  getSpeakingTopics: () =>
+    degradePage<SpeakingTopic>("/speaking-topics", {
+      revalidate: REVALIDATE.profile,
+    }),
+
   getVideos: async (): Promise<Video[]> => {
     const videos = await degradePage<Video>("/videos");
     if (videos.length === 0) return [];
@@ -603,6 +613,7 @@ export async function getHomepageData() {
     educations,
     tools,
     communities,
+    pillars,
     projects,
     events,
     posts,
@@ -613,6 +624,7 @@ export async function getHomepageData() {
     api.getEducations(),
     api.getTools(),
     api.getCommunities(),
+    api.getPillars(),
     api.getProjects({ featured: true, limit: 3 }),
     api.getEvents({ limit: 4 }),
     api.getBlogs({ limit: 4 }),
@@ -625,6 +637,7 @@ export async function getHomepageData() {
     educations,
     tools,
     communities,
+    pillars,
     projects,
     events,
     posts,

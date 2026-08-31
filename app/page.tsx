@@ -24,6 +24,7 @@ export default async function HomePage() {
     educations,
     tools,
     communities,
+    pillars,
     projects,
     events,
     posts,
@@ -37,7 +38,7 @@ export default async function HomePage() {
   return (
     <div id="top">
       <Hero about={about} />
-      <About about={about} />
+      <About about={about} pillars={pillars} />
       <Work experiences={experiences} tools={tools} projects={projects} />
       <EducationSection educations={educations} />
       <CommunitySection

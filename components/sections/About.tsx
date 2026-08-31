@@ -1,17 +1,45 @@
-import { BookOpen, Code2, Cpu, Mic, Users, Video } from "lucide-react";
+import {
+  BookOpen,
+  Code2,
+  Cpu,
+  Globe,
+  GraduationCap,
+  Mic,
+  PenTool,
+  Rocket,
+  Sparkles,
+  Terminal,
+  Users,
+  Video,
+  type LucideIcon,
+} from "lucide-react";
 import { Card, Container, Section, SectionHeading } from "@/components/ui";
-import type { About as AboutData } from "@/lib/api-types";
+import type { About as AboutData, Pillar, PillarIcon } from "@/lib/api-types";
 import { PILLARS, SECTIONS } from "@/lib/constants";
 import { paragraphs as splitParagraphs } from "@/lib/format";
 
-const PILLAR_ICONS = {
-  "ai-engineering": Cpu,
-  "open-source": Code2,
-  "public-speaking": Mic,
-  "technical-writing": BookOpen,
-  "technical-videos": Video,
-  "community-building": Users,
-} as const;
+/**
+ * The icon names the API serves, resolved to components.
+ *
+ * `PillarIcon` is a closed set in the spec, so this map is exhaustive by
+ * construction — dropping a name here stops compiling rather than rendering a
+ * blank card. `??` in the lookup covers the other direction: an API newer than
+ * this build draws `Cpu` rather than nothing.
+ */
+const PILLAR_ICONS: Record<PillarIcon, LucideIcon> = {
+  cpu: Cpu,
+  code: Code2,
+  mic: Mic,
+  book: BookOpen,
+  video: Video,
+  users: Users,
+  sparkles: Sparkles,
+  rocket: Rocket,
+  terminal: Terminal,
+  pen: PenTool,
+  globe: Globe,
+  "graduation-cap": GraduationCap,
+};
 
 /**
  * About.
@@ -20,10 +48,36 @@ const PILLAR_ICONS = {
  * so the whole block is one field in the admin rather than a heading and a body
  * that can drift apart. The six cards show what Dileepa does across AI engineering,
  * open source, speaking, writing, videos, and community volunteering.
+ *
+ * The cards come from `GET /pillars`, so rewording one is a save in the admin
+ * rather than a deploy. `PILLARS` in `lib/constants.ts` is what renders when
+ * that call returns nothing — an API outage should cost the section its
+ * editability, not its content.
  */
-export function About({ about }: { about: AboutData | null }) {
+export function About({
+  about,
+  pillars = [],
+}: {
+  about: AboutData | null;
+  pillars?: Pillar[];
+}) {
   const copy = splitParagraphs(about?.description);
   const paragraphs = copy.slice(1);
+
+  const cards =
+    pillars.length > 0
+      ? pillars.map((pillar) => ({
+          key: pillar.id,
+          title: pillar.title,
+          description: pillar.description,
+          icon: PILLAR_ICONS[pillar.icon] ?? Cpu,
+        }))
+      : PILLARS.map((pillar) => ({
+          key: pillar.key,
+          title: pillar.title,
+          description: pillar.description,
+          icon: PILLAR_ICONS[pillar.icon] ?? Cpu,
+        }));
 
   return (
     <Section id="about">
@@ -42,11 +96,10 @@ export function About({ about }: { about: AboutData | null }) {
         )}
 
         <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {PILLARS.map((pillar) => {
-            const Icon =
-              PILLAR_ICONS[pillar.key as keyof typeof PILLAR_ICONS] ?? Cpu;
+          {cards.map((card) => {
+            const Icon = card.icon;
             return (
-              <Card key={pillar.key} className="card flex flex-col">
+              <Card key={card.key} className="card flex flex-col">
                 <div>
                   <div className="mb-4 inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border-strong bg-bg text-brand">
                     <Icon
@@ -55,8 +108,8 @@ export function About({ about }: { about: AboutData | null }) {
                       aria-hidden="true"
                     />
                   </div>
-                  <h3>{pillar.title}</h3>
-                  <p>{pillar.description}</p>
+                  <h3>{card.title}</h3>
+                  <p>{card.description}</p>
                 </div>
               </Card>
             );

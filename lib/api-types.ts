@@ -26,6 +26,12 @@ export type Experience = Schemas["Experience"];
 export type Education = Schemas["Education"];
 export type Tool = Schemas["Tool"];
 export type Community = Schemas["Community"];
+// The six About cards and the speaker kit's talk themes. Both were constants in
+// `lib/constants.ts` until the API grew a collection for each; the constants
+// stay as the fallback for when the API answers with nothing.
+export type Pillar = Schemas["Pillar"];
+export type PillarIcon = Pillar["icon"];
+export type SpeakingTopic = Schemas["SpeakingTopic"];
 export type Video = Schemas["Video"] & {
   durationSeconds?: number | null;
 };

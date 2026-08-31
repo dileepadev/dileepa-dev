@@ -65,7 +65,9 @@ versions — version drift between the two apps is the thing v2.0.0 exists to en
 - Components are PascalCase files; barrel exports via `index.ts` per folder. Route-local
   components live in `_components/` inside the route.
 - Comments explain *why*, not *what*.
-- Site copy and config live in `lib/constants.ts`, not inline in components.
+- Site copy and config live in `lib/constants.ts`, not inline in components. Copy the owner
+  edits — the About cards, the speaker bios, the speaking topics — comes from the API; what
+  stays in `lib/constants.ts` is the fallback rendered when the API answers with nothing.
 - Images go through `next/image`. A new remote host must be added to `remotePatterns` in
   `next.config.ts` or the image fails at runtime, not at build.
 

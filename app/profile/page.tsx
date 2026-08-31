@@ -18,9 +18,10 @@ export const metadata: Metadata = {
 export const revalidate = 900;
 
 export default async function ProfilePage() {
-  const [about, experiences] = await Promise.all([
+  const [about, experiences, speakingTopics] = await Promise.all([
     api.getAbout(),
     api.getExperiences(),
+    api.getSpeakingTopics(),
   ]);
 
   if (!about) {
@@ -43,7 +44,11 @@ export default async function ProfilePage() {
           <p className="section-intro mt-4 max-w-2xl">{PAGES.profile.intro}</p>
         </div>
 
-        <ProfileClient about={about} experiences={experiences} />
+        <ProfileClient
+          about={about}
+          experiences={experiences}
+          speakingTopics={speakingTopics}
+        />
       </Container>
     </Section>
   );
