@@ -240,5 +240,19 @@ export async function getPostContent(
   slug: string,
 ): Promise<PostContent | null> {
   const posts = await getAllContent();
-  return posts.get(slug) ?? null;
+  const existing = posts.get(slug);
+  if (existing) return existing;
+
+  // On-demand fallback: If a post was added to Git/disk after the server started
+  // or after the build, refresh the posts map so new posts resolve on-demand.
+  try {
+    const fresh = await (LOCAL_PATH ? listLocal() : listRemote());
+    for (const post of fresh) {
+      posts.set(post.slug, post);
+    }
+    return posts.get(slug) ?? null;
+  } catch (error) {
+    console.error(`[content] Failed on-demand fetch for ${slug}:`, error);
+    return null;
+  }
 }

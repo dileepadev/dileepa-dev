@@ -43,7 +43,7 @@ interface Params {
  * The consequence to keep in mind: publishing a post needs a rebuild. That was
  * already true of the pinned ref — see `content-pipeline.md` §8.
  */
-export const dynamicParams = false;
+export const dynamicParams = true;
 
 export async function generateStaticParams() {
   const posts = await api.getAllBlogs();
