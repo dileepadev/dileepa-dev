@@ -38,6 +38,79 @@ export const SITE_CONFIG = {
 } as const;
 
 /**
+ * The terminal rendering — what `curl` gets instead of the homepage.
+ *
+ * Additive. `proxy.ts` looks at the User-Agent on `/` and rewrites terminal
+ * clients to `TERMINAL.path`; a browser is never matched and the site it gets
+ * is byte-for-byte the one it got before this existed.
+ */
+export const TERMINAL = {
+  /**
+   * The command the site advertises, and the one the output echoes back.
+   *
+   * `-L` is not decoration and it is not a stylistic choice. `curl dileepa.dev`
+   * resolves to `http://dileepa.dev`, and Vercel answers plaintext HTTP on a
+   * custom domain with a `308` to the HTTPS origin — at the edge, before any
+   * code in this repository runs. curl does not follow redirects unless told
+   * to, so the bare command prints Vercel's two-word `Redirecting...` body and
+   * exits 0. There is no application-level fix: the redirect is not ours to
+   * remove. So the advertised command carries the flag that makes it work in
+   * one shot, and `TERMINAL.commandHttps` is the equally short alternative for
+   * anyone who would rather type the scheme than the flag.
+   */
+  command: "curl -L dileepa.dev",
+  /** The other one-shot form. Reaches HTTPS directly, so it needs no `-L`. */
+  commandHttps: "curl https://dileepa.dev",
+  /**
+   * Content width inside the two-space gutter.
+   *
+   * 72 + 2 leaves an 80-column terminal — still the floor worth designing for —
+   * with room to spare, and keeps the output readable when it is pasted into a
+   * chat window or an issue.
+   */
+  columns: 72,
+  /** The rewrite destination, and a stable URL in its own right. */
+  path: "/terminal",
+  /**
+   * The boot sequence plays by default for a terminal client, and these force
+   * it on for anyone else — a browser at `/terminal`, or a client the
+   * User-Agent matcher does not recognise.
+   */
+  introKeys: ["intro", "boot", "animate"],
+  /**
+   * The query keys that skip the boot sequence and return the document at once.
+   *
+   * This is the escape hatch, and it exists because of a limit that cannot be
+   * engineered away: the server cannot tell whether the reader's `stdout` is a
+   * terminal or a redirect into a file. curl answers `isatty` locally and sends
+   * nothing about it, so `curl -L dileepa.dev > profile.txt` looks identical on
+   * the wire to a person watching their screen — and the animation lands in the
+   * file, carriage returns and all.
+   *
+   * Playing by default is a deliberate trade of that case for the common one.
+   * Anyone piping, scripting or saving reaches for one of these, and
+   * `?nocolor` — which they already want, to drop the escape codes — implies it
+   * without having to be told twice.
+   */
+  staticKeys: ["static", "fast", "now", "nointro"],
+  /**
+   * How many rows each section may spend.
+   *
+   * A profile is a summary. The index pages exist for the full lists and every
+   * section prints the URL of its own, so a cap costs a reader nothing.
+   */
+  limits: {
+    experiences: 4,
+    educations: 2,
+    projects: 4,
+    posts: 4,
+    communities: 3,
+    events: 2,
+    tools: 28,
+  },
+} as const;
+
+/**
  * Primary navigation.
  *
  * The homepage is the site: everything is a section on it, and the index pages
