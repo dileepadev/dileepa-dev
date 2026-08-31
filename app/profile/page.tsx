@@ -7,11 +7,17 @@ import { ProfileClient } from "./_components/ProfileClient";
 export const metadata: Metadata = {
   title: PAGES.profile.meta.title,
   description: PAGES.profile.meta.description,
-  alternates: { canonical: `${SITE_CONFIG.url}/profile` },
+  alternates: { canonical: "/profile" },
   openGraph: {
     title: `${PAGES.profile.title} · ${SITE_CONFIG.name}`,
     description: PAGES.profile.meta.description,
-    images: [{ url: `${SITE_CONFIG.url}/profile/v2.webp` }],
+    images: [{ url: "/profile/v2.webp", width: 800, height: 800, alt: PAGES.profile.title }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${PAGES.profile.title} · ${SITE_CONFIG.name}`,
+    description: PAGES.profile.meta.description,
+    images: ["/profile/v2.webp"],
   },
 };
 

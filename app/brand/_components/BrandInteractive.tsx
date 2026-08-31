@@ -165,11 +165,21 @@ export function CopySnippetButton({
 
 export function SocialCardPreview() {
   const [platform, setPlatform] = useState<"twitter" | "linkedin">("twitter");
+  const [variant, setVariant] = useState<"standard" | "detailed">("standard");
   const [copied, setCopied] = useState(false);
+
+  const currentImage = variant === "standard" ? "/og.png" : "/og2.png";
+  const currentFilename =
+    variant === "standard"
+      ? "dileepa-dev-og.png"
+      : "dileepa-dev-og-detailed.png";
+  const dimensions = variant === "standard" ? "1200 × 630 px" : "1600 × 900 px";
+  const ratio =
+    variant === "standard" ? "1.91:1 (standard)" : "16:9 (widescreen)";
 
   const handleCopyUrl = async () => {
     try {
-      await navigator.clipboard.writeText("https://dileepa.dev/og.png");
+      await navigator.clipboard.writeText(`https://dileepa.dev${currentImage}`);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
@@ -179,9 +189,39 @@ export function SocialCardPreview() {
 
   return (
     <div className="rounded-lg border border-border-strong bg-bg-surface overflow-hidden shadow-xs">
-      {/* Platform toggle bar */}
-      <div className="flex items-center justify-between px-4 py-3 bg-bg border-b border-border-strong text-xs font-mono">
-        <span className="text-fg font-medium">Social card simulator</span>
+      {/* Control bar */}
+      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 bg-bg border-b border-border-strong text-xs font-mono">
+        <div className="flex items-center gap-2">
+          <span className="text-fg font-medium">Social card simulator</span>
+          <span className="text-border-strong select-none">/</span>
+          <div className="flex items-center rounded border border-border-strong overflow-hidden text-[0.6875rem]">
+            <button
+              type="button"
+              onClick={() => setVariant("standard")}
+              className={cn(
+                "px-2 py-0.5 transition-colors cursor-pointer",
+                variant === "standard"
+                  ? "bg-brand-fill text-on-brand font-medium"
+                  : "bg-bg-surface text-fg-muted hover:text-fg hover:bg-surface-hover",
+              )}
+            >
+              Default (1200×630)
+            </button>
+            <button
+              type="button"
+              onClick={() => setVariant("detailed")}
+              className={cn(
+                "px-2 py-0.5 transition-colors cursor-pointer border-l border-border-strong",
+                variant === "detailed"
+                  ? "bg-brand-fill text-on-brand font-medium"
+                  : "bg-bg-surface text-fg-muted hover:text-fg hover:bg-surface-hover",
+              )}
+            >
+              Detailed (1600×900)
+            </button>
+          </div>
+        </div>
+
         <div className="flex items-center rounded border border-border-strong overflow-hidden text-[0.6875rem]">
           <button
             type="button"
@@ -214,12 +254,18 @@ export function SocialCardPreview() {
       <div className="p-4 sm:p-6 bg-bg flex justify-center">
         <div className="w-full max-w-xl rounded-xl border border-border-strong bg-bg-surface overflow-hidden shadow-md">
           {/* OG Image */}
-          <div className="relative aspect-[1200/630] w-full bg-bg overflow-hidden">
+          <div
+            className={cn(
+              "relative w-full bg-bg overflow-hidden",
+              variant === "standard" ? "aspect-[1200/630]" : "aspect-[16/9]",
+            )}
+          >
             <Image
-              src="/og.png"
+              key={currentImage}
+              src={currentImage}
               alt="Dileepa Bandara Open Graph preview"
-              width={1200}
-              height={630}
+              width={variant === "standard" ? 1200 : 1600}
+              height={variant === "standard" ? 630 : 900}
               className="w-full h-full object-cover"
               priority
             />
@@ -254,15 +300,15 @@ export function SocialCardPreview() {
       {/* Action Footer */}
       <div className="px-4 py-3 bg-bg-surface border-t border-border-strong flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
         <div className="flex items-center gap-2 text-fg-muted">
-          <span>Dimensions: 1200 × 630 px</span>
+          <span>Dimensions: {dimensions}</span>
           <span>·</span>
-          <span>Ratio: 1.91:1</span>
+          <span>Ratio: {ratio}</span>
         </div>
 
         <div className="flex items-center gap-2">
           <a
-            href="/og.png"
-            download="dileepa-dev-og.png"
+            href={currentImage}
+            download={currentFilename}
             className="btn btn--secondary !h-7 !px-2.5 text-xs inline-flex items-center gap-1.5"
           >
             Download image

@@ -33,7 +33,7 @@ import {
 export const metadata: Metadata = {
   title: PAGES.brand.meta.title,
   description: PAGES.brand.meta.description,
-  alternates: { canonical: `${SITE_CONFIG.url}/brand` },
+  alternates: { canonical: "/brand" },
 };
 
 export const revalidate = 900;
