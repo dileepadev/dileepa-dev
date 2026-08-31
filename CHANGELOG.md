@@ -11,7 +11,90 @@ Changes are organized into the following categories:
 
 ## [Unreleased]
 
-Unreleased changes go here.
+### Added
+
+- **`curl -L dileepa.dev` renders the profile in a terminal.** `proxy.ts` matches `/` and nothing
+  else, reads the User-Agent, and rewrites known terminal clients — curl, wget, HTTPie, xh,
+  PowerShell — to `app/terminal/route.ts`, which serves `text/plain` with ANSI colour. The route is
+  also a stable URL of its own at `/terminal`, for a client the sniffer does not recognise.
+
+  **Nothing a browser sees changed.** An unmatched request falls through `NextResponse.next()` to
+  the same prerendered homepage it got before, with no added header and no modified response.
+  Crawlers are unmatched by construction: Googlebot, Bingbot and Slack's unfurler all send
+  browser-shaped agents, so they index the real page. HTTP *libraries* — `python-requests`,
+  `okhttp`, `node-fetch` — are deliberately excluded too. Those are scripts rather than a person at
+  a prompt, and handing them a different body than a browser gets is indistinguishable from
+  cloaking.
+
+  The content is composed in `lib/terminal.ts` from the same `api.*` calls the homepage uses,
+  through the same data cache, so there is no second copy of the profile to keep in sync and the
+  output degrades exactly the way the page does — a dead collection costs one section, not the
+  response. `lib/ansi.ts` holds the colour and the fixed-width layout; width is measured against
+  visible columns rather than string length, because an escape code occupies bytes without
+  occupying a column. Emerald stays the only accent, at the Emerald Bright stop: a terminal is a
+  dark surface by overwhelming default and its background cannot be detected over HTTP. `?nocolor`
+  drops every escape code for anyone that assumption is wrong for.
+
+  **`-L` is part of the advertised command, and not for style.** `curl dileepa.dev` resolves to
+  `http://dileepa.dev`, and Vercel answers plaintext HTTP on a custom domain with a `308` to the
+  HTTPS origin — at the edge, before any code in this repository runs. curl does not follow
+  redirects unless asked, so the bare command prints Vercel's `Redirecting...` body. There is no
+  application-level fix; the redirect is not ours to remove. `curl https://dileepa.dev` reaches
+  HTTPS directly and needs no flag.
+
+- **A streamed boot sequence, played by default.** `curl -L dileepa.dev` writes its response down
+  a chunked stream with pauses between the chunks; curl prints bytes as they land, so the pauses
+  become timing. The wordmark types itself in, four boot steps spin and resolve, a bar fills, and
+  it settles into the same document the static route serves — about two and a half seconds, then
+  exit 0. `lib/terminal-intro.ts`.
+
+  **The trade it makes, stated plainly.** The server cannot tell whether the reader's `stdout` is a
+  terminal or a file: curl answers `isatty` locally and sends nothing about it, so
+  `curl -L dileepa.dev > profile.txt` is indistinguishable on the wire from a person watching their
+  screen, and the animation lands in the file. Playing by default trades that case for the common
+  one, and `?static` (or `?fast`, `?now`, `?nointro`) skips it. `?nocolor` implies a skip, because
+  someone who turned the escape codes off is piping and should not have to pass two flags to say
+  one thing.
+
+  Redraws use carriage returns rather than cursor-up sequences, so a redraw can only overwrite the
+  line it is on. Only terminal clients are animated — a browser at `/terminal` gets the document
+  at once, since it cannot render a redraw. `lib/terminal-client.ts` now answers "is this a
+  terminal?" for both the proxy and the route, so the two cannot drift apart.
+
+- **The masthead is the wordmark drawn large in block characters**, in a double-ruled box, with
+  the name, role and status centred beneath it. `lib/wordmark.ts`.
+
+  The brand rule survives the change of scale — the wordmark takes the neutral foreground, the
+  `/.` takes emerald, and the two never swap — which is why `renderWordmark` hands back the two
+  halves separately instead of one joined string. The font is hand-built on a 6-row body at
+  proportional widths rather than borrowed from ANSI Shadow: its 8-to-9-column glyphs put "dileepadev" past
+  75 columns before the mark, and widening the document to fit a banner would let the decoration
+  set the measure for the content. The six rows are an ascender zone for `d`, `l` and the dot of
+  the `i`, four rows of x-height, and a descender for the `p` — the lockup is lowercase everywhere
+  else on the platform, and a 5-row block would set it in caps and render the wrong word.
+
+  Glyphs are proportional, not monospaced. `i` is one column of ink and `d` is four, so a fixed
+  cell width leaves the `i` with dead columns to its right and the word renders as `di leepadev`:
+  two blank columns between `d` and `i`, four between `i` and `l`, from a table that looks regular
+  in the source. Each glyph is exactly as wide as its ink and `GAP` is the only space between them,
+  so every inter-letter gap is two columns by construction rather than by tuning each cell. The `/.` is a single glyph, because composing it from a slash and a full
+  stop puts the inter-letter gap between them and it reads `/ .`.
+
+  In the boot sequence the masthead wipes down one row per frame. A row is written once and never
+  touched again, so the block builds itself in place — a left-to-right column fill would mean
+  repainting all five rows every frame, which needs cursor-up and reintroduces everything the
+  carriage-return-only rule exists to avoid.
+
+- **The static rendering was reworked.** Section headings rule out to the right edge, so every
+  section shares a column with the header panel and the colophon instead of trailing off ragged.
+  The panel has rounded corners and now carries the name, role, location and an emerald status dot
+  — it is the identity card rather than a box with a mark in it. The tool list is separated by
+  middots and wrapped by item rather than by word, because word wrapping splits "Claude Code" and
+  strands a bare middot at the start of the next line.
+
+- **The footer says the site answers `curl`.** One dim mono line beside the copyright, in
+  `components/ui/CurlHint.tsx`, that copies the command when clicked. It sits outside the footer's
+  link row on purpose — that row is navigation, and this is not a seventh place to go.
 
 ## [v2.0.0] - 2026-08-31
 
