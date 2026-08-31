@@ -21,7 +21,7 @@ import {
   Chip,
   StatusBadge,
 } from "@/components/ui";
-import { getHomepageData, getGallery } from "@/lib/api";
+import { api, getGallery } from "@/lib/api";
 import { PAGES, SITE_CONFIG } from "@/lib/constants";
 import { portrait as getPortraitUrl } from "@/lib/format";
 import {
@@ -175,8 +175,8 @@ const metadataSnippet = `export const metadata: Metadata = {
 };`;
 
 export default async function BrandPage() {
-  const [{ about }, galleryPhotos] = await Promise.all([
-    getHomepageData(),
+  const [about, galleryPhotos] = await Promise.all([
+    api.getAbout(),
     getGallery(4),
   ]);
 
