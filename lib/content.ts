@@ -102,7 +102,7 @@ async function githubJson<T>(url: string): Promise<T> {
       // can hit it — and the failure then looks like a content bug.
       ...(TOKEN ? { Authorization: `Bearer ${TOKEN}` } : {}),
     },
-    next: { revalidate: false },
+    next: { revalidate: 300 },
   });
   if (!response.ok) {
     throw new Error(
@@ -171,7 +171,7 @@ async function listRemote(): Promise<PostContent[]> {
     files.map(async (file) => {
       const response = await fetch(
         `https://raw.githubusercontent.com/${REPO}/${REF}/${file.path}`,
-        { next: { revalidate: false } },
+        { next: { revalidate: 300 } },
       );
       if (!response.ok) {
         throw new Error(`Could not read ${file.path} from ${REPO}@${REF}`);
@@ -243,9 +243,32 @@ export async function getPostContent(
   const existing = posts.get(slug);
   if (existing) return existing;
 
-  // On-demand fallback: If a post was added to Git/disk after the server started
-  // or after the build, refresh the posts map so new posts resolve on-demand.
+  // On-demand fallback: fetch directly by date-scoped slug path if newly added
   try {
+    const match = slug.match(/^(\d{4})-(\d{2})-\d{2}-/);
+    if (match) {
+      const [, year, month] = match;
+      const relPath = `${POSTS_DIR}/${year}/${month}/${slug}.md`;
+      if (LOCAL_PATH) {
+        const fullPath = path.resolve(LOCAL_PATH, relPath);
+        const raw = await fs.readFile(fullPath, "utf8");
+        const parsed = parse(fullPath, raw);
+        posts.set(slug, parsed);
+        return parsed;
+      }
+      const response = await fetch(
+        `https://raw.githubusercontent.com/${REPO}/${REF}/${relPath}`,
+        { next: { revalidate: 300 } },
+      );
+      if (response.ok) {
+        const raw = await response.text();
+        const parsed = parse(relPath, raw);
+        posts.set(slug, parsed);
+        return parsed;
+      }
+    }
+
+    // Fallback scan if naming doesn't match standard year/month pattern
     const fresh = await (LOCAL_PATH ? listLocal() : listRemote());
     for (const post of fresh) {
       posts.set(post.slug, post);
