@@ -80,6 +80,28 @@ function securityHeaders() {
     "https://c.bing.com",
   ];
 
+  const vercelScripts = [
+    "https://vercel.live",
+    "https://*.vercel.live",
+    "https://va.vercel-scripts.com",
+  ];
+  const vercelConnect = [
+    "https://vercel.live",
+    "https://*.vercel.live",
+    "https://*.pusher.com",
+    "wss://*.pusher.com",
+    "https://va.vercel-scripts.com",
+  ];
+  const vercelImages = [
+    "https://vercel.live",
+    "https://*.vercel.live",
+    "https://vercel.com",
+  ];
+  const vercelFrames = [
+    "https://vercel.live",
+    "https://*.vercel.live",
+  ];
+
   // Development-only. See the note above: React's dev build needs eval(),
   // HMR is a WebSocket, and Turbopack serves some chunks from blob: URLs.
   const devScript = isDev
@@ -89,18 +111,17 @@ function securityHeaders() {
 
   const csp = [
     "default-src 'self'",
-    `script-src 'self' 'unsafe-inline'${devScript} ${analyticsScripts.join(" ")}`,
-    "style-src 'self' 'unsafe-inline'",
+    `script-src 'self' 'unsafe-inline'${devScript} ${analyticsScripts.join(" ")} ${vercelScripts.join(" ")}`,
+    "style-src 'self' 'unsafe-inline' https://vercel.live",
     // next/font self-hosts Manrope and JetBrains Mono, so no font CDN appears.
-    "font-src 'self' data:",
-    `img-src 'self' data: blob: https://res.cloudinary.com ${analyticsImages.join(" ")}`,
-    `connect-src 'self'${devConnect} ${api} ${analyticsConnect.join(" ")}`
+    "font-src 'self' data: https://vercel.live https://assets.vercel.com",
+    `img-src 'self' data: blob: https://res.cloudinary.com ${analyticsImages.join(" ")} ${vercelImages.join(" ")}`,
+    `connect-src 'self'${devConnect} ${api} ${analyticsConnect.join(" ")} ${vercelConnect.join(" ")}`
       .replace(/\s+/g, " ")
       .trim(),
     `worker-src 'self'${isDev ? " blob:" : ""}`,
-    // Google Tag Manager loads a frame for some tag types. Named rather than
-    // left open so nothing else can frame into the page.
-    "frame-src 'self' https://www.googletagmanager.com",
+    // Google Tag Manager loads a frame for some tag types; Vercel Live uses frames for the feedback toolbar.
+    `frame-src 'self' https://www.googletagmanager.com ${vercelFrames.join(" ")}`,
     "frame-ancestors 'none'",
     "form-action 'self'",
     "base-uri 'none'",
