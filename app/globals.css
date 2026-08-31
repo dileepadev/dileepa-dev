@@ -453,7 +453,9 @@ button:hover .chip,
 
 /* An external link takes a small arrow. Social icons and elements with their
    own explicit icons (.item a, .entry-org a, .view-all, .btn, .no-external) are excluded to prevent duplicate icons. */
-a[target="_blank"]:not(.socials a):not(.item a):not(.entry-org a):not(.view-all):not(.btn):not(.no-external)::after {
+a[target="_blank"]:not(.socials a):not(.item a):not(.entry-org a):not(
+    .view-all
+  ):not(.btn):not(.no-external)::after {
   content: "";
   display: inline-block;
   width: 0.85em;
@@ -471,7 +473,9 @@ a[target="_blank"]:not(.socials a):not(.item a):not(.entry-org a):not(.view-all)
     transform var(--dur) var(--ease);
 }
 
-a[target="_blank"]:not(.socials a):not(.item a):not(.entry-org a):not(.view-all):not(.btn):not(.no-external):hover::after {
+a[target="_blank"]:not(.socials a):not(.item a):not(.entry-org a):not(
+    .view-all
+  ):not(.btn):not(.no-external):hover::after {
   opacity: 1;
   transform: translate(1px, -1px);
 }
@@ -2266,6 +2270,39 @@ pre {
   color: var(--fg-muted);
 }
 
+.footer-legal {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+/* The `curl` hint. Sized and coloured to disappear into the copyright line it
+   sits beside — it is an invitation, not a call to action, and it earns its
+   place by being findable rather than by being loud. Emerald arrives on hover
+   only, which is the same bargain `.footer-meta a` makes. */
+.curl-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0;
+  font-family: var(--font-mono);
+  font-size: inherit;
+  line-height: inherit;
+  letter-spacing: var(--track-label);
+  color: var(--fg-muted);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  transition: color var(--dur) var(--ease);
+}
+.curl-hint:hover {
+  color: var(--brand);
+}
+.curl-hint:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
 .footer-meta {
   display: flex;
   align-items: center;

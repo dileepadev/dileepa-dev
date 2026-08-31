@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { GitBranch } from "lucide-react";
 import { FaGithub } from "@/components/icons/SocialIcons";
-import { Container, Lockup } from "@/components/ui";
+import { Container, CurlHint, Lockup } from "@/components/ui";
 import { FOOTER_LINKS, SITE_CONFIG } from "@/lib/constants";
 import { SOCIAL_ICONS } from "@/lib/social-icons";
 import type { About } from "@/lib/api-types";
@@ -89,9 +89,14 @@ export function Footer({ about }: { about?: About | null }) {
         </div>
 
         <div className="footer-bottom">
-          <span>
-            © {new Date().getFullYear()} {SITE_CONFIG.author}
-          </span>
+          <div className="footer-legal">
+            <span>
+              © {new Date().getFullYear()} {SITE_CONFIG.author}
+            </span>
+            {/* The site answers `curl` as well as a browser. This is the only
+                place that says so. */}
+            <CurlHint />
+          </div>
           <div className="footer-meta">
             <Link
               href="/profile"
