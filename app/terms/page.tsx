@@ -21,7 +21,7 @@ export default function TermsOfServicePage() {
         <p className="section-intro">{PAGES.terms.intro}</p>
 
         <div className="font-mono text-label text-fg-muted mt-2 mb-8">
-          Last updated: August 2026
+          Last updated: 31 August 2026
         </div>
 
         <article className="prose max-w-3xl">
@@ -82,9 +82,12 @@ export default function TermsOfServicePage() {
             </li>
           </ul>
           <p>
-            Comments are moderated. I reserve the right to edit, decline, or
-            delete any comments that violate these guidelines without prior
-            notice.
+            Comments are not reviewed before they appear. They publish
+            immediately, behind a rate limit and a spam honeypot rather than a
+            queue, and moderation happens afterwards: I may hide, edit, or
+            delete any comment that breaks the guidelines above, without prior
+            notice. Hiding a comment is reversible and leaves the replies
+            underneath it intact; deleting one is permanent.
           </p>
 
           <h2>5. Disclaimers and limitation of liability</h2>
@@ -133,7 +136,7 @@ export default function TermsOfServicePage() {
             </li>
             <li>
               Privacy policy:{" "}
-              <Link href="/privacy">Read our Privacy Policy</Link>
+              <Link href="/privacy">What this site collects, and why</Link>
             </li>
           </ul>
         </article>
