@@ -3,10 +3,10 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { ExternalLink, FileText, Globe } from "lucide-react";
 import { FaGithub } from "@/components/icons/SocialIcons";
-import { Badge, Chip, Container, LinkButton, PagePath, Section } from "@/components/ui";
-import { api } from "@/lib/api";
+import { ApiOfflinePage, Badge, Chip, Container, LinkButton, PagePath, Section } from "@/components/ui";
+import { api, checkApiHealth } from "@/lib/api";
 import { SITE_CONFIG } from "@/lib/constants";
-import { formatMonth, humanise } from "@/lib/format";
+import { formatMonth, humanise, paragraphs } from "@/lib/format";
 
 interface Params {
   params: Promise<{ slug: string }>;
@@ -50,7 +50,13 @@ function period(start?: string | null, end?: string | null): string {
 export default async function ProjectPage({ params }: Params) {
   const { slug } = await params;
   const project = await api.getProject(slug);
-  if (!project) notFound();
+  if (!project) {
+    const health = await checkApiHealth();
+    if (!health.ok) {
+      return <ApiOfflinePage path={`/projects/${slug}`} />;
+    }
+    notFound();
+  }
 
   const links = Object.entries(project.links ?? {}).filter(
     (entry): entry is [string, string] => Boolean(entry[1]),
@@ -121,7 +127,7 @@ export default async function ProjectPage({ params }: Params) {
 
         {project.description && (
           <div className="prose mt-10">
-            {project.description.split("\n\n").map((paragraph, index) => (
+            {paragraphs(project.description).map((paragraph, index) => (
               <p key={index}>{paragraph}</p>
             ))}
           </div>

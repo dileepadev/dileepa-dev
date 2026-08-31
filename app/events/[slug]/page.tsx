@@ -4,22 +4,76 @@ import { notFound } from "next/navigation";
 import {
   Building2,
   Calendar,
+  ExternalLink,
+  FileText,
   MapPin,
+  Megaphone,
   Presentation,
+  Sparkles,
+  Ticket,
   Users,
   Video,
 } from "lucide-react";
-import { Badge, Container, LinkButton, PagePath, Section } from "@/components/ui";
-import { api } from "@/lib/api";
+import {
+  FaFacebook,
+  FaGithub,
+  FaLinkedin,
+  FaXTwitter,
+  FaYoutube,
+} from "@/components/icons/SocialIcons";
+import {
+  ApiOfflinePage,
+  Badge,
+  Chip,
+  Container,
+  LinkButton,
+  PagePath,
+  Section,
+  ZoomableImage,
+} from "@/components/ui";
+import { api, checkApiHealth } from "@/lib/api";
 import type { EventRecord } from "@/lib/api-types";
 import { SITE_CONFIG } from "@/lib/constants";
 import { jsonLd } from "@/lib/utils";
 import {
   formatDate,
   formatDuration,
+  formatTimeRange,
   humanise,
+  paragraphs,
   toDateAttribute,
 } from "@/lib/format";
+
+function normalizeAvatarUrl(url?: string | null): string | null {
+  if (!url) return null;
+  return url.replace(/^https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?/, "");
+}
+
+function linkIcon(url: string, kind: string) {
+  const lowerUrl = url.toLowerCase();
+  if (lowerUrl.includes("facebook.com")) return FaFacebook;
+  if (lowerUrl.includes("github.com")) return FaGithub;
+  if (lowerUrl.includes("linkedin.com")) return FaLinkedin;
+  if (lowerUrl.includes("youtube.com") || lowerUrl.includes("youtu.be"))
+    return FaYoutube;
+  if (lowerUrl.includes("x.com") || lowerUrl.includes("twitter.com"))
+    return FaXTwitter;
+
+  switch (kind) {
+    case "registration":
+      return Ticket;
+    case "announcement":
+      return Megaphone;
+    case "recap":
+      return Sparkles;
+    case "repo":
+      return FaGithub;
+    case "resource":
+      return FileText;
+    default:
+      return ExternalLink;
+  }
+}
 
 interface Params {
   params: Promise<{ slug: string }>;
@@ -105,9 +159,30 @@ function eventJsonLd(event: EventRecord) {
 export default async function EventPage({ params }: Params) {
   const { slug } = await params;
   const event = await api.getEvent(slug);
-  if (!event) notFound();
+  if (!event) {
+    const health = await checkApiHealth();
+    if (!health.ok) {
+      return <ApiOfflinePage path={`/events/${slug}`} />;
+    }
+    notFound();
+  }
 
   const photos = [...(event.photos ?? [])].sort((a, b) => a.order - b.order);
+  const timeRange = formatTimeRange(
+    event.startAt,
+    event.endAt,
+    event.timezone,
+  );
+  const locationPlace = [event.location?.city, event.location?.country]
+    .filter(Boolean)
+    .join(", ");
+  const registrationLink = (event.links ?? []).find(
+    (link) => link.kind === "registration",
+  );
+
+  const hasBadges = Boolean(
+    event.series || event.status === "upcoming" || event.status === "cancelled",
+  );
 
   return (
     <Section>
@@ -119,106 +194,231 @@ export default async function EventPage({ params }: Params) {
           }}
         />
 
-        <div className="mb-3">
+        <div className="mb-2">
           <PagePath path={`/events/${event.slug}`} />
         </div>
-
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge>{humanise(event.type)}</Badge>
-          <Badge>{humanise(event.format)}</Badge>
-          {event.status === "cancelled" && <Badge>Cancelled</Badge>}
-        </div>
+        <div className="section-label">Events</div>
 
         <h1>{event.title}</h1>
         {event.summary && (
-          <p className="mt-4 text-h3 text-fg-muted">{event.summary}</p>
+          <p className="section-intro">{event.summary}</p>
         )}
 
-        <dl className="mt-6 grid gap-x-6 gap-y-3 font-mono text-small text-fg-muted sm:grid-cols-2">
-          <div>
-            <dt className="sr-only">Date</dt>
-            <dd className="flex items-center gap-2">
-              <Calendar
-                className="h-4 w-4 shrink-0 text-fg-muted"
-                strokeWidth={1.75}
+        <div className={`overflow-hidden rounded-lg border border-border-strong bg-bg-surface ${event.summary ? "" : "mt-6 sm:mt-8"}`}>
+          {hasBadges && (
+            <div className="flex flex-wrap items-center gap-2 border-b border-border-hairline p-4 sm:p-5">
+              {event.series && <Badge>Part of {event.series.name}</Badge>}
+              {event.status === "upcoming" && (
+                <Badge variant="filled">Upcoming</Badge>
+              )}
+              {event.status === "cancelled" && <Badge>Cancelled</Badge>}
+            </div>
+          )}
+          <dl className="grid grid-cols-1 sm:grid-cols-2">
+            {/* 1. Date & Time */}
+            <div className="flex items-start gap-3.5 border-b sm:border-r border-border-hairline p-4 sm:p-5">
+              <div
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded border border-border-strong bg-bg text-fg-muted"
                 aria-hidden="true"
-              />
-              <time dateTime={toDateAttribute(event.startAt)}>
-                {formatDate(event.startAt)}
-              </time>
-            </dd>
-          </div>
-          {event.location && (
-            <div>
-              <dt className="sr-only">Location</dt>
-              <dd className="flex items-center gap-2">
-                <MapPin
-                  className="h-4 w-4 shrink-0 text-fg-muted"
-                  strokeWidth={1.75}
-                  aria-hidden="true"
-                />
-                <span>
-                  {[
-                    event.location.venue,
-                    event.location.city,
-                    event.location.country,
-                  ]
-                    .filter(Boolean)
-                    .join(", ")}
-                </span>
-              </dd>
-            </div>
-          )}
-          {event.host?.name && (
-            <div>
-              <dt className="sr-only">Event</dt>
-              <dd className="flex items-center gap-2">
-                <Building2
-                  className="h-4 w-4 shrink-0 text-fg-muted"
-                  strokeWidth={1.75}
-                  aria-hidden="true"
-                />
-                <span>{event.host.name}</span>
-              </dd>
-            </div>
-          )}
-          {event.audienceSize && (
-            <div>
-              <dt className="sr-only">Audience</dt>
-              <dd className="flex items-center gap-2">
-                <Users
-                  className="h-4 w-4 shrink-0 text-fg-muted"
-                  strokeWidth={1.75}
-                  aria-hidden="true"
-                />
-                <span>{event.audienceSize} attendees</span>
-              </dd>
-            </div>
-          )}
-        </dl>
-
-        {(event.links ?? []).length > 0 && (
-          <div className="mt-6 flex flex-wrap gap-3">
-            {(event.links ?? []).map((link) => (
-              <LinkButton
-                key={link.url}
-                href={link.url}
-                variant={link.kind === "registration" ? "primary" : "secondary"}
               >
-                {link.label}
+                <Calendar className="h-4 w-4" strokeWidth={1.75} />
+              </div>
+              <div className="min-w-0 flex-1">
+                <dt className="text-label tracking-[0.01em] text-fg-muted">Date &amp; time</dt>
+                <dd className="mt-1">
+                  <time
+                    dateTime={toDateAttribute(event.startAt)}
+                    className="block font-mono text-small font-medium text-fg break-words"
+                  >
+                    {formatDate(event.startAt, event.timezone)}
+                  </time>
+                  {timeRange && (
+                    <span className="mt-0.5 block font-mono text-small text-fg-muted break-words">
+                      {timeRange}
+                    </span>
+                  )}
+                </dd>
+              </div>
+            </div>
+
+            {/* 2. Venue & Location */}
+            <div className="flex items-start gap-3.5 border-b border-border-hairline p-4 sm:p-5">
+              <div
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded border border-border-strong bg-bg text-fg-muted"
+                aria-hidden="true"
+              >
+                {event.format === "online" && !event.location?.venue ? (
+                  <Video className="h-4 w-4" strokeWidth={1.75} />
+                ) : (
+                  <MapPin className="h-4 w-4" strokeWidth={1.75} />
+                )}
+              </div>
+              <div className="min-w-0 flex-1">
+                <dt className="text-label tracking-[0.01em] text-fg-muted">Location</dt>
+                <dd className="mt-1">
+                  {event.location?.venue ? (
+                    event.location.mapUrl ? (
+                      <a
+                        href={event.location.mapUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-medium text-fg transition-colors hover:text-brand"
+                      >
+                        {event.location.venue}
+                      </a>
+                    ) : (
+                      <span className="block font-medium text-fg break-words">
+                        {event.location.venue}
+                      </span>
+                    )
+                  ) : (
+                    <span className="block font-medium text-fg break-words">
+                      {locationPlace ||
+                        (event.format === "online" ? "Online" : humanise(event.format))}
+                    </span>
+                  )}
+                  {event.location?.venue && locationPlace ? (
+                    <span className="mt-0.5 block font-mono text-small text-fg-muted break-words">
+                      {locationPlace}
+                    </span>
+                  ) : event.format === "online" ? (
+                    <span className="mt-0.5 block font-mono text-small text-fg-muted">
+                      Virtual event
+                    </span>
+                  ) : (
+                    <span className="mt-0.5 block font-mono text-small text-fg-muted break-words">
+                      {humanise(event.format)}
+                    </span>
+                  )}
+                </dd>
+              </div>
+            </div>
+
+            {/* 3. Organiser */}
+            <div className="flex items-start gap-3.5 border-b sm:border-b-0 sm:border-r border-border-hairline p-4 sm:p-5">
+              <div
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded border border-border-strong bg-bg text-fg-muted"
+                aria-hidden="true"
+              >
+                {event.host ? (
+                  <Building2 className="h-4 w-4" strokeWidth={1.75} />
+                ) : (
+                  <Sparkles className="h-4 w-4" strokeWidth={1.75} />
+                )}
+              </div>
+              <div className="min-w-0 flex-1">
+                <dt className="text-label tracking-[0.01em] text-fg-muted">
+                  {event.host
+                    ? "Organiser"
+                    : event.series
+                      ? "Series"
+                      : "Event type"}
+                </dt>
+                <dd className="mt-1">
+                  {event.host ? (
+                    event.host.organizerUrl ? (
+                      <a
+                        href={event.host.organizerUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-medium text-fg transition-colors hover:text-brand"
+                      >
+                        {event.host.organizer ?? event.host.name}
+                      </a>
+                    ) : (
+                      <span className="block font-medium text-fg break-words">
+                        {event.host.organizer ?? event.host.name}
+                      </span>
+                    )
+                  ) : event.series ? (
+                    <span className="block font-medium text-fg break-words">
+                      {event.series.name}
+                    </span>
+                  ) : (
+                    <span className="block font-medium text-fg break-words">
+                      {humanise(event.type)}
+                    </span>
+                  )}
+                  {event.host ? (
+                    <span className="mt-0.5 block font-mono text-small text-fg-muted break-words">
+                      {event.series ? `Part of ${event.series.name}` : "Host"}
+                    </span>
+                  ) : event.series ? (
+                    <span className="mt-0.5 block font-mono text-small text-fg-muted break-words">
+                      {humanise(event.type)}
+                    </span>
+                  ) : (
+                    <span className="mt-0.5 block font-mono text-small text-fg-muted">
+                      Community session
+                    </span>
+                  )}
+                </dd>
+              </div>
+            </div>
+
+            {/* 4. Audience & Format */}
+            <div className="flex items-start gap-3.5 p-4 sm:p-5">
+              <div
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded border border-border-strong bg-bg text-fg-muted"
+                aria-hidden="true"
+              >
+                {event.audienceSize ? (
+                  <Users className="h-4 w-4" strokeWidth={1.75} />
+                ) : (
+                  <Presentation className="h-4 w-4" strokeWidth={1.75} />
+                )}
+              </div>
+              <div className="min-w-0 flex-1">
+                <dt className="text-label tracking-[0.01em] text-fg-muted">
+                  {event.audienceSize ? "Audience" : "Format"}
+                </dt>
+                <dd className="mt-1">
+                  {event.audienceSize ? (
+                    <span className="block font-mono text-small font-medium text-fg break-words">
+                      {event.audienceSize} attendees
+                    </span>
+                  ) : (
+                    <span className="block font-medium text-fg break-words">
+                      {humanise(event.format)}
+                    </span>
+                  )}
+                  <span className="mt-0.5 block font-mono text-small text-fg-muted break-words">
+                    {event.audienceSize
+                      ? `${humanise(event.format)} · ${humanise(event.type)}`
+                      : event.format === "online"
+                        ? "Virtual attendance"
+                        : "In-person attendance"}
+                  </span>
+                </dd>
+              </div>
+            </div>
+          </dl>
+
+          {registrationLink && event.status === "upcoming" && (
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-border-hairline bg-surface-hover/20 px-4 py-3.5 sm:px-5">
+              <div className="flex items-center gap-2 text-small font-mono text-fg-muted">
+                <Ticket className="h-4 w-4 text-fg-muted shrink-0" strokeWidth={1.75} aria-hidden="true" />
+                <span className="break-words">Registration is open for this event</span>
+              </div>
+              <LinkButton
+                href={registrationLink.url}
+                variant="primary"
+                className="inline-flex items-center justify-center gap-2 w-full sm:w-auto shrink-0"
+              >
+                <Ticket className="h-4 w-4 shrink-0" aria-hidden="true" />
+                <span>{registrationLink.label}</span>
               </LinkButton>
-            ))}
-          </div>
-        )}
+            </div>
+          )}
+        </div>
 
         {event.cover && (
-          <div className="relative mt-10 aspect-[16/9] overflow-hidden rounded-lg border border-border-strong bg-bg-surface">
-            <Image
+          <div className="mt-10">
+            <ZoomableImage
               src={event.cover.url}
               alt={event.cover.alt}
-              fill
+              aspectRatio="aspect-16/9"
               sizes="(max-width: 768px) 100vw, 768px"
-              className="object-cover"
               priority
             />
           </div>
@@ -226,7 +426,7 @@ export default async function EventPage({ params }: Params) {
 
         {event.description && (
           <div className="prose mt-10">
-            {event.description.split("\n\n").map((paragraph, index) => (
+            {paragraphs(event.description).map((paragraph, index) => (
               <p key={index}>{paragraph}</p>
             ))}
           </div>
@@ -235,44 +435,64 @@ export default async function EventPage({ params }: Params) {
         {(event.speakers ?? []).length > 0 && (
           <section className="mt-12">
             <h2>Speakers</h2>
-            <ul className="mt-4 space-y-3">
-              {(event.speakers ?? []).map((speaker) => (
-                <li key={speaker.name} className="flex items-center gap-3">
-                  {speaker.avatarUrl && (
-                    <Image
-                      src={speaker.avatarUrl}
-                      alt=""
-                      width={40}
-                      height={40}
-                      className="h-10 w-10 rounded-full border border-border-strong object-cover"
-                    />
-                  )}
-                  <div>
-                    <p className="text-fg">
-                      {speaker.profileUrl ? (
-                        <a
-                          href={speaker.profileUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {speaker.name}
-                        </a>
-                      ) : (
-                        speaker.name
-                      )}
-                      {speaker.isHost && (
-                        <span className="text-fg-muted"> · host</span>
-                      )}
-                    </p>
-                    {speaker.role && (
-                      <p className="font-mono text-small text-fg-muted">
-                        {speaker.role}
-                      </p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              {(event.speakers ?? []).map((speaker) => {
+                const avatarSrc = normalizeAvatarUrl(speaker.avatarUrl);
+                const isCloudinary = avatarSrc?.includes("res.cloudinary.com");
+                const isLocal = avatarSrc?.startsWith("/");
+
+                return (
+                  <div
+                    key={speaker.name}
+                    className="flex items-center gap-3.5 rounded-lg border border-border-strong bg-bg-surface p-4 transition-colors hover:border-brand"
+                  >
+                    {avatarSrc ? (
+                      <Image
+                        src={avatarSrc}
+                        alt={speaker.name}
+                        width={48}
+                        height={48}
+                        unoptimized={!isLocal && !isCloudinary}
+                        className="h-12 w-12 shrink-0 rounded-full border border-border-strong object-cover"
+                      />
+                    ) : (
+                      <div
+                        className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-border-strong bg-bg text-fg-muted font-mono text-small font-medium"
+                        aria-hidden="true"
+                      >
+                        {speaker.name.charAt(0).toUpperCase()}
+                      </div>
                     )}
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate font-medium text-fg">
+                        {speaker.profileUrl ? (
+                          <a
+                            href={speaker.profileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="transition-colors hover:text-brand"
+                          >
+                            {speaker.name}
+                          </a>
+                        ) : (
+                          speaker.name
+                        )}
+                        {speaker.isHost && (
+                          <span className="ml-2 inline-flex items-center rounded-xs border border-brand/40 bg-brand/10 px-1.5 py-0.5 font-mono text-[0.6875rem] font-medium text-brand">
+                            Host
+                          </span>
+                        )}
+                      </p>
+                      {speaker.role && (
+                        <p className="mt-0.5 truncate font-mono text-small text-fg-muted">
+                          {speaker.role}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                </li>
-              ))}
-            </ul>
+                );
+              })}
+            </div>
           </section>
         )}
 
@@ -282,54 +502,73 @@ export default async function EventPage({ params }: Params) {
         {(event.recordings ?? []).length > 0 && (
           <section className="mt-12">
             <h2>Recordings</h2>
-            <ul className="mt-4 space-y-2">
+            <div className="mt-4 flex flex-wrap gap-3">
               {(event.recordings ?? []).map((recording) => (
-                <li
+                <LinkButton
                   key={recording.url}
-                  className="flex items-center gap-2 font-mono text-small"
+                  href={recording.url}
+                  variant="secondary"
+                  className="inline-flex items-center gap-2"
                 >
                   <Video
                     className="h-4 w-4 shrink-0 text-brand"
                     strokeWidth={1.75}
                     aria-hidden="true"
                   />
-                  <a
-                    href={recording.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Watch on {humanise(recording.platform)}
-                  </a>
+                  <span>Watch on {humanise(recording.platform)}</span>
                   {recording.durationSeconds && (
-                    <span className="text-fg-muted">
-                      {" "}
+                    <span className="font-mono text-small text-fg-muted">
                       · {formatDuration(recording.durationSeconds)}
                     </span>
                   )}
-                </li>
+                </LinkButton>
               ))}
-            </ul>
+            </div>
           </section>
         )}
 
         {event.slides && (
           <section className="mt-12">
             <h2>Slides</h2>
-            <p className="mt-4 flex items-center gap-2 font-mono text-small">
-              <Presentation
-                className="h-4 w-4 shrink-0 text-brand"
-                strokeWidth={1.75}
-                aria-hidden="true"
-              />
-              <a
+            <div className="mt-4">
+              <LinkButton
                 href={event.slides.url}
-                target="_blank"
-                rel="noopener noreferrer"
+                variant="secondary"
+                className="inline-flex items-center gap-2"
               >
-                View the slides
-                {event.slides.provider ? ` on ${event.slides.provider}` : ""}
-              </a>
-            </p>
+                <Presentation
+                  className="h-4 w-4 shrink-0 text-brand"
+                  strokeWidth={1.75}
+                  aria-hidden="true"
+                />
+                <span>
+                  View slides
+                  {event.slides.provider ? ` on ${event.slides.provider}` : ""}
+                </span>
+              </LinkButton>
+            </div>
+          </section>
+        )}
+
+        {(event.links ?? []).length > 0 && (
+          <section className="mt-12">
+            <h2>Links</h2>
+            <div className="mt-4 flex flex-wrap gap-3">
+              {(event.links ?? []).map((link) => {
+                const Icon = linkIcon(link.url, link.kind);
+                return (
+                  <LinkButton
+                    key={link.url}
+                    href={link.url}
+                    variant={link.kind === "registration" ? "primary" : "secondary"}
+                    className="inline-flex items-center gap-2"
+                  >
+                    <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
+                    <span>{link.label}</span>
+                  </LinkButton>
+                );
+              })}
+            </div>
           </section>
         )}
 
@@ -339,15 +578,12 @@ export default async function EventPage({ params }: Params) {
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               {photos.map((photo) => (
                 <figure key={photo.url}>
-                  <div className="relative aspect-[4/3] overflow-hidden rounded-lg border border-border-strong bg-bg-surface">
-                    <Image
-                      src={photo.url}
-                      alt={photo.alt}
-                      fill
-                      sizes="(max-width: 640px) 100vw, 380px"
-                      className="object-cover"
-                    />
-                  </div>
+                  <ZoomableImage
+                    src={photo.url}
+                    alt={photo.alt}
+                    aspectRatio="aspect-4/3"
+                    sizes="(max-width: 640px) 100vw, 380px"
+                  />
                   {(photo.caption || photo.credit) && (
                     <figcaption className="mt-2 font-mono text-small text-fg-muted">
                       {photo.caption}
@@ -358,6 +594,16 @@ export default async function EventPage({ params }: Params) {
               ))}
             </div>
           </section>
+        )}
+
+        {(event.tags ?? []).length > 0 && (
+          <div className="mt-12">
+            <div className="flex flex-wrap gap-2">
+              {(event.tags ?? []).map((tag) => (
+                <Chip key={tag}>{tag}</Chip>
+              ))}
+            </div>
+          </div>
         )}
       </Container>
     </Section>

@@ -335,9 +335,11 @@ All badges share one treatment — `--bg-surface`, `--fg-muted`, `--border-stron
 `--text-label` at weight 500. With a single accent, **badges are told apart by label, not hue.**
 The one filled variant (`--brand-fill`/`--on-brand`) is reserved: one per surface, at most.
 
-Stack/tag chips are mono at `--text-label`, same shape and border as a badge, hovering to
-`--surface-hover` background and a `--brand` border — the card's hover formula, at a smaller
-scale.
+Stack/tag chips are mono at `--text-label`, same shape and border as a badge. **Hover is strictly
+opt-in for interactive targets** (clickable tags, links, and filter triggers) lifting to
+`--surface-hover` background and a `--brand` border. Purely informative badges and chips (operational
+status badges, technology stacks, read-only category labels) remain calm with `cursor: default` and no
+hover effects to prevent false interactive affordances.
 
 ### Forms
 

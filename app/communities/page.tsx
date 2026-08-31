@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
-import { Container, EmptyState, PagePath, Section } from "@/components/ui";
-import { api } from "@/lib/api";
+import {
+  ApiOfflinePage,
+  Container,
+  EmptyState,
+  PagePath,
+  Section,
+} from "@/components/ui";
+import { api, checkApiHealth } from "@/lib/api";
 import { EMPTY_STATES, PAGES } from "@/lib/constants";
 import { CommunitySearch } from "./_components/CommunitySearch";
 
@@ -13,6 +19,13 @@ export const metadata: Metadata = {
 export default async function CommunitiesPage() {
   const communities = await api.getCommunities();
   const total = communities.length;
+
+  if (total === 0) {
+    const health = await checkApiHealth();
+    if (!health.ok) {
+      return <ApiOfflinePage path="/communities" />;
+    }
+  }
 
   return (
     <Section>

@@ -24,14 +24,23 @@ function parse(value: string | null | undefined): Date | null {
 }
 
 /** "6 August 2026". Returns an empty string rather than "Invalid Date". */
-export function formatDate(value: string | null | undefined): string {
+export function formatDate(
+  value: string | null | undefined,
+  timezone?: string | null,
+): string {
   const date = parse(value);
   if (!date) return "";
+  let tz = timezone?.trim() || TIME_ZONE;
+  try {
+    new Intl.DateTimeFormat(undefined, { timeZone: tz });
+  } catch {
+    tz = TIME_ZONE;
+  }
   return new Intl.DateTimeFormat(LOCALE, {
     day: "numeric",
     month: "long",
     year: "numeric",
-    timeZone: TIME_ZONE,
+    timeZone: tz,
   }).format(date);
 }
 
@@ -90,6 +99,70 @@ export function year(value: string | null | undefined): number | null {
   return date ? date.getUTCFullYear() : null;
 }
 
+function getTimezoneOffset(
+  timezone: string | null | undefined,
+  date: Date,
+): string {
+  const tz = timezone?.trim();
+  if (!tz || tz.toUpperCase() === "UTC") return "UTC";
+  try {
+    const parts = new Intl.DateTimeFormat("en-GB", {
+      timeZone: tz,
+      timeZoneName: "shortOffset",
+    }).formatToParts(date);
+    const offset = parts.find((p) => p.type === "timeZoneName")?.value;
+    if (!offset || offset === "GMT+0" || offset === "GMT-0") return "UTC";
+    return offset;
+  } catch {
+    return tz;
+  }
+}
+
+/**
+ * Formats start and optional end times with AM/PM and the timezone offset.
+ *
+ * Example: "09:00 AM - 11:00 AM (GMT+5:30)"
+ *
+ * If `startAt` represents a date-only timestamp (00:00:00 UTC) and has no
+ * `endAt`, returns an empty string so date-only records render as a clean date.
+ */
+export function formatTimeRange(
+  startAt: string | null | undefined,
+  endAt?: string | null | undefined,
+  timezone?: string | null,
+): string {
+  const start = parse(startAt);
+  if (!start) return "";
+
+  const hasTime =
+    start.getUTCHours() !== 0 ||
+    start.getUTCMinutes() !== 0 ||
+    Boolean(endAt);
+  if (!hasTime) return "";
+
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+    timeZone: "UTC",
+  });
+
+  const tzStr = getTimezoneOffset(timezone, start);
+  const startTime = formatter.format(start);
+
+  if (!endAt) {
+    return `${startTime} (${tzStr})`;
+  }
+
+  const end = parse(endAt);
+  if (!end) {
+    return `${startTime} (${tzStr})`;
+  }
+
+  const endTime = formatter.format(end);
+  return `${startTime} - ${endTime} (${tzStr})`;
+}
+
 /** "7 min read". Below a minute reads as one, because "0 min read" is absurd. */
 export function readingTime(minutes: number | null | undefined): string {
   const value = Math.max(1, Math.round(minutes ?? 0));
@@ -126,18 +199,22 @@ export function humanise(value: string | null | undefined): string {
 /**
  * Flattens a prose field into paragraphs.
  *
- * `description` is an array of paragraphs in the API contract, but a record
- * can legitimately hold one entry carrying several paragraphs separated by
- * blank lines — that is what a textarea in the admin produces. Splitting here
- * means the page renders the same structure either way, instead of a heading
- * that has swallowed the whole body.
+ * Can receive either a single string or an array of strings. A record can
+ * legitimately hold one entry carrying several paragraphs separated by blank
+ * lines (CRLF or LF) — that is what a textarea in the admin produces. Splitting
+ * here means the page renders the same structure either way, instead of one
+ * block that has swallowed the whole body.
  */
-export function paragraphs(value: string[] | null | undefined): string[] {
-  return (value ?? [])
-    .flatMap((entry) => entry.split(/\n\s*\n/))
+export function paragraphs(
+  value: string | string[] | null | undefined,
+): string[] {
+  const entries = typeof value === "string" ? [value] : (value ?? []);
+  return entries
+    .flatMap((entry) => entry.split(/\r?\n\s*\r?\n/))
     .map((entry) => entry.trim())
     .filter(Boolean);
 }
+
 
 /**
  * The portrait, from whichever formats the about record actually carries.

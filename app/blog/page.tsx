@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import {
+  ApiOfflinePage,
   Container,
   EmptyState,
   PagePath,
   Section,
 } from "@/components/ui";
-import { api } from "@/lib/api";
+import { api, checkApiHealth } from "@/lib/api";
 import { EMPTY_STATES, PAGES } from "@/lib/constants";
 import { BlogSearch } from "./_components/BlogSearch";
 
@@ -20,6 +21,13 @@ export const metadata: Metadata = {
 
 export default async function BlogPage() {
   const posts = (await api.getAllBlogs()) ?? [];
+
+  if (posts.length === 0) {
+    const health = await checkApiHealth();
+    if (!health.ok) {
+      return <ApiOfflinePage path="/blog" />;
+    }
+  }
 
   return (
     <Section>

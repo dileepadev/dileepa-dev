@@ -14,51 +14,51 @@ import {
 import { cn } from "@/lib/utils";
 
 // Single-column frames — no trailing annotation on the same line
-const UPLINK_FRAMES = [
+const getUplinkFrames = (target: string) => [
   ` [ UPLINK PROBE ]
- TARGET: api.dileepa.dev
+ TARGET: ${target}
  ┌────────────────┐
  │ >>----x------- │
  └────────────────┘
  PACKET: SYN_SENT (TIMEOUT)`,
   ` [ UPLINK PROBE ]
- TARGET: api.dileepa.dev
+ TARGET: ${target}
  ┌────────────────┐
  │ ---->>--x----- │
  └────────────────┘
  PACKET: NO_ROUTE_HOST`,
   ` [ UPLINK PROBE ]
- TARGET: api.dileepa.dev
+ TARGET: ${target}
  ┌────────────────┐
  │ ------>>x----- │
  └────────────────┘
  PACKET: ECONNREFUSED`,
   ` [ UPLINK PROBE ]
- TARGET: api.dileepa.dev
+ TARGET: ${target}
  ┌────────────────┐
  │ --------x<<<<- │
  └────────────────┘
  PACKET: RETRY_BACKOFF`,
   ` [ UPLINK PROBE ]
- TARGET: api.dileepa.dev
+ TARGET: ${target}
  ┌────────────────┐
  │ >>----x------- │
  └────────────────┘
  PACKET: PROBING_FALLBACK`,
   ` [ UPLINK PROBE ]
- TARGET: api.dileepa.dev
+ TARGET: ${target}
  ┌────────────────┐
  │ ---->>----x--- │
  └────────────────┘
  PACKET: CIRCUIT_OPEN`,
   ` [ UPLINK PROBE ]
- TARGET: api.dileepa.dev
+ TARGET: ${target}
  ┌────────────────┐
  │ ------>>--x--- │
  └────────────────┘
  PACKET: GATEWAY_STANDBY`,
   ` [ UPLINK PROBE ]
- TARGET: api.dileepa.dev
+ TARGET: ${target}
  ┌────────────────┐
  │ -------->>x--- │
  └────────────────┘
@@ -73,7 +73,12 @@ const ASCII_503_BANNER = `
  |____/ \\___/|____/ 
 `;
 
-export function ApiOfflineVisual() {
+export function ApiOfflineVisual({
+  targetHost = "api.dileepa.dev",
+}: {
+  targetHost?: string;
+} = {}) {
+  const frames = getUplinkFrames(targetHost);
   const [activeTab, setActiveTab] = useState<"uplink" | "cached">("uplink");
   const [frameIndex, setFrameIndex] = useState(0);
   const [isProbing, setIsProbing] = useState(false);
@@ -83,10 +88,10 @@ export function ApiOfflineVisual() {
   // Cycle ASCII uplink animation
   useEffect(() => {
     const timer = setInterval(() => {
-      setFrameIndex((prev) => (prev + 1) % UPLINK_FRAMES.length);
+      setFrameIndex((prev) => (prev + 1) % frames.length);
     }, 240);
     return () => clearInterval(timer);
-  }, []);
+  }, [frames.length]);
 
   const handleProbeApi = async () => {
     setIsProbing(true);
@@ -120,7 +125,7 @@ export function ApiOfflineVisual() {
   const handleCopyStatus = async () => {
     const report = [
       `[dileepa.dev API Health Status]`,
-      `Target: api.dileepa.dev`,
+      `Target: ${targetHost}`,
       `Status: 503 Service Unavailable / Connection Disconnected`,
       `Timestamp: ${new Date().toISOString()}`,
       `Frontend: dileepa.dev (Static Shell Active)`,
@@ -144,7 +149,7 @@ export function ApiOfflineVisual() {
           <span className="w-2 h-2 rounded-full bg-border-strong inline-block shrink-0" />
           <span className="w-2 h-2 rounded-full bg-border-strong inline-block shrink-0" />
           <span className="w-2 h-2 rounded-full bg-border-strong inline-block shrink-0" />
-          <span className="ml-2 text-fg-muted truncate">uplink://api.dileepa.dev/status</span>
+          <span className="ml-2 text-fg-muted truncate">uplink://{targetHost}/status</span>
         </div>
 
         {/* Tab Toggle */}
@@ -192,7 +197,7 @@ export function ApiOfflineVisual() {
             {/* Animated ASCII Network Uplink */}
             <div className="p-2.5 rounded bg-bg border border-border-strong/70 overflow-hidden relative">
               <pre className="text-[0.6875rem] leading-[1.3] text-fg select-none whitespace-pre">
-                {UPLINK_FRAMES[frameIndex]}
+                {frames[frameIndex]}
               </pre>
 
               {isProbing && (
@@ -210,7 +215,7 @@ export function ApiOfflineVisual() {
             <div className="text-[0.6875rem] text-fg-muted space-y-1 pt-2 border-t border-border-strong/40">
               <div className="flex items-center justify-between">
                 <span>GATEWAY:</span>
-                <span className="text-fg font-medium truncate ml-2">api.dileepa.dev</span>
+                <span className="text-fg font-medium truncate ml-2">{targetHost}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span>STATE:</span>

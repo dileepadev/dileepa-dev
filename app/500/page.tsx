@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Container, ErrorVisual, LinkButton, Section } from "@/components/ui";
+import { Button, Container, ErrorVisual, LinkButton, PagePath, Section } from "@/components/ui";
 
 const MOCK_ERROR = {
   name: "Error",
@@ -20,6 +20,9 @@ export default function Error500PreviewPage() {
       <Container>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           <div className="lg:col-span-6 xl:col-span-7 min-w-0">
+            <div className="mb-4">
+              <PagePath path="/500" />
+            </div>
             <div className="section-label">500 / Error</div>
             <h1>This page did not load</h1>
             <p className="mt-4 text-fg-muted leading-relaxed">

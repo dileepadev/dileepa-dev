@@ -56,7 +56,7 @@ export function ColorSwatch({
         style={{
           backgroundColor: bgHex || hex,
           borderColor: borderHex || "var(--border)",
-          color: textHex || "#ffffff",
+          color: textHex || "var(--fg)",
         }}
       >
         <span className="font-mono text-xs font-medium drop-shadow-xs">
@@ -110,7 +110,7 @@ export function ColorSwatch({
       </div>
 
       {copied && (
-        <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded bg-brand text-bg text-[0.625rem] font-mono font-medium shadow-xs">
+        <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded bg-brand-fill text-on-brand text-[0.625rem] font-mono font-medium shadow-xs">
           Copied
         </div>
       )}
@@ -181,7 +181,7 @@ export function SocialCardPreview() {
     <div className="rounded-lg border border-border-strong bg-bg-surface overflow-hidden shadow-xs">
       {/* Platform toggle bar */}
       <div className="flex items-center justify-between px-4 py-3 bg-bg border-b border-border-strong text-xs font-mono">
-        <span className="text-fg font-medium">Social Card Simulator</span>
+        <span className="text-fg font-medium">Social card simulator</span>
         <div className="flex items-center rounded border border-border-strong overflow-hidden text-[0.6875rem]">
           <button
             type="button"
@@ -189,7 +189,7 @@ export function SocialCardPreview() {
             className={cn(
               "px-2.5 py-1 transition-colors cursor-pointer",
               platform === "twitter"
-                ? "bg-brand text-bg font-medium"
+                ? "bg-brand-fill text-on-brand font-medium"
                 : "bg-bg-surface text-fg-muted hover:text-fg hover:bg-surface-hover",
             )}
           >
@@ -201,7 +201,7 @@ export function SocialCardPreview() {
             className={cn(
               "px-2.5 py-1 transition-colors cursor-pointer border-l border-border-strong",
               platform === "linkedin"
-                ? "bg-brand text-bg font-medium"
+                ? "bg-brand-fill text-on-brand font-medium"
                 : "bg-bg-surface text-fg-muted hover:text-fg hover:bg-surface-hover",
             )}
           >
@@ -214,10 +214,10 @@ export function SocialCardPreview() {
       <div className="p-4 sm:p-6 bg-bg flex justify-center">
         <div className="w-full max-w-xl rounded-xl border border-border-strong bg-bg-surface overflow-hidden shadow-md">
           {/* OG Image */}
-          <div className="relative aspect-[1200/630] w-full bg-carbon overflow-hidden">
+          <div className="relative aspect-[1200/630] w-full bg-bg overflow-hidden">
             <Image
               src="/og.png"
-              alt="Dileepa Bandara Open Graph Preview"
+              alt="Dileepa Bandara Open Graph preview"
               width={1200}
               height={630}
               className="w-full h-full object-cover"
@@ -228,7 +228,7 @@ export function SocialCardPreview() {
           {/* Social feed metadata preview */}
           {platform === "twitter" ? (
             <div className="p-3.5 bg-bg-surface border-t border-border-strong space-y-1">
-              <div className="font-mono text-[0.6875rem] text-fg-muted uppercase">
+              <div className="font-mono text-[0.6875rem] text-fg-muted">
                 dileepa.dev
               </div>
               <div className="font-medium text-sm text-fg truncate">

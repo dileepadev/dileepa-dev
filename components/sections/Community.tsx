@@ -8,11 +8,13 @@ import {
   Video as VideoIcon,
 } from "lucide-react";
 import {
+  Chip,
   Container,
   Item,
   ItemList,
   Section,
   SectionHeading,
+  StatusBadge,
   Subsection,
   ViewAll,
 } from "@/components/ui";
@@ -77,14 +79,9 @@ export function CommunitySection({
                   meta={
                     <>
                       {community.current ? (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium border border-brand/30 bg-brand/10 text-brand transition-colors duration-150 hover:border-brand hover:bg-brand/20 cursor-default">
-                          <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" aria-hidden="true" />
-                          <span>Current</span>
-                        </span>
+                        <StatusBadge>Current</StatusBadge>
                       ) : (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-mono text-fg-muted border border-border-strong bg-bg-surface transition-colors duration-150 hover:border-brand hover:bg-surface-hover hover:text-fg cursor-default">
-                          Past role
-                        </span>
+                        <Chip>Past role</Chip>
                       )}
                       {community.role && (
                         <span className="font-medium text-fg">{community.role}</span>
@@ -119,18 +116,13 @@ export function CommunitySection({
                   meta={
                     <>
                       {event.status === "upcoming" ? (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium border border-brand/30 bg-brand/10 text-brand transition-colors duration-150 hover:border-brand hover:bg-brand/20 cursor-default">
-                          <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" aria-hidden="true" />
-                          <span>Upcoming</span>
-                        </span>
+                        <StatusBadge>Upcoming</StatusBadge>
                       ) : event.status === "cancelled" ? (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-mono text-error border border-error/30 bg-error/10 transition-colors duration-150 hover:border-error/60 hover:bg-error/20 cursor-default">
+                        <Chip className="text-error border-error/30 bg-error/10">
                           Cancelled
-                        </span>
+                        </Chip>
                       ) : (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-mono text-fg-muted border border-border-strong bg-bg-surface transition-colors duration-150 hover:border-brand hover:bg-surface-hover hover:text-fg cursor-default">
-                          Past event
-                        </span>
+                        <Chip>Past event</Chip>
                       )}
                       <span className="inline-flex items-center gap-1.5 text-fg font-medium">
                         <Calendar className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />

@@ -13,6 +13,7 @@ export { NotFoundPage } from "./NotFoundPage";
 export { NotFoundVisual } from "./NotFoundVisual";
 export { ErrorVisual } from "./ErrorVisual";
 export { ApiOfflineVisual } from "./ApiOfflineVisual";
+export { ApiOfflinePage } from "./ApiOfflinePage";
 export { Gallery } from "./Gallery";
 export { SearchInput } from "./SearchInput";
 export { SortSelect, type SortOption } from "./SortSelect";
@@ -25,4 +26,5 @@ export {
 export { BackToTop } from "./BackToTop";
 export { LoadMore } from "./LoadMore";
 export { ImageLightbox } from "./ImageLightbox";
+export { ZoomableImage } from "./ZoomableImage";
 export { PagePath } from "./PagePath";

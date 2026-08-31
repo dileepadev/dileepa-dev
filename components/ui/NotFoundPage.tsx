@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Container } from "./Container";
 import { LinkButton } from "./Button";
+import { PagePath } from "./PagePath";
 import { Section } from "./Section";
 
 interface NotFoundPageProps {
@@ -11,6 +12,8 @@ interface NotFoundPageProps {
   back?: { href: string; label: string };
   /** An optional visual or interactive panel beside the message. */
   aside?: ReactNode;
+  /** The route path for the breadcrumb, defaults to /404 */
+  path?: string;
 }
 
 /**
@@ -28,6 +31,7 @@ export function NotFoundPage({
   children,
   back,
   aside,
+  path = "/404",
 }: NotFoundPageProps) {
   return (
     <Section>
@@ -40,6 +44,9 @@ export function NotFoundPage({
           }
         >
           <div className={aside ? "lg:col-span-6 xl:col-span-7 min-w-0" : undefined}>
+            <div className="mb-4">
+              <PagePath path={path} />
+            </div>
             <div className="section-label">404</div>
             <h1>{heading}</h1>
             <p className="mt-4 text-fg-muted">{children}</p>

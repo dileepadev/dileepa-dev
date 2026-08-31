@@ -444,7 +444,7 @@ a {
   border-color: transparent;
 }
 
-/* A stack/tag chip: mono, same hover formula as the card. */
+/* A stack/tag chip: mono, with hover reserved strictly for interactive targets. */
 .chip {
   display: inline-block;
   font-family: var(--font-mono);
@@ -456,12 +456,24 @@ a {
   border: var(--hairline) solid var(--border-strong);
   border-radius: var(--radius-sm);
   padding: var(--space-2) var(--space-3);
+  cursor: default;
+}
+a > .chip,
+a.chip,
+button > .chip,
+button.chip,
+.chip--interactive {
+  cursor: pointer;
   transition:
     background var(--dur) var(--ease),
     border-color var(--dur) var(--ease),
     color var(--dur) var(--ease);
 }
-.chip:hover {
+a:hover > .chip,
+a.chip:hover,
+button:hover > .chip,
+button.chip:hover,
+.chip--interactive:hover {
   background: var(--surface-hover);
   border-color: var(--brand);
   color: var(--fg);

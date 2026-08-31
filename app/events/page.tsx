@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
-import { Container, EmptyState, PagePath, Section } from "@/components/ui";
-import { api } from "@/lib/api";
+import {
+  ApiOfflinePage,
+  Container,
+  EmptyState,
+  PagePath,
+  Section,
+} from "@/components/ui";
+import { api, checkApiHealth } from "@/lib/api";
 import { EMPTY_STATES, PAGES } from "@/lib/constants";
 import { EventSearch } from "./_components/EventSearch";
 
@@ -20,6 +26,13 @@ export default async function EventsPage() {
   ]);
 
   const total = upcoming.length + completed.length;
+  if (total === 0) {
+    const health = await checkApiHealth();
+    if (!health.ok) {
+      return <ApiOfflinePage path="/events" />;
+    }
+  }
+
   const empty = total === 0;
 
   return (

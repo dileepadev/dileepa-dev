@@ -12,6 +12,7 @@ import {
   Container,
   PagePath,
   Section,
+  SectionHeading,
   Subsection,
   Lockup,
   Button,
@@ -99,21 +100,21 @@ const FAVICONS = [
 const METADATA_ENDPOINTS = [
   {
     path: "/manifest.json",
-    type: "Web Manifest",
+    type: "Web manifest",
     description:
       "PWA configuration declaring application name, standalone display mode, and icon manifest.",
   },
   {
     path: "/browserconfig.xml",
-    type: "Windows Tile",
+    type: "Windows tile",
     description:
       "Windows 8/10/11 Start screen pin tiles and brand accent configuration.",
   },
   {
     path: "/sitemap.xml",
-    type: "XML Sitemap",
+    type: "XML sitemap",
     description:
-      "Machine-readable index of all 123 static pages, articles, projects, and events with lastmod timestamps.",
+      "Machine-readable index of all static pages, articles, projects, and events with lastmod timestamps.",
   },
   {
     path: "/robots.txt",
@@ -123,13 +124,13 @@ const METADATA_ENDPOINTS = [
   },
   {
     path: "/llms.txt",
-    type: "AI Context Index",
+    type: "AI context index",
     description:
       "Standard plaintext reference describing dileepadev for AI models and autonomous agents.",
   },
   {
     path: "/blog/rss.xml",
-    type: "RSS 2.0 Feed",
+    type: "RSS 2.0 feed",
     description:
       "Full-text syndication feed of published engineering articles for RSS readers.",
   },
@@ -231,7 +232,7 @@ export default async function BrandPage() {
 }`;
 
   return (
-    <div className="space-y-12 pb-16">
+    <>
       {/* Page Header */}
       <Section>
         <Container>
@@ -243,7 +244,7 @@ export default async function BrandPage() {
               <div className="section-label">{PAGES.brand.label}</div>
               <h1>{PAGES.brand.title}</h1>
             </div>
-            <div className="inline-flex items-center gap-1.5 font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1 transition-colors hover:border-brand">
+            <div className="inline-flex items-center gap-1.5 font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1 transition-colors hover:border-brand cursor-default">
               <span className="font-medium text-fg">v2.0</span>
               <span>Design system</span>
             </div>
@@ -253,53 +254,53 @@ export default async function BrandPage() {
           {/* Quick-jump Anchor Bar */}
           <nav
             aria-label="Brand reference sections"
-            className="mt-6 flex items-center gap-2 overflow-x-auto pb-2 text-xs font-mono border-b border-border-strong/60"
+            className="mt-6 flex flex-wrap items-center gap-2"
           >
             <a
               href="#mark"
-              className="px-2.5 py-1 rounded-sm bg-bg-surface text-fg hover:text-brand border border-border-strong transition-colors shrink-0"
+              className="px-2.5 py-1 rounded-sm bg-bg-surface text-fg-muted hover:text-fg hover:border-brand border border-border-strong transition-colors font-mono text-xs"
             >
               #mark
             </a>
             <a
               href="#colors"
-              className="px-2.5 py-1 rounded-sm bg-bg-surface text-fg hover:text-brand border border-border-strong transition-colors shrink-0"
+              className="px-2.5 py-1 rounded-sm bg-bg-surface text-fg-muted hover:text-fg hover:border-brand border border-border-strong transition-colors font-mono text-xs"
             >
               #colors
             </a>
             <a
               href="#typography"
-              className="px-2.5 py-1 rounded-sm bg-bg-surface text-fg hover:text-brand border border-border-strong transition-colors shrink-0"
+              className="px-2.5 py-1 rounded-sm bg-bg-surface text-fg-muted hover:text-fg hover:border-brand border border-border-strong transition-colors font-mono text-xs"
             >
               #typography
             </a>
             <a
               href="#portrait"
-              className="px-2.5 py-1 rounded-sm bg-bg-surface text-fg hover:text-brand border border-border-strong transition-colors shrink-0"
+              className="px-2.5 py-1 rounded-sm bg-bg-surface text-fg-muted hover:text-fg hover:border-brand border border-border-strong transition-colors font-mono text-xs"
             >
               #portrait-and-media
             </a>
             <a
               href="#metadata"
-              className="px-2.5 py-1 rounded-sm bg-bg-surface text-fg hover:text-brand border border-border-strong transition-colors shrink-0"
+              className="px-2.5 py-1 rounded-sm bg-bg-surface text-fg-muted hover:text-fg hover:border-brand border border-border-strong transition-colors font-mono text-xs"
             >
               #metadata-and-assets
             </a>
             <a
               href="#components"
-              className="px-2.5 py-1 rounded-sm bg-bg-surface text-fg hover:text-brand border border-border-strong transition-colors shrink-0"
+              className="px-2.5 py-1 rounded-sm bg-bg-surface text-fg-muted hover:text-fg hover:border-brand border border-border-strong transition-colors font-mono text-xs"
             >
               #ui-components
             </a>
             <a
               href="#voice"
-              className="px-2.5 py-1 rounded-sm bg-bg-surface text-fg hover:text-brand border border-border-strong transition-colors shrink-0"
+              className="px-2.5 py-1 rounded-sm bg-bg-surface text-fg-muted hover:text-fg hover:border-brand border border-border-strong transition-colors font-mono text-xs"
             >
               #voice-and-copy
             </a>
             <a
               href="#tokens"
-              className="px-2.5 py-1 rounded-sm bg-bg-surface text-fg hover:text-brand border border-border-strong transition-colors shrink-0"
+              className="px-2.5 py-1 rounded-sm bg-bg-surface text-fg-muted hover:text-fg hover:border-brand border border-border-strong transition-colors font-mono text-xs"
             >
               #tokens-code
             </a>
@@ -308,19 +309,15 @@ export default async function BrandPage() {
       </Section>
 
       {/* 1. The Mark & Lockup */}
-      <section id="mark" className="scroll-mt-16">
+      <Section id="mark">
         <Container>
-          <div className="section-head mb-6">
-            <div className="section-label">Identity</div>
-            <h2 className="section-title">The mark and logo lockup</h2>
-            <p className="section-intro">
-              The platform lockup is an understated developer identity: a
-              neutral wordmark paired with an upright emerald terminal prompt
-              and dot.
-            </p>
-          </div>
+          <SectionHeading
+            label="Identity"
+            title="The mark and logo lockup"
+            intro="The platform lockup is an understated developer identity: a neutral wordmark paired with an upright emerald terminal prompt and dot."
+          />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             {/* Primary Lockup Showcase */}
             <div className="p-6 rounded-lg border border-border-strong bg-bg-surface flex flex-col justify-between">
               <div>
@@ -429,301 +426,296 @@ export default async function BrandPage() {
             </div>
           </div>
         </Container>
-      </section>
+      </Section>
 
       {/* 2. Color System & Contrast */}
-      <section id="colors" className="scroll-mt-16">
+      <Section id="colors">
         <Container>
-          <div className="section-head mb-6">
-            <div className="section-label">Palette</div>
-            <h2 className="section-title">Color system and contrast</h2>
-            <p className="section-intro">
-              Emerald is the single accent. Everything else is neutral. The
-              contrast between emerald and deep carbon or crisp paper carries
-              the brand.
-            </p>
-          </div>
+          <SectionHeading
+            label="Palette"
+            title="Color system and contrast"
+            intro="Emerald is the single accent. Everything else is neutral. The contrast between emerald and deep carbon or crisp paper carries the brand."
+          />
 
           {/* Emerald Stops */}
-          <Subsection title="Accent stops">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-              <ColorSwatch
-                name="Emerald Bright"
-                token="--emerald-bright"
-                hex="#23B888"
-                role="Primary accent on dark (Carbon) surfaces. Links, buttons, tags."
-                contrast="8.0:1 on Carbon (#050505)"
-                contrastBadge="WCAG AAA"
-                bgHex="#23B888"
-                textHex="#050505"
-              />
-              <ColorSwatch
-                name="Emerald Deep"
-                token="--emerald-deep"
-                hex="#087F5B"
-                role="Primary accent on light (Paper) surfaces. Links, buttons, tags."
-                contrast="4.7:1 on Paper (#F7F7F7)"
-                contrastBadge="WCAG AA"
-                bgHex="#087F5B"
-                textHex="#ffffff"
-              />
-            </div>
-          </Subsection>
-
-          {/* Palette Proportions */}
-          <div className="p-4 rounded-lg border border-border-strong bg-bg-surface mb-8">
-            <div className="flex items-center justify-between text-xs font-mono text-fg-muted mb-2">
-              <span>Palette proportion budget</span>
-              <span className="text-brand">Deliberate accent</span>
-            </div>
-            <div className="h-4 w-full rounded overflow-hidden flex font-mono text-[0.625rem] text-bg font-bold">
-              <div
-                style={{ width: "85%" }}
-                className="bg-fg-muted flex items-center justify-center truncate"
-                title="85% Neutrals"
-              >
-                Neutrals 85%
+          <div className="mt-6">
+            <Subsection title="Accent stops">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                <ColorSwatch
+                  name="Emerald Bright"
+                  token="--emerald-bright"
+                  hex="#23B888"
+                  role="Primary accent on dark (Carbon) surfaces. Links, buttons, tags."
+                  contrast="8.0:1 on Carbon (#050505)"
+                  contrastBadge="WCAG AAA"
+                  bgHex="#23B888"
+                  textHex="#050505"
+                />
+                <ColorSwatch
+                  name="Emerald Deep"
+                  token="--emerald-deep"
+                  hex="#087F5B"
+                  role="Primary accent on light (Paper) surfaces. Links, buttons, tags."
+                  contrast="4.7:1 on Paper (#F7F7F7)"
+                  contrastBadge="WCAG AA"
+                  bgHex="#087F5B"
+                  textHex="#ffffff"
+                />
               </div>
-              <div
-                style={{ width: "14%" }}
-                className="bg-brand flex items-center justify-center truncate text-bg"
-                title="14% Emerald"
-              >
-                14%
+            </Subsection>
+
+            {/* Palette Proportions */}
+            <div className="p-4 rounded-lg border border-border-strong bg-bg-surface mb-8">
+              <div className="flex items-center justify-between text-xs font-mono text-fg-muted mb-2">
+                <span>Palette proportion budget</span>
+                <span className="text-brand">Deliberate accent</span>
               </div>
-              <div
-                style={{ width: "1%" }}
-                className="bg-error"
-                title="1% Functional"
-              />
-            </div>
-            <p className="mt-2 text-xs text-fg-muted">
-              Emerald appears <strong>once per surface</strong> as an intentional
-              focal point. Scattering emerald links, chips, and icons dilutes
-              visual hierarchy.
-            </p>
-          </div>
-
-          {/* Dark Neutrals Ramp */}
-          <Subsection title="Dark ramp (Carbon foundation)">
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-8">
-              <ColorSwatch
-                name="Carbon"
-                token="--ink-900 / --carbon"
-                hex="#050505"
-                role="Canvas page foundation in dark theme."
-                bgHex="#050505"
-                borderHex="#1f1f1f"
-                textHex="#f1f1f1"
-              />
-              <ColorSwatch
-                name="Surface"
-                token="--ink-800 / --bg-surface"
-                hex="#0D0D0D"
-                role="Card and section background."
-                bgHex="#0D0D0D"
-                borderHex="#2e2e2e"
-                textHex="#f1f1f1"
-              />
-              <ColorSwatch
-                name="Raised"
-                token="--ink-700 / --bg-raised"
-                hex="#141414"
-                role="Raised surface, code blocks."
-                bgHex="#141414"
-                borderHex="#2e2e2e"
-                textHex="#f1f1f1"
-              />
-              <ColorSwatch
-                name="Divider"
-                token="--ink-600 / --border"
-                hex="#1F1F1F"
-                role="Structural rules, section borders."
-                bgHex="#1F1F1F"
-                borderHex="#2e2e2e"
-                textHex="#f1f1f1"
-              />
-              <ColorSwatch
-                name="Edge strong"
-                token="--ink-500 / --border-strong"
-                hex="#2E2E2E"
-                role="Card borders, control boundaries."
-                bgHex="#2E2E2E"
-                borderHex="#8d8d8d"
-                textHex="#f1f1f1"
-              />
-              <ColorSwatch
-                name="Text muted"
-                token="--ink-400 / --fg-muted"
-                hex="#8D8D8D"
-                role="Secondary metadata and subtitles (6.1:1)."
-                contrastBadge="WCAG AAA"
-                bgHex="#8D8D8D"
-                textHex="#050505"
-              />
-              <ColorSwatch
-                name="Text primary"
-                token="--ink-100 / --fg"
-                hex="#F1F1F1"
-                role="Headings and primary body copy (18:1)."
-                contrastBadge="WCAG AAA"
-                bgHex="#F1F1F1"
-                textHex="#050505"
-              />
-            </div>
-          </Subsection>
-
-          {/* Light Neutrals Ramp */}
-          <Subsection title="Light ramp (Paper foundation)">
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-8">
-              <ColorSwatch
-                name="Pure Paper"
-                token="--paper-0"
-                hex="#FFFFFF"
-                role="Raised cards in light mode."
-                bgHex="#FFFFFF"
-                borderHex="#d2d2d2"
-                textHex="#131313"
-              />
-              <ColorSwatch
-                name="Paper Ground"
-                token="--paper-50 / --paper"
-                hex="#F7F7F7"
-                role="Canvas page foundation in light theme."
-                bgHex="#F7F7F7"
-                borderHex="#d2d2d2"
-                textHex="#131313"
-              />
-              <ColorSwatch
-                name="Paper Rule"
-                token="--paper-200"
-                hex="#E3E3E3"
-                role="Structural dividing lines in light mode."
-                bgHex="#E3E3E3"
-                borderHex="#d2d2d2"
-                textHex="#131313"
-              />
-              <ColorSwatch
-                name="Paper Edge"
-                token="--paper-300"
-                hex="#D2D2D2"
-                role="Component boundaries in light mode."
-                bgHex="#D2D2D2"
-                borderHex="#6a6a6a"
-                textHex="#131313"
-              />
-              <ColorSwatch
-                name="Paper Muted"
-                token="--paper-400"
-                hex="#6A6A6A"
-                role="Secondary text on light mode (5.1:1)."
-                contrastBadge="WCAG AA"
-                bgHex="#6A6A6A"
-                textHex="#ffffff"
-              />
-              <ColorSwatch
-                name="Paper Primary"
-                token="--paper-900"
-                hex="#131313"
-                role="Primary headings and text on light mode."
-                contrastBadge="WCAG AAA"
-                bgHex="#131313"
-                textHex="#ffffff"
-              />
-            </div>
-          </Subsection>
-
-          {/* Functional colors */}
-          <Subsection title="Functional & state colors">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
-              <ColorSwatch
-                name="Success"
-                token="--success"
-                hex="#23B888 / #087F5B"
-                role="Reuses emerald accent — no new hue needed."
-                bgHex="#23B888"
-                textHex="#050505"
-              />
-              <ColorSwatch
-                name="Error"
-                token="--error"
-                hex="#E5484D / #C4292E"
-                role="Alert states, validation errors (5.2:1)."
-                contrastBadge="WCAG AA"
-                bgHex="#E5484D"
-                textHex="#ffffff"
-              />
-              <ColorSwatch
-                name="Warning"
-                token="--warning"
-                hex="#D97706 / #B45309"
-                role="Strictly UI warning states, never a brand accent."
-                contrastBadge="WCAG AA"
-                bgHex="#D97706"
-                textHex="#ffffff"
-              />
-            </div>
-          </Subsection>
-
-          {/* Contrast & Forbidden Pairings */}
-          <div className="p-4 rounded-lg border border-border-strong bg-bg-surface">
-            <div className="font-mono text-xs font-bold text-fg mb-3">
-              Verified contrast & forbidden pairings
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono">
-              <div className="space-y-2">
-                <div className="text-fg-muted font-medium">
-                  Allowed pairings:
+              <div className="h-4 w-full rounded overflow-hidden flex font-mono text-[0.625rem] text-bg font-bold">
+                <div
+                  style={{ width: "85%" }}
+                  className="bg-fg-muted flex items-center justify-center truncate"
+                  title="85% Neutrals"
+                >
+                  Neutrals 85%
                 </div>
-                <div className="flex items-center justify-between p-2 rounded bg-bg border border-border">
-                  <span>Emerald Bright on Carbon</span>
-                  <span className="text-brand font-medium">8.0:1 (AAA)</span>
+                <div
+                  style={{ width: "14%" }}
+                  className="bg-brand flex items-center justify-center truncate text-bg"
+                  title="14% Emerald"
+                >
+                  14%
                 </div>
-                <div className="flex items-center justify-between p-2 rounded bg-bg border border-border">
-                  <span>Emerald Deep on Paper</span>
-                  <span className="text-brand font-medium">4.7:1 (AA)</span>
-                </div>
-                <div className="flex items-center justify-between p-2 rounded bg-bg border border-border">
-                  <span>Primary text on Carbon</span>
-                  <span className="text-brand font-medium">18.0:1 (AAA)</span>
-                </div>
+                <div
+                  style={{ width: "1%" }}
+                  className="bg-error"
+                  title="1% Functional"
+                />
               </div>
+              <p className="mt-2 text-xs text-fg-muted">
+                Emerald appears <strong>once per surface</strong> as an intentional
+                focal point. Scattering emerald links, chips, and icons dilutes
+                visual hierarchy.
+              </p>
+            </div>
 
-              <div className="space-y-2">
-                <div className="text-error font-medium">
-                  Forbidden pairings (never ship):
+            {/* Dark Neutrals Ramp */}
+            <Subsection title="Dark ramp (Carbon foundation)">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-8">
+                <ColorSwatch
+                  name="Carbon"
+                  token="--ink-900 / --carbon"
+                  hex="#050505"
+                  role="Canvas page foundation in dark theme."
+                  bgHex="#050505"
+                  borderHex="#1f1f1f"
+                  textHex="#f1f1f1"
+                />
+                <ColorSwatch
+                  name="Surface"
+                  token="--ink-800 / --bg-surface"
+                  hex="#0D0D0D"
+                  role="Card and section background."
+                  bgHex="#0D0D0D"
+                  borderHex="#2e2e2e"
+                  textHex="#f1f1f1"
+                />
+                <ColorSwatch
+                  name="Raised"
+                  token="--ink-700 / --bg-raised"
+                  hex="#141414"
+                  role="Raised surface, code blocks."
+                  bgHex="#141414"
+                  borderHex="#2e2e2e"
+                  textHex="#f1f1f1"
+                />
+                <ColorSwatch
+                  name="Divider"
+                  token="--ink-600 / --border"
+                  hex="#1F1F1F"
+                  role="Structural rules, section borders."
+                  bgHex="#1F1F1F"
+                  borderHex="#2e2e2e"
+                  textHex="#f1f1f1"
+                />
+                <ColorSwatch
+                  name="Edge strong"
+                  token="--ink-500 / --border-strong"
+                  hex="#2E2E2E"
+                  role="Card borders, control boundaries."
+                  bgHex="#2E2E2E"
+                  borderHex="#8d8d8d"
+                  textHex="#f1f1f1"
+                />
+                <ColorSwatch
+                  name="Text muted"
+                  token="--ink-400 / --fg-muted"
+                  hex="#8D8D8D"
+                  role="Secondary metadata and subtitles (6.1:1)."
+                  contrastBadge="WCAG AAA"
+                  bgHex="#8D8D8D"
+                  textHex="#050505"
+                />
+                <ColorSwatch
+                  name="Text primary"
+                  token="--ink-100 / --fg"
+                  hex="#F1F1F1"
+                  role="Headings and primary body copy (18:1)."
+                  contrastBadge="WCAG AAA"
+                  bgHex="#F1F1F1"
+                  textHex="#050505"
+                />
+              </div>
+            </Subsection>
+
+            {/* Light Neutrals Ramp */}
+            <Subsection title="Light ramp (Paper foundation)">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-8">
+                <ColorSwatch
+                  name="Pure Paper"
+                  token="--paper-0"
+                  hex="#FFFFFF"
+                  role="Raised cards in light mode."
+                  bgHex="#FFFFFF"
+                  borderHex="#d2d2d2"
+                  textHex="#131313"
+                />
+                <ColorSwatch
+                  name="Paper Ground"
+                  token="--paper-50 / --paper"
+                  hex="#F7F7F7"
+                  role="Canvas page foundation in light theme."
+                  bgHex="#F7F7F7"
+                  borderHex="#d2d2d2"
+                  textHex="#131313"
+                />
+                <ColorSwatch
+                  name="Paper Rule"
+                  token="--paper-200"
+                  hex="#E3E3E3"
+                  role="Structural dividing lines in light mode."
+                  bgHex="#E3E3E3"
+                  borderHex="#d2d2d2"
+                  textHex="#131313"
+                />
+                <ColorSwatch
+                  name="Paper Edge"
+                  token="--paper-300"
+                  hex="#D2D2D2"
+                  role="Component boundaries in light mode."
+                  bgHex="#D2D2D2"
+                  borderHex="#6a6a6a"
+                  textHex="#131313"
+                />
+                <ColorSwatch
+                  name="Paper Muted"
+                  token="--paper-400"
+                  hex="#6A6A6A"
+                  role="Secondary text on light mode (5.1:1)."
+                  contrastBadge="WCAG AA"
+                  bgHex="#6A6A6A"
+                  textHex="#ffffff"
+                />
+                <ColorSwatch
+                  name="Paper Primary"
+                  token="--paper-900"
+                  hex="#131313"
+                  role="Primary headings and text on light mode."
+                  contrastBadge="WCAG AAA"
+                  bgHex="#131313"
+                  textHex="#ffffff"
+                />
+              </div>
+            </Subsection>
+
+            {/* Functional colors */}
+            <Subsection title="Functional & state colors">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
+                <ColorSwatch
+                  name="Success"
+                  token="--success"
+                  hex="#23B888 / #087F5B"
+                  role="Reuses emerald accent — no new hue needed."
+                  bgHex="#23B888"
+                  textHex="#050505"
+                />
+                <ColorSwatch
+                  name="Error"
+                  token="--error"
+                  hex="#E5484D / #C4292E"
+                  role="Alert states, validation errors (5.2:1)."
+                  contrastBadge="WCAG AA"
+                  bgHex="#E5484D"
+                  textHex="#ffffff"
+                />
+                <ColorSwatch
+                  name="Warning"
+                  token="--warning"
+                  hex="#D97706 / #B45309"
+                  role="Strictly UI warning states, never a brand accent."
+                  contrastBadge="WCAG AA"
+                  bgHex="#D97706"
+                  textHex="#ffffff"
+                />
+              </div>
+            </Subsection>
+
+            {/* Contrast & Forbidden Pairings */}
+            <div className="p-4 rounded-lg border border-border-strong bg-bg-surface">
+              <div className="font-mono text-xs font-bold text-fg mb-3">
+                Verified contrast and forbidden pairings
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono">
+                <div className="space-y-2">
+                  <div className="text-fg-muted font-medium">
+                    Allowed pairings:
+                  </div>
+                  <div className="flex items-center justify-between p-2 rounded bg-bg border border-border">
+                    <span>Emerald Bright on Carbon</span>
+                    <span className="text-brand font-medium">8.0:1 (AAA)</span>
+                  </div>
+                  <div className="flex items-center justify-between p-2 rounded bg-bg border border-border">
+                    <span>Emerald Deep on Paper</span>
+                    <span className="text-brand font-medium">4.7:1 (AA)</span>
+                  </div>
+                  <div className="flex items-center justify-between p-2 rounded bg-bg border border-border">
+                    <span>Primary text on Carbon</span>
+                    <span className="text-brand font-medium">18.0:1 (AAA)</span>
+                  </div>
                 </div>
-                <div className="flex items-center justify-between p-2 rounded bg-error/10 border border-error/30">
-                  <span>Emerald Deep on Carbon</span>
-                  <span className="text-error font-medium">4.1:1 (Fail)</span>
-                </div>
-                <div className="flex items-center justify-between p-2 rounded bg-error/10 border border-error/30">
-                  <span>Emerald Bright on Paper</span>
-                  <span className="text-error font-medium">2.4:1 (Fail)</span>
-                </div>
-                <div className="p-2 text-fg-muted text-[0.6875rem]">
-                  Never use light accent on light background, nor dark accent on
-                  dark background.
+
+                <div className="space-y-2">
+                  <div className="text-error font-medium">
+                    Forbidden pairings (never ship):
+                  </div>
+                  <div className="flex items-center justify-between p-2 rounded bg-error/10 border border-error/30">
+                    <span>Emerald Deep on Carbon</span>
+                    <span className="text-error font-medium">4.1:1 (Fail)</span>
+                  </div>
+                  <div className="flex items-center justify-between p-2 rounded bg-error/10 border border-error/30">
+                    <span>Emerald Bright on Paper</span>
+                    <span className="text-error font-medium">2.4:1 (Fail)</span>
+                  </div>
+                  <div className="p-2 text-fg-muted text-[0.6875rem]">
+                    Never use light accent on light background, nor dark accent on
+                    dark background.
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </Container>
-      </section>
+      </Section>
 
       {/* 3. Typography & Scale */}
-      <section id="typography" className="scroll-mt-16">
+      <Section id="typography">
         <Container>
-          <div className="section-head mb-6">
-            <div className="section-label">Typography</div>
-            <h2 className="section-title">Typefaces and typographic scale</h2>
-            <p className="section-intro">
-              Two families: Manrope for display and UI, JetBrains Mono for code
-              and data. Weights 400, 500, and 700 only — no 600.
-            </p>
-          </div>
+          <SectionHeading
+            label="Typography"
+            title="Typefaces and typographic scale"
+            intro="Two families: Manrope for display and UI, JetBrains Mono for code and data. Weights 400, 500, and 700 only — no 600."
+          />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6 mb-8">
             <div className="p-5 rounded-lg border border-border-strong bg-bg-surface">
               <div className="flex items-center justify-between text-xs font-mono text-fg-muted mb-2">
                 <span>Display & UI typeface</span>
@@ -822,277 +814,273 @@ export default async function BrandPage() {
               <div className="font-mono text-xs text-fg-muted shrink-0">
                 Label · 12px / 1.45 · 500
               </div>
-              <div className="font-mono text-xs text-fg-muted uppercase tracking-wider">
+              <div className="font-mono text-xs text-fg-muted">
                 Section labels, badges, and status chips
               </div>
             </div>
           </div>
         </Container>
-      </section>
+      </Section>
 
       {/* 4. Imagery & Portrait */}
-      <section id="portrait" className="scroll-mt-16">
+      <Section id="portrait">
         <Container>
-          <div className="section-head mb-6">
-            <div className="section-label">Media</div>
-            <h2 className="section-title">Portrait and photography guidelines</h2>
-            <p className="section-intro">
-              The image budget is strictly two locations: the hero portrait and
-              the event gallery. That is the entire image budget for the platform.
-            </p>
-          </div>
+          <SectionHeading
+            label="Media"
+            title="Portrait and photography guidelines"
+            intro="The image budget is strictly two locations: the hero portrait and the event gallery. That is the entire image budget for the platform."
+          />
 
           {/* Portrait fields */}
-          <Subsection title="The three portrait field grounds">
-            <p className="text-xs text-fg-muted mb-4">
-              The official hero portrait for {name} ({role}) sits on verified neutral fields to guarantee contrast
-              and prevent visual clash across platform crops.
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
-              {/* Field 1: Default */}
-              <div className="p-4 rounded-lg border border-border-strong bg-bg-surface flex flex-col items-center text-center">
-                <div
-                  className="w-44 h-44 rounded-sm border border-border-strong overflow-hidden flex items-center justify-center mb-3"
-                  style={{ backgroundColor: "#D2D2D2" }}
-                >
-                  <Image
-                    src={transparentPortrait || portraitUrl}
-                    alt={`${name} portrait on default field`}
-                    width={176}
-                    height={176}
-                    className="object-contain w-full h-full"
-                  />
-                </div>
-                <div className="font-mono text-xs font-medium text-fg">
-                  portrait-field (#D2D2D2)
-                </div>
-                <div className="text-[0.75rem] text-fg-muted mt-1">
-                  Default field for platform crops (re-uses paper-300).
-                </div>
-              </div>
-
-              {/* Field 2: On Dark */}
-              <div className="p-4 rounded-lg border border-border-strong bg-bg-surface flex flex-col items-center text-center">
-                <div
-                  className="w-44 h-44 rounded-sm border border-border-strong overflow-hidden flex items-center justify-center mb-3"
-                  style={{ backgroundColor: "#F1F1F1" }}
-                >
-                  <Image
-                    src={transparentPortrait || portraitUrl}
-                    alt={`${name} portrait on dark swap`}
-                    width={176}
-                    height={176}
-                    className="object-contain w-full h-full"
-                  />
-                </div>
-                <div className="font-mono text-xs font-medium text-fg">
-                  portrait-on-dark (#F1F1F1)
-                </div>
-                <div className="text-[0.75rem] text-fg-muted mt-1">
-                  Swap-in field on Carbon surfaces (re-uses ink-100).
-                </div>
-              </div>
-
-              {/* Field 3: On Light */}
-              <div className="p-4 rounded-lg border border-border-strong bg-bg-surface flex flex-col items-center text-center">
-                <div
-                  className="w-44 h-44 rounded-sm border border-border-strong overflow-hidden flex items-center justify-center mb-3"
-                  style={{ backgroundColor: "#6A6A6A" }}
-                >
-                  <Image
-                    src={transparentPortrait || portraitUrl}
-                    alt={`${name} portrait on light swap`}
-                    width={176}
-                    height={176}
-                    className="object-contain w-full h-full"
-                  />
-                </div>
-                <div className="font-mono text-xs font-medium text-fg">
-                  portrait-on-light (#6A6A6A)
-                </div>
-                <div className="text-[0.75rem] text-fg-muted mt-1">
-                  Swap-in field on Paper surfaces (re-uses paper-400).
-                </div>
-              </div>
-            </div>
-          </Subsection>
-
-          {/* Event Gallery Context */}
-          {galleryPhotos.length > 0 && (
-            <Subsection title="Event gallery photography">
+          <div className="mt-6">
+            <Subsection title="The three portrait field grounds">
               <p className="text-xs text-fg-muted mb-4">
-                The only other photograph surface on the website. Authentic,
-                documentary captures from delivered workshops and talks.
+                The official hero portrait for {name} ({role}) sits on verified neutral fields to guarantee contrast
+                and prevent visual clash across platform crops.
               </p>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {galleryPhotos.map((photo, i) => (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+                {/* Field 1: Default */}
+                <div className="p-4 rounded-lg border border-border-strong bg-bg-surface flex flex-col items-center text-center">
                   <div
-                    key={photo.url || i}
-                    className="group relative aspect-4/3 rounded overflow-hidden border border-border-strong bg-bg-surface"
+                    className="w-44 h-44 rounded-sm border border-border-strong overflow-hidden flex items-center justify-center mb-3"
+                    style={{ backgroundColor: "#D2D2D2" }}
                   >
                     <Image
-                      src={photo.url}
-                      alt={photo.caption || photo.eventTitle || "Event photo"}
-                      fill
-                      sizes="(max-width: 640px) 50vw, 25vw"
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      src={transparentPortrait || portraitUrl}
+                      alt={`${name} portrait on default field`}
+                      width={176}
+                      height={176}
+                      className="object-contain w-full h-full"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-bg/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-2 flex items-end">
-                      <span className="font-mono text-[0.625rem] text-fg truncate">
-                        {photo.eventTitle}
-                      </span>
+                  </div>
+                  <div className="font-mono text-xs font-medium text-fg">
+                    portrait-field (#D2D2D2)
+                  </div>
+                  <div className="text-[0.75rem] text-fg-muted mt-1">
+                    Default field for platform crops (re-uses paper-300).
+                  </div>
+                </div>
+
+                {/* Field 2: On Dark */}
+                <div className="p-4 rounded-lg border border-border-strong bg-bg-surface flex flex-col items-center text-center">
+                  <div
+                    className="w-44 h-44 rounded-sm border border-border-strong overflow-hidden flex items-center justify-center mb-3"
+                    style={{ backgroundColor: "#F1F1F1" }}
+                  >
+                    <Image
+                      src={transparentPortrait || portraitUrl}
+                      alt={`${name} portrait on dark swap`}
+                      width={176}
+                      height={176}
+                      className="object-contain w-full h-full"
+                    />
+                  </div>
+                  <div className="font-mono text-xs font-medium text-fg">
+                    portrait-on-dark (#F1F1F1)
+                  </div>
+                  <div className="text-[0.75rem] text-fg-muted mt-1">
+                    Swap-in field on Carbon surfaces (re-uses ink-100).
+                  </div>
+                </div>
+
+                {/* Field 3: On Light */}
+                <div className="p-4 rounded-lg border border-border-strong bg-bg-surface flex flex-col items-center text-center">
+                  <div
+                    className="w-44 h-44 rounded-sm border border-border-strong overflow-hidden flex items-center justify-center mb-3"
+                    style={{ backgroundColor: "#6A6A6A" }}
+                  >
+                    <Image
+                      src={transparentPortrait || portraitUrl}
+                      alt={`${name} portrait on light swap`}
+                      width={176}
+                      height={176}
+                      className="object-contain w-full h-full"
+                    />
+                  </div>
+                  <div className="font-mono text-xs font-medium text-fg">
+                    portrait-on-light (#6A6A6A)
+                  </div>
+                  <div className="text-[0.75rem] text-fg-muted mt-1">
+                    Swap-in field on Paper surfaces (re-uses paper-400).
+                  </div>
+                </div>
+              </div>
+            </Subsection>
+
+            {/* Event Gallery Context */}
+            {galleryPhotos.length > 0 && (
+              <Subsection title="Event gallery photography">
+                <p className="text-xs text-fg-muted mb-4">
+                  The only other photograph surface on the website. Authentic,
+                  documentary captures from delivered workshops and talks.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  {galleryPhotos.map((photo, i) => (
+                    <div
+                      key={photo.url || i}
+                      className="group relative aspect-4/3 rounded overflow-hidden border border-border-strong bg-bg-surface"
+                    >
+                      <Image
+                        src={photo.url}
+                        alt={photo.caption || photo.eventTitle || "Event photo"}
+                        fill
+                        sizes="(max-width: 640px) 50vw, 25vw"
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-bg/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-2 flex items-end">
+                        <span className="font-mono text-[0.625rem] text-fg truncate">
+                          {photo.eventTitle}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Subsection>
+            )}
+          </div>
+        </Container>
+      </Section>
+
+      {/* 5. Favicons, Open Graph & Platform Metadata */}
+      <Section id="metadata">
+        <Container>
+          <SectionHeading
+            label="Assets"
+            title="Favicons, Open Graph, and metadata"
+            intro="The platform's favicon suite, social card previews, web app manifest, and discovery feeds."
+          />
+
+          {/* Favicons Suite */}
+          <div className="mt-6">
+            <Subsection
+              title="Favicon suite"
+              note="The favicon is the circular portrait, not the reduced mark (decided in brand guide §3.2)."
+            >
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
+                {FAVICONS.map((icon) => (
+                  <div
+                    key={icon.filename}
+                    className="rounded-lg border border-border-strong bg-bg-surface p-4 flex flex-col justify-between gap-3 shadow-xs hover:border-brand/40 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded border border-border-strong bg-bg flex items-center justify-center p-1 shrink-0 overflow-hidden">
+                        <Image
+                          src={icon.src}
+                          alt={icon.label}
+                          width={icon.size}
+                          height={icon.size}
+                          className="object-contain max-h-full max-w-full"
+                        />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="font-bold text-xs text-fg truncate">
+                          {icon.label}
+                        </div>
+                        <div className="font-mono text-[0.6875rem] text-brand">
+                          {icon.dimensions}
+                        </div>
+                      </div>
+                    </div>
+
+                    <p className="text-[0.6875rem] text-fg-muted leading-relaxed">
+                      {icon.target}
+                    </p>
+
+                    <div className="pt-2 border-t border-border-strong/60 flex items-center justify-between text-[0.6875rem] font-mono">
+                      <span className="text-fg-muted truncate">{icon.filename}</span>
+                      <a
+                        href={icon.src}
+                        download={icon.filename}
+                        className="text-brand hover:underline font-medium ml-2 shrink-0"
+                      >
+                        Download
+                      </a>
                     </div>
                   </div>
                 ))}
               </div>
             </Subsection>
-          )}
-        </Container>
-      </section>
 
-      {/* 5. Favicons, Open Graph & Platform Metadata */}
-      <section id="metadata" className="scroll-mt-16">
-        <Container>
-          <div className="section-head mb-6">
-            <div className="section-label">Identity / Assets</div>
-            <h2 className="section-title">Favicons, Open Graph and metadata</h2>
-            <p className="section-intro">
-              The platform&apos;s favicon suite, social card previews, web app manifest, and discovery feeds.
-            </p>
-          </div>
+            {/* Social Open Graph (OG) Card */}
+            <Subsection
+              title="Open Graph & social card"
+              note="1200×630 px master image rendered with carbon theme styling and canonical brand lockup."
+            >
+              <div className="mb-8">
+                <SocialCardPreview />
+              </div>
+            </Subsection>
 
-          {/* Favicons Suite */}
-          <Subsection
-            title="Favicon suite"
-            note="The favicon is the circular portrait, not the reduced mark (decided in brand guide §3.2)."
-          >
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
-              {FAVICONS.map((icon) => (
-                <div
-                  key={icon.filename}
-                  className="rounded-lg border border-border-strong bg-bg-surface p-4 flex flex-col justify-between gap-3 shadow-xs hover:border-brand/40 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded border border-border-strong bg-bg flex items-center justify-center p-1 shrink-0 overflow-hidden">
-                      <Image
-                        src={icon.src}
-                        alt={icon.label}
-                        width={icon.size}
-                        height={icon.size}
-                        className="object-contain max-h-full max-w-full"
-                      />
-                    </div>
-                    <div className="min-w-0">
-                      <div className="font-bold text-xs text-fg truncate">
-                        {icon.label}
+            {/* Platform Discovery & Crawlers */}
+            <Subsection
+              title="Platform metadata & crawlers"
+              note="Search engines, AI agent crawlers, and platform syndication feeds configured on dileepa.dev."
+            >
+              <div className="rounded-lg border border-border-strong bg-bg-surface overflow-hidden divide-y divide-border-strong/60 shadow-xs mb-8">
+                {METADATA_ENDPOINTS.map((ep) => (
+                  <div
+                    key={ep.path}
+                    className="p-4 sm:px-6 sm:py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-surface-hover/30 transition-colors"
+                  >
+                    <div className="space-y-0.5 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-mono text-xs font-bold text-fg">
+                          {ep.path}
+                        </span>
+                        <span className="text-[0.625rem] font-mono px-1.5 py-0.2 rounded bg-brand/10 text-brand border border-brand/20">
+                          {ep.type}
+                        </span>
                       </div>
-                      <div className="font-mono text-[0.6875rem] text-brand">
-                        {icon.dimensions}
-                      </div>
+                      <p className="text-xs text-fg-muted">
+                        {ep.description}
+                      </p>
                     </div>
-                  </div>
 
-                  <p className="text-[0.6875rem] text-fg-muted leading-relaxed">
-                    {icon.target}
-                  </p>
-
-                  <div className="pt-2 border-t border-border-strong/60 flex items-center justify-between text-[0.6875rem] font-mono">
-                    <span className="text-fg-muted truncate">{icon.filename}</span>
                     <a
-                      href={icon.src}
-                      download={icon.filename}
-                      className="text-brand hover:underline font-medium ml-2 shrink-0"
+                      href={ep.path}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn--secondary !h-7 !px-2.5 text-xs inline-flex items-center gap-1 shrink-0 self-end sm:self-auto font-mono"
                     >
-                      Download
+                      <span>Inspect</span>
+                      <ExternalLink className="h-3 w-3 text-fg-muted" aria-hidden="true" />
                     </a>
                   </div>
-                </div>
-              ))}
-            </div>
-          </Subsection>
-
-          {/* Social Open Graph (OG) Card */}
-          <Subsection
-            title="Open Graph & social card"
-            note="1200×630 px master image rendered with carbon theme styling and canonical brand lockup."
-          >
-            <div className="mb-8">
-              <SocialCardPreview />
-            </div>
-          </Subsection>
-
-          {/* Platform Discovery & Crawlers */}
-          <Subsection
-            title="Platform metadata & crawlers"
-            note="Search engines, AI agent crawlers, and platform syndication feeds configured on dileepa.dev."
-          >
-            <div className="rounded-lg border border-border-strong bg-bg-surface overflow-hidden divide-y divide-border-strong/60 shadow-xs mb-8">
-              {METADATA_ENDPOINTS.map((ep) => (
-                <div
-                  key={ep.path}
-                  className="p-4 sm:px-6 sm:py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-surface-hover/30 transition-colors"
-                >
-                  <div className="space-y-0.5 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-mono text-xs font-bold text-fg">
-                        {ep.path}
-                      </span>
-                      <span className="text-[0.625rem] font-mono px-1.5 py-0.2 rounded bg-brand/10 text-brand border border-brand/20">
-                        {ep.type}
-                      </span>
-                    </div>
-                    <p className="text-xs text-fg-muted">
-                      {ep.description}
-                    </p>
-                  </div>
-
-                  <a
-                    href={ep.path}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn btn--secondary !h-7 !px-2.5 text-xs inline-flex items-center gap-1 shrink-0 self-end sm:self-auto font-mono"
-                  >
-                    <span>Inspect</span>
-                    <ExternalLink className="h-3 w-3 text-fg-muted" aria-hidden="true" />
-                  </a>
-                </div>
-              ))}
-            </div>
-          </Subsection>
-
-          {/* Production HTML Head & Next.js Metadata Snippet */}
-          <Subsection
-            title="Production metadata specification"
-            note="Canonical Next.js Metadata configuration powering search rankings, social unfurls, and theme colors."
-          >
-            <div className="space-y-3 mb-8">
-              <div className="flex justify-end">
-                <CopySnippetButton
-                  text={metadataSnippet}
-                  label="Copy meta snippet"
-                />
+                ))}
               </div>
-              <pre className="p-4 rounded border border-border-strong/60 bg-bg overflow-x-auto font-mono text-xs text-fg-muted leading-relaxed">
-                <code>{metadataSnippet}</code>
-              </pre>
-            </div>
-          </Subsection>
+            </Subsection>
+
+            {/* Production HTML Head & Next.js Metadata Snippet */}
+            <Subsection
+              title="Production metadata specification"
+              note="Canonical Next.js Metadata configuration powering search rankings, social unfurls, and theme colors."
+            >
+              <div className="space-y-3 mb-8">
+                <div className="flex justify-end">
+                  <CopySnippetButton
+                    text={metadataSnippet}
+                    label="Copy meta snippet"
+                  />
+                </div>
+                <pre className="p-4 rounded border border-border-strong/60 bg-bg overflow-x-auto font-mono text-xs text-fg-muted leading-relaxed">
+                  <code>{metadataSnippet}</code>
+                </pre>
+              </div>
+            </Subsection>
+          </div>
         </Container>
-      </section>
+      </Section>
 
       {/* 6. UI Components & Patterns */}
-      <section id="components" className="scroll-mt-16">
+      <Section id="components">
         <Container>
-          <div className="section-head mb-6">
-            <div className="section-label">Components</div>
-            <h2 className="section-title">UI components and spatial rules</h2>
-            <p className="section-intro">
-              Universal control height of 40px, container width capped at
-              1020px, and hairline borders.
-            </p>
-          </div>
+          <SectionHeading
+            label="Components"
+            title="UI components and spatial rules"
+            intro="Universal control height of 40px, container width capped at 1020px, and hairline borders."
+          />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 mb-8">
             {/* Buttons Showcase */}
             <div className="p-5 rounded-lg border border-border-strong bg-bg-surface space-y-4">
               <div className="flex items-center justify-between text-xs font-mono text-fg-muted">
@@ -1129,34 +1117,47 @@ export default async function BrandPage() {
               <div className="text-xs font-mono text-fg-muted">
                 Badges and chip indicators (`Badge`, `Chip`, `StatusBadge`)
               </div>
-              <div className="flex flex-wrap items-center gap-2">
-                <StatusBadge>Available for work</StatusBadge>
-                <Badge variant="filled">Active</Badge>
-                <Badge>Upcoming</Badge>
-                <Chip>Agent Framework</Chip>
-                <Chip>v2.0</Chip>
+              <div className="space-y-3">
+                <div>
+                  <div className="text-[0.6875rem] font-mono text-fg-muted mb-1.5">
+                    Static (read-only metadata, status, tech stack — calm, no hover):
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <StatusBadge>Available for work</StatusBadge>
+                    <Badge variant="filled">Active</Badge>
+                    <Badge>Upcoming</Badge>
+                    <Chip>Agent Framework</Chip>
+                    <Chip>v2.0</Chip>
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[0.6875rem] font-mono text-fg-muted mb-1.5">
+                    Interactive (links, filter buttons — cursor-pointer &amp; brand hover):
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Badge interactive>Next.js</Badge>
+                    <Chip interactive>TypeScript</Chip>
+                  </div>
+                </div>
               </div>
               <div className="font-mono text-[0.6875rem] text-fg-muted pt-2 border-t border-border-strong/40">
-                Font: JetBrains Mono (Chip) / Manrope (Badge) · Size: 12px · Tracking: 0.01em
+                Font: JetBrains Mono (Chip) / Manrope (Badge) · Size: 12px · Tracking: 0.01em · Hover reserved strictly for interactive targets
               </div>
             </div>
           </div>
         </Container>
-      </section>
+      </Section>
 
       {/* 7. Voice & Banned Words */}
-      <section id="voice" className="scroll-mt-16">
+      <Section id="voice">
         <Container>
-          <div className="section-head mb-6">
-            <div className="section-label">Voice</div>
-            <h2 className="section-title">Tone of voice and prohibited copy</h2>
-            <p className="section-intro">
-              Direct, technical, and understated. Speak as an engineer explaining
-              real systems to peers. Avoid hyperbole and empty buzzwords.
-            </p>
-          </div>
+          <SectionHeading
+            label="Voice"
+            title="Tone of voice and prohibited copy"
+            intro="Direct, technical, and understated. Speak as an engineer explaining real systems to peers. Avoid hyperbole and empty buzzwords."
+          />
 
-          <div className="p-5 rounded-lg border border-error/30 bg-bg-surface">
+          <div className="p-5 rounded-lg border border-error/30 bg-bg-surface mt-6">
             <div className="flex items-center gap-2 font-mono text-xs font-bold text-error mb-4">
               <XCircle className="h-4 w-4" aria-hidden="true" />
               <span>Banned terms in all content and copy</span>
@@ -1191,21 +1192,18 @@ export default async function BrandPage() {
             </p>
           </div>
         </Container>
-      </section>
+      </Section>
 
       {/* 8. Quick Reference & CSS Tokens */}
-      <section id="tokens" className="scroll-mt-16">
+      <Section id="tokens">
         <Container>
-          <div className="section-head mb-6">
-            <div className="section-label">Tokens</div>
-            <h2 className="section-title">Design tokens quick reference</h2>
-            <p className="section-intro">
-              Canonical tokens as defined in `docs/brand-tokens.css` and
-              `DESIGN.md`.
-            </p>
-          </div>
+          <SectionHeading
+            label="Tokens"
+            title="Design tokens quick reference"
+            intro="Canonical tokens as defined in `docs/brand-tokens.css` and `DESIGN.md`."
+          />
 
-          <div className="rounded-lg border border-border-strong bg-bg-surface p-4 sm:p-6">
+          <div className="rounded-lg border border-border-strong bg-bg-surface p-4 sm:p-6 mt-6">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2 font-mono text-xs text-fg-muted">
                 <Code2 className="h-4 w-4 text-brand" aria-hidden="true" />
@@ -1243,7 +1241,7 @@ export default async function BrandPage() {
             </div>
           </div>
         </Container>
-      </section>
-    </div>
+      </Section>
+    </>
   );
 }

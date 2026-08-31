@@ -414,7 +414,7 @@ textarea:disabled {
   cursor: default;
 }
 
-/* Badges and chips: pointer when interactive buttons or direct links */
+/* Badges and chips: pointer when interactive buttons, direct links, or marked interactive */
 a > .badge,
 a > .chip,
 a.badge,
@@ -422,16 +422,22 @@ a.chip,
 button > .badge,
 button > .chip,
 button .badge,
-button .chip {
+button .chip,
+.badge--interactive,
+.chip--interactive {
   cursor: pointer;
 }
 
 a:hover > .badge:not(.badge-filled),
+a.badge:hover:not(.badge-filled),
 a:hover > .chip,
+a.chip:hover,
 button:hover > .badge:not(.badge-filled),
 button:hover .badge:not(.badge-filled),
 button:hover > .chip,
-button:hover .chip {
+button:hover .chip,
+.badge--interactive:hover:not(.badge-filled),
+.chip--interactive:hover {
   border-color: var(--brand);
   background-color: var(--surface-hover);
   color: var(--fg);
@@ -955,25 +961,16 @@ pre {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
   background: var(--bg-surface);
-  border: var(--hairline) solid var(--border);
-  font-family: var(--font-sans);
-  font-size: var(--text-small);
-  font-weight: 500;
+  border: var(--hairline) solid var(--border-strong);
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  line-height: 1;
+  letter-spacing: var(--track-label);
   color: var(--fg-muted);
   cursor: default;
-  transition:
-    border-color var(--dur) var(--ease),
-    background-color var(--dur) var(--ease),
-    color var(--dur) var(--ease);
-}
-
-.hero-status-pill:hover {
-  border-color: var(--brand);
-  background-color: var(--surface-hover);
-  color: var(--fg);
 }
 
 .hero-status-dot {
@@ -1184,19 +1181,6 @@ pre {
   border-radius: var(--radius-sm);
   padding: var(--space-2) var(--space-3);
   cursor: default;
-  transition:
-    background var(--dur) var(--ease),
-    border-color var(--dur) var(--ease),
-    color var(--dur) var(--ease);
-}
-
-/* The surface lifts and the border warms. The 1px emerald box-shadow this used
-   to add sat directly on top of an emerald border and drew as a 2px outline —
-   a heavier hover than the cards got, on the smaller element. */
-.stack span:hover {
-  background: var(--surface-hover);
-  border-color: var(--brand);
-  color: var(--fg);
 }
 
 /* --- Card grid ---------------------------------------------------------- */
@@ -2391,6 +2375,12 @@ pre {
 
 .prose > * + * {
   margin-top: var(--space-6);
+}
+
+.prose > :first-child,
+.prose > h2:first-child,
+.prose > h3:first-child {
+  margin-top: 0;
 }
 
 .prose p,

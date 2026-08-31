@@ -61,23 +61,14 @@ export function Contact({ about }: { about: About | null }) {
           </div>
         )}
 
-        <div className="flex items-center gap-3 flex-wrap">
-          <a className="contact-email" href={`mailto:${email}`}>
-            <Mail
-              className="h-4 w-4 shrink-0"
-              strokeWidth={1.75}
-              aria-hidden="true"
-            />
-            <span>{email}</span>
-          </a>
-
-          {about?.status && (
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium border border-brand/30 bg-brand/10 text-brand transition-colors duration-150 hover:border-brand hover:bg-brand/20 cursor-default">
-              <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" aria-hidden="true" />
-              <span>{about.status}</span>
-            </span>
-          )}
-        </div>
+        <a className="contact-email" href={`mailto:${email}`}>
+          <Mail
+            className="h-4 w-4 shrink-0"
+            strokeWidth={1.75}
+            aria-hidden="true"
+          />
+          <span>{email}</span>
+        </a>
 
         {/* The link-in-bio page. It used to sit in the footer's Elsewhere
             column, which Projects now occupies; here it is beside the address,

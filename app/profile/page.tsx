@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Container, PagePath, Section } from "@/components/ui";
+import { ApiOfflinePage, Container, PagePath, Section } from "@/components/ui";
 import { api } from "@/lib/api";
 import { PAGES, SITE_CONFIG } from "@/lib/constants";
 import { ProfileClient } from "./_components/ProfileClient";
@@ -22,6 +22,10 @@ export default async function ProfilePage() {
     api.getAbout(),
     api.getExperiences(),
   ]);
+
+  if (!about) {
+    return <ApiOfflinePage path="/profile" />;
+  }
 
   return (
     <Section>

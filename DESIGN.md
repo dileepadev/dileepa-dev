@@ -571,18 +571,21 @@ Cards group related content on a surface.
 
 Badges label or categorize. Chips represent metadata tags or technology stacks.
 
-- **Default Badge**: Neutral surface (`var(--bg-surface)`), muted text (`var(--fg-muted)`), hairline border (`var(--border-strong)`), `0.75rem` (12px), 500 weight.
+- **Default Badge**: Neutral surface (`var(--bg-surface)`), muted text (`var(--fg-muted)`), hairline border (`var(--border-strong)`), `0.75rem` (12px), 500 weight. Static by default (`cursor: default`) without hover states.
 - **Filled Badge (`badge--ship`)**: Reserved for a single accent per surface (e.g., active release, featured status).
-- **Stack Chip (`Chip`)**: Rendered in `JetBrains Mono` font (`font-mono text-label`), interactive on hover (`hover:border-brand hover:bg-surface-hover`).
+- **Stack Chip (`Chip`)**: Rendered in `JetBrains Mono` font (`font-mono text-label/[1] tracking-[0.01em]`), `--radius-sm` (6px). Static by default (`cursor: default`) without hover states.
+- **Interactive Badges & Chips**: Only clickable chips or badges (e.g., tag archive links, filter buttons, or when marked `interactive={true}`) receive `cursor: pointer` and the hover formula (`hover:border-brand hover:bg-surface-hover hover:text-fg`). Purely informational chips (status pills, stack tags, read-only labels) never flash hover effects to prevent false interactive affordances.
 
 ---
 
 ### 9.5 Status Badges (`StatusBadge`)
 
-Indicates live operational state (e.g., "Available for contract", "Operational", "Draft"):
+Indicates live operational state (e.g., "Available for contract", "Operational", "Active", "Current", "Upcoming"):
 
-- Features a solid 8px indicator dot (`--radius-pill`) on the left, paired with `0.75rem` label text.
-- Dot color reflects semantic state: Emerald for active/online, amber for pending/maintenance, crimson for error/offline.
+- Conforms to the canonical `<Chip>` specification (`var(--radius-sm)`, `var(--border-strong)`, `var(--bg-surface)`, `var(--font-mono)`).
+- Static by default (`cursor: default`, no hover transitions).
+- Features a solid 6px indicator dot on the left, paired with `0.75rem` label text.
+- Dot color reflects semantic state: Emerald (`var(--brand)`) for active/current/upcoming, amber for pending/maintenance, crimson for error/offline.
 
 ---
 

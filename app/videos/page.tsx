@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
-import { Container, EmptyState, PagePath, Section } from "@/components/ui";
-import { api } from "@/lib/api";
+import {
+  ApiOfflinePage,
+  Container,
+  EmptyState,
+  PagePath,
+  Section,
+} from "@/components/ui";
+import { api, checkApiHealth } from "@/lib/api";
 import { EMPTY_STATES, PAGES } from "@/lib/constants";
 import { VideoSearch } from "./_components/VideoSearch";
 
@@ -20,6 +26,13 @@ export const metadata: Metadata = {
 export default async function VideosPage() {
   const videos = await api.getVideos();
   const total = videos.length;
+
+  if (total === 0) {
+    const health = await checkApiHealth();
+    if (!health.ok) {
+      return <ApiOfflinePage path="/videos" />;
+    }
+  }
 
   return (
     <Section>

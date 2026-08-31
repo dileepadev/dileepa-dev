@@ -14,6 +14,7 @@
  * resource. `fetchPage` unwraps it; nothing else should reach into `.items`.
  */
 
+import { cache } from "react";
 import type {
   About,
   ApiErrorBody,
@@ -161,6 +162,41 @@ function buildUrl(endpoint: string, query?: RequestOptions["query"]): string {
   }
   return url.toString();
 }
+
+/**
+ * Returns the hostname of the configured upstream API (e.g. "api.dileepa.dev" or "localhost:8000").
+ */
+export function getApiHost(): string {
+  try {
+    return new URL(API_URL).host;
+  } catch {
+    return "api.dileepa.dev";
+  }
+}
+
+/**
+ * Checks whether the upstream API is reachable and healthy.
+ *
+ * Wrapped in React `cache()` so multiple components or server routes can verify
+ * upstream connectivity within a single request without generating redundant network probes.
+ */
+export const checkApiHealth = cache(
+  async (): Promise<{ ok: boolean; host: string; error?: string }> => {
+    const host = getApiHost();
+    try {
+      const response = await fetch(buildUrl("/health"), {
+        next: { revalidate: 0 },
+        signal: AbortSignal.timeout(3000),
+      });
+      if (!response.ok) {
+        return { ok: false, host, error: `HTTP ${response.status}` };
+      }
+      return { ok: true, host };
+    } catch (error) {
+      return { ok: false, host, error: (error as Error).message };
+    }
+  },
+);
 
 async function readError(
   response: Response,

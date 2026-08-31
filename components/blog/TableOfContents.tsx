@@ -39,26 +39,53 @@ export function TableOfContents({ headings }: { headings: Heading[] }) {
 
   if (headings.length < 2) return null;
 
-  const list = (
-    <ul className="space-y-2">
-      {headings.map((heading) => (
-        <li
-          key={heading.id}
-          className={heading.depth === 3 ? "pl-4" : undefined}
-        >
-          <a
-            href={`#${heading.id}`}
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    e.preventDefault();
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+      window.history.pushState(null, "", `#${id}`);
+      setActive(id);
+    }
+  };
+
+  const renderList = (isMobile = false) => (
+    <ul className={cn("space-y-1.5 font-mono text-small", !isMobile && "border-l border-border-hairline")}>
+      {headings.map((heading) => {
+        const isActive = active === heading.id;
+        return (
+          <li
+            key={heading.id}
             className={cn(
-              "block text-small no-underline transition-colors duration-[160ms] ease-brand",
-              active === heading.id
-                ? "text-brand"
-                : "text-fg-muted hover:text-fg",
+              "relative",
+              heading.depth === 3 ? "pl-3 text-[0.8125rem]" : undefined,
             )}
           >
-            {heading.text}
-          </a>
-        </li>
-      ))}
+            <a
+              href={`#${heading.id}`}
+              onClick={(e) => handleClick(e, heading.id)}
+              className={cn(
+                "block py-1 transition-colors duration-[160ms] ease-brand no-underline leading-snug",
+                isMobile
+                  ? cn(
+                      "pl-2 rounded-xs",
+                      isActive
+                        ? "text-brand font-medium bg-brand/5"
+                        : "text-fg-muted hover:text-fg",
+                    )
+                  : cn(
+                      "-ml-px border-l-2 pl-3",
+                      isActive
+                        ? "border-brand font-medium text-brand"
+                        : "border-transparent text-fg-muted hover:border-border-strong hover:text-fg",
+                    ),
+              )}
+            >
+              {heading.text}
+            </a>
+          </li>
+        );
+      })}
     </ul>
   );
 
@@ -66,29 +93,37 @@ export function TableOfContents({ headings }: { headings: Heading[] }) {
     <>
       <nav
         aria-label="On this page"
-        className="hidden lg:sticky lg:top-24 lg:block"
+        className="hidden lg:sticky lg:top-24 lg:block max-h-[calc(100vh-8rem)] overflow-y-auto pr-2"
       >
-        <p className="font-mono text-small text-fg-muted">On this page</p>
-        <div className="mt-3">{list}</div>
+        <div className="flex items-center gap-2 mb-3">
+          <span className="h-1.5 w-1.5 rounded-full bg-brand" aria-hidden="true" />
+          <p className="font-mono text-small font-medium text-fg">On this page</p>
+        </div>
+        {renderList(false)}
       </nav>
 
       <details className="group rounded-lg border border-border-strong bg-bg-surface p-4 lg:hidden">
-        <summary className="flex cursor-pointer items-center justify-between font-mono text-small text-fg-muted">
+        <summary className="flex cursor-pointer items-center justify-between font-mono text-small text-fg">
           <span className="inline-flex items-center gap-2">
             <List
-              className="h-4 w-4 shrink-0 text-fg-muted"
+              className="h-4 w-4 shrink-0 text-brand"
               strokeWidth={1.75}
               aria-hidden="true"
             />
-            <span>On this page</span>
+            <span className="font-medium">On this page</span>
+            <span className="text-xs text-fg-muted font-normal">
+              ({headings.length})
+            </span>
           </span>
           <ChevronDown
-            className="h-4 w-4 shrink-0 transition-transform duration-[160ms] ease-brand group-open:rotate-180"
+            className="h-4 w-4 shrink-0 text-fg-muted transition-transform duration-[160ms] ease-brand group-open:rotate-180"
             strokeWidth={1.75}
             aria-hidden="true"
           />
         </summary>
-        <div className="mt-3">{list}</div>
+        <div className="mt-3.5 border-t border-border-hairline pt-3">
+          {renderList(true)}
+        </div>
       </details>
     </>
   );

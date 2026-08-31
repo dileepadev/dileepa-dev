@@ -6,6 +6,7 @@ import {
   Hero,
   Work,
 } from "@/components/sections";
+import { ApiOfflinePage } from "@/components/ui";
 import { getHomepageData } from "@/lib/api";
 
 /**
@@ -28,6 +29,10 @@ export default async function HomePage() {
     posts,
     videos,
   } = await getHomepageData();
+
+  if (!about) {
+    return <ApiOfflinePage path="/" />;
+  }
 
   return (
     <div id="top">

@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
-import { Container, EmptyState, Gallery, PagePath, Section } from "@/components/ui";
-import { getGallery } from "@/lib/api";
+import {
+  ApiOfflinePage,
+  Container,
+  EmptyState,
+  Gallery,
+  PagePath,
+  Section,
+} from "@/components/ui";
+import { checkApiHealth, getGallery } from "@/lib/api";
 import { EMPTY_STATES, PAGES } from "@/lib/constants";
 
 export const metadata: Metadata = {
@@ -19,6 +26,13 @@ export const metadata: Metadata = {
 export default async function GalleryPage() {
   const photos = await getGallery(200);
   const total = photos.length;
+
+  if (total === 0) {
+    const health = await checkApiHealth();
+    if (!health.ok) {
+      return <ApiOfflinePage path="/gallery" />;
+    }
+  }
 
   return (
     <Section>
