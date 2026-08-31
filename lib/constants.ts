@@ -14,7 +14,7 @@ import type { NavLink } from "./types";
 
 export const SITE_CONFIG = {
   name: "Dileepa Bandara",
-  title: "Dileepa Bandara — AI engineer",
+  title: "Dileepa Bandara - AI Engineer",
   // Says what is here and what the person does, without adjectives doing the
   // work. The v1 description opened with "passionate about" and closed on
   // "something amazing together"; both are gone.

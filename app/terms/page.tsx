@@ -21,7 +21,7 @@ export default function TermsOfServicePage() {
         <p className="section-intro">{PAGES.terms.intro}</p>
 
         <div className="font-mono text-label text-fg-muted mt-2 mb-8">
-          Last updated: 31 August 2026
+          Last updated: 1 September 2026
         </div>
 
         <article className="prose max-w-3xl">
