@@ -252,7 +252,7 @@ async function degrade<T>(
   } catch (error) {
     const reason =
       error instanceof ApiError ? `${error.code}: ${error.message}` : error;
-    console.error(
+    console.warn(
       `[api] ${endpoint} failed, degrading to a fallback —`,
       reason,
     );
@@ -302,7 +302,7 @@ async function degradePage<T>(
     try {
       return assertPage<T>(endpoint, body);
     } catch (error) {
-      console.error(`[api] ${endpoint} —`, (error as Error).message);
+      console.warn(`[api] ${endpoint} —`, (error as Error).message);
       return empty;
     }
   });
