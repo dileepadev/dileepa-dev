@@ -16,11 +16,15 @@ export function SearchInput({
   placeholder = "Search…",
   className,
   autoFocusHotkey = true,
+  name = "search",
 }: {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
   className?: string;
+  /** Form control name. An input with neither `id` nor `name` is flagged by
+   *  Chrome and is invisible to autofill; the default suits every use here. */
+  name?: string;
   /** When true, pressing '/' focuses this input if not already typing elsewhere. */
   autoFocusHotkey?: boolean;
 }) {
@@ -64,6 +68,7 @@ export function SearchInput({
       <input
         ref={inputRef}
         type="search"
+        name={name}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}

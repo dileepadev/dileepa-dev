@@ -44,8 +44,16 @@ function apiOrigin(): string {
  * - `'unsafe-eval'` — React's development build calls `eval()` to rebuild
  *   callstacks across environments and for other debugging features. Without
  *   it the console fills with "eval() is not supported in this environment".
- *   React never calls `eval()` in a production build, so production keeps the
- *   stricter policy and loses nothing.
+ *
+ *   Production keeps the stricter policy, and does **not** get away clean:
+ *   Next ships a browserified `util` in its Node-builtin polyfill bundle, and
+ *   `is-generator-function` inside it feature-detects with
+ *   `Function("return function*(){}")`. CSP blocks the call, the surrounding
+ *   `try/catch` swallows it, and the page is unaffected — but Chrome logs one
+ *   `kEvalViolation` per load, which is what holds Lighthouse's Best Practices
+ *   at 96. It is framework code, reachable from no import in this repository,
+ *   so the choice is to keep the directive or to hand every third-party script
+ *   `eval()` for a score. The directive stays.
  * - `ws:` and `wss:` on `connect-src` — hot module replacement is a WebSocket.
  * - `blob:` on `script-src` and `worker-src` — Turbopack loads some chunks as
  *   blob-backed workers.
@@ -144,6 +152,15 @@ function securityHeaders() {
 }
 
 const nextConfig: NextConfig = {
+  // Turbopack infers the project root from the nearest lockfile and walks up
+  // to find one. There is a stray `package-lock.json` in the home directory
+  // above this repository, so the inference reached outside the repo, warned
+  // on every `next dev` and `next build`, and then fell back. Naming the root
+  // settles it: module resolution, cache validation and filesystem watching
+  // all stay inside the repository.
+  turbopack: {
+    root: import.meta.dirname,
+  },
   // `X-Powered-By: Next.js` names the framework and its presence on every
   // response is free reconnaissance. Nothing reads it.
   poweredByHeader: false,

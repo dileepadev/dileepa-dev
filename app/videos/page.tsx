@@ -8,13 +8,14 @@ import {
 } from "@/components/ui";
 import { api, checkApiHealth } from "@/lib/api";
 import { EMPTY_STATES, PAGES } from "@/lib/constants";
+import { pageMetadata } from "@/lib/metadata";
 import { VideoSearch } from "./_components/VideoSearch";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: PAGES.videos.meta.title,
   description: PAGES.videos.meta.description,
-  alternates: { canonical: "/videos" },
-};
+  path: "/videos",
+});
 
 /**
  * Videos, as a list rather than a grid of thumbnails.

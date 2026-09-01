@@ -112,7 +112,7 @@ const SPEAKING_TOPICS: { title: string; summary: string }[] = [
   {
     title: "Azure AI Foundry & enterprise AI architecture",
     summary:
-      "Leveraging managed AI platforms for enterprise security, model governance, data isolation, and scalable agent deployment.",
+      "Using managed AI platforms for enterprise security, model governance, data isolation, and scalable agent deployment.",
   },
   {
     title: "Open source AI engineering & community building",
@@ -290,7 +290,7 @@ export function ProfileClient({
                 width={112}
                 height={112}
                 className="object-cover w-full h-full"
-                priority
+                preload
               />
             </div>
 

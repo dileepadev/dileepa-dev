@@ -301,6 +301,7 @@ export function ProjectSearch({ projects }: { projects: Project[] }) {
             {visibleProjects.map((project) => (
               <Item
                 key={project.id}
+                headingLevel={2}
                 title={project.name}
                 href={`/projects/${project.slug}`}
                 description={project.tagline || project.description}

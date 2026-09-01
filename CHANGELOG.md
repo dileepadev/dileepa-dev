@@ -11,7 +11,89 @@ Changes are organized into the following categories:
 
 ## [Unreleased]
 
-- Unreleased changes go here.
+> [!NOTE]
+> A pre-release review pass over metadata, accessibility, branding and performance. No new
+> features; the changes below are corrections to what v2.0.0 already ships.
+
+### Added - Unreleased
+
+- **One place that composes page metadata**, `lib/metadata.ts`. Next merges metadata per key
+  rather than per field, which made hand-written page metadata fail in two directions at once: a
+  page that declared no `openGraph` inherited the homepage's entire card, and a page that declared
+  one replaced the layout's outright and lost `siteName`, `locale` and the default image with it.
+  `pageMetadata()` takes what a page actually knows — a title, a description, a path, optionally an
+  image and article dates — and returns the whole set.
+- **`Item` takes a `headingLevel`.** An item title is `h3` under a section heading on the homepage
+  and `h2` on an index page, where the list is the page and there is nothing between it and the
+  `h1`. `.item-title` carries the H3 type step either way, so only the outline changes.
+- **A bounded retry on `429`** in the API client, honouring `Retry-After`. The API allows sixty
+  requests a minute; a build renders 150 pages across seven workers.
+
+### Changed - Unreleased
+
+- **The site title is sentence case**: `Dileepa Bandara — AI engineer`, which is the form
+  `/brand` has documented all along while the site shipped `Dileepa Bandara - AI Engineer`.
+- **Brand tokens re-vendored at v2.1** and `app/globals.css` trimmed to match. The override block
+  restored the neutral ramp, the radius scale, the type steps, the control height, the hairline,
+  both border weights, the button fill and every derived interaction token — about a hundred
+  declarations that the reconciled sheet now sets identically. Four font variables, the two
+  `--on-emerald-*` stops and `--track-wide` are what genuinely differ, and all that is left.
+- **The 500 and 503 screens are components, not copies.** `app/error.tsx` carried its own inline
+  version of both; the 503 there had already lost the gateway-host row the real one shows, and the
+  two 500s disagreed on their button copy. Both now render the same components every other route
+  renders, and "Go to the homepage" / "Explore the sitemap" read the same everywhere.
+- The favicon previews on `/brand` are served as the files themselves rather than through the
+  image optimizer — a re-encoded copy of an icon is not the icon on a page whose job is to show
+  what ships.
+- Tag pages filter the full post set instead of issuing a query per tag, which is sixty-eight
+  fewer requests per cold build.
+- `README.md` no longer lists Framer Motion or React Icons, neither of which is installed or used.
+
+### Fixed - Unreleased
+
+- **Twenty-nine of sixty-eight tag pages were empty.** `generateStaticParams` returned
+  `encodeURIComponent(tag)` and Next encoded it again, so `"Advanced Git"` arrived as
+  `"Advanced%20Git"` after one decode — a string no post carries. The page rendered that as its
+  heading and reported that no posts carry the tag. Tags without spaces encode to themselves,
+  which is why it looked like missing content rather than an encoding fault.
+- **Every index and static page shared the homepage's social card** — same `og:title`, same
+  `og:description`, same `og:url` — and **every blog post, project and event shipped with no card
+  image at all**. `/profile` put an 800×800 portrait behind `summary_large_image`, which every
+  platform crops to 1.91:1.
+- **`/404`, `/500` and `/503` were indexable and canonicalised to the homepage.** All three now
+  carry their own title, description and canonical, and `noindex` — `/404` excepted, where Next
+  reserves the route name and supplies its own; the file records why rather than exporting
+  metadata that does nothing.
+- **Non-interactive chips showed a hover state.** The `Chip` component was right and the token
+  sheet underneath it was not: an unscoped `.chip:hover` reached every chip regardless, and a
+  `cursor: default` utility cancels the cursor and nothing else.
+- **Heading order skipped a level on every index page** — `h1` straight to `h3`.
+- **`/brand` failed contrast in two places and Label in Name in twenty.** The Error and Warning
+  swatches set white on their fill (3.9:1 and 3.2:1); a metadata line used `--fg-muted` at 80%
+  opacity at 11px (4.2:1). Sixteen ad-hoc type sizes on the page that documents the type scale are
+  now `--text-label`. Each swatch's `aria-label` replaced its visible text rather than containing
+  it, so the words a reader can see were not the words that activate the control.
+- **The LCP image on `/gallery` had no priority hint** and `sizes` understated the tile by a third
+  — a 240px variant in a 332px slot. `priority` is deprecated in Next 16 and does not do what
+  `fetchPriority` does; both are now used where each belongs.
+- Search and comment inputs had neither `id` nor `name`, and the sitemap filter had no accessible
+  name at all.
+- A cold build silently prerendered empty pages when the API rate-limited it — the exact failure
+  `lib/api.ts` was rewritten to stop making silent.
+- `"Leveraging"` in a speaking-topic summary, which the brand rules ban.
+- `browserconfig.xml` used `#0D0D0D` — the surface stop, not the page foundation the tile shares
+  with `theme-color` and the manifest.
+- The web manifest's description was a third wording of a sentence that already exists once, and
+  it declared no `id`, `scope`, `lang` or `orientation`.
+- `robots.txt` allowed the system routes and the API proxy.
+- Documentation that had drifted from the code: `AGENTS.md` still described `/blog/[slug]` as
+  closed to unbuilt slugs, and the docstring above `dynamicParams = true` still argued for closing
+  it; `Subsection`'s comment described an uppercase, accented title that the CSS does not draw.
+
+### Removed - Unreleased
+
+- `@next/third-parties`, which nothing imports, and a direct `shiki` dependency pinned a major
+  version behind the copy `@shikijs/rehype` actually uses — two Shiki installs, one of them dead.
 
 ## [v2.0.0] - 2026-08-31
 

@@ -8,13 +8,14 @@ import {
 } from "@/components/ui";
 import { api, checkApiHealth } from "@/lib/api";
 import { EMPTY_STATES, PAGES } from "@/lib/constants";
+import { pageMetadata } from "@/lib/metadata";
 import { ProjectSearch } from "./_components/ProjectSearch";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: PAGES.projects.meta.title,
   description: PAGES.projects.meta.description,
-  alternates: { canonical: "/projects" },
-};
+  path: "/projects",
+});
 
 export default async function ProjectsPage() {
   const projects = await api.getProjects({ limit: 100 });

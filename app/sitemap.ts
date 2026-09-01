@@ -19,6 +19,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const projects = rawProjects ?? [];
   const events = rawEvents ?? [];
 
+  // The static routes carry no `lastModified` of their own: they have no
+  // record behind them to read a date from, and inventing `new Date()` on
+  // every build would tell a crawler that all twelve changed every deploy,
+  // which is the fastest way to have the field ignored. The dated entries
+  // below are the ones where the date is real.
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: SITE_CONFIG.url, changeFrequency: "monthly", priority: 1 },
     {

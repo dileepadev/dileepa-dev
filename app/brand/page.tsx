@@ -23,6 +23,7 @@ import {
 } from "@/components/ui";
 import { api, getGallery } from "@/lib/api";
 import { PAGES, SITE_CONFIG } from "@/lib/constants";
+import { pageMetadata } from "@/lib/metadata";
 import { portrait as getPortraitUrl } from "@/lib/format";
 import {
   ColorSwatch,
@@ -30,11 +31,11 @@ import {
   SocialCardPreview,
 } from "./_components/BrandInteractive";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: PAGES.brand.meta.title,
   description: PAGES.brand.meta.description,
-  alternates: { canonical: "/brand" },
-};
+  path: "/brand",
+});
 
 export const revalidate = 900;
 
@@ -169,10 +170,38 @@ const metadataSnippet = `export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Dileepa Bandara — AI engineer",
     description: "AI engineer. Building AI systems and the community around them.",
+    site: "@dileepadev",
     creator: "@dileepadev",
     images: [{ url: "/og.png", width: 1200, height: 630, type: "image/png" }],
   },
 };`;
+
+// Every other route composes its tags through one helper rather than writing
+// them out. Next merges metadata per key, not per field: a page that declares
+// `openGraph` replaces the layout's outright, and a page that declares none
+// inherits the homepage's whole card — so hand-written page metadata produces
+// either a card with no image or the homepage's card under another page's URL.
+const pageMetadataSnippet = `// lib/metadata.ts
+export const metadata: Metadata = pageMetadata({
+  title: PAGES.projects.meta.title,
+  description: PAGES.projects.meta.description,
+  path: "/projects",
+});
+
+// …and, for a record that carries its own card image and dates:
+export async function generateMetadata({ params }): Promise<Metadata> {
+  const post = await api.getBlog((await params).slug);
+  return pageMetadata({
+    title: post.seo?.metaTitle || post.title,
+    description: post.seo?.metaDescription || post.description,
+    path: \`/blog/\${post.slug}\`,
+    image: post.seo?.ogImage,     // falls back to /og.png
+    type: "article",
+    publishedTime: post.publishedDate,
+    modifiedTime: post.updatedDate,
+    tags: post.tags ?? [],
+  });
+}`;
 
 export default async function BrandPage() {
   const [about, galleryPhotos] = await Promise.all([
@@ -183,7 +212,7 @@ export default async function BrandPage() {
   const portraitUrl = getPortraitUrl(about?.images) || "/profile/v2.webp";
   const transparentPortrait = "/profile/v2-transparent.png";
   const name = about?.name || SITE_CONFIG.name;
-  const role = about?.title || "Software Engineer";
+  const role = about?.title || "AI engineer";
 
   const fullLockupSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 32" height="32" fill="none">
   <text x="0" y="24" font-family="Manrope, system-ui, sans-serif" font-size="20" font-weight="500" letter-spacing="-0.02em" fill="#f1f1f1">dileepadev</text>
@@ -470,7 +499,7 @@ export default async function BrandPage() {
                 <span>Palette proportion budget</span>
                 <span className="text-brand">Deliberate accent</span>
               </div>
-              <div className="h-4 w-full rounded overflow-hidden flex font-mono text-[0.625rem] text-bg font-bold">
+              <div className="h-4 w-full rounded overflow-hidden flex font-mono text-label text-bg font-bold">
                 <div
                   style={{ width: "85%" }}
                   className="bg-fg-muted flex items-center justify-center truncate"
@@ -638,6 +667,10 @@ export default async function BrandPage() {
                   bgHex="#23B888"
                   textHex="#050505"
                 />
+                {/* Error and Warning carry dark ink rather than white: white on
+                    those fills is 3.9:1 and 3.2:1, under the 4.5:1 a 12px label
+                    needs. Both read as light surfaces in the WCAG luminance
+                    sense, the same way Emerald Bright does. */}
                 <ColorSwatch
                   name="Error"
                   token="--error"
@@ -645,7 +678,7 @@ export default async function BrandPage() {
                   role="Alert states, validation errors (5.2:1)."
                   contrastBadge="WCAG AA"
                   bgHex="#E5484D"
-                  textHex="#ffffff"
+                  textHex="#050505"
                 />
                 <ColorSwatch
                   name="Warning"
@@ -654,7 +687,7 @@ export default async function BrandPage() {
                   role="Strictly UI warning states, never a brand accent."
                   contrastBadge="WCAG AA"
                   bgHex="#D97706"
-                  textHex="#ffffff"
+                  textHex="#050505"
                 />
               </div>
             </Subsection>
@@ -695,7 +728,7 @@ export default async function BrandPage() {
                     <span>Emerald Bright on Paper</span>
                     <span className="text-error font-medium">2.4:1 (Fail)</span>
                   </div>
-                  <div className="p-2 text-fg-muted text-[0.6875rem]">
+                  <div className="p-2 text-fg-muted text-label">
                     Never use light accent on light background, nor dark accent on
                     dark background.
                   </div>
@@ -729,7 +762,7 @@ export default async function BrandPage() {
                 curves. Used for all headings, navigation, button labels, and
                 narrative body copy.
               </p>
-              <div className="mt-4 pt-3 border-t border-border-strong/50 font-mono text-[0.6875rem] text-fg-muted">
+              <div className="mt-4 pt-3 border-t border-border-strong/50 font-mono text-label text-fg-muted">
                 Weights: 400 (regular) · 500 (medium) · 700 (bold)
               </div>
             </div>
@@ -747,7 +780,7 @@ export default async function BrandPage() {
                 source code, dates, terminal commands, metadata chips, and
                 numerical values.
               </p>
-              <div className="mt-4 pt-3 border-t border-border-strong/50 font-mono text-[0.6875rem] text-fg-muted">
+              <div className="mt-4 pt-3 border-t border-border-strong/50 font-mono text-label text-fg-muted">
                 Weights: 400 (regular) · 500 (medium)
               </div>
             </div>
@@ -856,7 +889,7 @@ export default async function BrandPage() {
                   <div className="font-mono text-xs font-medium text-fg">
                     portrait-field (#D2D2D2)
                   </div>
-                  <div className="text-[0.75rem] text-fg-muted mt-1">
+                  <div className="text-label text-fg-muted mt-1">
                     Default field for platform crops (re-uses paper-300).
                   </div>
                 </div>
@@ -878,7 +911,7 @@ export default async function BrandPage() {
                   <div className="font-mono text-xs font-medium text-fg">
                     portrait-on-dark (#F1F1F1)
                   </div>
-                  <div className="text-[0.75rem] text-fg-muted mt-1">
+                  <div className="text-label text-fg-muted mt-1">
                     Swap-in field on Carbon surfaces (re-uses ink-100).
                   </div>
                 </div>
@@ -900,7 +933,7 @@ export default async function BrandPage() {
                   <div className="font-mono text-xs font-medium text-fg">
                     portrait-on-light (#6A6A6A)
                   </div>
-                  <div className="text-[0.75rem] text-fg-muted mt-1">
+                  <div className="text-label text-fg-muted mt-1">
                     Swap-in field on Paper surfaces (re-uses paper-400).
                   </div>
                 </div>
@@ -928,7 +961,7 @@ export default async function BrandPage() {
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-bg/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-2 flex items-end">
-                        <span className="font-mono text-[0.625rem] text-fg truncate">
+                        <span className="font-mono text-label text-fg truncate">
                           {photo.eventTitle}
                         </span>
                       </div>
@@ -964,11 +997,17 @@ export default async function BrandPage() {
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 rounded border border-border-strong bg-bg flex items-center justify-center p-1 shrink-0 overflow-hidden">
+                        {/* Served as the file itself, not through the image
+                            optimizer. This grid exists to show what actually
+                            ships in /public — a re-encoded, re-scaled copy of
+                            an icon is not the icon, and a 16px PNG has nothing
+                            to gain from being optimized anyway. */}
                         <Image
                           src={icon.src}
                           alt={icon.label}
                           width={icon.size}
                           height={icon.size}
+                          unoptimized
                           className="object-contain max-h-full max-w-full"
                         />
                       </div>
@@ -976,17 +1015,17 @@ export default async function BrandPage() {
                         <div className="font-bold text-xs text-fg truncate">
                           {icon.label}
                         </div>
-                        <div className="font-mono text-[0.6875rem] text-brand">
+                        <div className="font-mono text-label text-brand">
                           {icon.dimensions}
                         </div>
                       </div>
                     </div>
 
-                    <p className="text-[0.6875rem] text-fg-muted leading-relaxed">
+                    <p className="text-label text-fg-muted leading-relaxed">
                       {icon.target}
                     </p>
 
-                    <div className="pt-2 border-t border-border-strong/60 flex items-center justify-between text-[0.6875rem] font-mono">
+                    <div className="pt-2 border-t border-border-strong/60 flex items-center justify-between text-label font-mono">
                       <span className="text-fg-muted truncate">{icon.filename}</span>
                       <a
                         href={icon.src}
@@ -1027,7 +1066,7 @@ export default async function BrandPage() {
                         <span className="font-mono text-xs font-bold text-fg">
                           {ep.path}
                         </span>
-                        <span className="text-[0.625rem] font-mono px-1.5 py-0.2 rounded bg-brand/10 text-brand border border-brand/20">
+                        <span className="text-label font-mono px-1.5 py-0.2 rounded bg-brand/10 text-brand border border-brand/20">
                           {ep.type}
                         </span>
                       </div>
@@ -1053,7 +1092,7 @@ export default async function BrandPage() {
             {/* Production HTML Head & Next.js Metadata Snippet */}
             <Subsection
               title="Production metadata specification"
-              note="Canonical Next.js Metadata configuration powering search rankings, social unfurls, and theme colors."
+              note="The root layout's defaults — the title template, the icon set, and the card every page falls back to."
             >
               <div className="space-y-3 mb-8">
                 <div className="flex justify-end">
@@ -1064,6 +1103,23 @@ export default async function BrandPage() {
                 </div>
                 <pre className="p-4 rounded border border-border-strong/60 bg-bg overflow-x-auto font-mono text-xs text-fg-muted leading-relaxed">
                   <code>{metadataSnippet}</code>
+                </pre>
+              </div>
+            </Subsection>
+
+            <Subsection
+              title="Per-page metadata"
+              note="Every route composes its own tags through one helper. Next merges metadata per key, not per field, so a page that hand-writes an openGraph block loses the site name, the locale and the default card image along with it."
+            >
+              <div className="space-y-3 mb-8">
+                <div className="flex justify-end">
+                  <CopySnippetButton
+                    text={pageMetadataSnippet}
+                    label="Copy page snippet"
+                  />
+                </div>
+                <pre className="p-4 rounded border border-border-strong/60 bg-bg overflow-x-auto font-mono text-xs text-fg-muted leading-relaxed">
+                  <code>{pageMetadataSnippet}</code>
                 </pre>
               </div>
             </Subsection>
@@ -1119,7 +1175,7 @@ export default async function BrandPage() {
               </div>
               <div className="space-y-3">
                 <div>
-                  <div className="text-[0.6875rem] font-mono text-fg-muted mb-1.5">
+                  <div className="text-label font-mono text-fg-muted mb-1.5">
                     Static (read-only metadata, status, tech stack — calm, no hover):
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
@@ -1131,7 +1187,7 @@ export default async function BrandPage() {
                   </div>
                 </div>
                 <div>
-                  <div className="text-[0.6875rem] font-mono text-fg-muted mb-1.5">
+                  <div className="text-label font-mono text-fg-muted mb-1.5">
                     Interactive (links, filter buttons — cursor-pointer &amp; brand hover):
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
@@ -1140,7 +1196,7 @@ export default async function BrandPage() {
                   </div>
                 </div>
               </div>
-              <div className="font-mono text-[0.6875rem] text-fg-muted pt-2 border-t border-border-strong/40">
+              <div className="font-mono text-label text-fg-muted pt-2 border-t border-border-strong/40">
                 Font: JetBrains Mono (Chip) / Manrope (Badge) · Size: 12px · Tracking: 0.01em · Hover reserved strictly for interactive targets
               </div>
             </div>
@@ -1182,7 +1238,7 @@ export default async function BrandPage() {
                   className="px-2.5 py-1.5 rounded bg-error/10 border border-error/20 font-mono text-xs text-error flex items-center justify-between"
                 >
                   <span className="line-through">{term}</span>
-                  <span className="text-[0.625rem] text-error/80">✗</span>
+                  <span className="text-label text-error/80">✗</span>
                 </div>
               ))}
             </div>

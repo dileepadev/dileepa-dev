@@ -2,12 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Container, PagePath, Section } from "@/components/ui";
 import { PAGES, SITE_CONFIG } from "@/lib/constants";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: PAGES.terms.meta.title,
   description: PAGES.terms.meta.description,
-  alternates: { canonical: "/terms" },
-};
+  path: "/terms",
+});
 
 export default function TermsOfServicePage() {
   return (

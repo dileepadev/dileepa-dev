@@ -12,6 +12,18 @@ export function ItemList({ children }: { children: ReactNode }) {
   return <div>{children}</div>;
 }
 
+/**
+ * The heading level an item title renders at.
+ *
+ * An item title is a heading, and which one depends on what is above it. On
+ * the homepage a list sits inside a section, so its items are the third level
+ * down: `h1` hero, `h2` section, `h3` item. On an index page the list *is* the
+ * page — there is no section heading between the `h1` and the items — so an
+ * `h3` there skips a level and the outline reads as though two headings went
+ * missing. The visual weight is the same either way; only the level moves.
+ */
+export type ItemHeadingLevel = 2 | 3;
+
 export function Item({
   title,
   href,
@@ -19,6 +31,7 @@ export function Item({
   description,
   meta,
   icon,
+  headingLevel = 3,
   children,
 }: {
   title: string;
@@ -28,14 +41,19 @@ export function Item({
   /** Mono, right-aligned on wide screens. Dates, formats, counts. */
   meta?: ReactNode;
   icon?: ReactNode;
+  /** See `ItemHeadingLevel`. `3` under a section heading, `2` on an index. */
+  headingLevel?: ItemHeadingLevel;
   children?: ReactNode;
 }) {
   const isExternal = external ?? href?.startsWith("http");
+  // `h3` keeps its own type step; an `h2` here would take the section
+  // heading's, which is a size the item titles are not.
+  const Heading = headingLevel === 2 ? "h2" : "h3";
 
   return (
     <article className="item">
       <div className="min-w-0">
-        <h3 className="flex items-center gap-2 flex-wrap">
+        <Heading className="item-title flex items-center gap-2 flex-wrap">
           {icon && <span className="shrink-0">{icon}</span>}
           {href ? (
             isExternal ? (
@@ -66,7 +84,7 @@ export function Item({
           ) : (
             title
           )}
-        </h3>
+        </Heading>
         {description && <p>{description}</p>}
         {children && <div className="mt-4">{children}</div>}
       </div>

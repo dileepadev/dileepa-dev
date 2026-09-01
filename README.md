@@ -32,24 +32,29 @@ Welcome to my personal website project, hosted at [dileepa.dev](https://dileepa.
 - **Package Manager:** [npm](https://www.npmjs.com/)
 - **Linting:** [ESLint](https://eslint.org/)
 - **Formatting:** [Prettier](https://prettier.io/)
-- **Styling:** [Tailwind CSS 4](https://tailwindcss.com/)
-- **Animations:** [Framer Motion](https://www.framer.com/motion/)
-- **Theming:** [Next Themes](https://github.com/pacocoursey/next-themes)
+- **Styling:** [Tailwind CSS 4](https://tailwindcss.com/), against the vendored brand token sheet
+- **Theming:** [next-themes](https://github.com/pacocoursey/next-themes)
 - **Deployment:** [Vercel](https://vercel.com/)
 - **Analytics:**
   - [Vercel Analytics](https://vercel.com/analytics)
   - [Vercel Speed Insights](https://vercel.com/docs/speed-insights)
   - [Google Analytics](https://analytics.google.com/)
   - [Microsoft Clarity](https://clarity.microsoft.com/)
-- **Image Optimization:** [Next.js Image](https://nextjs.org/docs/api-reference/next/image)
+- **Image Optimization:** [Next.js Image](https://nextjs.org/docs/app/api-reference/components/image)
 - **API Communication:** [api.dileepa.dev](https://api.dileepa.dev/)
-- **Icons:** [React Icons](https://react-icons.github.io/react-icons)
+- **Icons:** [Lucide](https://lucide.dev/) for interface icons; hand-authored inline SVG for
+  brand and social marks
+- **Markdown:** [next-mdx-remote](https://github.com/hashicorp/next-mdx-remote) with
+  [remark-gfm](https://github.com/remarkjs/remark-gfm) and
+  [rehype](https://github.com/rehypejs/rehype), highlighted at build time by
+  [Shiki](https://shiki.style/)
+- **Notifications:** [react-hot-toast](https://react-hot-toast.com/)
 
 ## Sections
 
 - **Hero:** Introduction and call to action.
 - **About:** General profile information and biography.
-- **Experience:** Professional journey, skills, and technologies.
+- **Work:** Roles, the tools behind them, and open-source projects.
 - **Education:** Academic background and qualifications.
 - **Community:**
   - **Communities:** Tech communities I am part of.

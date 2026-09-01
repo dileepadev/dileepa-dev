@@ -91,18 +91,18 @@
 }
 
 /* ============================================================
-   Reference parity — the design reference is the source of truth
+   Local overrides — the fonts, and the two text-on-emerald stops
 
-   `index.html` in the `dileepadev` repo is the design this site renders. Its
-   `<style>` block is the specification for the whole surface, not only for the
-   layout, so the values it sets that differ from the vendored v2.0 token sheet
-   are restored here rather than approximated: the neutral ramp, the 1px
-   hairline, the single-family type stack.
+   Everything else comes from `brand-tokens.css` above. This block used to
+   restore the neutral ramp, the radius scale, the type steps, the control
+   height, the hairline, both border weights, the button fill and every
+   derived interaction token — around a hundred declarations — because the
+   vendored sheet was still at v2.0 and the shipped site had moved past it.
+   v2.1 reconciled the sheet against this site, so all of it was re-stating
+   values the sheet already sets. Two files declaring one neutral ramp is the
+   drift the token sheet exists to prevent, and it was here.
 
-   These are overrides, not a second token sheet. `brand-tokens.css` stays a
-   pristine vendored copy — nothing below is edited into it — and every rule
-   here still resolves through the same semantic names, so a component that
-   asks for `--border` keeps working and simply gets the reference's value.
+   What is left is what genuinely differs, and each one says why.
    ============================================================ */
 :root {
   /* The token sheet names the families; next/font provides the files. The
@@ -129,140 +129,19 @@
     "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji",
     "Twemoji Mozilla", "EmojiOne Color", "Android Emoji", sans-serif;
 
-  /* The reference neutral ramp, on one neutral axis.
-
-     The paper stops used to carry a yellow-green cast — #e4e4da, #6b6b62,
-     #12140f — while every surface underneath them was a pure grey. Light-mode
-     borders and muted text therefore read warm against cold backgrounds, which
-     is the kind of mismatch nobody can name and everybody can see. These are
-     the same lightnesses with the hue taken out; the published contrast ratios
-     are unchanged (muted 5.0:1, foreground 17:1). */
-  --ink-900: #050505;
-  --ink-800: #0d0d0d;
-  --ink-700: #141414;
-  --ink-600: #1f1f1f;
-  --ink-500: #2e2e2e;
-  --ink-400: #8d8d8d;
-  --ink-100: #f1f1f1;
-
-  --paper-200: #e3e3e3;
-  --paper-300: #d2d2d2;
-  --paper-400: #6a6a6a;
-  --paper-900: #131313;
-
   /* Text on a saturated emerald fill — the primary button, the filled badge.
-     Emerald Bright is a *bright* green in the WCAG luminance sense (the
-     formula weights green heavily), so it behaves like a light surface: dark
-     text reads clearly on it and light text does not — white on Emerald
-     Bright is 2.5:1, well under the 4.5:1 a 14px/500 button label needs.
-     Reusing the page's own foundation colours rather than a bespoke pair
-     also means this pairing gets darker/lighter automatically if the
-     foundation ever does, instead of drifting out of sync with it. */
+     The sheet pairs Emerald Bright with #062B20 and Emerald Deep with
+     #F7F7F7; this reuses the page's own foundation colours instead, which is
+     both a step more contrast and one fewer bespoke pair to keep in sync —
+     the pairing follows the foundation automatically if it ever moves. */
   --on-emerald-dark: var(--ink-900); /* 8.0:1 on Emerald Bright — AAA */
   --on-emerald-light: var(--paper-0); /* 5.0:1 on Emerald Deep — AA */
 
-  /* 1px, not 0.5px. Every rule, card edge and input border on the page. */
-  --hairline: 1px;
-
-  /* --- Shape --------------------------------------------------------------
-     Four steps and a pill. The nav used to draw an 18px corner that appeared
-     nowhere else, so the one floating element on the page was also the one
-     shape the page could not repeat. */
-  --radius-sm: 6px;
-  --radius: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
-  --radius-pill: 999px;
-
-  /* One control height, so a button, an input and the theme toggle line up
-     when they sit on the same row. They used to be 38px, 45px and 36px. */
-  --control-h: 40px;
-
-  /* --- Type ---------------------------------------------------------------
-     The display came down from 3rem and h2 went up in weight rather than in
-     size: the old ramp jumped 48px → 24px and then landed on a heading set at
-     500, barely above body text, so the middle of the hierarchy went missing.
-
-     `--text-label` is the one step below `--text-small`, and it exists to stop
-     0.72rem, 0.75rem and text-xs each being invented separately for badges,
-     captions and subsection titles. */
-  --text-display: 2.75rem;
-  --text-h2: 1.375rem;
-  --lh-h2: 1.3;
-  --text-label: 0.75rem;
-  --lh-label: 1.45;
-
-  /* Tracking opens as type gets smaller — a label at 12px needs the air a
-     display at 44px needs taken away. */
-  --track-label: 0.01em;
-  --track-wide: 0.06em;
-
-  /* Two steps the space scale was missing, both of which were already being
-     used as bare Tailwind utilities (`mt-10`) with nothing behind them. */
-  --space-5: 1.25rem;
-  --space-10: 2.5rem;
-}
-
-/* ============================================================
-   Semantic layer — the values components actually name
-
-   Every colour below resolves from `--brand`, `--fg` or `--bg`, so there is no
-   stop that can drift out of the theme. `color-mix` toward `--fg` darkens on
-   Paper and lightens on Carbon from the same declaration, which is why hover
-   and active states are written once here rather than twice per component.
-   ============================================================ */
-:root,
-[data-theme="dark"] {
-  --border: var(--ink-600);
-  --border-strong: var(--ink-500);
-
-  /* The primary button was hard-coded to Emerald Deep in both themes while
-     every other accent on a dark surface was Emerald Bright. Two greens, one
-     page, and the loudest element wearing the one that belonged to neither.
-     The fill is now the accent — literally the same value as the section
-     labels, the links and the lockup. `--ink-900` on it is 8.0:1 — AAA. */
-  --brand-fill: var(--emerald-bright);
-  --on-brand: var(--on-emerald-dark);
-
-  --shadow-nav: 0 10px 30px rgb(0 0 0 / 0.45);
-}
-
-[data-theme="light"] {
-  --border: var(--paper-200);
-  --border-strong: var(--paper-300);
-
-  --brand-fill: var(--emerald-deep);
-  --on-brand: var(--on-emerald-light); /* 5.0:1 on fill */
-
-  --shadow-nav: 0 8px 24px rgb(0 0 0 / 0.06), 0 1px 2px rgb(0 0 0 / 0.05);
-}
-
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme]) {
-    --border: var(--paper-200);
-    --border-strong: var(--paper-300);
-    --brand-fill: var(--emerald-deep);
-    --on-brand: var(--on-emerald-light);
-    --shadow-nav: 0 8px 24px rgb(0 0 0 / 0.06), 0 1px 2px rgb(0 0 0 / 0.05);
-  }
-}
-
-/* Derived in one place, in both themes, from the values above. */
-:root {
-  /* A surface one step up from where it sits. This is the single answer to
-     "what does hover look like" for every card, chip, row and icon button. */
-  --surface-hover: color-mix(in srgb, var(--fg) 7%, var(--bg-surface));
-  --raised-hover: color-mix(in srgb, var(--fg) 9%, var(--bg-surface));
-
-  /* Toward --fg: lighter on Carbon, darker on Paper. Contrast against
-     --on-brand rises in both directions, so neither state can fall below AA. */
-  --brand-fill-hover: color-mix(in srgb, var(--brand-fill) 88%, var(--fg));
-  --brand-fill-active: color-mix(in srgb, var(--brand-fill) 78%, var(--fg));
-
-  /* The one focus and emphasis ring. Soft, three pixels, accent-tinted —
-     replacing four different hard 1px emerald outlines. */
-  --ring: color-mix(in srgb, var(--brand) 32%, transparent);
-  --ring-width: 3px;
+  /* `--track-wide: 0.06em` used to sit here and was referenced by nothing —
+     the components that want open tracking under an uppercase mono label
+     reach for Tailwind's `tracking-wider` instead. Removed rather than
+     documented: an unused token is a value the next person has to check
+     before they can change anything near it. */
 }
 
 /* ============================================================
@@ -1287,7 +1166,15 @@ pre {
   border-top: var(--hairline) solid var(--border);
 }
 
-.item h3 {
+/* The item title carries the H3 type step whichever element it is. On an
+   index page it is an `h2` — there is no section heading between the page's
+   `h1` and the list, so an `h3` there skips a level — and an item title is
+   not the size a section heading is. The level is the outline's business;
+   the step is the type scale's. */
+.item-title {
+  font-size: var(--text-h3);
+  line-height: var(--lh-h3);
+  font-weight: 500;
   letter-spacing: var(--track-tight);
 }
 
@@ -1295,13 +1182,13 @@ pre {
   border-bottom: var(--hairline) solid var(--border);
 }
 
-.item h3 a {
+.item-title a {
   color: inherit;
   text-decoration: none;
   transition: color var(--dur) var(--ease);
 }
 
-.item h3 a:hover {
+.item-title a:hover {
   color: var(--brand);
 }
 

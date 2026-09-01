@@ -341,6 +341,12 @@ opt-in for interactive targets** (clickable tags, links, and filter triggers) li
 status badges, technology stacks, read-only category labels) remain calm with `cursor: default` and no
 hover effects to prevent false interactive affordances.
 
+This is enforced in the token sheet, not only in the component. `.chip:hover` is scoped to
+`a`/`button` ancestors and `.chip--interactive`; an unscoped `.chip:hover` in the sheet reaches
+every chip on the page regardless of what the component does, because a `cursor: default` utility
+cancels the cursor and nothing else. That was live on `dileepa-dev` until the sheet was reconciled
+— the component was right and the layer underneath it was not.
+
 ### Forms
 
 Inputs and textareas: `--bg-surface` background, `--border-input` (not `--border-strong` — see

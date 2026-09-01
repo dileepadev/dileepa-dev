@@ -17,14 +17,15 @@ gains Projects and an event gallery, and adopts the new brand. Whatever ships he
 `admin-dileepa-dev` and `links-dileepa-dev` follow — this repo is the design reference for the
 whole platform, so a shortcut taken here propagates to three applications.
 
-Currently on branch `feat/v2.0.0`. Version `1.3.0` in `package.json`; the target is `2.0.0`.
+Currently on branch `feat/v2.0.0`. `package.json` is at `2.0.0`; the release is what this
+branch is being readied for.
 
 [TODO.md](TODO.md) holds this repo's slice of the migration. Issue **#15** holds the full scope.
 The cross-repository roadmap lives in `dileepadev/TODO.md`.
 
 ## Layout
 
-The v2.0.0 routes do not exist yet. Know which is which.
+Every row below is built. The table is a map of where things live, not a plan.
 
 | Path | Status |
 | --- | --- |
@@ -37,12 +38,12 @@ The v2.0.0 routes do not exist yet. Know which is which.
 | `lib/api.ts` | **Built.** The FastAPI client, plus `getHomepageData()` and `getGallery()` |
 | `lib/api-schema.ts` | **Generated** from `openapi.json` by `npm run api:types`. Never edited by hand |
 | `lib/api-types.ts` | **Built.** Names the generated shapes; the only file that reaches into `api-schema.ts` |
-| `lib/content.ts` | **Built.** Post bodies, read from Git at build time against a pinned ref. Fails the build on an empty post set |
+| `lib/content.ts` | **Built.** Post bodies, read from Git at build time against a pinned ref, with a direct per-slug read at runtime for anything published since. Fails the build on an empty post set |
 
 ## Toolchain
 
 - Node + npm. `npm install`, then `npm run dev` (port 3000; `npm run dev -- -p 4000` to change).
-- `npm run build` · `npm run start` · `npm run lint`.
+- `npm run build` · `npm run start` · `npm run lint` · `npm run typecheck` · `npm run format:check`.
 - Next.js App Router with React Server Components. Default to server components; add
   `"use client"` only where a hook or a browser API actually requires it.
 - Tailwind CSS 4 via `@tailwindcss/postcss` — configured in CSS, not in a `tailwind.config.js`.
@@ -70,16 +71,31 @@ versions — version drift between the two apps is the thing v2.0.0 exists to en
   stays in `lib/constants.ts` is the fallback rendered when the API answers with nothing.
 - Images go through `next/image`. A new remote host must be added to `remotePatterns` in
   `next.config.ts` or the image fails at runtime, not at build.
+- **`priority` on an image is deprecated in Next 16.** Its replacements are not interchangeable:
+  `loading` / `preload` / `priority` decide lazy-vs-eager, and `fetchPriority` only sets the
+  hint. `fetchPriority="high"` on its own leaves the LCP image lazily loaded. Where `loading` is
+  already set, pair it with `fetchPriority`; where it is not, `preload` is the replacement.
+- **Page metadata is composed by `pageMetadata()` in `lib/metadata.ts`, not written per route.**
+  Next replaces the layout's `openGraph` wholesale when a page declares one and inherits it
+  wholesale when a page does not, so hand-written page metadata silently produces either the
+  homepage's card or a card with no image. Add a route by calling the helper.
 
 ## Brand rules — v2.0.0
 
-Tokens come from `dileepadev/docs/brand/brand-tokens.css`. Import them; never re-declare values.
+Tokens come from `dileepadev/docs/brand/brand-tokens.css`, vendored here as
+`app/brand-tokens.css` and mirrored for the doc set as `docs/brand-tokens.css`. Import them;
+never re-declare values.
 
 > [!IMPORTANT]
-> The HTML design reference (`index.html` in the `dileepadev` repo) still carries **v1.0
-> tokens** — `--cyan`, `--gold`, a different neutral ramp, Manrope aliased as the mono font,
-> and weights 600/800. Use it for **layout and structure only**. Every colour, type, and token
-> value comes from `brand-tokens.css`.
+> The sheet is at **brand tokens v2.1**, which reconciled it against this site after the
+> post-launch visual pass — where the draft and the shipped result disagreed, the shipped result
+> won. `app/globals.css` therefore overrides only four font variables, the two `--on-emerald-*`
+> stops and `--track-wide`; it used to restore around a hundred declarations that the v2.0 sheet
+> had wrong, and every one of those is now a duplicate waiting to drift. If you find yourself
+> re-declaring a token in `globals.css`, the sheet is the thing to change.
+>
+> The v1.0 HTML design reference (`index.html` in the `dileepadev` repo) no longer exists. Do
+> not reintroduce a dependency on it.
 
 - Emerald is the only accent. No second hue.
 - Never Emerald Deep on Carbon. Never Emerald Bright on Paper.
@@ -90,7 +106,11 @@ Tokens come from `dileepadev/docs/brand/brand-tokens.css`. Import them; never re
 - No hard-coded hex in components. If you're typing `#`, you're doing it wrong.
 - Banned in copy, without exception: *passionate about, leveraging, cutting-edge, revolutionize,
   game-changing, unlock, seamless, AI enthusiast, thought leader, journey, humbled to announce,
-  10x.* Note `lib/constants.ts` currently contains "passionate about" — it goes in v2.0.0.
+  10x.* The list appears twice on purpose — as a comment in `lib/constants.ts` and rendered on
+  `/brand` — so a grep for one of these words hits those two places and nothing else.
+- Item titles in a list are headings, and which level depends on what is above them: `h3` under a
+  section heading on the homepage, `h2` on an index page where the list *is* the page. `Item`
+  takes `headingLevel` for this; the type step does not change either way.
 
 ## Testing
 
@@ -140,13 +160,15 @@ There is no test suite. Before calling a change done:
   prerenders eighteen 404 pages and reports success, and it is what a ref pointing at the
   pre-v2.0.0 blog tree did. `assertNotEmpty` turns it into a failure that names the ref and the
   directory. **Do not soften it into a warning.**
-- **`/blog/[slug]` sets `dynamicParams = false`.** Post bodies come from a pinned ref, so a slug
-  that was not in the set at build time has no body to fetch and cannot render at runtime either.
-  Closing the route also fixes the 404 itself: an on-demand `notFound()` is served as a
-  client-rendered shell — correct status, empty `<body>` — whereas a slug the router rejects
-  renders `not-found.tsx` on the server like any other page. `/projects/[slug]` and
-  `/events/[slug]` keep `dynamicParams` open on purpose: those are published from the admin and
-  must resolve without a rebuild, and they still carry the empty-shell 404.
+- **Every dynamic route resolves an unbuilt slug, and that is recent.** `/blog/[slug]` was closed
+  (`dynamicParams = false`) while post bodies could only come from the pinned ref: a slug missing
+  at build time had no body to fetch at runtime either. `getPostContent` now falls back to reading
+  the file directly from the content repo, so the route is open and a post published after the
+  last build resolves without a redeploy. `/projects/[slug]` and `/events/[slug]` were never
+  closed — they are published from the admin and must resolve without a rebuild. The cost, on all
+  three, is that a genuinely unknown slug 404s from the client: Next serves an on-demand
+  `notFound()` as a client-rendered shell, correct status and empty `<body>`, where a slug the
+  router rejects would have rendered `not-found.tsx` on the server.
 - **A post page is static; three things on it are not.** Reactions, views and comments are fetched
   in the browser by `PostInteractions`, which owns the comment thread — the action bar's count and
   the comment list are the same data, and fetching it twice is waste nobody notices. Anything else

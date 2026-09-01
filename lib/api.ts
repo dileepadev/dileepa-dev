@@ -224,14 +224,62 @@ async function readError(
   );
 }
 
+/**
+ * A 429 is the one status worth waiting out.
+ *
+ * A production build renders 150 pages across seven workers and asks the API
+ * for a distinct URL per post, project and event. React's `cache` deduplicates
+ * within a render and Next's fetch cache deduplicates identical URLs, but
+ * neither helps a cold build fetching a hundred different ones, so the burst
+ * reaches the API as a burst and the API — sixty requests a minute — answers
+ * some of it with `rate_limited`.
+ *
+ * `degrade` then does exactly what it is designed to do: returns the fallback,
+ * logs, and lets the build succeed. The result is a page prerendered with an
+ * empty state on it. The build reports success and the page is wrong, which is
+ * the failure this client was rewritten to stop making silent.
+ *
+ * Retrying is the honest answer: the API is not broken, it is asking us to
+ * slow down. Three attempts with a widening pause, and only for 429 — every
+ * other status is a real answer and is returned immediately.
+ */
+const RATE_LIMIT_RETRIES = 3;
+const RATE_LIMIT_BACKOFF_MS = 500;
+/**
+ * The API allows sixty requests a minute and answers a 429 with
+ * `Retry-After: 50`. Honour it: a cap below the window turns the retry into
+ * three fast failures and the fallback ships anyway.
+ */
+const RATE_LIMIT_MAX_WAIT_MS = 60_000;
+
 /** Fetch, throwing `ApiError` on anything that is not a 2xx. */
 async function request<T>(
   endpoint: string,
   options: RequestOptions = {},
 ): Promise<T> {
-  const response = await fetch(buildUrl(endpoint, options.query), {
+  const url = buildUrl(endpoint, options.query);
+  const init = {
     next: { revalidate: options.revalidate ?? REVALIDATE.content },
-  });
+  } as const;
+
+  let response = await fetch(url, init);
+  for (
+    let attempt = 1;
+    response.status === 429 && attempt <= RATE_LIMIT_RETRIES;
+    attempt += 1
+  ) {
+    // `Retry-After` when the API sends one, an exponential pause when it does
+    // not. Capped so a genuinely rate-limited build fails in reasonable time
+    // rather than hanging on a wall of sleeps.
+    const header = Number(response.headers.get("retry-after"));
+    const waitMs =
+      Number.isFinite(header) && header > 0
+        ? Math.min(header * 1000, RATE_LIMIT_MAX_WAIT_MS)
+        : RATE_LIMIT_BACKOFF_MS * 2 ** (attempt - 1);
+    await new Promise((resolve) => setTimeout(resolve, waitMs));
+    response = await fetch(url, init);
+  }
+
   if (!response.ok) throw await readError(response, endpoint);
   return (await response.json()) as T;
 }

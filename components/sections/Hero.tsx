@@ -113,7 +113,14 @@ export function Hero({ about }: { about: About | null }) {
                   width={260}
                   height={260}
                   sizes="260px"
-                  priority
+                  // The LCP element on the homepage, and both attributes are
+                  // load-bearing. `fetchPriority` only sets the hint; what
+                  // decides lazy-vs-eager is `loading`, `priority` or
+                  // `preload` — so `fetchPriority` on its own leaves the LCP
+                  // image lazily loaded. `priority` was deprecated in Next 16
+                  // and `preload` is documented as the wrong choice wherever
+                  // `loading` is set, which leaves this pair.
+                  loading="eager"
                   fetchPriority="high"
                 />
                 <div className="mt-4">

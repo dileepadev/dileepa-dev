@@ -1,7 +1,7 @@
 ---
 name: dileepadev's Design System
 description: Visual design system, machine-readable design tokens, and frontend UI/UX design contract for human engineers and AI coding agents across all Dileepa Dev repositories.
-version: 2.0.0
+version: 2.1.0
 theme:
   default: dark
   supported: [dark, light]
@@ -573,7 +573,7 @@ Badges label or categorize. Chips represent metadata tags or technology stacks.
 
 - **Default Badge**: Neutral surface (`var(--bg-surface)`), muted text (`var(--fg-muted)`), hairline border (`var(--border-strong)`), `0.75rem` (12px), 500 weight. Static by default (`cursor: default`) without hover states.
 - **Filled Badge (`badge--ship`)**: Reserved for a single accent per surface (e.g., active release, featured status).
-- **Stack Chip (`Chip`)**: Rendered in `JetBrains Mono` font (`font-mono text-label/[1] tracking-[0.01em]`), `--radius-sm` (6px). Static by default (`cursor: default`) without hover states.
+- **Stack Chip (`Chip`)**: Rendered in `JetBrains Mono` font (`font-mono text-label/[1] tracking-[0.01em]`), `--radius-sm` (6px). Static by default (`cursor: default`) without hover states. The base sheet enforces this too — `.chip:hover` is scoped to `a`/`button` ancestors and `.chip--interactive`, because a `cursor: default` utility on the component does not cancel a colour change coming from the stylesheet underneath it.
 - **Interactive Badges & Chips**: Only clickable chips or badges (e.g., tag archive links, filter buttons, or when marked `interactive={true}`) receive `cursor: pointer` and the hover formula (`hover:border-brand hover:bg-surface-hover hover:text-fg`). Purely informational chips (status pills, stack tags, read-only labels) never flash hover effects to prevent false interactive affordances.
 
 ---
@@ -811,6 +811,28 @@ Accessibility is a non-negotiable core quality floor.
 
 - Use real HTML elements: `<main>`, `<nav>`, `<header>`, `<footer>`, `<section>`, `<article>`, `<button>`, `<dialog>`.
 - Never use `<div onClick="...">` in place of a `<button>`. A button handles keyboard events (`Enter`, `Space`) and screen reader roles automatically.
+
+### 16.4 Heading Order
+
+Heading levels describe the document outline; the type scale describes the size. They are set
+independently, and a heading must never skip a level to get the size you want.
+
+- The homepage runs `h1` (hero) → `h2` (section) → `h3` (item title).
+- An index page has no section heading between its `h1` and its list, so item titles there are
+  `h2`. `Item` takes a `headingLevel` prop for exactly this; `.item-title` holds the H3 type step
+  either way, so the two look identical and only the outline differs.
+- Subsection titles (`.subsection-title`) are deliberately **not** headings. They are a `<span>`,
+  which is what keeps `h2` → `h3` contiguous inside a section that groups several lists.
+
+### 16.5 Accessible Names Must Contain the Visible Label
+
+WCAG 2.5.3. When a control has visible text, its accessible name must contain that text, in
+order. An `aria-label` that replaces the visible label — `aria-label="Copy hex code for Emerald
+Bright"` on a swatch that reads "Emerald Bright #23B888" — breaks voice control: the words a
+person can see are not the words that activate the control.
+
+Where a control needs its action announced as well as its content, append the action in an
+`sr-only` span rather than overriding the name with `aria-label`.
 
 ---
 

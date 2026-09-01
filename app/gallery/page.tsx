@@ -9,12 +9,13 @@ import {
 } from "@/components/ui";
 import { checkApiHealth, getGallery } from "@/lib/api";
 import { EMPTY_STATES, PAGES } from "@/lib/constants";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: PAGES.gallery.meta.title,
   description: PAGES.gallery.meta.description,
-  alternates: { canonical: "/gallery" },
-};
+  path: "/gallery",
+});
 
 /**
  * The full gallery.

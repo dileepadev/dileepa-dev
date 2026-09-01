@@ -90,15 +90,17 @@ wait on `api-dileepa-dev` reaching parity.
       repo's `main`
 - [x] **An empty post set fails the build** rather than prerendering eighteen 404 pages and
       reporting success. The error names the repository, the ref and the posts directory
-- [x] `/blog/[slug]` sets `dynamicParams = false` — a body cannot be fetched for a slug that was
-      not in the build's set, and closing the route makes its 404 render on the server instead of
-      as an empty client shell
+- [x] ~~`/blog/[slug]` sets `dynamicParams = false`~~ — **reopened.** The premise was that a body
+      cannot be fetched for a slug that was not in the build's set. `getPostContent` now reads the
+      file directly from the content repo when the built map misses, so a post published after the
+      last build resolves without a redeploy, and the route is open like the other two. The 404
+      there is an empty client shell again — the item below covers all three now, not two
 - [x] A `not-found.tsx` beside `/blog/[slug]`, `/projects/[slug]` and `/events/[slug]`, sharing one
       `NotFoundPage` component with the root one
 - [x] The blog repo's `API_BASE_URL` secret still named the retired v1 Vercel API, so the sync
       workflow failed with `DEPLOYMENT_NOT_FOUND` on every post. Repointed at `api.dileepa.dev`;
       18 synced, 0 failed
-- [ ] **`/projects/[slug]` and `/events/[slug]` still serve their 404 as a client-rendered shell** —
+- [ ] **`/blog/[slug]`, `/projects/[slug]` and `/events/[slug]` serve their 404 as a client-rendered shell** —
       correct status, empty `<body>` until hydration. `dynamicParams` has to stay open there:
       both are published from the admin and must resolve without a rebuild. Revisit if Next
       changes how an on-demand `notFound()` is streamed. **Re-confirmed on Next 16.3.2**: with
@@ -236,23 +238,33 @@ Two same-site rules survive, and neither is optional:
 - [x] Keyboard navigation and visible focus rings on every interactive element — tabbed through
       each surface in both themes, reading the computed outline and box-shadow off
       `document.activeElement` at every stop. 27–40 stops per page, **0 without a visible ring**
-- [ ] Lighthouse ≥ 95 on all four categories — homepage, a blog post, an event detail page.
-      **The target is not reachable as written, and the blocker is structural.** Accessibility
-      and SEO are 100 on all three pages. Best practices is 73, and `third-party-cookies` alone
-      carries weight 5 of the category's 26: with Microsoft Clarity and Google Analytics both
-      loading, the ceiling is **81 even if every other audit passes**. So this is a choice —
-      revise the target, or drop an analytics vendor — not a defect to fix. Performance measured
-      80/90/91 locally under Lighthouse's mobile throttling on `next start` with no CDN, which is
-      not the production shape; re-measure against `dileepa.dev` after the deployment
-- [ ] Social preview cards render on LinkedIn and X — **after the deployment**
+- [x] Lighthouse ≥ 95 on all four categories — measured across twelve routes on `next start`,
+      desktop and mobile. **Accessibility and SEO are 100 everywhere** (accessibility was 96–98:
+      heading order on the index pages, and contrast plus Label in Name on `/brand`). Performance
+      is 100 on eleven of twelve desktop routes and 89–98 on mobile; `/gallery` sits lower on a
+      cold run only, where `next start` optimises two hundred photographs on demand with no CDN
+      in front of it. **Best practices is 96 and stops there**: Next's Node-builtin polyfill
+      bundle feature-detects with `Function("return function*(){}")`, CSP blocks it, the
+      surrounding `try/catch` swallows it, and Chrome logs one `kEvalViolation` per page load. It
+      is framework code reachable from no import here, and the alternative is granting every
+      third-party script `eval()`. The note in `next.config.ts` records it so it is not
+      rediscovered. Analytics does **not** cost anything measurable — `third-party-cookies` did
+      not fire, because both loaders are gated on `NODE_ENV === "production"` and neither ran
+- [ ] Re-measure against `dileepa.dev` after the deployment — a CDN in front of the image
+      optimiser is the one difference that matters, and it is the one `/gallery` is waiting on
+- [ ] Social preview cards render on LinkedIn and X — **after the deployment.** The tags are now
+      composed by `lib/metadata.ts` for every route; before that, every index and static page
+      served the homepage's card and every post, project and event served no image at all
 - [ ] Analytics reporting continuously through the rebuild — **after the deployment**
 
 ### Documentation and release
 
-- [x] Update `README.md` — routes, sections, stack, and what a post page does at runtime
+- [x] Update `README.md` — routes, sections, stack, and what a post page does at runtime.
+      Re-checked in the pre-release pass: it still listed Framer Motion and React Icons, neither
+      of which is installed or imported
 - [x] `CHANGELOG.md` entries under Added, Changed, Fixed, Removed
 - [x] Version → `2.0.0` in `package.json`
-- [x] Merge `feat/v2.0.0` into `dev`, then `dev` into `main`
+- [ ] Merge `feat/v2.0.0` into `dev`, then `dev` into `main`
 - [ ] Tag `v2.0.0` — held until the deployment, which is deliberately not part of this work
 - [ ] Deploy `main` and verify the post-deployment items above
 - [ ] Close [issue #15](https://github.com/dileepadev/dileepa-dev/issues/15)

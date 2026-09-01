@@ -2,13 +2,14 @@ import type { Metadata } from "next";
 import { Container, PagePath, Section } from "@/components/ui";
 import { api } from "@/lib/api";
 import { PAGES, PAGES_LIST } from "@/lib/constants";
+import { pageMetadata } from "@/lib/metadata";
 import { SiteTree, type TreeNode } from "./_components/SiteTree";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: PAGES.sitemap.meta.title,
   description: PAGES.sitemap.meta.description,
-  alternates: { canonical: "/sitemap" },
-};
+  path: "/sitemap",
+});
 
 export const revalidate = 300;
 

@@ -288,6 +288,10 @@ export function SiteTree({ tree, totalRoutes, pagesList }: SiteTreeProps) {
           />
           <input
             type="text"
+            name="filter"
+            aria-label={
+              viewMode === "pages" ? "Filter pages" : "Filter routes and slugs"
+            }
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={

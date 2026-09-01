@@ -8,13 +8,14 @@ import {
 } from "@/components/ui";
 import { api, checkApiHealth } from "@/lib/api";
 import { EMPTY_STATES, PAGES } from "@/lib/constants";
+import { pageMetadata } from "@/lib/metadata";
 import { EventSearch } from "./_components/EventSearch";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: PAGES.events.meta.title,
   description: PAGES.events.meta.description,
-  alternates: { canonical: "/events" },
-};
+  path: "/events",
+});
 
 export default async function EventsPage() {
   // Two queries rather than one filtered in the browser: upcoming sorts

@@ -8,13 +8,14 @@ import {
 } from "@/components/ui";
 import { api, checkApiHealth } from "@/lib/api";
 import { EMPTY_STATES, PAGES } from "@/lib/constants";
+import { pageMetadata } from "@/lib/metadata";
 import { CommunitySearch } from "./_components/CommunitySearch";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: PAGES.communities.meta.title,
   description: PAGES.communities.meta.description,
-  alternates: { canonical: "/communities" },
-};
+  path: "/communities",
+});
 
 export default async function CommunitiesPage() {
   const communities = await api.getCommunities();

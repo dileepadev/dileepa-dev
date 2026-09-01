@@ -198,6 +198,7 @@ export function CommunitySearch({ communities }: { communities: Community[] }) {
             {paginatedCommunities.map((community) => (
               <Item
                 key={community.id}
+                headingLevel={2}
                 title={community.name}
                 href={community.communityUrl || undefined}
                 description={community.description}

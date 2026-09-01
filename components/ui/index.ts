@@ -14,6 +14,7 @@ export { NotFoundVisual } from "./NotFoundVisual";
 export { ErrorVisual } from "./ErrorVisual";
 export { ApiOfflineVisual } from "./ApiOfflineVisual";
 export { ApiOfflinePage } from "./ApiOfflinePage";
+export { ErrorPage } from "./ErrorPage";
 export { Gallery } from "./Gallery";
 export { SearchInput } from "./SearchInput";
 export { SortSelect, type SortOption } from "./SortSelect";

@@ -10,7 +10,8 @@ interface ZoomableImageProps {
   alt?: string | null;
   aspectRatio?: string;
   sizes?: string;
-  priority?: boolean;
+  /** Preload the image — for a cover that is the page's LCP element. */
+  preload?: boolean;
   className?: string;
 }
 
@@ -23,7 +24,7 @@ export function ZoomableImage({
   alt,
   aspectRatio = "aspect-16/9",
   sizes = "(max-width: 768px) 100vw, 768px",
-  priority = false,
+  preload = false,
   className = "",
 }: ZoomableImageProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -44,7 +45,7 @@ export function ZoomableImage({
             alt={altText}
             fill
             sizes={sizes}
-            priority={priority}
+            preload={preload}
             className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
           />
 

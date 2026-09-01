@@ -40,6 +40,11 @@ export function ColorSwatch({
     }
   };
 
+  // No `aria-label` on the button. An override there replaces the visible
+  // text with a string that does not contain it, which is the "Label in Name"
+  // failure (WCAG 2.5.3): someone saying "Emerald Bright" hits a control named
+  // "Copy hex code for…". The name is built from the swatch's own content
+  // instead, with the action appended after it by the `sr-only` span below.
   return (
     <button
       type="button"
@@ -48,7 +53,6 @@ export function ColorSwatch({
         "group relative flex flex-col justify-between p-3.5 rounded-sm border text-left transition-all duration-150 cursor-pointer w-full",
         "border-border-strong bg-bg hover:border-brand hover:bg-surface-hover focus:outline-none focus-visible:ring-1 focus-visible:ring-brand",
       )}
-      aria-label={`Copy hex code for ${name} (${hex})`}
     >
       {/* Color tile representation */}
       <div
@@ -84,7 +88,7 @@ export function ColorSwatch({
           {contrastBadge && (
             <span
               className={cn(
-                "inline-flex items-center px-1.5 py-0.2 rounded text-[0.625rem] font-mono",
+                "inline-flex items-center px-1.5 py-0.2 rounded text-label font-mono",
                 contrastBadge.includes("AAA")
                   ? "bg-brand/15 text-brand border border-brand/30"
                   : contrastBadge.includes("AA")
@@ -96,21 +100,23 @@ export function ColorSwatch({
             </span>
           )}
         </div>
-        <div className="font-mono text-[0.6875rem] text-fg-muted truncate">
+        <div className="font-mono text-label text-fg-muted truncate">
           {token}
         </div>
-        <p className="text-[0.75rem] text-fg-muted line-clamp-2 leading-relaxed">
+        <p className="text-small text-fg-muted line-clamp-2 leading-relaxed">
           {role}
         </p>
         {contrast && (
-          <div className="text-[0.6875rem] font-mono text-fg-muted/80">
+          <div className="text-label font-mono text-fg-muted">
             {contrast}
           </div>
         )}
       </div>
 
+      <span className="sr-only">Copy hex code</span>
+
       {copied && (
-        <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded bg-brand-fill text-on-brand text-[0.625rem] font-mono font-medium shadow-xs">
+        <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded bg-brand-fill text-on-brand text-label font-mono font-medium shadow-xs">
           Copied
         </div>
       )}
@@ -139,6 +145,11 @@ export function CopySnippetButton({
     }
   };
 
+  // No `aria-label` on the button. An override there replaces the visible
+  // text with a string that does not contain it, which is the "Label in Name"
+  // failure (WCAG 2.5.3): someone saying "Emerald Bright" hits a control named
+  // "Copy hex code for…". The name is built from the swatch's own content
+  // instead, with the action appended after it by the `sr-only` span below.
   return (
     <button
       type="button"
@@ -194,7 +205,7 @@ export function SocialCardPreview() {
         <div className="flex items-center gap-2">
           <span className="text-fg font-medium">Social card simulator</span>
           <span className="text-border-strong select-none">/</span>
-          <div className="flex items-center rounded border border-border-strong overflow-hidden text-[0.6875rem]">
+          <div className="flex items-center rounded border border-border-strong overflow-hidden text-label">
             <button
               type="button"
               onClick={() => setVariant("standard")}
@@ -222,7 +233,7 @@ export function SocialCardPreview() {
           </div>
         </div>
 
-        <div className="flex items-center rounded border border-border-strong overflow-hidden text-[0.6875rem]">
+        <div className="flex items-center rounded border border-border-strong overflow-hidden text-label">
           <button
             type="button"
             onClick={() => setPlatform("twitter")}
@@ -267,14 +278,14 @@ export function SocialCardPreview() {
               width={variant === "standard" ? 1200 : 1600}
               height={variant === "standard" ? 630 : 900}
               className="w-full h-full object-cover"
-              priority
+              preload
             />
           </div>
 
           {/* Social feed metadata preview */}
           {platform === "twitter" ? (
             <div className="p-3.5 bg-bg-surface border-t border-border-strong space-y-1">
-              <div className="font-mono text-[0.6875rem] text-fg-muted">
+              <div className="font-mono text-label text-fg-muted">
                 dileepa.dev
               </div>
               <div className="font-medium text-sm text-fg truncate">

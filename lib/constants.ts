@@ -14,7 +14,11 @@ import type { NavLink } from "./types";
 
 export const SITE_CONFIG = {
   name: "Dileepa Bandara",
-  title: "Dileepa Bandara - AI Engineer",
+  // Sentence case, and an em dash rather than a hyphen — the form the brand
+  // page has documented as this site's `<title>` all along, while the site
+  // itself shipped "AI Engineer" behind a hyphen. `jobTitle` in the Person
+  // schema stays title case: that is a schema.org value, not site copy.
+  title: "Dileepa Bandara — AI engineer",
   // Says what is here and what the person does, without adjectives doing the
   // work. The v1 description opened with "passionate about" and closed on
   // "something amazing together"; both are gone.

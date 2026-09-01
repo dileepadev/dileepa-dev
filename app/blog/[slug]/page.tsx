@@ -16,6 +16,7 @@ import { api, checkApiHealth } from "@/lib/api";
 import type { BlogPost } from "@/lib/api-types";
 import { getPostContent } from "@/lib/content";
 import { SITE_CONFIG } from "@/lib/constants";
+import { pageMetadata } from "@/lib/metadata";
 import { jsonLd } from "@/lib/utils";
 import { extractHeadings, mdxOptions } from "@/lib/mdx";
 import {
@@ -30,18 +31,23 @@ interface Params {
 }
 
 /**
- * Only the slugs built here exist.
+ * A slug that was not built still resolves.
  *
- * Post bodies are read from a pinned content ref, so a post that was not in
- * the set at build time cannot render at runtime either — there is no body to
- * fetch for it. Leaving this open meant an unknown slug cost a live API call
- * and a content lookup before 404ing, and Next served that 404 as a
- * client-rendered shell: correct status, empty `<body>`. Closing it makes the
- * router answer from the route table, which renders `not-found.tsx` on the
- * server like any other page.
+ * This route was closed (`dynamicParams = false`) for as long as post bodies
+ * could only come from the pinned ref: a slug missing at build time had no
+ * body to fetch at runtime either, so rejecting it at the router was both
+ * honest and better-rendered — an on-demand `notFound()` is served as a
+ * client-rendered shell, correct status and empty `<body>`, while a slug the
+ * router rejects renders `not-found.tsx` on the server like any other page.
  *
- * The consequence to keep in mind: publishing a post needs a rebuild. That was
- * already true of the pinned ref — see `content-pipeline.md` §8.
+ * `getPostContent` now falls back to reading the file directly from the
+ * content repo when the built map does not have it, so that premise no longer
+ * holds and a post published after the last build resolves without a redeploy.
+ * The empty-shell 404 is the price, and it is paid only by a genuinely unknown
+ * slug.
+ *
+ * The trade to keep in mind: an unknown slug now costs a live API call and a
+ * content lookup before it 404s. See `content-pipeline.md` §8.
  */
 export const dynamicParams = true;
 
@@ -58,35 +64,27 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const title = post.seo?.metaTitle || post.title;
   const description = post.seo?.metaDescription || post.description;
   // Posts carry no banner of their own any more — an image is either set
-  // deliberately in `seo.ogImage` or the site's default card is used.
+  // deliberately in `seo.ogImage` or the site's default card is used. Passing
+  // it through `pageMetadata` is what makes the second half of that sentence
+  // true: an `undefined` here used to mean the post shipped with no card
+  // image at all, because a page-level `openGraph` replaces the layout's
+  // rather than filling in around it.
   const image = post.seo?.ogImage;
 
-  return {
+  // Every post points at its own dileepa.dev URL. `postUrl` refuses a stored
+  // canonical on the retired host, which is why this is not just
+  // `post.canonicalUrl`. `pageMetadata` takes a site-relative path, and the
+  // slug is the whole of it.
+  return pageMetadata({
     title,
     description,
-    // Every post points at its own dileepa.dev URL. `postUrl` refuses a
-    // stored canonical on the retired host, which is why this is not just
-    // `post.canonicalUrl`.
-    alternates: {
-      canonical: postUrl(post),
-    },
-    openGraph: {
-      type: "article",
-      title,
-      description,
-      url: postUrl(post),
-      publishedTime: post.publishedDate ?? undefined,
-      modifiedTime: post.updatedDate ?? undefined,
-      tags: post.tags ?? [],
-      images: image ? [{ url: image, alt: title }] : undefined,
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: image ? [image] : undefined,
-    },
-  };
+    path: new URL(postUrl(post)).pathname,
+    image,
+    type: "article",
+    publishedTime: post.publishedDate,
+    modifiedTime: post.updatedDate,
+    tags: post.tags ?? [],
+  });
 }
 
 function articleJsonLd(post: BlogPost, url: string) {

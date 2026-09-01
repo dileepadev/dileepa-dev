@@ -8,13 +8,21 @@ import {
 } from "@/components/ui";
 import { api, checkApiHealth } from "@/lib/api";
 import { EMPTY_STATES, PAGES } from "@/lib/constants";
+import { pageMetadata } from "@/lib/metadata";
 import { BlogSearch } from "./_components/BlogSearch";
 
-export const metadata: Metadata = {
+const blogMetadata = pageMetadata({
   title: PAGES.blog.meta.title,
   description: PAGES.blog.meta.description,
+  path: "/blog",
+});
+
+export const metadata: Metadata = {
+  ...blogMetadata,
+  // The feed is announced from the index, so a reader who lands here with a
+  // feed reader installed is offered it without having to find the link.
   alternates: {
-    canonical: "/blog",
+    ...blogMetadata.alternates,
     types: { "application/rss+xml": "/blog/rss.xml" },
   },
 };

@@ -164,6 +164,7 @@ function CommentForm({
       <span>Name</span>
       <input
         type="text"
+        name="author"
         value={author}
         onChange={(e) => setAuthor(e.target.value)}
         placeholder="Jane Doe"
@@ -191,6 +192,7 @@ function CommentForm({
             </span>
             <input
               type="email"
+              name="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="jane@example.com"
@@ -206,6 +208,7 @@ function CommentForm({
         <span>{parentId ? "Reply" : "Comment"}</span>
         <textarea
           ref={formRef}
+          name="comment"
           value={body}
           onChange={(e) => setBody(e.target.value)}
           rows={compact ? 3 : 4}

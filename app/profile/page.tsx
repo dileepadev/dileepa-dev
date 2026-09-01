@@ -1,25 +1,18 @@
 import type { Metadata } from "next";
 import { ApiOfflinePage, Container, PagePath, Section } from "@/components/ui";
 import { api } from "@/lib/api";
-import { PAGES, SITE_CONFIG } from "@/lib/constants";
+import { PAGES } from "@/lib/constants";
+import { pageMetadata } from "@/lib/metadata";
 import { ProfileClient } from "./_components/ProfileClient";
 
-export const metadata: Metadata = {
+// The portrait is 800×800 and the card is `summary_large_image`, which every
+// platform crops to 1.91:1 — so a square headshot arrives with the top and
+// bottom of the face cut off. The site card is already built at that ratio.
+export const metadata: Metadata = pageMetadata({
   title: PAGES.profile.meta.title,
   description: PAGES.profile.meta.description,
-  alternates: { canonical: "/profile" },
-  openGraph: {
-    title: `${PAGES.profile.title} · ${SITE_CONFIG.name}`,
-    description: PAGES.profile.meta.description,
-    images: [{ url: "/profile/v2.webp", width: 800, height: 800, alt: PAGES.profile.title }],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: `${PAGES.profile.title} · ${SITE_CONFIG.name}`,
-    description: PAGES.profile.meta.description,
-    images: ["/profile/v2.webp"],
-  },
-};
+  path: "/profile",
+});
 
 export const revalidate = 900;
 

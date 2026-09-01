@@ -34,6 +34,7 @@ import {
 import { api, checkApiHealth } from "@/lib/api";
 import type { EventRecord } from "@/lib/api-types";
 import { SITE_CONFIG } from "@/lib/constants";
+import { pageMetadata } from "@/lib/metadata";
 import { jsonLd } from "@/lib/utils";
 import {
   formatDate,
@@ -93,19 +94,15 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const description = event.seo?.metaDescription || event.summary;
   const image = event.seo?.ogImage || event.cover?.url;
 
-  return {
+  return pageMetadata({
     title,
     description,
-    alternates: { canonical: `/events/${event.slug}` },
-    openGraph: {
-      type: "article",
-      title,
-      description,
-      url: `${SITE_CONFIG.url}/events/${event.slug}`,
-      images: image ? [{ url: image }] : undefined,
-    },
-    twitter: { card: "summary_large_image", title, description },
-  };
+    path: `/events/${event.slug}`,
+    image,
+    type: "article",
+    publishedTime: event.createdAt,
+    modifiedTime: event.updatedAt,
+  });
 }
 
 /** schema.org/Event, so an event can surface as one in search results. */
@@ -419,7 +416,7 @@ export default async function EventPage({ params }: Params) {
               alt={event.cover.alt}
               aspectRatio="aspect-16/9"
               sizes="(max-width: 768px) 100vw, 768px"
-              priority
+              preload
             />
           </div>
         )}

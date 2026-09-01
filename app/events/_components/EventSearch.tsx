@@ -382,6 +382,7 @@ function EventItems({ events }: { events: EventRecord[] }) {
       {events.map((event) => (
         <Item
           key={event.id}
+          headingLevel={2}
           title={event.title}
           href={`/events/${event.slug}`}
           description={event.summary}

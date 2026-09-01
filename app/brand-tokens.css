@@ -2,7 +2,7 @@
    VENDORED COPY — do not edit here.
 
    Source: dileepadev/docs/brand/brand-tokens.css
-   Vendored: v2.0.0
+   Vendored: brand tokens v2.1
 
    This is a copy, and a copy can drift. When the canonical file
    changes, re-copy it; never patch this one in place. The only
@@ -30,12 +30,17 @@
    ============================================================ */
 
 /* ============================================================
-   Dileepa — brand tokens v2.0
+   Dileepa — brand tokens v2.1
    Logo lockup: "dileepadev /." — wordmark neutral, "/." in emerald.
    Rule: emerald is the only accent. No second hue, anywhere.
    Every pairing below is verified against WCAG AA minimum.
 
-   Finalized v2.0 token specification for the platform.
+   v2.1 supersedes v2.0: this revision reconciles the sheet against
+   dileepa-dev, the platform's flagship surface, after a post-launch
+   visual pass corrected drift between the original v2.0 values and
+   what actually shipped. Where the two disagreed, the shipped site
+   wins — see design-system.md §0 for the full account of what moved
+   and why. Nothing here is provisional; it is the recorded result.
    ============================================================ */
 
 :root {
@@ -45,9 +50,9 @@
   --carbon: #050505;
   --paper: #f7f7f7;
 
-  /* Dark neutral ramp. Deeper at every stop — the page
-     foundation moved from #0D0D0D to #050505 — which is why the finalized
-     surface and an earlier surface read as different weights of the same
+  /* Dark neutral ramp. Deeper than v2.0 at every stop — the page
+     foundation moved from #0D0D0D to #050505 — which is why a v2.0
+     surface and a v2.1 surface read as different weights of the same
      design even though nothing else about the palette changed. */
   --ink-900: #050505;
   --ink-800: #0d0d0d;
@@ -460,7 +465,7 @@ a {
   border-color: transparent;
 }
 
-/* A stack/tag chip: mono, same hover formula as the card. */
+/* A stack/tag chip: mono, with hover reserved strictly for interactive targets. */
 .chip {
   display: inline-block;
   font-family: var(--font-mono);
@@ -472,12 +477,24 @@ a {
   border: var(--hairline) solid var(--border-strong);
   border-radius: var(--radius-sm);
   padding: var(--space-2) var(--space-3);
+  cursor: default;
+}
+a > .chip,
+a.chip,
+button > .chip,
+button.chip,
+.chip--interactive {
+  cursor: pointer;
   transition:
     background var(--dur) var(--ease),
     border-color var(--dur) var(--ease),
     color var(--dur) var(--ease);
 }
-.chip:hover {
+a:hover > .chip,
+a.chip:hover,
+button:hover > .chip,
+button.chip:hover,
+.chip--interactive:hover {
   background: var(--surface-hover);
   border-color: var(--brand);
   color: var(--fg);

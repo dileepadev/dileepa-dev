@@ -176,6 +176,7 @@ export function VideoSearch({ videos }: { videos: Video[] }) {
             {paginatedVideos.map((video) => (
               <Item
                 key={video.id}
+                headingLevel={2}
                 title={video.title}
                 href={video.link}
                 description={video.description || undefined}

@@ -5,7 +5,7 @@ import { ExternalLink, FileText, Globe } from "lucide-react";
 import { FaGithub } from "@/components/icons/SocialIcons";
 import { ApiOfflinePage, Badge, Chip, Container, LinkButton, PagePath, Section } from "@/components/ui";
 import { api, checkApiHealth } from "@/lib/api";
-import { SITE_CONFIG } from "@/lib/constants";
+import { pageMetadata } from "@/lib/metadata";
 import { formatMonth, humanise, paragraphs } from "@/lib/format";
 
 interface Params {
@@ -26,19 +26,15 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const description = project.seo?.metaDescription || project.tagline;
   const image = project.seo?.ogImage || project.cover?.url;
 
-  return {
+  return pageMetadata({
     title,
     description,
-    alternates: { canonical: `/projects/${project.slug}` },
-    openGraph: {
-      type: "article",
-      title,
-      description,
-      url: `${SITE_CONFIG.url}/projects/${project.slug}`,
-      images: image ? [{ url: image }] : undefined,
-    },
-    twitter: { card: "summary_large_image", title, description },
-  };
+    path: `/projects/${project.slug}`,
+    image,
+    type: "article",
+    publishedTime: project.createdAt,
+    modifiedTime: project.updatedAt,
+  });
 }
 
 function period(start?: string | null, end?: string | null): string {
@@ -120,7 +116,7 @@ export default async function ProjectPage({ params }: Params) {
               fill
               sizes="(max-width: 768px) 100vw, 768px"
               className="object-cover"
-              priority
+              preload
             />
           </div>
         )}

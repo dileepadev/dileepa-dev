@@ -52,8 +52,14 @@ export function SectionHeading({
 /**
  * A subsection inside a section — communities, events, posts, videos.
  *
- * The title is uppercase, tracked, and marked with a 3px emerald rule. It is
- * the only element in the block that carries the accent.
+ * The title is `--text-small` at weight 700, sentence case, marked with a 2px
+ * emerald rule that the accent is spent on rather than the text — the words
+ * stay `--fg`, so the block has one accented element and it is the rule.
+ *
+ * It is a `<span>`, not a heading, on purpose. A section that groups several
+ * lists would otherwise put an `h3` between its `h2` and the item titles that
+ * are already `h3`, and the outline would have to gain a level to describe
+ * something the page does not treat as a level.
  */
 export function Subsection({
   id,

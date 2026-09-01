@@ -271,6 +271,7 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
             {paginatedPosts.map((post) => (
               <Item
                 key={post.slug}
+                headingLevel={2}
                 title={post.title}
                 href={`/blog/${post.slug}`}
                 description={post.description ?? undefined}
