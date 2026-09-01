@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Single-column frames — no trailing annotation on the same line
+// Single-column frames - no trailing annotation on the same line
 const getUplinkFrames = (target: string) => [
   ` [ UPLINK PROBE ]
  TARGET: ${target}
@@ -187,7 +187,7 @@ export function ApiOfflineVisual({
       {activeTab === "uplink" ? (
         <div className="min-h-[390px] sm:h-[390px] p-4 sm:p-5 font-mono text-xs flex flex-col justify-between gap-3">
           <div className="space-y-3">
-            {/* Big ASCII 503 Banner — overflow-hidden, no side scroll */}
+            {/* Big ASCII 503 Banner - overflow-hidden, no side scroll */}
             <div className="p-2.5 rounded bg-bg border border-border-strong/70 text-brand select-none overflow-hidden">
               <pre className="text-[0.625rem] sm:text-xs leading-[1.15] font-bold whitespace-pre">
                 {ASCII_503_BANNER}

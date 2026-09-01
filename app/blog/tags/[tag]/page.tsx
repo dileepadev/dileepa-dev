@@ -24,7 +24,7 @@ interface Params {
  * **encoded** segment on the way back, so a reader always decodes. What
  * `generateStaticParams` must not do is encode as well: `"Advanced Git"`
  * returned as `Advanced%20Git` was encoded a second time into the URL, arrived
- * as `Advanced%2520Git`, and decoded once to `"Advanced%20Git"` — a string no
+ * as `Advanced%2520Git`, and decoded once to `"Advanced%20Git"` - a string no
  * post carries. Every tag with a space in it, twenty-nine of sixty-eight, was
  * a page headed `Advanced%20Git` reporting that no posts carry the tag.
  *
@@ -52,11 +52,11 @@ export default async function TagPage({ params }: Params) {
   const name = decodeURIComponent(tag);
   // Filtered from the full set rather than fetched per tag. `getBlogs({ tag })`
   // is a distinct URL for every tag, so sixty-eight tag pages were sixty-eight
-  // requests that Next's fetch cache could not collapse — on their own more
+  // requests that Next's fetch cache could not collapse - on their own more
   // than the API's sixty-per-minute allowance, which is how a cold build ended
   // up prerendering "No posts carry this tag" onto pages that have posts.
   // `getAllBlogs()` is one URL, already fetched by `generateStaticParams`, and
-  // the tag set is derived from these same `tags` arrays — so the filter here
+  // the tag set is derived from these same `tags` arrays - so the filter here
   // and the query it replaces cannot disagree.
   const posts = (await api.getAllBlogs()).filter((post) =>
     (post.tags ?? []).includes(name),

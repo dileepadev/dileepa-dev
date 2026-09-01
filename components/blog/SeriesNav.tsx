@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
  *
  * The Astro blog did this with a `SeriesBox.astro` component imported into the
  * post body. That import cannot compile here and, more to the point, put
- * navigation inside the content — so a reordered series meant editing eight
+ * navigation inside the content - so a reordered series meant editing eight
  * posts. This derives the same box from `series.name` and `series.order`.
  */
 export function SeriesNav({

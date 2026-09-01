@@ -15,8 +15,8 @@ import { portrait as portraitUrl } from "@/lib/format";
 import "./globals.css";
 
 // Three weights, which is the whole scale: 400 body, 500 UI and labels, 700
-// headings and the lockup mark. Five were loaded to serve three exceptions —
-// 600 for the lockup mark and the hero name, 800 for the subsection rules —
+// headings and the lockup mark. Five were loaded to serve three exceptions -
+// 600 for the lockup mark and the hero name, 800 for the subsection rules -
 // and those three now sit on the scale, so the two extra faces are two
 // requests and ~40KB of woff2 the page no longer waits on.
 const manrope = Manrope({
@@ -34,7 +34,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  // The deployment's own origin, not the site's identity — see
+  // The deployment's own origin, not the site's identity - see
   // `deploymentOrigin` in lib/metadata.ts. Every relative URL in this object
   // and in every page's resolves against it, which is what makes a preview's
   // `og:image` a file that exists.
@@ -70,7 +70,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
   },
-  // The favicon is the portrait at every size — brand-guide.md §3.2. There is
+  // The favicon is the portrait at every size - brand-guide.md §3.2. There is
   // deliberately no SVG favicon: the identity is a photograph, a photograph
   // has no vector form, and the alternatives are both worse than not having
   // one. A vector of the `/.` mark would put a second design in the tab while
@@ -97,14 +97,14 @@ export const metadata: Metadata = {
       { url: "/apple-icon-180x180.png", sizes: "180x180", type: "image/png" },
     ],
     // No `mask-icon`. It pointed at a PNG, and Safari's pinned-tab icon has to
-    // be a monochrome SVG with a `color` attribute — so the tag has never done
+    // be a monochrome SVG with a `color` attribute - so the tag has never done
     // anything but add a line to every page's head. Safari 12 and later use the
     // ordinary favicon for pinned tabs anyway, and that is now an SVG.
   },
   openGraph: {
     type: "website",
     locale: SITE_CONFIG.locale,
-    // The deployment's origin, not the site's identity — a hard-coded
+    // The deployment's origin, not the site's identity - a hard-coded
     // production URL here would survive `metadataBase` and point a preview's
     // card at another site.
     url: METADATA_ORIGIN,
@@ -198,7 +198,7 @@ export default async function RootLayout({
   return (
     // The font variables belong on <html>, not <body>: globals.css builds
     // --font-sans out of them at :root, and a custom property that is only
-    // declared on <body> is undefined there — which makes the whole
+    // declared on <body> is undefined there - which makes the whole
     // declaration invalid and drops the site to a system font.
     <html
       lang="en"

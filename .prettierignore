@@ -1,5 +1,5 @@
 # The vendored canonical token sheet. AGENTS.md: it is a copy, and a copy can
-# drift — when the canonical file in `dileepadev/docs/brand/` changes, re-copy
+# drift - when the canonical file in `dileepadev/docs/brand/` changes, re-copy
 # it rather than patching it here. Formatting it would rewrite lines the source
 # does not have, and every later re-copy would then show a spurious diff.
 app/brand-tokens.css

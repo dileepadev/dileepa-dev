@@ -110,8 +110,8 @@ export default function PrivacyPolicyPage() {
             anonymous either, and the difference is worth being precise about.
           </p>
           <p>
-            To count a reader once rather than once per refresh — and to let you
-            change a reaction rather than add a second one — the backend has to
+            To count a reader once rather than once per refresh - and to let you
+            change a reaction rather than add a second one - the backend has to
             recognise a repeat request. It does that by hashing your IP address
             together with a server-side secret and the post identifier, and
             storing only the result. Your IP address itself is never written
@@ -139,7 +139,7 @@ export default function PrivacyPolicyPage() {
             </li>
           </ul>
           <p>
-            Your IP address is also read — and not stored — to rate limit the
+            Your IP address is also read - and not stored - to rate limit the
             contact form and the comment form, which is what keeps both usable.
           </p>
 
@@ -151,7 +151,7 @@ export default function PrivacyPolicyPage() {
           <p>
             It does set analytics cookies. Google Analytics and Microsoft
             Clarity each write their own first-party cookies to tell a returning
-            visit from a new one — <code>_ga</code> and <code>_ga_*</code> for
+            visit from a new one - <code>_ga</code> and <code>_ga_*</code> for
             the former, <code>_clck</code> and <code>_clsk</code> for the
             latter. Vercel Analytics and Speed Insights set none.
           </p>
@@ -194,11 +194,11 @@ export default function PrivacyPolicyPage() {
               <strong>Google Analytics:</strong> aggregate traffic analysis. It
               runs as GA4, which does not log or store full IP addresses. The
               site&apos;s own configuration is page-view measurement and nothing
-              more — no advertising or ad-personalisation features are added on
+              more - no advertising or ad-personalisation features are added on
               top of it.
             </li>
             <li>
-              <strong>Microsoft Clarity:</strong> heatmaps and session replays —
+              <strong>Microsoft Clarity:</strong> heatmaps and session replays -
               a reconstruction of clicks, scrolling, and pointer movement, used
               to find usability problems. Clarity masks page text and form input
               by default, so what you type is not captured.
@@ -250,7 +250,7 @@ export default function PrivacyPolicyPage() {
             You can ask for a copy of any personal data you have submitted, or
             ask that your comments or contact messages be corrected or
             permanently deleted. I handle those requests myself and there is no
-            form to fill in — an email is enough.
+            form to fill in - an email is enough.
           </p>
           <p>
             If you would like to request removal of a comment or have questions

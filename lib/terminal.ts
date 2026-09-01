@@ -11,8 +11,8 @@
  * same `api.*` calls the homepage uses, through the same Next data cache. There
  * is no second source of truth to update when a project ships or a role
  * changes, and no fixture that can quietly go stale. The consequence is that
- * the terminal output degrades exactly the way the homepage does — `degrade`
- * returns the fallback and logs the endpoint — so a dead collection costs one
+ * the terminal output degrades exactly the way the homepage does - `degrade`
+ * returns the fallback and logs the endpoint - so a dead collection costs one
  * section rather than the response.
  *
  * **It is composed, not templated.** The layout is built from the primitives in
@@ -61,7 +61,7 @@ function rule(p: Palette): string {
 /**
  * A section heading, ruled out to the right edge.
  *
- * `▍` is the escape-code translation of `.subsection-title::before` — the
+ * `▍` is the escape-code translation of `.subsection-title::before` - the
  * emerald bar the design system puts ahead of a subsection title. It is the one
  * place emerald appears in a section, which is the rule the site follows too:
  * the accent is a marker, not a highlight.
@@ -85,7 +85,7 @@ function heading(p: Palette, title: string): string[] {
  * A left value and a right value on one line, filled with spaces between.
  *
  * The left side is truncated to whatever the right side leaves it. Both are
- * styled after measuring, never before — `truncate` on a string that already
+ * styled after measuring, never before - `truncate` on a string that already
  * carries escape codes would cut one in half and leave the rest of the document
  * wearing it.
  */
@@ -173,7 +173,7 @@ function short(url: string): string {
  * brand rule survives the change of scale intact: the wordmark takes the
  * neutral foreground, the `/.` takes emerald, and the two never swap. That is
  * the whole reason `renderWordmark` hands back the two halves separately
- * instead of one pre-joined string — a banner with the colours reversed is a
+ * instead of one pre-joined string - a banner with the colours reversed is a
  * brand failure visible from across a room.
  *
  * The border is double-ruled rather than the light rule everything else uses.
@@ -209,7 +209,7 @@ function banner(p: Palette, about: About | null): string[] {
   // The block is the thing the eye lands on first, and an off-centre one reads
   // as a mistake. Everything under it follows the same axis.
   // Every row of the block is the same width by construction, so they centre on
-  // one measurement rather than each finding its own — which would let a row
+  // one measurement rather than each finding its own - which would let a row
   // whose trailing spaces got trimmed drift out of the column.
   const pad = indent(Math.max(0, Math.floor((boxInner - WORDMARK_WIDTH) / 2)));
   const art = renderWordmark().map((row) =>
@@ -222,7 +222,7 @@ function banner(p: Palette, about: About | null): string[] {
   if (meta) lines.push(centred(meta, p.muted(meta)));
 
   // The availability line, carried by a filled dot rather than a word like
-  // "status:". The dot is the second and last emerald in the panel — a third
+  // "status:". The dot is the second and last emerald in the panel - a third
   // would be scattering the accent rather than spending it.
   if (about?.status) {
     lines.push(
@@ -435,7 +435,7 @@ function community(
  * Where to find the person, not the site.
  *
  * Driven off `about.links`, so a channel that is not configured is simply not
- * printed rather than rendered as an empty row — the same rule the footer's
+ * printed rather than rendered as an empty row - the same rule the footer's
  * social icons follow.
  */
 function links(p: Palette, record: About | null): string[] {
@@ -483,7 +483,7 @@ function colophon(p: Palette): string[] {
     field(p, "This page", TERMINAL.command),
     field(p, "No colour", `curl -L "${short(ORIGIN)}?nocolor"`),
     // The boot sequence plays by default, so what the reader needs from this
-    // block is not how to see it — they just did — but how to turn it off. The
+    // block is not how to see it - they just did - but how to turn it off. The
     // reader most likely to want that is the one about to pipe this somewhere,
     // and they will not find the flag by guessing.
     field(p, "Skip intro", `curl -L "${short(ORIGIN)}?static"`),
@@ -555,8 +555,8 @@ export async function renderTerminalMasthead(
 /**
  * Builds the document.
  *
- * Sections that resolve to nothing contribute nothing — no heading, no blank
- * run — so an API that is half down produces a shorter page rather than a
+ * Sections that resolve to nothing contribute nothing - no heading, no blank
+ * run - so an API that is half down produces a shorter page rather than a
  * skeleton of empty labels.
  */
 export async function renderTerminalProfile(

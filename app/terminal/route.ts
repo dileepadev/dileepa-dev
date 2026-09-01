@@ -9,7 +9,7 @@ import { streamTerminalIntro } from "@/lib/terminal-intro";
  * The terminal rendering, as a route of its own.
  *
  * `proxy.ts` rewrites terminal clients on `/` to here, but this URL is not an
- * implementation detail of that rewrite — it is the stable address of the
+ * implementation detail of that rewrite - it is the stable address of the
  * thing. Someone who wants the plain-text profile from a client the sniffer
  * does not know about, or wants to link it, or wants to read it in a browser,
  * asks for it by name and gets it.
@@ -22,7 +22,7 @@ import { streamTerminalIntro } from "@/lib/terminal-intro";
 /**
  * Fifteen minutes, matching `REVALIDATE.content` in `lib/api.ts`.
  *
- * The route itself is dynamic — it reads the query string — but every fetch
+ * The route itself is dynamic - it reads the query string - but every fetch
  * underneath it goes through the same Next data cache the homepage uses, so a
  * request that misses the CDN still does not hit the API.
  */
@@ -44,12 +44,12 @@ export const maxDuration = 15;
  * Whether the reader asked for escape codes to be left out.
  *
  * `NO_COLOR` is the convention, but it is an environment variable and this is
- * an HTTP request — the server never sees it. A query parameter is the closest
+ * an HTTP request - the server never sees it. A query parameter is the closest
  * equivalent that survives the gap, and all four spellings people actually try
  * are accepted because guessing wrong here just looks broken.
  *
  * Presence is enough: `?nocolor` and `?nocolor=1` mean the same thing, and
- * `?nocolor=` — which is what a shell produces from a bare flag — is the one
+ * `?nocolor=` - which is what a shell produces from a bare flag - is the one
  * that a value check would miss.
  */
 function wantsPlainText(params: URLSearchParams): boolean {
@@ -64,7 +64,7 @@ function wantsPlainText(params: URLSearchParams): boolean {
  * 1. **An explicit skip wins.** `?static`, `?fast`, `?now`, `?nointro`.
  * 2. **Plain text implies a skip.** Someone who turned the escape codes off is
  *    piping or saving, and a redraw with no cursor control is not an animation
- *    — it is sixty lines of spinner in a file. They should not have to pass two
+ *    - it is sixty lines of spinner in a file. They should not have to pass two
  *    flags to say one thing.
  * 3. **An explicit request wins next.** `?intro` lets a browser, or a client
  *    the User-Agent matcher does not know, ask for it anyway.
@@ -85,7 +85,7 @@ export async function GET(request: Request) {
   const mode: ColorMode = wantsPlainText(searchParams) ? "plain" : "ansi";
 
   // The animated form. Returned as a stream so the pauses between chunks reach
-  // the reader as timing rather than being flattened into one body — which is
+  // the reader as timing rather than being flattened into one body - which is
   // the whole mechanism, and the reason this branch cannot share the response
   // construction below.
   if (wantsIntro(request, searchParams)) {
@@ -114,9 +114,9 @@ export async function GET(request: Request) {
       // Deliberately not `s-maxage`, and the reasoning is worth keeping.
       //
       // This body is reachable at two URLs: here, and at `/` for a terminal
-      // client that Proxy rewrote. A shared cache that stored it under `/` —
+      // client that Proxy rewrote. A shared cache that stored it under `/` -
       // because it keyed the entry on the requested path rather than the
-      // rewritten one — would then serve plain text to the next browser that
+      // rewritten one - would then serve plain text to the next browser that
       // asked for the homepage. That is the one failure this feature must not
       // have, and it is not worth a single round trip to risk it.
       //

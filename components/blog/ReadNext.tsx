@@ -3,7 +3,7 @@ import type { BlogPost } from "@/lib/api-types";
 import { formatMonth, readingTime } from "@/lib/format";
 
 /**
- * "Read next" — posts sharing a tag first, then the most recent.
+ * "Read next" - posts sharing a tag first, then the most recent.
  *
  * Related-by-tag beats newest-first on its own: a reader who finished a post
  * about Foundry is more likely to want another one than whatever went out

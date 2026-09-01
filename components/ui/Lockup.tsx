@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 /**
  * The brand lockup: `dileepadev /.`
  *
- * The wordmark stays neutral and only the `/.` is emerald — the two are never
+ * The wordmark stays neutral and only the `/.` is emerald - the two are never
  * swapped. The mark is decorative, so the accessible name comes from the
  * anchor's `aria-label` and the mark itself is hidden from assistive tech.
  *
@@ -43,7 +43,7 @@ export function Lockup({
     <Link
       href={href}
       onClick={handleClick}
-      aria-label="dileepadev — home"
+      aria-label="dileepadev - home"
       className={cn("lockup", className)}
     >
       <span className="wordmark">dileepadev</span>

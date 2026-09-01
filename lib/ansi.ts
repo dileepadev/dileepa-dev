@@ -7,7 +7,7 @@
  *
  * - **Emerald is the only accent.** Nothing here emits a second hue. Everything
  *   that is not emerald is the terminal's own foreground, either at full
- *   strength or dimmed — which is the escape-code equivalent of `--fg` and
+ *   strength or dimmed - which is the escape-code equivalent of `--fg` and
  *   `--fg-muted`, and means the output inherits whatever palette the reader has
  *   already chosen rather than fighting it.
  * - **Emerald Bright, not Emerald Deep.** The guide forbids Emerald Deep on
@@ -27,7 +27,7 @@ const EMERALD_BRIGHT = [35, 184, 136] as const;
 const ESC = "\u001b";
 
 /**
- * Matches an SGR escape sequence — the only kind this module emits.
+ * Matches an SGR escape sequence - the only kind this module emits.
  *
  * Width has to be measured against what a reader sees, and an escape code
  * occupies bytes without occupying a column. Every alignment helper below
@@ -46,7 +46,7 @@ export interface Palette {
   strong: (text: string) => string;
   /** `--fg-muted`: labels, metadata, rules, anything supporting. */
   muted: (text: string) => string;
-  /** A link. Underlined rather than coloured — emerald is spoken for. */
+  /** A link. Underlined rather than coloured - emerald is spoken for. */
   link: (text: string) => string;
 }
 
@@ -91,7 +91,7 @@ export function padEnd(text: string, columns: number): string {
 /**
  * Greedy word wrap at `columns`.
  *
- * A token longer than the line — which in practice means a URL — is placed on
+ * A token longer than the line - which in practice means a URL - is placed on
  * its own line and allowed to overflow rather than broken. A wrapped URL is a
  * URL that cannot be double-clicked or copied, and losing the alignment of one
  * line costs less than that.
@@ -129,7 +129,7 @@ export function truncate(text: string, columns: number): string {
 //
 // Everything above builds a document. What follows is for writing one *over
 // time*, down a chunked HTTP response, which is the only way an animation
-// reaches `curl` — it prints bytes as they arrive rather than waiting for the
+// reaches `curl` - it prints bytes as they arrive rather than waiting for the
 // body to finish.
 //
 // These use carriage returns rather than cursor-up sequences on purpose. `\r`
@@ -160,7 +160,7 @@ export function showCursor(mode: ColorMode): string {
   return mode === "plain" ? "" : `${ESC}[?25h`;
 }
 
-/** The braille spinner. Eight frames, no ASCII fallback needed — it is UTF-8. */
+/** The braille spinner. Eight frames, no ASCII fallback needed - it is UTF-8. */
 export const SPINNER = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧"] as const;
 
 /**

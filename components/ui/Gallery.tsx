@@ -13,7 +13,7 @@ import { formatMonth } from "@/lib/format";
  *
  * Each tile links to the event the photo was taken at, because a photo of a
  * room full of people is only worth showing if a reader can find out what was
- * happening in it. The caption is revealed on hover and on keyboard focus —
+ * happening in it. The caption is revealed on hover and on keyboard focus -
  * hover alone would hide it from anyone not using a mouse.
  *
  * Every photo is Cloudinary-hosted. `next.config.ts` allows that host and no
@@ -34,7 +34,7 @@ export function Gallery({ photos }: { photos: GalleryPhoto[] }) {
               width={photo.width ?? 800}
               height={photo.height ?? 600}
               // Three columns inside the 1020px measure, less two 12px gaps,
-              // is a 332px tile — not 240px. Understating it made the browser
+              // is a 332px tile - not 240px. Understating it made the browser
               // pick a variant a third too small for the slot it renders in,
               // which is a soft image on every desktop screen and a worse one
               // on a retina display.

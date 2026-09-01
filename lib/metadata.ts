@@ -4,8 +4,8 @@
  * Next merges metadata per key, not per field: a page that declares
  * `openGraph` replaces the layout's `openGraph` object outright rather than
  * filling in around it. Every page that set only `title` and `description`
- * therefore inherited the homepage's card — same `og:title`, same
- * `og:description`, same `og:url` — while every page that *did* declare an
+ * therefore inherited the homepage's card - same `og:title`, same
+ * `og:description`, same `og:url` - while every page that *did* declare an
  * `openGraph` lost `siteName`, `locale` and the default image along with it.
  * Both failures are silent: the page renders, the tags are present, and only
  * the card a reader sees is wrong.
@@ -18,7 +18,7 @@ import type { Metadata } from "next";
 import { SITE_CONFIG } from "./constants";
 
 /**
- * The default social card — 1200×630, the one aspect ratio every platform
+ * The default social card - 1200×630, the one aspect ratio every platform
  * crops to predictably. A page without an image of its own gets this rather
  * than nothing, which is what "no image" resolved to before.
  */
@@ -70,8 +70,8 @@ function toImage(image: PageMetadataInput["image"]): PageImage {
 /**
  * The origin this deployment is actually served from.
  *
- * `SITE_CONFIG.url` is the site's *identity* — what it calls itself in the
- * media kit, the terminal profile and `llms.txt` — and that is always
+ * `SITE_CONFIG.url` is the site's *identity* - what it calls itself in the
+ * media kit, the terminal profile and `llms.txt` - and that is always
  * `dileepa.dev`. It is the wrong value for a card, because a preview
  * deployment that describes itself with the production origin points every
  * absolute URL at a different site: `og:image` resolved to
@@ -80,8 +80,8 @@ function toImage(image: PageMetadataInput["image"]): PageImage {
  * image. The card could not be checked until after it shipped, which is the
  * one moment checking it is no longer useful.
  *
- * So metadata — `metadataBase`, and therefore the canonical, `og:url`,
- * `og:image` and `twitter:image` composed against it — follows the deployment.
+ * So metadata - `metadataBase`, and therefore the canonical, `og:url`,
+ * `og:image` and `twitter:image` composed against it - follows the deployment.
  * `VERCEL_ENV` and `VERCEL_BRANCH_URL` are read unprefixed because this module
  * is only ever imported by a `metadata` export or a `generateMetadata`, both of
  * which run on the server; nothing here reaches a client bundle.

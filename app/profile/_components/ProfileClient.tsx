@@ -96,7 +96,7 @@ const PROFILE_PHOTOS: ProfilePhoto[] = [
  * The list is served by `GET /speaking-topics` now, so this is what renders
  * when that call comes back empty. Same reasoning as `PILLARS` in
  * `lib/constants.ts`: an outage should cost the section its editability, not
- * its content — an organiser reading this page needs to see the talks.
+ * its content - an organiser reading this page needs to see the talks.
  */
 const SPEAKING_TOPICS: { title: string; summary: string }[] = [
   {
@@ -126,7 +126,7 @@ const SHORT_BIO =
   "Dileepa Bandara is an AI engineer building agentic systems, production LLM pipelines, and the developer communities around them. He speaks and leads technical workshops on AI architectures, multi-agent orchestration, and cloud infrastructure.";
 
 const FULL_BIO =
-  "Dileepa Bandara is an AI systems engineer with experience building agentic applications, production evaluation harnesses, and scalable cloud solutions. A community builder and active technical speaker, Dileepa has delivered numerous talks and hands-on workshops across developer meetups, conferences, and open-source groups. He focuses on practical AI engineering — moving beyond basic prototypes to resilient, observable production systems. Dileepa writes about AI architecture on dileepa.dev and maintains open-source tools for developers.";
+  "Dileepa Bandara is an AI systems engineer with experience building agentic applications, production evaluation harnesses, and scalable cloud solutions. A community builder and active technical speaker, Dileepa has delivered numerous talks and hands-on workshops across developer meetups, conferences, and open-source groups. He focuses on practical AI engineering - moving beyond basic prototypes to resilient, observable production systems. Dileepa writes about AI architecture on dileepa.dev and maintains open-source tools for developers.";
 
 interface ProfileClientProps {
   about: About | null;
@@ -177,7 +177,7 @@ export function ProfileClient({
       if (navigator.share) {
         try {
           await navigator.share({
-            title: `Dileepa Bandara — ${photo.title}`,
+            title: `Dileepa Bandara - ${photo.title}`,
             text: `Download official headshot: ${photo.title}`,
             url: fullUrl,
           });
@@ -476,7 +476,7 @@ export function ProfileClient({
                 />
                 <Image
                   src={photo.src}
-                  alt={`Dileepa Bandara — ${photo.title}`}
+                  alt={`Dileepa Bandara - ${photo.title}`}
                   width={300}
                   height={300}
                   className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-108"
@@ -661,7 +661,7 @@ export function ProfileClient({
       {lightboxPhoto && (
         <ImageLightbox
           src={lightboxPhoto.src}
-          alt={`Dileepa Bandara — ${lightboxPhoto.title}`}
+          alt={`Dileepa Bandara - ${lightboxPhoto.title}`}
           isOpen={Boolean(lightboxPhoto)}
           onClose={() => setLightboxPhoto(null)}
         />

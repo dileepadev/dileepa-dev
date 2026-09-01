@@ -10,7 +10,7 @@ interface ZoomableImageProps {
   alt?: string | null;
   aspectRatio?: string;
   sizes?: string;
-  /** Preload the image — for a cover that is the page's LCP element. */
+  /** Preload the image - for a cover that is the page's LCP element. */
   preload?: boolean;
   className?: string;
 }

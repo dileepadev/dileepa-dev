@@ -185,7 +185,7 @@ const metadataSnippet = `export const metadata: Metadata = {
 // Every other route composes its tags through one helper rather than writing
 // them out. Next merges metadata per key, not per field: a page that declares
 // `openGraph` replaces the layout's outright, and a page that declares none
-// inherits the homepage's whole card — so hand-written page metadata produces
+// inherits the homepage's whole card - so hand-written page metadata produces
 // either a card with no image or the homepage's card under another page's URL.
 const pageMetadataSnippet = `// lib/metadata.ts
 export const metadata: Metadata = pageMetadata({
@@ -439,7 +439,7 @@ export default async function BrandPage() {
             <div className="p-4 rounded-sm border border-brand/40 bg-brand/5">
               <div className="flex items-center gap-2 font-mono text-xs font-bold text-brand mb-2">
                 <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
-                <span>Mark rules — do</span>
+                <span>Mark rules - do</span>
               </div>
               <ul className="text-xs text-fg-muted space-y-1.5 list-disc list-inside">
                 <li>
@@ -456,7 +456,7 @@ export default async function BrandPage() {
             <div className="p-4 rounded-sm border border-error/40 bg-error/5">
               <div className="flex items-center gap-2 font-mono text-xs font-bold text-error mb-2">
                 <XCircle className="h-4 w-4" aria-hidden="true" />
-                <span>Mark rules — don&apos;t</span>
+                <span>Mark rules - don&apos;t</span>
               </div>
               <ul className="text-xs text-fg-muted space-y-1.5 list-disc list-inside">
                 <li>Never color the wordmark in emerald</li>
@@ -677,7 +677,7 @@ export default async function BrandPage() {
                   name="Success"
                   token="--success"
                   hex="#23B888 / #087F5B"
-                  role="Reuses emerald accent — no new hue needed."
+                  role="Reuses emerald accent - no new hue needed."
                   bgHex="#23B888"
                   textHex="#050505"
                 />
@@ -759,7 +759,7 @@ export default async function BrandPage() {
           <SectionHeading
             label="Typography"
             title="Typefaces and typographic scale"
-            intro="Two families: Manrope for display and UI, JetBrains Mono for code and data. Weights 400, 500, and 700 only — no 600."
+            intro="Two families: Manrope for display and UI, JetBrains Mono for code and data. Weights 400, 500, and 700 only - no 600."
           />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6 mb-8">
@@ -1002,7 +1002,7 @@ export default async function BrandPage() {
           <div className="mt-6">
             <Subsection
               title="Favicon suite"
-              note="The circular portrait at every size, and no vector — the identity is a photograph (brand guide §3.2)."
+              note="The circular portrait at every size, and no vector - the identity is a photograph (brand guide §3.2)."
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
                 {FAVICONS.map((icon) => (
@@ -1014,7 +1014,7 @@ export default async function BrandPage() {
                       <div className="w-12 h-12 rounded border border-border-strong bg-bg flex items-center justify-center p-1 shrink-0 overflow-hidden">
                         {/* Served as the file itself, not through the image
                             optimizer. This grid exists to show what actually
-                            ships in /public — a re-encoded, re-scaled copy of
+                            ships in /public - a re-encoded, re-scaled copy of
                             an icon is not the icon, and a 16px PNG has nothing
                             to gain from being optimized anyway. */}
                         <Image
@@ -1110,7 +1110,7 @@ export default async function BrandPage() {
             {/* Production HTML Head & Next.js Metadata Snippet */}
             <Subsection
               title="Production metadata specification"
-              note="The root layout's defaults — the title template, the icon set, and the card every page falls back to."
+              note="The root layout's defaults - the title template, the icon set, and the card every page falls back to."
             >
               <div className="space-y-3 mb-8">
                 <div className="flex justify-end">
@@ -1193,7 +1193,7 @@ export default async function BrandPage() {
               <div className="space-y-3">
                 <div>
                   <div className="text-label font-mono text-fg-muted mb-1.5">
-                    Static (read-only metadata, status, tech stack — calm, no
+                    Static (read-only metadata, status, tech stack - calm, no
                     hover):
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
@@ -1206,7 +1206,7 @@ export default async function BrandPage() {
                 </div>
                 <div>
                   <div className="text-label font-mono text-fg-muted mb-1.5">
-                    Interactive (links, filter buttons — cursor-pointer &amp;
+                    Interactive (links, filter buttons - cursor-pointer &amp;
                     brand hover):
                   </div>
                   <div className="flex flex-wrap items-center gap-2">

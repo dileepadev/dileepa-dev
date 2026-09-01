@@ -19,7 +19,7 @@ interface NotFoundPageProps {
 /**
  * The 404 body, shared by `app/not-found.tsx` and the per-segment ones.
  *
- * There are four of these — one for unmatched routes and one beside each
+ * There are four of these - one for unmatched routes and one beside each
  * dynamic segment that calls `notFound()`. They exist separately because a
  * segment-level `not-found.tsx` is what makes Next render the 404 **on the
  * server**; without one the render unwinds to the root boundary and the whole

@@ -17,7 +17,7 @@ import { SECTIONS, SUBSECTIONS } from "@/lib/constants";
 import { humanise } from "@/lib/format";
 
 /**
- * Work — roles, then the stack, then the open source.
+ * Work - roles, then the stack, then the open source.
  *
  * All three are the same question ("what does this person actually do?") asked
  * at three scales, so they share a section rather than each claiming one.

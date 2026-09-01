@@ -7,7 +7,7 @@ import { Moon, Sun } from "lucide-react";
 /**
  * ThemeToggle
  *
- * Implements Concept 2 — Radial Spotlight Theme Transition:
+ * Implements Concept 2 - Radial Spotlight Theme Transition:
  * An aperture circle of the target theme expands radially from the center of the
  * toggle button across the entire viewport using the View Transitions API.
  *

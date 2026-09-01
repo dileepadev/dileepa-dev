@@ -6,7 +6,7 @@ import { pageMetadata } from "@/lib/metadata";
 import { ProfileClient } from "./_components/ProfileClient";
 
 // The portrait is 800×800 and the card is `summary_large_image`, which every
-// platform crops to 1.91:1 — so a square headshot arrives with the top and
+// platform crops to 1.91:1 - so a square headshot arrives with the top and
 // bottom of the face cut off. The site card is already built at that ratio.
 export const metadata: Metadata = pageMetadata({
   title: PAGES.profile.meta.title,

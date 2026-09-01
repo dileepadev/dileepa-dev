@@ -47,7 +47,7 @@ const STATUS_LABELS: Record<string, string> = {
  * The filterable dimensions, and how a community is filed under each.
  *
  * `current` is a boolean on the record rather than a string, so it is projected
- * onto the two values the dropdown offers — which keeps the count beside an
+ * onto the two values the dropdown offers - which keeps the count beside an
  * option and the rows it yields on one rule instead of two.
  */
 const FACETS: FacetSpec<Community>[] = [
@@ -92,7 +92,7 @@ export function CommunitySearch({ communities }: { communities: Community[] }) {
     () =>
       toOptions(counts.status, {
         label: (value) => STATUS_LABELS[value] ?? value,
-        // "Current roles" before "Past roles" — the order a reader expects, and
+        // "Current roles" before "Past roles" - the order a reader expects, and
         // one a count-first ordering would flip as soon as the past outnumbers
         // the present.
         order: "label",

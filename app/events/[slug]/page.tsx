@@ -493,7 +493,7 @@ export default async function EventPage({ params }: Params) {
           </section>
         )}
 
-        {/* Recordings and photos are both optional and often empty — an
+        {/* Recordings and photos are both optional and often empty - an
             in-person event with no photos yet and an online one before its
             recording is published are normal states, not degraded ones. */}
         {(event.recordings ?? []).length > 0 && (

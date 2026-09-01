@@ -1,5 +1,5 @@
 /**
- * The boot sequence — what `curl -L "dileepa.dev?intro"` plays before the profile.
+ * The boot sequence - what `curl -L "dileepa.dev?intro"` plays before the profile.
  *
  * A normal response arrives as one body and prints at once. This one arrives as
  * a chunked stream with pauses between the chunks, and `curl` prints bytes as
@@ -8,16 +8,16 @@
  * ordinary HTTP, written slowly.
  *
  * **Why it is opt-in.** The server cannot tell whether the reader's `stdout` is
- * a terminal or a file — `isatty` is answered on the client, and curl sends
+ * a terminal or a file - `isatty` is answered on the client, and curl sends
  * nothing about it. So an animation on the default response would also be an
  * animation inside `curl -L dileepa.dev > profile.txt`: spinner frames, partial
  * lines and carriage returns, saved to disk. The plain command stays the clean,
  * pipeable document; the animation is asked for by name.
  *
  * **Why it ends.** The obvious reference point loops until the reader presses
- * Ctrl+C. That is fine for a novelty and wrong for a profile — a command that
+ * Ctrl+C. That is fine for a novelty and wrong for a profile - a command that
  * does not terminate cannot be put in a script, a README, or a demo without a
- * caveat. This one runs about two and a half seconds — see `TIMING` — resolves into the
+ * caveat. This one runs about two and a half seconds - see `TIMING` - resolves into the
  * same document the static route serves, and exits 0.
  */
 
@@ -38,7 +38,7 @@ const GUTTER = "  ";
  * The frame budget, in milliseconds.
  *
  * These multiply, and it is easy to write a sequence that reads as "a moment"
- * and runs for ten seconds — four steps at four spinner turns of eight frames
+ * and runs for ten seconds - four steps at four spinner turns of eight frames
  * is nine seconds of spinner alone. The numbers below are chosen against a
  * total, not against how each phase feels on its own:
  *
@@ -67,7 +67,7 @@ const TIMING = {
   settle: 180,
 } as const;
 
-/** The bar is 40 cells wide but advances in 20 frames — two cells at a time. */
+/** The bar is 40 cells wide but advances in 20 frames - two cells at a time. */
 const BAR = { cells: 40, frames: 20 } as const;
 
 /**
@@ -93,7 +93,7 @@ function sleep(ms: number): Promise<void> {
  * Streams the boot sequence, then the profile.
  *
  * `signal` is the request's. A reader who presses Ctrl+C aborts it, and every
- * loop checks it — without that, the sequence keeps sleeping and enqueuing into
+ * loop checks it - without that, the sequence keeps sleeping and enqueuing into
  * a stream nobody is reading, holding a function invocation open for the rest
  * of its budget.
  */
@@ -110,8 +110,8 @@ export function streamTerminalIntro(
       const aborted = () => signal.aborted;
 
       // Every frame loop below is a redraw, and a redraw needs somewhere to
-      // redraw *to*. Plain mode has no cursor control — `resetLine` degrades to
-      // a newline — so an animation played in it is not an animation, it is
+      // redraw *to*. Plain mode has no cursor control - `resetLine` degrades to
+      // a newline - so an animation played in it is not an animation, it is
       // sixty consecutive lines of spinner saved to a file. Plain mode gets the
       // outcome of each step and nothing else, which is what someone piping
       // this asked for when they turned the escape codes off.
@@ -136,7 +136,7 @@ export function streamTerminalIntro(
         if (animated) await sleep(TIMING.settle);
 
         // 2. The boot steps. Each spins in place on its own line, then is
-        //    overwritten by its resolved form — one line, one final state.
+        //    overwritten by its resolved form - one line, one final state.
         for (const step of STEPS) {
           const label = step.padEnd(24, " ");
 
@@ -163,7 +163,7 @@ export function streamTerminalIntro(
 
         write("\n");
 
-        // 3. The bar. It is honest about being decorative — everything it
+        // 3. The bar. It is honest about being decorative - everything it
         //    reports has already happened by the time it draws.
         const barLine = (ratio: number) =>
           `${GUTTER}${p.brand(progressBar(ratio, BAR.cells))} ${p.strong(
@@ -186,7 +186,7 @@ export function streamTerminalIntro(
 
         // 4. The document, unchanged. Whatever the animation did, what the
         //    reader is left holding is the same profile the plain command
-        //    prints — so the two can never drift into different content.
+        //    prints - so the two can never drift into different content.
         write(await renderTerminalProfile(mode, { masthead: false }));
       } catch {
         // A disconnected reader makes `enqueue` throw. That is the normal end

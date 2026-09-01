@@ -12,7 +12,7 @@ interface ApiOfflinePageProps {
   path?: string;
   host?: string;
   /**
-   * An extra control shown before the links — the render boundary's retry.
+   * An extra control shown before the links - the render boundary's retry.
    * Passed in as an element rather than a handler so this stays a server
    * component for the dozen routes that render it during a degraded fetch.
    */

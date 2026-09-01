@@ -25,8 +25,8 @@ import { isTerminalClient } from "@/lib/terminal-client";
  * request's User-Agent, which is normally how a CDN gets poisoned. It cannot
  * happen here: Proxy runs ahead of the filesystem and cache layers on every
  * request to a matched path (see the routing order in the Next.js Proxy
- * reference), and the two audiences resolve to two different paths — `/` and
- * `TERMINAL.path` — which are two different cache entries. Neither audience can
+ * reference), and the two audiences resolve to two different paths - `/` and
+ * `TERMINAL.path` - which are two different cache entries. Neither audience can
  * be served the other's body, so no `Vary` is needed on the pass-through, and
  * none is set: `Vary: User-Agent` on a static homepage is a cache key with a
  * near-unbounded value space, and the hit rate is worth more than a header that
@@ -63,7 +63,7 @@ export function proxy(request: NextRequest) {
 /**
  * The homepage and nothing else.
  *
- * `curl dileepa.dev/blog` should return the blog, not a profile — every other
+ * `curl dileepa.dev/blog` should return the blog, not a profile - every other
  * route on this site already has an answer that makes sense in a terminal or
  * does not, and neither case is improved by intercepting it. Narrowing the
  * matcher to one literal path also means Proxy never runs for a static asset,

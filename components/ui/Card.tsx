@@ -12,7 +12,7 @@ interface CardProps {
 const base = "block rounded-lg border border-border-strong bg-bg-surface p-6";
 
 // The one hover in the system: the surface lifts a step and the border warms
-// to the accent. No shadow, no scale, no ring — a 1px brand ring sitting on a
+// to the accent. No shadow, no scale, no ring - a 1px brand ring sitting on a
 // 1px brand border drew a 2px outline, which made a card the loudest hover on
 // a page where a chip and a button used the same idea more quietly.
 const interactive =

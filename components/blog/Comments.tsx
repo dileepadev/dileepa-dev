@@ -16,7 +16,7 @@ import { ReactionPicker, ReactionSummary } from "./reactions";
  *
  * **Controlled.** The thread lives in `PostInteractions`, because the action bar
  * above the article shows the comment count and the count is derived from this
- * list — two components reading the same thing means one of them owns it.
+ * list - two components reading the same thing means one of them owns it.
  *
  * Unlike the action bar, posting does **not** fail silently. A reader who typed
  * a paragraph and pressed a button is owed an answer, so a failed post says so
@@ -146,7 +146,7 @@ function CommentForm({
         honeypot,
       });
       // `accepted: false` is the honeypot path. It cannot happen to a person,
-      // and saying nothing is the point — a bot that learns it was caught is a
+      // and saying nothing is the point - a bot that learns it was caught is a
       // bot that comes back working.
       if (result.comment) onPosted(result.comment, parentId);
       setBody("");
@@ -222,7 +222,7 @@ function CommentForm({
       </label>
 
       {/* The honeypot. Hidden from sight and from assistive technology, and
-          skipped by the tab order — a person cannot reach it, so anything that
+          skipped by the tab order - a person cannot reach it, so anything that
           fills it is not a person. Not `display: none`: some bots skip those. */}
       <div
         aria-hidden="true"
@@ -323,7 +323,7 @@ export function Comments({
               />
 
               {(entry.replies?.length ?? 0) > 0 && (
-                // One level, and one level only — the same depth LinkedIn uses.
+                // One level, and one level only - the same depth LinkedIn uses.
                 // The indent is a border rather than padding so it still reads
                 // as nesting on a narrow screen.
                 <ol className="ml-3 flex flex-col gap-4 border-l border-border-hairline pl-4 sm:ml-4 sm:pl-6">

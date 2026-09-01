@@ -22,7 +22,7 @@ import { paragraphs as splitParagraphs } from "@/lib/format";
  * The icon names the API serves, resolved to components.
  *
  * `PillarIcon` is a closed set in the spec, so this map is exhaustive by
- * construction — dropping a name here stops compiling rather than rendering a
+ * construction - dropping a name here stops compiling rather than rendering a
  * blank card. `??` in the lookup covers the other direction: an API newer than
  * this build draws `Cpu` rather than nothing.
  */
@@ -51,7 +51,7 @@ const PILLAR_ICONS: Record<PillarIcon, LucideIcon> = {
  *
  * The cards come from `GET /pillars`, so rewording one is a save in the admin
  * rather than a deploy. `PILLARS` in `lib/constants.ts` is what renders when
- * that call returns nothing — an API outage should cost the section its
+ * that call returns nothing - an API outage should cost the section its
  * editability, not its content.
  */
 export function About({

@@ -3,7 +3,7 @@ import { FolderSearch } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
- * An empty state says what would appear here and how to make it appear —
+ * An empty state says what would appear here and how to make it appear -
  * design system §8. "No results" on its own tells a reader nothing.
  */
 export function EmptyState({

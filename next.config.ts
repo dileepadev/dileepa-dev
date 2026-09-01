@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 /**
  * The origin the browser talks to the API on.
  *
- * Post interactions — views, reactions, comments — are fetched in the browser
+ * Post interactions - views, reactions, comments - are fetched in the browser
  * rather than at build time, so the API is a real `connect-src` and not just a
  * server-side dependency. Derived from the same variable the client reads, so
  * pointing the site at a different API cannot leave the policy behind naming
@@ -28,20 +28,20 @@ function apiOrigin(): string {
  *
  * `Strict-Transport-Security` deliberately omits `includeSubDomains`.
  * `blog.dileepa.dev` is retired and resolves to a registrar forward with no
- * certificate, and the directive would be honoured for that host too — turning
+ * certificate, and the directive would be honoured for that host too - turning
  * a redirect into a connection failure.
  *
  * `'unsafe-inline'` on `script-src` is not optional here: Next inlines its
  * hydration payload on every page, and Microsoft Clarity's loader is an inline
  * bootstrap. Removing it needs a per-request nonce, which needs middleware on
  * every route, which would make all 109 statically generated pages dynamic.
- * The directive still earns its place — it blocks an injected
+ * The directive still earns its place - it blocks an injected
  * `<script src="https://…">` from anywhere not named below.
  *
  * **Development needs three things production must never get**, so they are
  * added only when `next dev` is the thing running:
  *
- * - `'unsafe-eval'` — React's development build calls `eval()` to rebuild
+ * - `'unsafe-eval'` - React's development build calls `eval()` to rebuild
  *   callstacks across environments and for other debugging features. Without
  *   it the console fills with "eval() is not supported in this environment".
  *
@@ -49,15 +49,15 @@ function apiOrigin(): string {
  *   Next ships a browserified `util` in its Node-builtin polyfill bundle, and
  *   `is-generator-function` inside it feature-detects with
  *   `Function("return function*(){}")`. CSP blocks the call, the surrounding
- *   `try/catch` swallows it, and the page is unaffected — but Chrome logs one
+ *   `try/catch` swallows it, and the page is unaffected - but Chrome logs one
  *   `kEvalViolation` per load, which is what holds Lighthouse's Best Practices
  *   at 96. It is framework code, reachable from no import in this repository,
  *   so the choice is to keep the directive or to hand every third-party script
  *   `eval()` for a score. The directive stays.
- * - `ws:` and `wss:` on `connect-src` — hot module replacement is a WebSocket.
- * - `blob:` on `script-src` and `worker-src` — Turbopack loads some chunks as
+ * - `ws:` and `wss:` on `connect-src` - hot module replacement is a WebSocket.
+ * - `blob:` on `script-src` and `worker-src` - Turbopack loads some chunks as
  *   blob-backed workers.
- * - `https://va.vercel-scripts.com` — `@vercel/analytics` and
+ * - `https://va.vercel-scripts.com` - `@vercel/analytics` and
  *   `@vercel/speed-insights` fetch a *debug* build from that host when they
  *   detect development. In production both load from `/_vercel/…` on this
  *   origin, which `'self'` already covers, so the host never appears in the
@@ -172,7 +172,7 @@ const nextConfig: NextConfig = {
       // long enough to be shared. Neither rule is optional: a redirect costs
       // nothing to keep and the URL is the only thing a reader saved.
       //
-      // redirects.md §2 row 1 — this lived in the blog's `astro.config.mjs`,
+      // redirects.md §2 row 1 - this lived in the blog's `astro.config.mjs`,
       // which has been deleted, so it is easy to lose with that file.
       {
         source:
@@ -180,7 +180,7 @@ const nextConfig: NextConfig = {
         destination: "/blog/2026-08-06-part-1-kicking-off-the-series",
         permanent: true,
       },
-      // redirects.md §2 row 2 — the v2.0.0 content move renamed this post and
+      // redirects.md §2 row 2 - the v2.0.0 content move renamed this post and
       // corrected its publishedDate by a day. The corrected date is kept.
       {
         source: "/blog/2026-02-11-welcome",
@@ -188,7 +188,7 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       // `/sessions` existed only on the v2.0.0 branch and was never the
-      // published URL — `/events` was, and is again. The rule is kept so links
+      // published URL - `/events` was, and is again. The rule is kept so links
       // shared from a preview deployment keep resolving.
       { source: "/sessions", destination: "/events", permanent: true },
       {

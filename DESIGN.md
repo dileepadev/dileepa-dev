@@ -109,7 +109,7 @@ a11y:
   reducedMotion: true
 ---
 
-# dileepadev — Design System Specification & Frontend Guidelines
+# dileepadev - Design System Specification & Frontend Guidelines
 
 > **Practical visual guidance for AI coding agents** working on the dileepadev platform UI.
 > This document synthesises the brand guide and the design-system contract into an
@@ -122,8 +122,8 @@ a11y:
 
 | Document | Authority | Purpose |
 | :--- | :--- | :--- |
-| [`brand-guide.md`](docs/brand-guide.md) | Brand identity authority | Colour, type, logo, voice, portrait — the *what* and *why* of the brand |
-| [`design-system.md`](docs/design-system.md) | Implementation contract authority | Tokens, components, states, layout, theming — the *how*, reconciled against the shipped site |
+| [`brand-guide.md`](docs/brand-guide.md) | Brand identity authority | Colour, type, logo, voice, portrait - the *what* and *why* of the brand |
+| [`design-system.md`](docs/design-system.md) | Implementation contract authority | Tokens, components, states, layout, theming - the *how*, reconciled against the shipped site |
 | **This file (`DESIGN.md`)** | AI agent reference | Synthesises both into actionable rules, machine-readable YAML, component checklists |
 | `app/globals.css` + shipped site | Ultimate source of truth | When any document disagrees with what actually renders, the shipped CSS wins |
 
@@ -201,7 +201,7 @@ Interactive affordances follow strict physical consistency across the platform:
 
 All titles, navigation links, buttons, table headers, badges, and labels use **sentence case**. Title Case and ALL-CAPS are prohibited unless rendering an acronym (e.g., API, RSS, AWS, LLM) or a proper noun.
 
-**The role is a proper noun: `AI Engineer`.** Title case wherever it is a label — the site `<title>`, the Person schema's `jobTitle`, the role line under the hero portrait, the terminal profile. The *discipline* is not, and stays lowercase: "AI engineering" in a section intro, "an AI engineer" in the running prose of a biography.
+**The role is a proper noun: `AI Engineer`.** Title case wherever it is a label - the site `<title>`, the Person schema's `jobTitle`, the role line under the hero portrait, the terminal profile. The *discipline* is not, and stays lowercase: "AI engineering" in a section intro, "an AI engineer" in the running prose of a biography.
 
 ---
 
@@ -213,7 +213,7 @@ The platform logo lockup consists of a neutral wordmark paired with an emerald t
 
 ```html
 <!-- Canonical markup -->
-<a href="/#top" class="lockup" aria-label="dileepadev — home">
+<a href="/#top" class="lockup" aria-label="dileepadev - home">
   <span class="wordmark">dileepadev</span>
   <span class="mark" aria-hidden="true">/</span>
 </a>
@@ -428,7 +428,7 @@ Only three font weights are permissible across the entire platform:
 | `small` | `0.875rem` (14px) | `1.55` | `0.01em` | 400 / 500 | Button labels, input text, card descriptions, metadata |
 | `label` | `0.75rem` (12px) | `1.45` | `0.01em` | 500 | Badges, chips, kickers, timestamps, table headers |
 
-**Tracking note:** `-0.02em` also applies to text set at the H3 *size* when it serves as a title (card titles, entry titles, item titles) — but not to the bare `<h3>` element itself. `0.01em` applies to label-sized and mono UI text (badges, chips, nav links, button labels, metadata).
+**Tracking note:** `-0.02em` also applies to text set at the H3 *size* when it serves as a title (card titles, entry titles, item titles) - but not to the bare `<h3>` element itself. `0.01em` applies to label-sized and mono UI text (badges, chips, nav links, button labels, metadata).
 
 ---
 
@@ -525,7 +525,7 @@ Buttons trigger actions; link buttons navigate. Both share identical visual styl
 
 ### 9.2 Links & External Link Indicators
 
-- **Default Link Colour**: `color: inherit` — a link reads as part of its surrounding text unless the component it belongs to deliberately states a colour. This keeps emerald meaningful: if every link were green, none would stand out. A component styles its own links (nav items step to `--brand` on current/hover, entry org names use `--brand`, footer links use `--fg-muted` stepping to `--brand` on hover).
+- **Default Link Colour**: `color: inherit` - a link reads as part of its surrounding text unless the component it belongs to deliberately states a colour. This keeps emerald meaningful: if every link were green, none would stand out. A component styles its own links (nav items step to `--brand` on current/hover, entry org names use `--brand`, footer links use `--fg-muted` stepping to `--brand` on hover).
 - **Long-form Prose Exception**: `.prose a` gets `var(--brand)` with an underline by default, because an unstyled link would otherwise be invisible against its own paragraph.
 - **External Links**: When navigating outside the application (`target="_blank"`), an external diagonal arrow glyph is automatically appended:
 
@@ -575,7 +575,7 @@ Badges label or categorize. Chips represent metadata tags or technology stacks.
 
 - **Default Badge**: Neutral surface (`var(--bg-surface)`), muted text (`var(--fg-muted)`), hairline border (`var(--border-strong)`), `0.75rem` (12px), 500 weight. Static by default (`cursor: default`) without hover states.
 - **Filled Badge (`badge--ship`)**: Reserved for a single accent per surface (e.g., active release, featured status).
-- **Stack Chip (`Chip`)**: Rendered in `JetBrains Mono` font (`font-mono text-label/[1] tracking-[0.01em]`), `--radius-sm` (6px). Static by default (`cursor: default`) without hover states. The base sheet enforces this too — `.chip:hover` is scoped to `a`/`button` ancestors and `.chip--interactive`, because a `cursor: default` utility on the component does not cancel a colour change coming from the stylesheet underneath it.
+- **Stack Chip (`Chip`)**: Rendered in `JetBrains Mono` font (`font-mono text-label/[1] tracking-[0.01em]`), `--radius-sm` (6px). Static by default (`cursor: default`) without hover states. The base sheet enforces this too - `.chip:hover` is scoped to `a`/`button` ancestors and `.chip--interactive`, because a `cursor: default` utility on the component does not cancel a colour change coming from the stylesheet underneath it.
 - **Interactive Badges & Chips**: Only clickable chips or badges (e.g., tag archive links, filter buttons, or when marked `interactive={true}`) receive `cursor: pointer` and the hover formula (`hover:border-brand hover:bg-surface-hover hover:text-fg`). Purely informational chips (status pills, stack tags, read-only labels) never flash hover effects to prevent false interactive affordances.
 
 ---
@@ -691,7 +691,7 @@ Every interactive element must support the complete state matrix:
 ### 11.3 Input Sizing
 
 - Single-line inputs (`type="text"`, `type="email"`, `type="search"`, `type="password"`) must measure exactly **40px height** (`--control-h`).
-- Input borders use `--border-input` (`#5b5b5b` on dark, `#8f8f8f` on light) — a distinct token held to a 3.0:1 contrast floor against the page background per WCAG 1.4.11.
+- Input borders use `--border-input` (`#5b5b5b` on dark, `#8f8f8f` on light) - a distinct token held to a 3.0:1 contrast floor against the page background per WCAG 1.4.11.
 - Multi-line inputs (`textarea`) must have a minimum height of `140px` (or `96px` for comments) and allow vertical resizing only (`resize: vertical`).
 
 ### 11.4 Non-Intrusive Validation (`:user-invalid`)
@@ -829,8 +829,8 @@ independently, and a heading must never skip a level to get the size you want.
 ### 16.5 Accessible Names Must Contain the Visible Label
 
 WCAG 2.5.3. When a control has visible text, its accessible name must contain that text, in
-order. An `aria-label` that replaces the visible label — `aria-label="Copy hex code for Emerald
-Bright"` on a swatch that reads "Emerald Bright #23B888" — breaks voice control: the words a
+order. An `aria-label` that replaces the visible label - `aria-label="Copy hex code for Emerald
+Bright"` on a swatch that reads "Emerald Bright #23B888" - breaks voice control: the words a
 person can see are not the words that activate the control.
 
 Where a control needs its action announced as well as its content, append the action in an

@@ -9,7 +9,7 @@ import { pageMetadata } from "@/lib/metadata";
  * `error.tsx` renders only when a render actually fails, so without this there
  * is no way to look at the screen, link to it from the sitemap page, or check
  * it in either theme. It renders the same component the boundary does, with a
- * digest that names itself as the preview — `error.tsx` checks for that string
+ * digest that names itself as the preview - `error.tsx` checks for that string
  * before logging, so opening this page does not write a fake error to the
  * console.
  */

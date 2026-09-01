@@ -1,5 +1,5 @@
 /* ============================================================
-   VENDORED COPY — do not edit here.
+   VENDORED COPY - do not edit here.
 
    Source: dileepadev/docs/brand/brand-tokens.css
    Vendored: brand tokens v2.1
@@ -17,21 +17,21 @@
    ============================================================ */
 
 /* ============================================================
-   CANONICAL TOKEN SHEET — do not fork, do not re-declare.
+   CANONICAL TOKEN SHEET - do not fork, do not re-declare.
 
    This file is the single source of truth for every colour, type,
    space, and motion value in the platform. Applications import it;
    they never copy values out of it.
 
-   This repo is the only home for it. Applications VENDOR this file —
-   copy it in, record the source — and never hot-link it: raw.github
+   This repo is the only home for it. Applications VENDOR this file -
+   copy it in, record the source - and never hot-link it: raw.github
    serves CSS as text/plain and browsers won't apply it as a stylesheet.
    When this file changes, push the change into each consuming repo.
    ============================================================ */
 
 /* ============================================================
-   Dileepa — brand tokens v2.1
-   Logo lockup: "dileepadev /." — wordmark neutral, "/." in emerald.
+   Dileepa - brand tokens v2.1
+   Logo lockup: "dileepadev /." - wordmark neutral, "/." in emerald.
    Rule: emerald is the only accent. No second hue, anywhere.
    Every pairing below is verified against WCAG AA minimum.
 
@@ -39,7 +39,7 @@
    dileepa-dev, the platform's flagship surface, after a post-launch
    visual pass corrected drift between the original v2.0 values and
    what actually shipped. Where the two disagreed, the shipped site
-   wins — see design-system.md §0 for the full account of what moved
+   wins - see design-system.md §0 for the full account of what moved
    and why. Nothing here is provisional; it is the recorded result.
    ============================================================ */
 
@@ -50,8 +50,8 @@
   --carbon: #050505;
   --paper: #f7f7f7;
 
-  /* Dark neutral ramp. Deeper than v2.0 at every stop — the page
-     foundation moved from #0D0D0D to #050505 — which is why a v2.0
+  /* Dark neutral ramp. Deeper than v2.0 at every stop - the page
+     foundation moved from #0D0D0D to #050505 - which is why a v2.0
      surface and a v2.1 surface read as different weights of the same
      design even though nothing else about the palette changed. */
   --ink-900: #050505;
@@ -64,7 +64,7 @@
 
   /* Light neutral ramp. `paper-200`/`400`/`900` are materially unchanged
      from v2.0 (sub-1% lightness adjustments, well inside rounding). The
-     real addition is `paper-300` — a second, more visible edge step
+     real addition is `paper-300` - a second, more visible edge step
      the v2.0 ramp had no room for once components needed to be told
      apart from structural rules; see --border-strong below. */
   --paper-0: #ffffff;
@@ -84,7 +84,7 @@
 
   /* Display came down from 3rem/48px and H2 stepped up in weight rather
      than size. The v2.0 ramp jumped straight from a 48px display to a
-     24px H2 set at weight 500 — barely above body text — so the middle
+     24px H2 set at weight 500 - barely above body text - so the middle
      of the hierarchy was missing on any page with more than two heading
      levels. `--text-label` is new: the one step below `--text-small`,
      for badges, chips, captions and metadata that were each inventing
@@ -108,7 +108,7 @@
   /* Tracking opens as type gets smaller: a 12px label needs the air a
      44px display needs taken away. `--track-tight` applies to display,
      H1, H2, and title-role text set at the H3 step (entry, item and
-     card titles, the hero name) — never to body, small, or mono text. */
+     card titles, the hero name) - never to body, small, or mono text. */
   --track-tight: -0.02em;
   --track-label: 0.01em;
 
@@ -125,8 +125,8 @@
   --space-16: 4rem;
 
   /* Four steps and a pill, not two. A single `--radius`/`--radius-lg`
-     pair left the one floating element on a page — a nav bar, a
-     popover — with nowhere to go but an invented one-off value. */
+     pair left the one floating element on a page - a nav bar, a
+     popover - with nowhere to go but an invented one-off value. */
   --radius-sm: 6px;
   --radius: 8px;
   --radius-lg: 12px;
@@ -135,8 +135,8 @@
 
   /* One control height. A button, a text input and an icon button used
      to be 38px, 45px and 36px respectively; when three controls share a
-     row — a form field beside its submit button, a toggle beside a nav
-     link — they now share one baseline in every theme. */
+     row - a form field beside its submit button, a toggle beside a nav
+     link - they now share one baseline in every theme. */
   --control-h: 40px;
 
   /* 1px, not 0.5px. Sub-pixel hairlines render inconsistently across
@@ -149,7 +149,7 @@
 }
 
 /* ============================================================
-   DARK — the default. Foundation for site, banners, decks, video.
+   DARK - the default. Foundation for site, banners, decks, video.
    ============================================================ */
 :root,
 [data-theme="dark"] {
@@ -157,8 +157,8 @@
   --bg-surface: var(--ink-800);
   --bg-raised: var(--ink-700);
 
-  /* Two border weights, not one. `--border` draws structural rules —
-     a section top, the line between list rows — and stays quiet enough
+  /* Two border weights, not one. `--border` draws structural rules -
+     a section top, the line between list rows - and stays quiet enough
      that a long list reads as text, not a table. `--border-strong`
      draws the edge of a *thing*: a card, a chip, the nav, an icon
      button. One value used to serve both jobs, so either the rules
@@ -168,14 +168,14 @@
   /* A text field's border is the only signal that it is a text field,
      so it is the one edge held to WCAG 1.4.11's 3:1 minimum against
      the page background rather than the quieter `--border-strong`
-     (1.4:1 — deliberately closer to invisible, because every other
+     (1.4:1 - deliberately closer to invisible, because every other
      component is identified by what's inside it, not its outline). */
   --border-input: #5b5b5b; /* 3.0:1 on --bg */
 
   --fg: var(--ink-100); /* 18.0:1 */
   --fg-muted: var(--ink-400); /*  6.1:1 */
 
-  --brand: var(--emerald-bright); /* 8.0:1 on bg — AAA */
+  --brand: var(--emerald-bright); /* 8.0:1 on bg - AAA */
   --brand-fill: var(--emerald-bright);
   --on-brand: var(--on-emerald-dark); /* 6.0:1 on fill */
 
@@ -187,7 +187,7 @@
 }
 
 /* ============================================================
-   LIGHT — documents, resume, print, light-mode site.
+   LIGHT - documents, resume, print, light-mode site.
    ============================================================ */
 [data-theme="light"] {
   --bg: var(--paper-50);
@@ -201,7 +201,7 @@
   --fg: var(--paper-900);
   --fg-muted: var(--paper-400); /* 5.1:1 */
 
-  --brand: var(--emerald-deep); /* 4.7:1 on bg — AA */
+  --brand: var(--emerald-deep); /* 4.7:1 on bg - AA */
   --brand-fill: var(--emerald-deep);
   --on-brand: var(--on-emerald-light); /* 4.7:1 on fill */
 
@@ -237,7 +237,7 @@
 }
 
 /* ============================================================
-   Derived states — one formula, both themes
+   Derived states - one formula, both themes
 
    Every hover, active, and focus treatment in the system reduces to
    one of these four. `color-mix` toward `--fg` lightens on Carbon and
@@ -246,7 +246,7 @@
    of each component inventing its own hover colour.
    ============================================================ */
 :root {
-  /* A surface one step up from where it sits — the shared hover for
+  /* A surface one step up from where it sits - the shared hover for
      cards, chips, list rows and icon buttons. */
   --surface-hover: color-mix(in srgb, var(--fg) 7%, var(--bg-surface));
   --raised-hover: color-mix(in srgb, var(--fg) 9%, var(--bg-surface));
@@ -328,7 +328,7 @@ pre {
 }
 
 /* Links do not carry colour by default. A page where every anchor is
-   emerald by default has no way to make one anchor *mean* something —
+   emerald by default has no way to make one anchor *mean* something -
    the accent has to be applied deliberately by whatever is styling the
    link (a nav item, an item title, an inline mention in running prose),
    not inherited for free. Long-form prose is the deliberate exception,
@@ -379,7 +379,7 @@ a {
     color var(--dur) var(--ease);
 }
 
-/* The fill IS the accent — the same value as --brand, not a second,
+/* The fill IS the accent - the same value as --brand, not a second,
    independently chosen green. Hover and active mix toward --fg rather
    than toward black/white, so both states gain contrast in both themes
    at once instead of one theme's hover accidentally losing it. */
@@ -407,7 +407,7 @@ a {
   background: var(--raised-hover);
 }
 
-/* The soft ring, not the hard 2px outline below — a button already
+/* The soft ring, not the hard 2px outline below - a button already
    shows its own border, so the outline would double it. */
 .btn:focus-visible {
   outline: none;
@@ -437,7 +437,7 @@ a {
 }
 /* The one hover pattern in the system, reused everywhere something
    bordered needs one: the surface lifts a step, the border warms to
-   the accent. No shadow, no lift, no scale, no additional ring — a
+   the accent. No shadow, no lift, no scale, no additional ring - a
    ring on top of an already-emerald border double-draws the same edge
    and reads as the loudest hover on the page instead of the quietest. */
 .card:hover {
@@ -445,7 +445,7 @@ a {
   border-color: var(--brand);
 }
 
-/* Badges and chips — all pillar/tag badges share one treatment. With a
+/* Badges and chips - all pillar/tag badges share one treatment. With a
    single accent colour, they are told apart by label, not by hue.
    `filled` is reserved: one emerald badge per surface, at most. */
 .badge {
@@ -530,7 +530,7 @@ textarea.input {
 }
 
 /* Logo lockup: wordmark stays neutral, only the "/." is emerald.
-   Upright, weight 700 — not italic, not 600. The wordmark and mark are
+   Upright, weight 700 - not italic, not 600. The wordmark and mark are
    flex siblings spaced by the wrapper's gap, and the dot sits flush
    against the slash (no gap of its own) so the pair reads as one
    character, "/.", rather than two with daylight between them. */
@@ -608,7 +608,7 @@ textarea.input {
   }
 }
 
-/* Print — resume and documents force the light foundation.
+/* Print - resume and documents force the light foundation.
    Dark backgrounds break ATS parsing and print badly. */
 @media print {
   :root {

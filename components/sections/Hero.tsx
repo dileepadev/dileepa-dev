@@ -13,7 +13,7 @@ import { SOCIAL_ICONS } from "@/lib/social-icons";
  * the useful thing to read first; the name belongs beside the portrait, where
  * it identifies the face rather than announcing itself.
  *
- * The portrait is one of only two places a photograph appears on this site —
+ * The portrait is one of only two places a photograph appears on this site -
  * the other is the event gallery.
  */
 export function Hero({ about }: { about: About | null }) {
@@ -21,8 +21,8 @@ export function Hero({ about }: { about: About | null }) {
   const role = about?.title ?? "";
   const tagline = about?.tagline ?? SITE_CONFIG.description;
   // The supporting line under the tagline, and its own field on the about
-  // record. It used to be `description[1]` — the About section's second
-  // paragraph, borrowed — which meant editing the About copy silently moved
+  // record. It used to be `description[1]` - the About section's second
+  // paragraph, borrowed - which meant editing the About copy silently moved
   // the hero's lead, and the site had to know a coupling nothing declared.
   //
   // The old reading is kept as the fallback rather than removed: a record
@@ -81,7 +81,7 @@ export function Hero({ about }: { about: About | null }) {
                   Find me on
                 </span>
                 <span className="text-border-strong select-none" aria-hidden="true">
-                  —
+                  -
                 </span>
                 <div className="socials !mt-0 flex items-center gap-3">
                   {socials.map((item) => {
@@ -116,7 +116,7 @@ export function Hero({ about }: { about: About | null }) {
                   // The LCP element on the homepage, and both attributes are
                   // load-bearing. `fetchPriority` only sets the hint; what
                   // decides lazy-vs-eager is `loading`, `priority` or
-                  // `preload` — so `fetchPriority` on its own leaves the LCP
+                  // `preload` - so `fetchPriority` on its own leaves the LCP
                   // image lazily loaded. `priority` was deprecated in Next 16
                   // and `preload` is documented as the wrong choice wherever
                   // `loading` is set, which leaves this pair.

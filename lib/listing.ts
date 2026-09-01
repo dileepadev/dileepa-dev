@@ -1,8 +1,8 @@
 /**
  * Shared search, facet and sort primitives for the listing pages.
  *
- * Blog, projects, events, videos and communities all run the same pipeline —
- * search, then filter, then sort, then paginate — and each page had grown its
+ * Blog, projects, events, videos and communities all run the same pipeline -
+ * search, then filter, then sort, then paginate - and each page had grown its
  * own copy of it. The copies drifted: some compared dates in local time while
  * the row beside them rendered in UTC, some counted a facet with a different
  * rule than the one the filter applied, and every one of them treated a
@@ -83,7 +83,7 @@ export function compareNumber(
  * UTC, via `year()`, because that is the timezone `formatDate` renders in. Read
  * with `getFullYear()` the facet is computed in the visitor's timezone, so a
  * post published at 00:30 UTC on 1 January is listed under 2026 and filed under
- * 2025 for anyone west of Greenwich — the row is then missing from the year its
+ * 2025 for anyone west of Greenwich - the row is then missing from the year its
  * own date column shows.
  */
 export function yearOf(value: string | null | undefined): string | null {
@@ -106,7 +106,7 @@ export function searchTokens(query: string): string[] {
 /**
  * True when every token appears somewhere in the given fields.
  *
- * Fields are joined with a newline — a separator no token can contain — so a
+ * Fields are joined with a newline - a separator no token can contain - so a
  * token cannot match across the seam between two unrelated fields.
  */
 export function matchesTokens(
@@ -129,7 +129,7 @@ export interface FacetSpec<T> {
   values: (item: T) => (string | null | undefined)[];
   /**
    * Whether a row matches a chosen value, when membership is not simply
-   * "the row is filed under it" — a project's "Ongoing" is one such rule.
+   * "the row is filed under it" - a project's "Ongoing" is one such rule.
    */
   matches?: (item: T, selected: string) => boolean;
 }
@@ -154,7 +154,7 @@ function itemMatches<T>(spec: FacetSpec<T>, item: T, selected: string): boolean 
  * Applies the selected filters, and counts each dimension's options.
  *
  * A dimension is counted against the search results and every *other* active
- * filter, but never against itself — which is what makes the number beside an
+ * filter, but never against itself - which is what makes the number beside an
  * option the number of rows that selecting it actually leaves. Counting
  * against the raw collection instead, as these pages used to, produces a
  * "Tech: Rust (7)" that lands on three rows because a status filter is also
@@ -198,8 +198,8 @@ export interface OptionsConfig {
   /**
    * The currently selected value, always kept in the list.
    *
-   * Without this a selection can fall out of its own dropdown — past the limit,
-   * or down to zero once another filter narrows the set — and `FilterSelect`
+   * Without this a selection can fall out of its own dropdown - past the limit,
+   * or down to zero once another filter narrows the set - and `FilterSelect`
    * then has nothing to render but "All tags" while the filter is still on.
    */
   keep?: string | null;
@@ -217,7 +217,7 @@ export function toOptions(
   const entries = [...counts.entries()];
   entries.sort(([valueA, countA], [valueB, countB]) => {
     if (order === "year") {
-      // A year dimension can carry a synthetic value that is not a year —
+      // A year dimension can carry a synthetic value that is not a year -
       // projects file an open-ended period under "Ongoing". Those sort above
       // the years rather than through `Number()`, which would compare them all
       // as NaN and leave the order down to the engine.

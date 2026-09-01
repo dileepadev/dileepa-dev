@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 
 /**
- * The item list — communities, events, posts, videos.
+ * The item list - communities, events, posts, videos.
  *
  * Content on the left, a 180px right-aligned mono metadata column on the right.
  * Collapses to one column below 720px with the metadata left-aligned.
@@ -18,7 +18,7 @@ export function ItemList({ children }: { children: ReactNode }) {
  * An item title is a heading, and which one depends on what is above it. On
  * the homepage a list sits inside a section, so its items are the third level
  * down: `h1` hero, `h2` section, `h3` item. On an index page the list *is* the
- * page — there is no section heading between the `h1` and the items — so an
+ * page - there is no section heading between the `h1` and the items - so an
  * `h3` there skips a level and the outline reads as though two headings went
  * missing. The visual weight is the same either way; only the level moves.
  */

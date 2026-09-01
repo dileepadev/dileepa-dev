@@ -5,7 +5,7 @@ import { postUrl } from "@/lib/format";
 
 /**
  * The sitemap covers the blog, projects and events as well as the static
- * routes — the three sections v2.0.0 adds are the ones that most need
+ * routes - the three sections v2.0.0 adds are the ones that most need
  * discovering.
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

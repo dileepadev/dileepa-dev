@@ -2,7 +2,7 @@
  * The wordmark, drawn large in block characters.
  *
  * **This is a display treatment of the lockup, not a second lockup.** The guide
- * is strict about the mark — the wordmark is never emerald, the `/.` is never
+ * is strict about the mark - the wordmark is never emerald, the `/.` is never
  * the neutral foreground, and the two never swap. Drawing it bigger does not
  * suspend that: `render()` returns the wordmark and the mark as separate
  * strings per row so the caller colours them the way it colours the small
@@ -11,7 +11,7 @@
  *
  * **Why a hand-built font and not a figlet.** The obvious font for this is ANSI
  * Shadow, which is what most `curl`-a-résumé sites use. Its glyphs are eight to
- * nine columns wide, so "dileepadev" lands around 75 columns before the mark —
+ * nine columns wide, so "dileepadev" lands around 75 columns before the mark -
  * past the 72 this document is built to, and past the 80-column terminal the
  * whole layout is sized for once a gutter and a box border are added. Widening
  * the document to fit the banner would be letting the decoration set the
@@ -29,7 +29,7 @@
  * Six, because the wordmark is lowercase and lowercase needs three zones: an
  * ascender for `d` and `l` and the dot of the `i`, four rows of x-height for
  * the body, and a descender for the `p`. Setting every letter on one 5-row
- * block is what turns `dileepadev` into `DILEEPADEV` — legible, but the wrong
+ * block is what turns `dileepadev` into `DILEEPADEV` - legible, but the wrong
  * word. The lockup is lowercase everywhere else on the platform, and it is
  * lowercase here.
  *
@@ -44,7 +44,7 @@ const ROWS = 6;
  *
  * Glyphs are **proportional**, not monospaced: each is exactly as wide as its
  * own ink, and this gap is the only space between them. A fixed cell width is
- * the obvious way to build a block font and it is wrong for a lowercase one —
+ * the obvious way to build a block font and it is wrong for a lowercase one -
  * `i` is one column of ink and `d` is four, so padding both into a 4-column
  * cell leaves the `i` with three dead columns on its right. The result reads as
  * `di leepadev`: two blank columns between `d` and `i`, four between `i` and
@@ -59,7 +59,7 @@ const GAP = 2;
 /**
  * The glyphs.
  *
- * Every entry is `ROWS` strings of exactly `WIDTH` characters — space-padded,
+ * Every entry is `ROWS` strings of exactly `WIDTH` characters - space-padded,
  * never trimmed, because the padding is what holds the columns together. The
  * assertion below enforces it rather than trusting the table to stay correct
  * through an edit.
@@ -80,7 +80,7 @@ const GLYPHS: Record<string, string[]> = {
 };
 
 /**
- * The `/.` — drawn as one glyph rather than two.
+ * The `/.` - drawn as one glyph rather than two.
  *
  * Composing it from a slash and a full stop puts the shared inter-letter gap
  * between them, and the pair reads as `/ .` rather than `/.`. That is named in
@@ -103,7 +103,7 @@ for (const [character, rows] of Object.entries(GLYPHS)) {
     );
   }
   // Rows within a glyph must agree with each other. They no longer have to
-  // agree with any other glyph — that is the whole point — but a glyph whose
+  // agree with any other glyph - that is the whole point - but a glyph whose
   // own rows differ would shear the block apart below the first bad row.
   const width = rows[0].length;
   for (const row of rows) {

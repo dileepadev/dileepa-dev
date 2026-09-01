@@ -1,10 +1,10 @@
 /* The cascade order, declared before anything else so that this is the order
-   that holds — a layer's position is fixed by where it is first named.
+   that holds - a layer's position is fixed by where it is first named.
 
    `brand` sits between Tailwind's `base` and `components` because the token
    sheet is a base layer that has to lose to a utility. Unlayered rules beat
-   every layer, so importing the sheet *unlayered* — which is what a bare
-   `@import` does — put `a { color: var(--brand) }` and `p { max-width: 68ch }`
+   every layer, so importing the sheet *unlayered* - which is what a bare
+   `@import` does - put `a { color: var(--brand) }` and `p { max-width: 68ch }`
    above every Tailwind class in the app. A `<a className="text-brand">` and a
    `<p className="max-w-none">` were both silently doing nothing. */
 @layer theme, base, brand, components, utilities;
@@ -13,7 +13,7 @@
 
 /* The vendored canonical token sheet. Every colour, type step, space and
    motion value in this app resolves through it. Do not declare a colour here
-   or in a component — if you are typing a `#`, you are creating the drift the
+   or in a component - if you are typing a `#`, you are creating the drift the
    design system exists to prevent.
 
    Imported into `brand` rather than unlayered, per the order above. The
@@ -26,7 +26,7 @@
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 /* ============================================================
-   Tailwind theme — the semantic tokens, and only those.
+   Tailwind theme - the semantic tokens, and only those.
 
    The raw palette (--emerald-bright, --ink-700, --paper-200, …) is
    deliberately not exposed. It exists so the semantic layer can be defined
@@ -38,8 +38,8 @@
   --color-bg-surface: var(--bg-surface);
   --color-bg-raised: var(--bg-raised);
   --color-surface-hover: var(--surface-hover);
-  /* Two edge weights, not one. `--border` draws the page's structural rules —
-     section tops, entry and item separators — and stays quiet enough that a
+  /* Two edge weights, not one. `--border` draws the page's structural rules -
+     section tops, entry and item separators - and stays quiet enough that a
      long list reads as text rather than a table. `--border-strong` draws the
      edge of a *thing*: a card, an input, a chip, the nav. A single value had
      to serve both, so either the rules shouted or the components dissolved. */
@@ -91,12 +91,12 @@
 }
 
 /* ============================================================
-   Local overrides — the fonts, and the two text-on-emerald stops
+   Local overrides - the fonts, and the two text-on-emerald stops
 
    Everything else comes from `brand-tokens.css` above. This block used to
    restore the neutral ramp, the radius scale, the type steps, the control
    height, the hairline, both border weights, the button fill and every
-   derived interaction token — around a hundred declarations — because the
+   derived interaction token - around a hundred declarations - because the
    vendored sheet was still at v2.0 and the shipped site had moved past it.
    v2.1 reconciled the sheet against this site, so all of it was re-stating
    values the sheet already sets. Two files declaring one neutral ramp is the
@@ -113,7 +113,7 @@
      footer metadata are Manrope at --text-small, not a monospace face. */
   --font-mono: var(--font-manrope), system-ui, -apple-system, sans-serif;
   /* Real monospace is still needed for the one thing the reference has no
-     example of — code — so JetBrains Mono keeps a name of its own. */
+     example of - code - so JetBrains Mono keeps a name of its own. */
   --font-code: var(--font-jetbrains-mono), ui-monospace, "SF Mono", monospace;
 
   /* Emoji, named so reaction glyphs render from the platform's own set rather
@@ -121,7 +121,7 @@
 
      This is deliberately NOT a palette entry. §1 of the brand guide is that
      emerald is the only accent and there is no second hue, and reaction glyphs
-     carry a lot of colour — so they are treated as content, the way a
+     carry a lot of colour - so they are treated as content, the way a
      photograph is, rather than as chrome. Nothing here defines a colour: the
      colour belongs to the reader's platform, which is also why these read as
      familiar rather than invented. */
@@ -129,15 +129,15 @@
     "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji",
     "Twemoji Mozilla", "EmojiOne Color", "Android Emoji", sans-serif;
 
-  /* Text on a saturated emerald fill — the primary button, the filled badge.
+  /* Text on a saturated emerald fill - the primary button, the filled badge.
      The sheet pairs Emerald Bright with #062B20 and Emerald Deep with
      #F7F7F7; this reuses the page's own foundation colours instead, which is
-     both a step more contrast and one fewer bespoke pair to keep in sync —
+     both a step more contrast and one fewer bespoke pair to keep in sync -
      the pairing follows the foundation automatically if it ever moves. */
-  --on-emerald-dark: var(--ink-900); /* 8.0:1 on Emerald Bright — AAA */
-  --on-emerald-light: var(--paper-0); /* 5.0:1 on Emerald Deep — AA */
+  --on-emerald-dark: var(--ink-900); /* 8.0:1 on Emerald Bright - AAA */
+  --on-emerald-light: var(--paper-0); /* 5.0:1 on Emerald Deep - AA */
 
-  /* `--track-wide: 0.06em` used to sit here and was referenced by nothing —
+  /* `--track-wide: 0.06em` used to sit here and was referenced by nothing -
      the components that want open tracking under an uppercase mono label
      reach for Tailwind's `tracking-wider` instead. Removed rather than
      documented: an unused token is a value the next person has to check
@@ -178,7 +178,7 @@ html {
 }
 
 /* Not emerald. The accent is a signal, and a scrollbar is not signalling
-   anything — spending the one accent here is part of why it stopped reading as
+   anything - spending the one accent here is part of why it stopped reading as
    deliberate where it is spent deliberately. */
 ::-webkit-scrollbar-thumb:hover {
   background: var(--fg-muted);
@@ -227,10 +227,10 @@ body {
 /* The reference's links inherit their colour and carry no underline; every
    coloured link on the page states its own colour. The token sheet's blanket
    `a { color: var(--brand) }` is unlayered, so it beat every Tailwind text
-   utility in the app — including the primary button's label, which was
+   utility in the app - including the primary button's label, which was
    rendering emerald-on-emerald. */
-/* These three sit in `brand` — the same layer as the token sheet, later in it,
-   so they win there — rather than unlayered, because they are defaults and a
+/* These three sit in `brand` - the same layer as the token sheet, later in it,
+   so they win there - rather than unlayered, because they are defaults and a
    default has to lose to a utility. Unlayered, `a { color: inherit }` beat
    `className="text-brand"` on every anchor in the app, and the token sheet's
    own unlayered `h1, h2, h3 { margin: 0 }` beat `className="mt-4"` on the blog
@@ -243,7 +243,7 @@ body {
   }
 
   /* The token sheet sets h2 at 500, which on this page put a heading a single
-     step above the paragraph beneath it while the display sat at 48px — so the
+     step above the paragraph beneath it while the display sat at 48px - so the
      ramp jumped, then went missing in the middle. Headings are ranked by
      weight here; size only carries rank where it is already doing work. */
   h1,
@@ -258,7 +258,7 @@ body {
 }
 
 /* One focus treatment for the whole site, and the same soft ring the hover
-   states use — four different hard 1px emerald outlines used to answer this. */
+   states use - four different hard 1px emerald outlines used to answer this. */
 :focus-visible {
   outline: 2px solid var(--brand);
   outline-offset: 2px;
@@ -372,7 +372,7 @@ pre {
 }
 
 /* ============================================================
-   Layout — the reference implementation
+   Layout - the reference implementation
 
    `docs/design/reference/index.html` in the platform repo is the structural
    contract for this site: container measure, section rhythm, the floating nav,
@@ -390,12 +390,12 @@ pre {
    to be 760px, with a wider 1020px variant reserved for the blog reader (760px
    of article plus its 220px table-of-contents rail). That made the reader the
    one page whose content didn't line up with the nav above it or the footer
-   below it — the exact "two sites" mismatch a single shared container exists
+   below it - the exact "two sites" mismatch a single shared container exists
    to prevent. 1020px is the reader's already-tuned figure, adopted as the
    one width rather than inventing a third number: it's what the two-column
    reader needs at minimum, and everything else has the same 68ch caps on
    running text (`p { max-width: 68ch }`) regardless of the container around
-   it, so widening them costs nothing but unused text width — the flexible
+   it, so widening them costs nothing but unused text width - the flexible
    grids (pillar cards, gallery, the contact form) simply get more room. */
 .container {
   width: min(100% - var(--space-8), 1020px);
@@ -437,7 +437,7 @@ pre {
   font-size: var(--text-h3);
   font-weight: 500;
   line-height: 1;
-  /* Never emerald — brand guide §3.2. */
+  /* Never emerald - brand guide §3.2. */
   color: var(--fg);
   letter-spacing: var(--track-tight);
 }
@@ -991,7 +991,7 @@ pre {
   font-weight: 500;
 }
 
-/* --- Entry list — experience, education --------------------------------- */
+/* --- Entry list - experience, education --------------------------------- */
 
 .entry {
   display: grid;
@@ -1148,7 +1148,7 @@ pre {
 }
 
 /* Supporting text under a label sat at 0.96rem while the label above it sat at
-   0.72rem — the note outweighed its own heading. It is the small step now. */
+   0.72rem - the note outweighed its own heading. It is the small step now. */
 .subsection-note {
   color: var(--fg-muted);
   font-size: var(--text-small);
@@ -1167,8 +1167,8 @@ pre {
 }
 
 /* The item title carries the H3 type step whichever element it is. On an
-   index page it is an `h2` — there is no section heading between the page's
-   `h1` and the list, so an `h3` there skips a level — and an item title is
+   index page it is an `h2` - there is no section heading between the page's
+   `h1` and the list, so an `h3` there skips a level - and an item title is
    not the size a section heading is. The level is the outline's business;
    the step is the type scale's. */
 .item-title {
@@ -1394,8 +1394,8 @@ pre {
 
 /* Form controls.
    The appearance is shared, the layout is not. `.form` is the contact form's
-   four-field grid; `.field` is the opt-in for any other form — the comment
-   form — that wants the same controls without inheriting that grid. */
+   four-field grid; `.field` is the opt-in for any other form - the comment
+   form - that wants the same controls without inheriting that grid. */
 .form input,
 .form textarea,
 .field input,
@@ -1416,7 +1416,7 @@ pre {
     box-shadow var(--dur) var(--ease);
 }
 
-/* An input is a replaced element and takes `normal`, not the body's 1.65 —
+/* An input is a replaced element and takes `normal`, not the body's 1.65 -
    inheriting it makes every field 3px taller than the reference draws it. The
    fixed height is what puts a field and a button on the same 40px baseline;
    padding alone had them at 45px and 38px. */
@@ -1507,7 +1507,7 @@ pre {
 
 /* One class, three states, used identically on posts, comments and replies.
 
-   Colour is the platform's, not the palette's — see --font-emoji. What this
+   Colour is the platform's, not the palette's - see --font-emoji. What this
    controls is *how much* of it shows: an unreacted row should read as calm, and
    a chosen reaction should be unmistakable without a second accent hue
    appearing anywhere in the chrome. */
@@ -2164,7 +2164,7 @@ pre {
   flex-wrap: wrap;
 }
 /* The `curl` hint. Sized and coloured to disappear into the copyright line it
-   sits beside — it is an invitation, not a call to action, and it earns its
+   sits beside - it is an invitation, not a call to action, and it earns its
    place by being findable rather than by being loud. Emerald arrives on hover
    only, which is the same bargain `.footer-meta a` makes. */
 .curl-hint {
@@ -2481,7 +2481,7 @@ pre {
    Forms
 
    Browser autofill overrides both background and text colour, which breaks the
-   dark theme entirely — the field goes pale blue with near-black text. The
+   dark theme entirely - the field goes pale blue with near-black text. The
    inset shadow is the only way to repaint it, and the fill-color the only way
    to reclaim the text. Design system §6.
    ============================================================ */

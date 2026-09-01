@@ -34,7 +34,7 @@ import {
 } from "@/lib/format";
 
 /**
- * Community — communities, events, writing, videos.
+ * Community - communities, events, writing, videos.
  *
  * Each subsection is an `ItemList` with up to four items and a `ViewAll`
  * link pointing at the collection route. The events subsection uses the

@@ -7,7 +7,7 @@
  * or `[]` on error, so a broken endpoint rendered an empty section and looked
  * like missing content. Each call now says which it wants: `degrade` returns a
  * fallback and logs, `require` throws so the route's `error.tsx` renders. The
- * homepage degrades — a missing videos section beats a blank page. A blog post
+ * homepage degrades - a missing videos section beats a blank page. A blog post
  * or a project detail page requires: a 404 is honest, an empty article is not.
  *
  * **Collections are enveloped.** `{ items, total, limit, offset }` on every
@@ -63,7 +63,7 @@ const LOCAL_HOSTS = new Set([
  *    though every collection were empty, with nothing in the console to say
  *    otherwise.
  * 2. **`http://` to a remote host.** This value is inlined into the browser
- *    bundle, so it is not only a plaintext hop — it is mixed content on an
+ *    bundle, so it is not only a plaintext hop - it is mixed content on an
  *    HTTPS page, which browsers block outright. Every client-side fetch on the
  *    blog (views, reactions, comments) would fail with no request sent.
  *
@@ -231,7 +231,7 @@ async function readError(
  * for a distinct URL per post, project and event. React's `cache` deduplicates
  * within a render and Next's fetch cache deduplicates identical URLs, but
  * neither helps a cold build fetching a hundred different ones, so the burst
- * reaches the API as a burst and the API — sixty requests a minute — answers
+ * reaches the API as a burst and the API - sixty requests a minute - answers
  * some of it with `rate_limited`.
  *
  * `degrade` then does exactly what it is designed to do: returns the fallback,
@@ -240,7 +240,7 @@ async function readError(
  * the failure this client was rewritten to stop making silent.
  *
  * Retrying is the honest answer: the API is not broken, it is asking us to
- * slow down. Three attempts with a widening pause, and only for 429 — every
+ * slow down. Three attempts with a widening pause, and only for 429 - every
  * other status is a real answer and is returned immediately.
  */
 const RATE_LIMIT_RETRIES = 3;
@@ -301,7 +301,7 @@ async function degrade<T>(
     const reason =
       error instanceof ApiError ? `${error.code}: ${error.message}` : error;
     console.warn(
-      `[api] ${endpoint} failed, degrading to a fallback —`,
+      `[api] ${endpoint} failed, degrading to a fallback -`,
       reason,
     );
     return fallback;
@@ -313,7 +313,7 @@ async function degrade<T>(
  *
  * v1 returned a bare array from its collection endpoints. Reading `.items` off
  * one yields `undefined`, and the crash lands wherever the caller first maps
- * over it — a stack trace pointing at a page component for a problem that is
+ * over it - a stack trace pointing at a page component for a problem that is
  * two layers away. Checking here turns that into an `ApiError` naming the
  * endpoint, which `degrade` then handles like any other failure.
  */
@@ -324,7 +324,7 @@ function assertPage<T>(endpoint: string, body: unknown): Page<T> {
       200,
       "unexpected_shape",
       `${endpoint} did not return { items, total, limit, offset }. ` +
-        `This is the v1 bare-array shape — check NEXT_PUBLIC_API_URL points at the v2 API.`,
+        `This is the v1 bare-array shape - check NEXT_PUBLIC_API_URL points at the v2 API.`,
     );
   }
   return page;
@@ -350,7 +350,7 @@ async function degradePage<T>(
     try {
       return assertPage<T>(endpoint, body);
     } catch (error) {
-      console.warn(`[api] ${endpoint} —`, (error as Error).message);
+      console.warn(`[api] ${endpoint} -`, (error as Error).message);
       return empty;
     }
   });
@@ -522,7 +522,7 @@ export const api = {
    *
    * The API de-duplicates per reader per 24 hours, so a reload is a no-op
    * server-side rather than an inflated number. The client guards too, but only
-   * as a courtesy — the guarantee is the API's.
+   * as a courtesy - the guarantee is the API's.
    */
   recordView: (slug: string): Promise<BlogEngagement> =>
     engagement("POST", `/blogs/${encodeURIComponent(slug)}/views`),
@@ -551,7 +551,7 @@ export const api = {
   },
 
   /**
-   * Post a comment. Appears immediately — there is no approval step.
+   * Post a comment. Appears immediately - there is no approval step.
    *
    * `honeypot` is a field no human can see and therefore never fills in. It is
    * sent as an empty string on every real submission; a value in it marks the
@@ -623,7 +623,7 @@ export const api = {
 /**
  * Every event photo, newest event first, flattened into one list.
  *
- * The API has no `/photos` resource and should not grow one — a photo has no
+ * The API has no `/photos` resource and should not grow one - a photo has no
  * life of its own away from the event it was taken at. So the gallery is
  * composed here from the events that have photos, which `?hasPhotos=true`
  * makes a single query rather than a fetch-and-filter.

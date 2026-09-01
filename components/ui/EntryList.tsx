@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { ArrowUpRight } from "lucide-react";
 
 /**
- * The entry list — experience and education.
+ * The entry list - experience and education.
  *
  * A 160px mono date column, then the content. Each row takes a hairline top
  * border and the last also takes a bottom one, so the list reads as a set of
@@ -23,7 +23,7 @@ export function Entry({
   description,
   children,
 }: {
-  /** Mono, and deliberately not a heading — it is metadata. */
+  /** Mono, and deliberately not a heading - it is metadata. */
   date: string;
   title: string;
   /** The organisation. Rendered in `--brand`, which is this row's one accent. */

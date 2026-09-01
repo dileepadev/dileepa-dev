@@ -18,15 +18,15 @@
  * Matched as whole words against the User-Agent, which is the only signal a
  * bare `curl` sends that says anything about itself. Two properties matter:
  *
- * - **A browser never matches.** Not because "Mozilla" is excluded — Windows
+ * - **A browser never matches.** Not because "Mozilla" is excluded - Windows
  *   PowerShell sends a UA that starts with `Mozilla/5.0` and is very much a
- *   terminal — but because no browser's UA contains any of these tokens.
+ *   terminal - but because no browser's UA contains any of these tokens.
  * - **A crawler never matches.** Googlebot, Bingbot, Slack's unfurler and the
  *   rest send browser-shaped agents, so they index and preview the real page.
  *   That is the point of listing clients rather than excluding browsers: an
  *   allowlist fails closed, and the failure is "someone gets the website".
  *
- * Deliberately absent are the HTTP *libraries* — `python-requests`, `okhttp`,
+ * Deliberately absent are the HTTP *libraries* - `python-requests`, `okhttp`,
  * `node-fetch`, `Go-http-client`. Those are scripts and scrapers rather than a
  * person at a prompt, they are what unknown bots use, and handing them a
  * different body than a browser gets is how a site ends up accused of

@@ -3,7 +3,7 @@
 //
 // Copy lives here, not inline in components, so the voice can be reviewed in
 // one place. Voice rules: dileepadev/docs/brand/voice.md. Plain, specific,
-// unhurried — and sentence case in every string a reader sees, except proper
+// unhurried - and sentence case in every string a reader sees, except proper
 // nouns. The role `AI Engineer` is one of those; the discipline
 // "AI engineering" is not. See the note on SITE_CONFIG.title.
 //
@@ -16,14 +16,14 @@ import type { NavLink } from "./types";
 
 export const SITE_CONFIG = {
   name: "Dileepa Bandara",
-  // "AI Engineer" is title case here and in every other role *label* — the
+  // "AI Engineer" is title case here and in every other role *label* - the
   // Person schema's `jobTitle`, the line under the hero portrait, the terminal
   // profile's role field. It is the name of the role, and the sentence-case
   // rule covers headings, buttons, nav and labels, not proper nouns. The
   // discipline keeps its lowercase: "AI engineering" in the Work intro and the
   // pillar cards, and "an AI engineer" in the running prose of a biography.
   //
-  // Metadata only — no heading renders this. Long enough to fill the ~60
+  // Metadata only - no heading renders this. Long enough to fill the ~60
   // characters a result gets before Google truncates it, which the previous
   // 29-character form left more than half of unused.
   title: "Dileepa Bandara - AI Engineer building agentic systems",
@@ -43,7 +43,7 @@ export const SITE_CONFIG = {
    *
    * Sized to the tighter of the two consumers, not the looser. A result
    * snippet runs to roughly 155 characters, but a social card truncates around
-   * 125 — and an ellipsis through the middle of a sentence on a shared link is
+   * 125 - and an ellipsis through the middle of a sentence on a shared link is
    * a worse failure than leaving thirty characters of a search snippet unused.
    * So these sit around 110-125: long enough that Google does not discard it
    * and compose its own, short enough to survive a card intact.
@@ -59,7 +59,7 @@ export const SITE_CONFIG = {
   locale: "en_US",
   twitterHandle: "@dileepadev",
   // The link-in-bio page. It left the footer when Projects took its place
-  // there, and is surfaced in the Contact section instead — a reader
+  // there, and is surfaced in the Contact section instead - a reader
   // looking for somewhere to follow rather than somewhere to read.
   linksUrl: "https://links.dileepa.dev",
   repository: "https://github.com/dileepadev/dileepa-dev",
@@ -68,7 +68,7 @@ export const SITE_CONFIG = {
 } as const;
 
 /**
- * The terminal rendering — what `curl` gets instead of the homepage.
+ * The terminal rendering - what `curl` gets instead of the homepage.
  *
  * Additive. `proxy.ts` looks at the User-Agent on `/` and rewrites terminal
  * clients to `TERMINAL.path`; a browser is never matched and the site it gets
@@ -80,7 +80,7 @@ export const TERMINAL = {
    *
    * `-L` is not decoration and it is not a stylistic choice. `curl dileepa.dev`
    * resolves to `http://dileepa.dev`, and Vercel answers plaintext HTTP on a
-   * custom domain with a `308` to the HTTPS origin — at the edge, before any
+   * custom domain with a `308` to the HTTPS origin - at the edge, before any
    * code in this repository runs. curl does not follow redirects unless told
    * to, so the bare command prints Vercel's two-word `Redirecting...` body and
    * exits 0. There is no application-level fix: the redirect is not ours to
@@ -94,7 +94,7 @@ export const TERMINAL = {
   /**
    * Content width inside the two-space gutter.
    *
-   * 72 + 2 leaves an 80-column terminal — still the floor worth designing for —
+   * 72 + 2 leaves an 80-column terminal - still the floor worth designing for -
    * with room to spare, and keeps the output readable when it is pasted into a
    * chat window or an issue.
    */
@@ -103,7 +103,7 @@ export const TERMINAL = {
   path: "/terminal",
   /**
    * The boot sequence plays by default for a terminal client, and these force
-   * it on for anyone else — a browser at `/terminal`, or a client the
+   * it on for anyone else - a browser at `/terminal`, or a client the
    * User-Agent matcher does not recognise.
    */
   introKeys: ["intro", "boot", "animate"],
@@ -114,12 +114,12 @@ export const TERMINAL = {
    * engineered away: the server cannot tell whether the reader's `stdout` is a
    * terminal or a redirect into a file. curl answers `isatty` locally and sends
    * nothing about it, so `curl -L dileepa.dev > profile.txt` looks identical on
-   * the wire to a person watching their screen — and the animation lands in the
+   * the wire to a person watching their screen - and the animation lands in the
    * file, carriage returns and all.
    *
    * Playing by default is a deliberate trade of that case for the common one.
    * Anyone piping, scripting or saving reaches for one of these, and
-   * `?nocolor` — which they already want, to drop the escape codes — implies it
+   * `?nocolor` - which they already want, to drop the escape codes - implies it
    * without having to be told twice.
    */
   staticKeys: ["static", "fast", "now", "nointro"],
@@ -144,7 +144,7 @@ export const TERMINAL = {
  * Primary navigation.
  *
  * The homepage is the site: everything is a section on it, and the index pages
- * exist for the full lists. So the nav points at sections, not routes — which
+ * exist for the full lists. So the nav points at sections, not routes - which
  * is what the layout reference does, and why the links are all hashes.
  */
 export const NAV_LINKS: NavLink[] = [
@@ -179,7 +179,7 @@ export const FOOTER_LINKS: { title: string; links: NavLink[] }[] = [
 ];
 
 /**
- * Section copy — one label, one heading, one intro. Design system §6.
+ * Section copy - one label, one heading, one intro. Design system §6.
  *
  * The label is a plain word rather than a numbered index: numbering sections
  * makes the page claim an order it does not have, and breaks the moment one is
@@ -259,7 +259,7 @@ export const SUBSECTIONS = {
  * The fallback for the six About cards.
  *
  * They are served by `GET /pillars` now, so this list is only what renders when
- * that call comes back empty — an API outage, or a deployment where the
+ * that call comes back empty - an API outage, or a deployment where the
  * collection has not been seeded yet. `icon` names the same closed set the API
  * does; `components/sections/About.tsx` resolves it either way.
  */
@@ -363,7 +363,7 @@ export const PAGES = {
     meta: {
       title: "Open source projects and experiments",
       description:
-        "Things I have built, maintained and contributed to — agent frameworks, developer tooling and cloud infrastructure work.",
+        "Things I have built, maintained and contributed to - agent frameworks, developer tooling and cloud infrastructure work.",
     },
     label: "Projects",
     title: "Things I have built",
@@ -463,7 +463,7 @@ export const PAGES = {
     label: "Identity",
     title: "Brand & design reference",
     intro:
-      "A living visual reference for the dileepadev identity — colors, typography, mark, photography, and UI patterns.",
+      "A living visual reference for the dileepadev identity - colors, typography, mark, photography, and UI patterns.",
   },
 
   profile: {

@@ -3,7 +3,7 @@
  *
  * Three stores, each holding what it is good at: Git holds the words,
  * Cloudinary holds the images, MongoDB holds the index. This module is the Git
- * half — see `content-pipeline.md`.
+ * half - see `content-pipeline.md`.
  *
  * **The ref is pinned.** Fetching `main` would make a build's output depend on
  * when it ran, so an in-progress edit could ship by accident and a rebuild
@@ -56,7 +56,7 @@ export interface PostContent {
  * Eight of the eighteen posts carry `import SeriesBox from
  * "../../components/SeriesBox.astro"` and a `<SeriesBox …/>` call. An Astro
  * component cannot compile here, and the series navigation is rendered from
- * the `series` and `seriesOrder` front matter instead — which is what
+ * the `series` and `seriesOrder` front matter instead - which is what
  * `content-pipeline.md` §7 specifies.
  *
  * The blog repo strips these during the content move. This runs anyway: a post
@@ -74,7 +74,7 @@ function sanitise(body: string): string {
  * The slug is the file name, not the path.
  *
  * Posts are grouped as `posts/<year>/<month>/<slug>.md`. The directories are
- * grouping and were never part of the URL — the slug is the URL and a
+ * grouping and were never part of the URL - the slug is the URL and a
  * published one is never renamed. See `redirects.md`.
  */
 function slugOf(filepath: string): string {
@@ -99,7 +99,7 @@ async function githubJson<T>(url: string): Promise<T> {
       Accept: "application/vnd.github+json",
       // The repo is public so this works unauthenticated, but the anonymous
       // rate limit is low enough that a build fetching 18 files plus a listing
-      // can hit it — and the failure then looks like a content bug.
+      // can hit it - and the failure then looks like a content bug.
       ...(TOKEN ? { Authorization: `Bearer ${TOKEN}` } : {}),
     },
     next: { revalidate: 300 },
@@ -146,7 +146,7 @@ async function listRemote(): Promise<PostContent[]> {
   // The Git trees API rather than the contents API: posts are nested under
   // year and month directories, and `recursive=1` returns the whole tree in one
   // request instead of one request per month. On a repo this size the tree is
-  // never truncated, but the flag is checked rather than assumed — a silently
+  // never truncated, but the flag is checked rather than assumed - a silently
   // short list would look like posts had been deleted.
   const tree = await githubJson<{
     tree: { path: string; type: string }[];
@@ -196,7 +196,7 @@ let cache: Promise<Map<string, PostContent>> | null = null;
  * `listRemote` filters a whole-repo tree down to `POSTS_DIR`, so a ref that
  * does not carry that directory yields zero files rather than an error. The
  * index is built from the API and goes on listing every post, so the only
- * symptom is that every `/blog/[slug]` falls through to `notFound()` — a build
+ * symptom is that every `/blog/[slug]` falls through to `notFound()` - a build
  * that prerenders eighteen 404 pages and reports success.
  *
  * That is exactly what a ref pointing at the pre-v2.0.0 blog repo did, where

@@ -20,8 +20,8 @@ export const metadata: Metadata = pageMetadata({
 /**
  * Videos, as a list rather than a grid of thumbnails.
  *
- * Photographs appear in two places on this site — the hero portrait and the
- * event gallery — and a wall of YouTube thumbnails is not either of them. The
+ * Photographs appear in two places on this site - the hero portrait and the
+ * event gallery - and a wall of YouTube thumbnails is not either of them. The
  * title and the date are what a reader is choosing between anyway.
  */
 export default async function VideosPage() {

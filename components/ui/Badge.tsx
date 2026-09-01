@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 interface BadgeProps {
   children: ReactNode;
   /**
-   * `filled` is the one emerald variant and is reserved — one per surface.
+   * `filled` is the one emerald variant and is reserved - one per surface.
    * Everything else shares a single treatment, because with a single accent
    * colour badges are told apart by their label, not by hue.
    */

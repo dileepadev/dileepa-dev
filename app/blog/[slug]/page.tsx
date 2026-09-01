@@ -36,7 +36,7 @@ interface Params {
  * This route was closed (`dynamicParams = false`) for as long as post bodies
  * could only come from the pinned ref: a slug missing at build time had no
  * body to fetch at runtime either, so rejecting it at the router was both
- * honest and better-rendered — an on-demand `notFound()` is served as a
+ * honest and better-rendered - an on-demand `notFound()` is served as a
  * client-rendered shell, correct status and empty `<body>`, while a slug the
  * router rejects renders `not-found.tsx` on the server like any other page.
  *
@@ -63,7 +63,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
   const title = post.seo?.metaTitle || post.title;
   const description = post.seo?.metaDescription || post.description;
-  // Posts carry no banner of their own any more — an image is either set
+  // Posts carry no banner of their own any more - an image is either set
   // deliberately in `seo.ogImage` or the site's default card is used. Passing
   // it through `pageMetadata` is what makes the second half of that sentence
   // true: an `undefined` here used to mean the post shipped with no card
@@ -193,7 +193,7 @@ export default async function BlogPostPage({ params }: Params) {
         <div className="mt-8 sm:mt-10 gap-12 lg:grid lg:grid-cols-[1fr_220px]">
           {/* `min-w-0`: a grid track's automatic minimum is its content's
               min-content width, so a wide table or code block in the article
-              pushed this column — and the rail beside it — past the container
+              pushed this column - and the rail beside it - past the container
               rather than scrolling inside itself. */}
           <article className="w-full max-w-3xl min-w-0">
             <div className="mb-8 lg:hidden">
@@ -235,7 +235,7 @@ export default async function BlogPostPage({ params }: Params) {
               </div>
             )}
 
-            {/* React, comment and share, then the thread — one client component
+            {/* React, comment and share, then the thread - one client component
                 because the action bar's comment count and the comment list are
                 the same data, fetched once. */}
             <PostInteractions slug={post.slug} url={url} title={post.title} />

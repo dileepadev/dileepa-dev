@@ -58,7 +58,7 @@ export function Footer({ about }: { about?: About | null }) {
 
           {FOOTER_LINKS.map((column) => (
             <div key={column.title} className="footer-col">
-              {/* Column titles are mono — they are labels, not headings. */}
+              {/* Column titles are mono - they are labels, not headings. */}
               <div className="footer-col-title">{column.title}</div>
               {column.links.map((link) => {
                 const active = isLinkActive(link.href);

@@ -11,7 +11,7 @@ import { TERMINAL } from "@/lib/constants";
  * It sits beside the copyright rather than in the footer's link row: the row is
  * navigation, and this is not a seventh place to go. An easter egg nobody finds
  * is a feature nobody has, but the discovery should cost the page one dim line
- * — which is why this is mono, muted, and the same size as the line it shares.
+ * - which is why this is mono, muted, and the same size as the line it shares.
  *
  * The command is `TERMINAL.command`, not a string typed here. That constant
  * carries the `-L` and the reason it is not optional, and the site advertising

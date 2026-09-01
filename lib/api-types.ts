@@ -2,7 +2,7 @@
  * The API's types, named.
  *
  * `lib/api-schema.ts` is generated from `openapi.json` by `openapi-typescript`
- * and is not edited by hand. It is accurate but unreadable — every type is a
+ * and is not edited by hand. It is accurate but unreadable - every type is a
  * path through `components["schemas"]`. This file gives the shapes the app
  * actually uses their real names, and is the only place that reaches into the
  * generated file.
@@ -40,14 +40,14 @@ export type EventRecord = Schemas["Event"];
 export type BlogPost = Schemas["BlogPost"];
 
 // Engagement. Separate from `BlogPost` because a post page is static and these
-// numbers are not — the page is built without them and fetches them on mount.
+// numbers are not - the page is built without them and fetches them on mount.
 export type BlogEngagement = Schemas["BlogEngagement"];
 export type ReactionCounts = Schemas["ReactionCounts"];
 
 /** The four reactions, as a type rather than four string literals repeated. */
 export type ReactionKind = NonNullable<BlogEngagement["viewerReaction"]>;
 
-// Comments. `PublicComment` is the only comment shape this site ever sees —
+// Comments. `PublicComment` is the only comment shape this site ever sees -
 // the admin-only `Comment`, which carries the commenter's email, is not
 // reachable from here and deliberately has no type exported.
 export type PublicComment = Schemas["PublicComment"];
@@ -86,7 +86,7 @@ export type EventFormat = EventRecord["format"];
  * One photo, carrying the event it came from.
  *
  * The gallery is a flat grid across every event, but a photo without its
- * event is a picture of nobody doing nothing — the caption needs the title
+ * event is a picture of nobody doing nothing - the caption needs the title
  * and the date, so they travel with it.
  */
 export interface GalleryPhoto extends Photo {
@@ -98,7 +98,7 @@ export interface GalleryPhoto extends Photo {
 // --- Envelopes -------------------------------------------------------------
 
 /**
- * Every collection endpoint returns this. There is no second shape — a caller
+ * Every collection endpoint returns this. There is no second shape - a caller
  * that can page one resource can page all of them.
  */
 export interface Page<T> {
