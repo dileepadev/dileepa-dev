@@ -83,11 +83,16 @@ export const metadata: Metadata = {
   icons: {
     // No `/favicon.ico` entry and no `shortcut`. `app/favicon.ico` is a file
     // convention: Next serves it at `/favicon.ico` and emits its own
-    // `<link rel="icon" sizes="48x48" type="image/x-icon">` for it. Declaring
-    // it here as well put three ICO links in every page's head for one file.
-    // `public/favicon.ico` was deleted with them - it was a 16x16 copy that
-    // the 48x48 app-router one had been shadowing all along, so the better
-    // image was already winning and the other was dead weight.
+    // `<link rel="icon" type="image/x-icon">` for it. Declaring it here as well
+    // put three ICO links in every page's head for one file.
+    //
+    // That file is now built from the vendored PNGs rather than shipped by an
+    // icon generator, and it carries 16, 32 and 48 in one container. The
+    // generated one was a single 48 on a warm #CBC4BA field while every PNG in
+    // the set sits on the neutral #D2D2D2 the portrait actually uses - a
+    // mismatch you could see in a tab beside any other surface. Rebuilding it
+    // from `favicon-16x16`, `favicon-32x32` and `android-icon-48x48` takes the
+    // colour from the same source as the rest and gains two sizes.
     icon: [
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
