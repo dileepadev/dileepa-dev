@@ -105,10 +105,7 @@ function securityHeaders() {
     "https://*.vercel.live",
     "https://vercel.com",
   ];
-  const vercelFrames = [
-    "https://vercel.live",
-    "https://*.vercel.live",
-  ];
+  const vercelFrames = ["https://vercel.live", "https://*.vercel.live"];
 
   // Development-only. See the note above: React's dev build needs eval(),
   // HMR is a WebSocket, and Turbopack serves some chunks from blob: URLs.
@@ -160,6 +157,13 @@ const nextConfig: NextConfig = {
   // all stay inside the repository.
   turbopack: {
     root: import.meta.dirname,
+  },
+  // The two Manrope files `lib/og/card.tsx` reads to draw a social card. Next
+  // traces `import` graphs, not `readFile` paths, so without this they are
+  // absent from the deployed bundle and every generated card 500s - and only
+  // at request time, because those routes render on demand.
+  outputFileTracingIncludes: {
+    "/**": ["./lib/og/*.ttf"],
   },
   // `X-Powered-By: Next.js` names the framework and its presence on every
   // response is free reconnaissance. Nothing reads it.

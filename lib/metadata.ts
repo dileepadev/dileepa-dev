@@ -57,6 +57,17 @@ export interface PageMetadataInput {
    * `/500`, `/503`) are reachable and useful, and belong in no search result.
    */
   noindex?: boolean;
+  /**
+   * The route has an `opengraph-image.tsx` beside it.
+   *
+   * Next emits the `og:image` tags for that file itself. Setting `images` here
+   * as well would put two `og:image` tags on the page, so when no explicit
+   * `image` is supplied this omits the block entirely and lets the generated
+   * card be the card. An `image` that *is* supplied still wins - that is the
+   * point of `seo.ogImage` in the admin - and is the one case where both the
+   * convention and this object have something to say.
+   */
+  generatedImage?: boolean;
 }
 
 function toImage(image: PageMetadataInput["image"]): PageImage {
@@ -118,11 +129,19 @@ export function pageMetadata(input: PageMetadataInput): Metadata {
   } = input;
 
   const url = absoluteUrl(path);
-  const image = toImage(input.image);
+  // `null` means "say nothing about images here". Only a route carrying its own
+  // `opengraph-image.tsx` and no record-level override reaches that.
+  const hasOwnImage = Boolean(
+    typeof input.image === "string"
+      ? input.image.trim()
+      : input.image?.url?.trim(),
+  );
+  const image =
+    input.generatedImage && !hasOwnImage ? null : toImage(input.image);
   // `og:title` stays the bare page title. `og:site_name` already carries the
   // attribution and every platform renders it beside the title, so repeating
   // the name inside the title spends card width saying it twice.
-  const imageAlt = image.alt ?? title;
+  const imageAlt = image?.alt ?? title;
 
   return {
     title,
@@ -132,7 +151,11 @@ export function pageMetadata(input: PageMetadataInput): Metadata {
       ? {
           // Overrides the layout's `index, follow`. Without this the system
           // routes carry two contradictory robots directives at once.
-          robots: { index: false, follow: false, googleBot: { index: false, follow: false } },
+          robots: {
+            index: false,
+            follow: false,
+            googleBot: { index: false, follow: false },
+          },
         }
       : {}),
     openGraph: {
@@ -142,7 +165,7 @@ export function pageMetadata(input: PageMetadataInput): Metadata {
       url,
       siteName: SITE_CONFIG.name,
       locale: SITE_CONFIG.locale,
-      images: [{ ...image, alt: imageAlt }],
+      ...(image ? { images: [{ ...image, alt: imageAlt }] } : {}),
       ...(type === "article"
         ? {
             publishedTime: publishedTime ?? undefined,
@@ -158,7 +181,7 @@ export function pageMetadata(input: PageMetadataInput): Metadata {
       description,
       site: SITE_CONFIG.twitterHandle,
       creator: SITE_CONFIG.twitterHandle,
-      images: [{ url: image.url, alt: imageAlt }],
+      ...(image ? { images: [{ url: image.url, alt: imageAlt }] } : {}),
     },
   };
 }

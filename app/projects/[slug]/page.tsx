@@ -3,7 +3,15 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { ExternalLink, FileText, Globe } from "lucide-react";
 import { FaGithub } from "@/components/icons/SocialIcons";
-import { ApiOfflinePage, Badge, Chip, Container, LinkButton, PagePath, Section } from "@/components/ui";
+import {
+  ApiOfflinePage,
+  Badge,
+  Chip,
+  Container,
+  LinkButton,
+  PagePath,
+  Section,
+} from "@/components/ui";
 import { api, checkApiHealth } from "@/lib/api";
 import { pageMetadata } from "@/lib/metadata";
 import { formatMonth, humanise, paragraphs } from "@/lib/format";
@@ -32,6 +40,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     path: `/projects/${project.slug}`,
     image,
     type: "article",
+    generatedImage: true,
     publishedTime: project.createdAt,
     modifiedTime: project.updatedAt,
   });

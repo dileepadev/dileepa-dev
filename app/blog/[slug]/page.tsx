@@ -11,7 +11,13 @@ import {
   TableOfContents,
 } from "@/components/blog";
 import { mdxComponents } from "@/components/mdx";
-import { ApiOfflinePage, Badge, Container, PagePath, Section } from "@/components/ui";
+import {
+  ApiOfflinePage,
+  Badge,
+  Container,
+  PagePath,
+  Section,
+} from "@/components/ui";
 import { api, checkApiHealth } from "@/lib/api";
 import type { BlogPost } from "@/lib/api-types";
 import { getPostContent } from "@/lib/content";
@@ -81,6 +87,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     path: new URL(postUrl(post)).pathname,
     image,
     type: "article",
+    generatedImage: true,
     publishedTime: post.publishedDate,
     modifiedTime: post.updatedDate,
     tags: post.tags ?? [],
@@ -162,21 +169,33 @@ export default async function BlogPostPage({ params }: Params) {
 
           <div className="mt-3 flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-small text-fg">
             <span className="inline-flex items-center gap-1.5">
-              <Calendar className="h-3.5 w-3.5 shrink-0 text-fg-muted" aria-hidden="true" />
+              <Calendar
+                className="h-3.5 w-3.5 shrink-0 text-fg-muted"
+                aria-hidden="true"
+              />
               <time dateTime={toDateAttribute(post.publishedDate)}>
                 {formatDate(post.publishedDate)}
               </time>
             </span>
-            <span className="text-fg-muted select-none" aria-hidden="true">·</span>
+            <span className="text-fg-muted select-none" aria-hidden="true">
+              ·
+            </span>
             <span className="inline-flex items-center gap-1.5">
-              <Clock className="h-3.5 w-3.5 shrink-0 text-fg-muted" aria-hidden="true" />
+              <Clock
+                className="h-3.5 w-3.5 shrink-0 text-fg-muted"
+                aria-hidden="true"
+              />
               <span>
-                {readingTime(post.readingTimeMinutes || content.readingTimeMinutes)}
+                {readingTime(
+                  post.readingTimeMinutes || content.readingTimeMinutes,
+                )}
               </span>
             </span>
             {post.updatedDate && post.updatedDate !== post.publishedDate && (
               <>
-                <span className="text-fg-muted select-none" aria-hidden="true">·</span>
+                <span className="text-fg-muted select-none" aria-hidden="true">
+                  ·
+                </span>
                 <span className="inline-flex items-center gap-1.5 text-fg-muted">
                   <span>
                     Updated{" "}

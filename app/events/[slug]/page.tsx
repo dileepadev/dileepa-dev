@@ -100,6 +100,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     path: `/events/${event.slug}`,
     image,
     type: "article",
+    generatedImage: true,
     publishedTime: event.createdAt,
     modifiedTime: event.updatedAt,
   });
@@ -165,11 +166,7 @@ export default async function EventPage({ params }: Params) {
   }
 
   const photos = [...(event.photos ?? [])].sort((a, b) => a.order - b.order);
-  const timeRange = formatTimeRange(
-    event.startAt,
-    event.endAt,
-    event.timezone,
-  );
+  const timeRange = formatTimeRange(event.startAt, event.endAt, event.timezone);
   const locationPlace = [event.location?.city, event.location?.country]
     .filter(Boolean)
     .join(", ");
@@ -197,11 +194,11 @@ export default async function EventPage({ params }: Params) {
         <div className="section-label">Events</div>
 
         <h1>{event.title}</h1>
-        {event.summary && (
-          <p className="section-intro">{event.summary}</p>
-        )}
+        {event.summary && <p className="section-intro">{event.summary}</p>}
 
-        <div className={`overflow-hidden rounded-lg border border-border-strong bg-bg-surface ${event.summary ? "" : "mt-6 sm:mt-8"}`}>
+        <div
+          className={`overflow-hidden rounded-lg border border-border-strong bg-bg-surface ${event.summary ? "" : "mt-6 sm:mt-8"}`}
+        >
           {hasBadges && (
             <div className="flex flex-wrap items-center gap-2 border-b border-border-hairline p-4 sm:p-5">
               {event.series && <Badge>Part of {event.series.name}</Badge>}
@@ -221,7 +218,9 @@ export default async function EventPage({ params }: Params) {
                 <Calendar className="h-4 w-4" strokeWidth={1.75} />
               </div>
               <div className="min-w-0 flex-1">
-                <dt className="text-label tracking-[0.01em] text-fg-muted">Date &amp; time</dt>
+                <dt className="text-label tracking-[0.01em] text-fg-muted">
+                  Date &amp; time
+                </dt>
                 <dd className="mt-1">
                   <time
                     dateTime={toDateAttribute(event.startAt)}
@@ -251,7 +250,9 @@ export default async function EventPage({ params }: Params) {
                 )}
               </div>
               <div className="min-w-0 flex-1">
-                <dt className="text-label tracking-[0.01em] text-fg-muted">Location</dt>
+                <dt className="text-label tracking-[0.01em] text-fg-muted">
+                  Location
+                </dt>
                 <dd className="mt-1">
                   {event.location?.venue ? (
                     event.location.mapUrl ? (
@@ -271,7 +272,9 @@ export default async function EventPage({ params }: Params) {
                   ) : (
                     <span className="block font-medium text-fg break-words">
                       {locationPlace ||
-                        (event.format === "online" ? "Online" : humanise(event.format))}
+                        (event.format === "online"
+                          ? "Online"
+                          : humanise(event.format))}
                     </span>
                   )}
                   {event.location?.venue && locationPlace ? (
@@ -394,8 +397,14 @@ export default async function EventPage({ params }: Params) {
           {registrationLink && event.status === "upcoming" && (
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-border-hairline bg-surface-hover/20 px-4 py-3.5 sm:px-5">
               <div className="flex items-center gap-2 text-small font-mono text-fg-muted">
-                <Ticket className="h-4 w-4 text-fg-muted shrink-0" strokeWidth={1.75} aria-hidden="true" />
-                <span className="break-words">Registration is open for this event</span>
+                <Ticket
+                  className="h-4 w-4 text-fg-muted shrink-0"
+                  strokeWidth={1.75}
+                  aria-hidden="true"
+                />
+                <span className="break-words">
+                  Registration is open for this event
+                </span>
               </div>
               <LinkButton
                 href={registrationLink.url}
@@ -475,7 +484,7 @@ export default async function EventPage({ params }: Params) {
                           speaker.name
                         )}
                         {speaker.isHost && (
-                          <span className="ml-2 inline-flex items-center rounded-xs border border-brand/40 bg-brand/10 px-1.5 py-0.5 font-mono text-[0.6875rem] font-medium text-brand">
+                          <span className="ml-2 inline-flex items-center rounded-xs border border-brand/40 bg-brand/10 px-1.5 py-0.5 font-mono text-label font-medium text-brand">
                             Host
                           </span>
                         )}
@@ -557,7 +566,9 @@ export default async function EventPage({ params }: Params) {
                   <LinkButton
                     key={link.url}
                     href={link.url}
-                    variant={link.kind === "registration" ? "primary" : "secondary"}
+                    variant={
+                      link.kind === "registration" ? "primary" : "secondary"
+                    }
                     className="inline-flex items-center gap-2"
                   >
                     <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
