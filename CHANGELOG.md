@@ -36,11 +36,19 @@ Changes are organized into the following categories:
   so the section's original "smudge" reasoning is not what settles it. One identity across every
   surface does. The note is there so the audit tip that prompted it does not reopen the question.
 
-- **The site title fills the space a search result gives it**: `Dileepa Bandara - AI Engineer
-  building agentic systems`, where it was 29 characters of a ~60-character result. `AI Engineer`
-  stays title case - it is the name of the role, and the brand guide's sentence-case rule has
-  always excepted proper nouns. The four documents that state that rule now name this one and
-  draw the line: the role is a proper noun, the discipline ("AI engineering") is not.
+- **The site title carries the role and the handle**: `Dileepa Bandara - AI Engineer |
+  @dileepadev`, where it was 29 characters of a ~60-character result. The handle is last on
+  purpose: `dileepadev` is the lockup, the manifest `short_name` and the GitHub org, and the
+  `dileepa.dev` domain does not cover it - but "Name (@handle)" is X's and GitHub's own
+  profile-title format, and putting it after the name makes a result read as a social profile
+  and pushes the strongest keyword out of the front. `AI Engineer` stays title case: it is the
+  name of the role, and the brand guide's sentence-case rule has always excepted proper nouns.
+  The four documents that state that rule now name this one and draw the line - the role is a
+  proper noun, the discipline ("AI engineering") is not.
+- **The homepage description is the owner's own sentence**, `taglineDescription` from the about
+  record, which is also what renders under the hero. A snippet that matches the first line a
+  reader sees on the page beats one written for the snippet, and the previous text was a framing
+  invented here from the speaking topics rather than anything the site says about itself.
 - **Brand tokens re-vendored at v2.1** and `app/globals.css` trimmed to match. The override block
   restored the neutral ramp, the radius scale, the type steps, the control height, the hairline,
   both border weights, the button fill and every derived interaction token - about a hundred

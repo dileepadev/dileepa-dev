@@ -16,17 +16,24 @@ import type { NavLink } from "./types";
 
 export const SITE_CONFIG = {
   name: "Dileepa Bandara",
-  // "AI Engineer" is title case here and in every other role *label* - the
+  // "AI Engineer" is title case here and in every other role *label*: the
   // Person schema's `jobTitle`, the line under the hero portrait, the terminal
   // profile's role field. It is the name of the role, and the sentence-case
   // rule covers headings, buttons, nav and labels, not proper nouns. The
   // discipline keeps its lowercase: "AI engineering" in the Work intro and the
   // pillar cards, and "an AI engineer" in the running prose of a biography.
   //
-  // Metadata only - no heading renders this. Long enough to fill the ~60
-  // characters a result gets before Google truncates it, which the previous
-  // 29-character form left more than half of unused.
-  title: "Dileepa Bandara - AI Engineer building agentic systems",
+  // The handle is last, after a pipe, and that placement is the point. It is
+  // worth carrying - `dileepadev` is the lockup, the manifest short_name and
+  // the GitHub org, and someone who knows the handle and searches it should
+  // land here, which the `dileepa.dev` domain does not cover. But "Dileepa
+  // Bandara (@dileepadev)" is X's and GitHub's own profile-title format, so
+  // putting it after the name makes a search result read as a social profile
+  // rather than this site - and it pushes "AI Engineer", the strongest term
+  // after the name, out of the front of the string.
+  //
+  // Metadata only - no heading renders this.
+  title: "Dileepa Bandara - AI Engineer | @dileepadev",
   // Says what is here and what the person does, without adjectives doing the
   // work. The v1 description opened with "passionate about" and closed on
   // "something amazing together"; both are gone.
@@ -47,9 +54,17 @@ export const SITE_CONFIG = {
    * a worse failure than leaving thirty characters of a search snippet unused.
    * So these sit around 110-125: long enough that Google does not discard it
    * and compose its own, short enough to survive a card intact.
+   *
+   * The words are the owner's, not invented here: this is `taglineDescription`
+   * on the `about` record, which is also the sentence rendered under the hero.
+   * A search snippet that matches the first thing a reader sees on the page is
+   * the point. It is duplicated rather than read from the API because the root
+   * layout exports a static `metadata` object; if it ever needs to follow what
+   * the admin says, the layout becomes `generateMetadata` and this stays as
+   * the fallback, which is the pattern the rest of the copy already uses.
    */
   metaDescription:
-    "AI Engineer building agentic systems, LLM pipelines and the infrastructure that runs them. Notes, talks and workshops.",
+    "I build AI systems end to end, from agent architectures and infrastructure to the interfaces people actually use.",
   // The origin the site is actually served from. Canonical URLs, the sitemap
   // and the RSS feed are all composed from it, so a wrong value here points
   // every canonical tag at somewhere else.
