@@ -93,8 +93,67 @@ function parse(filepath: string, raw: string): PostContent {
   };
 }
 
+/**
+ * Fetch, retrying the failures that are the network rather than the answer.
+ *
+ * A build reads a tree listing from `api.github.com`, then one file per post
+ * from `raw.githubusercontent.com`. A single connect timeout to either fails
+ * the whole build - `next build` exits non-zero on a prerender error - so a
+ * blip lasting ten seconds costs a deploy. That happened four times in one
+ * afternoon of local builds, on IPv6 addresses that resolved but would not
+ * connect.
+ *
+ * The detail that matters: those failures **throw**. undici raises
+ * `UND_ERR_CONNECT_TIMEOUT` as a `TypeError: fetch failed`, so a retry that
+ * only inspects `response.ok` never runs. This catches the throw as well as
+ * retrying 429 and 5xx.
+ *
+ * A 404 is not retried. It is a real answer, and the build should fail on it
+ * with the message that names the ref and the path.
+ *
+ * `lib/api.ts` grew the same guard for the portfolio API's rate limit. Content
+ * had none, which left the two halves of a build with different resilience for
+ * no reason beyond which one had been bitten first.
+ */
+const FETCH_RETRIES = 3;
+const FETCH_BACKOFF_MS = 400;
+
+async function fetchRetrying(
+  url: string,
+  init?: RequestInit,
+): Promise<Response> {
+  let lastError: unknown;
+
+  for (let attempt = 0; attempt <= FETCH_RETRIES; attempt += 1) {
+    if (attempt > 0) {
+      const waitMs = FETCH_BACKOFF_MS * 2 ** (attempt - 1);
+      await new Promise((resolve) => setTimeout(resolve, waitMs));
+    }
+    try {
+      const response = await fetch(url, init);
+      if (response.status === 429 || response.status >= 500) {
+        // Cancel rather than leave the socket holding a body nothing reads.
+        await response.body?.cancel();
+        lastError = new Error(`${url} returned ${response.status}`);
+        continue;
+      }
+      return response;
+    } catch (error) {
+      // Connect timeout, DNS failure, socket reset. Not an answer; ask again.
+      lastError = error;
+    }
+  }
+
+  throw lastError instanceof Error
+    ? new Error(
+        `${url} failed after ${FETCH_RETRIES + 1} attempts: ${lastError.message}`,
+        { cause: lastError },
+      )
+    : lastError;
+}
+
 async function githubJson<T>(url: string): Promise<T> {
-  const response = await fetch(url, {
+  const response = await fetchRetrying(url, {
     headers: {
       Accept: "application/vnd.github+json",
       // The repo is public so this works unauthenticated, but the anonymous
@@ -169,7 +228,7 @@ async function listRemote(): Promise<PostContent[]> {
 
   return Promise.all(
     files.map(async (file) => {
-      const response = await fetch(
+      const response = await fetchRetrying(
         `https://raw.githubusercontent.com/${REPO}/${REF}/${file.path}`,
         { next: { revalidate: 300 } },
       );
@@ -256,7 +315,7 @@ export async function getPostContent(
         posts.set(slug, parsed);
         return parsed;
       }
-      const response = await fetch(
+      const response = await fetchRetrying(
         `https://raw.githubusercontent.com/${REPO}/${REF}/${relPath}`,
         { next: { revalidate: 300 } },
       );
