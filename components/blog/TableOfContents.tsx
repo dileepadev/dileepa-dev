@@ -50,7 +50,12 @@ export function TableOfContents({ headings }: { headings: Heading[] }) {
   };
 
   const renderList = (isMobile = false) => (
-    <ul className={cn("space-y-1.5 font-mono text-small", !isMobile && "border-l border-border-hairline")}>
+    <ul
+      className={cn(
+        "space-y-1.5 font-mono text-small",
+        !isMobile && "border-l border-border-hairline",
+      )}
+    >
       {headings.map((heading) => {
         const isActive = active === heading.id;
         return (
@@ -58,7 +63,7 @@ export function TableOfContents({ headings }: { headings: Heading[] }) {
             key={heading.id}
             className={cn(
               "relative",
-              heading.depth === 3 ? "pl-3 text-[0.8125rem]" : undefined,
+              heading.depth === 3 ? "pl-3 text-label" : undefined,
             )}
           >
             <a
@@ -96,8 +101,13 @@ export function TableOfContents({ headings }: { headings: Heading[] }) {
         className="hidden lg:sticky lg:top-24 lg:block max-h-[calc(100vh-8rem)] overflow-y-auto pr-2"
       >
         <div className="flex items-center gap-2 mb-3">
-          <span className="h-1.5 w-1.5 rounded-full bg-brand" aria-hidden="true" />
-          <p className="font-mono text-small font-medium text-fg">On this page</p>
+          <span
+            className="h-1.5 w-1.5 rounded-full bg-brand"
+            aria-hidden="true"
+          />
+          <p className="font-mono text-small font-medium text-fg">
+            On this page
+          </p>
         </div>
         {renderList(false)}
       </nav>

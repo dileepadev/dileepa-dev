@@ -80,7 +80,7 @@ export function ReactionSummary({
         {used.map(({ kind, emoji }) => (
           <span
             key={kind}
-            className="inline-flex h-[20px] w-[20px] items-center justify-center rounded-full border border-border-hairline bg-bg-surface text-[0.6875rem]"
+            className="inline-flex h-[20px] w-[20px] items-center justify-center rounded-full border border-border-hairline bg-bg-surface text-label"
           >
             <span className="emoji" aria-hidden="true">
               {emoji}

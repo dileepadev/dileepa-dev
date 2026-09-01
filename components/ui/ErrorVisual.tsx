@@ -5,6 +5,20 @@ import Image from "next/image";
 import { Check, Copy, Mail, RotateCcw, Terminal, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+/**
+ * Type sizes below `--text-label` in this file are deliberate and must stay.
+ *
+ * The readout panel is `sm:h-[390px]` inside an `overflow-hidden` card, so its
+ * rows are drawn to a fixed box rather than flowing. Normalising 10px and 11px
+ * up to the 12px token was tried and clipped the last row off the bottom - the
+ * DIGEST line disappeared behind the card edge. These are annotation sizes in
+ * an illustration, the way a chart's tick labels are, not UI text a reader is
+ * meant to read at the body scale. The ASCII portrait's `text-[4px]` is the
+ * same argument taken to its limit: there, the font size *is* the pixel grid.
+ *
+ * DESIGN.md section 6 covers the type scale for interface text. This is not that.
+ */
+
 const OSCILLOSCOPE_FRAMES = [
   ` [ CIRCUIT: FAULT ]
  SYSTEM: SSR_RENDER_PIPELINE
@@ -72,7 +86,9 @@ interface ErrorVisualProps {
 }
 
 export function ErrorVisual({ error, reset }: ErrorVisualProps) {
-  const [activeTab, setActiveTab] = useState<"terminal" | "operator">("terminal");
+  const [activeTab, setActiveTab] = useState<"terminal" | "operator">(
+    "terminal",
+  );
   const [frameIndex, setFrameIndex] = useState(0);
   const [isResetting, setIsResetting] = useState(false);
   const [copiedTrace, setCopiedTrace] = useState(false);
@@ -159,7 +175,9 @@ export function ErrorVisual({ error, reset }: ErrorVisualProps) {
           <span className="w-2 h-2 rounded-full bg-border-strong inline-block shrink-0" />
           <span className="w-2 h-2 rounded-full bg-border-strong inline-block shrink-0" />
           <span className="w-2 h-2 rounded-full bg-border-strong inline-block shrink-0" />
-          <span className="ml-2 text-fg-muted truncate">circuit://500.fault.dileepa.dev</span>
+          <span className="ml-2 text-fg-muted truncate">
+            circuit://500.fault.dileepa.dev
+          </span>
         </div>
 
         {/* Tab Toggle */}
@@ -247,7 +265,9 @@ export function ErrorVisual({ error, reset }: ErrorVisualProps) {
                 disabled={isResetting}
                 className="btn btn--secondary !h-7 !px-2.5 text-xs inline-flex items-center gap-1.5 text-brand border-brand/30 hover:border-brand"
               >
-                <RotateCcw className={cn("h-3 w-3", isResetting && "animate-spin")} />
+                <RotateCcw
+                  className={cn("h-3 w-3", isResetting && "animate-spin")}
+                />
                 <span>{isResetting ? "Rebooting..." : "Reboot node"}</span>
               </button>
 
@@ -329,7 +349,9 @@ export function ErrorVisual({ error, reset }: ErrorVisualProps) {
             <div className="text-[0.6875rem] text-fg-muted space-y-1 pt-2 border-t border-border-strong/40">
               <div className="flex items-center justify-between">
                 <span>INCIDENT POSTING:</span>
-                <span className="text-fg font-medium">OPEN (AWAITING INPUT)</span>
+                <span className="text-fg font-medium">
+                  OPEN (AWAITING INPUT)
+                </span>
               </div>
               <div className="flex items-center justify-between">
                 <span>RESPONSE PROTOCOL:</span>
@@ -356,7 +378,9 @@ export function ErrorVisual({ error, reset }: ErrorVisualProps) {
                 onClick={() => setIsAsciiPhotoActive((prev) => !prev)}
                 className="btn btn--secondary !h-7 !px-2.5 text-xs inline-flex items-center gap-1.5"
               >
-                <span>{isAsciiPhotoActive ? "Standard photo" : "ASCII mode"}</span>
+                <span>
+                  {isAsciiPhotoActive ? "Standard photo" : "ASCII mode"}
+                </span>
               </button>
             </div>
           </div>

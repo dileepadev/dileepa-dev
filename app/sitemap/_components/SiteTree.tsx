@@ -63,23 +63,65 @@ function getNodeIcon(node: TreeNode, isOpen: boolean) {
 
   switch (node.type) {
     case "section":
-      return <Hash className="h-3.5 w-3.5 text-fg-muted shrink-0" aria-hidden="true" />;
+      return (
+        <Hash
+          className="h-3.5 w-3.5 text-fg-muted shrink-0"
+          aria-hidden="true"
+        />
+      );
     case "post":
-      return <FileText className="h-3.5 w-3.5 text-fg-muted shrink-0" aria-hidden="true" />;
+      return (
+        <FileText
+          className="h-3.5 w-3.5 text-fg-muted shrink-0"
+          aria-hidden="true"
+        />
+      );
     case "project":
-      return <Code2 className="h-3.5 w-3.5 text-fg-muted shrink-0" aria-hidden="true" />;
+      return (
+        <Code2
+          className="h-3.5 w-3.5 text-fg-muted shrink-0"
+          aria-hidden="true"
+        />
+      );
     case "event":
-      return <Calendar className="h-3.5 w-3.5 text-fg-muted shrink-0" aria-hidden="true" />;
+      return (
+        <Calendar
+          className="h-3.5 w-3.5 text-fg-muted shrink-0"
+          aria-hidden="true"
+        />
+      );
     case "tag":
-      return <Tag className="h-3.5 w-3.5 text-fg-muted shrink-0" aria-hidden="true" />;
+      return (
+        <Tag
+          className="h-3.5 w-3.5 text-fg-muted shrink-0"
+          aria-hidden="true"
+        />
+      );
     case "feed":
-      return <Rss className="h-3.5 w-3.5 text-brand shrink-0" aria-hidden="true" />;
+      return (
+        <Rss className="h-3.5 w-3.5 text-brand shrink-0" aria-hidden="true" />
+      );
     case "system":
-      return <FileCode className="h-3.5 w-3.5 text-fg-muted shrink-0" aria-hidden="true" />;
+      return (
+        <FileCode
+          className="h-3.5 w-3.5 text-fg-muted shrink-0"
+          aria-hidden="true"
+        />
+      );
     case "error":
-      return <AlertCircle className="h-3.5 w-3.5 text-error shrink-0" aria-hidden="true" />;
+      return (
+        <AlertCircle
+          className="h-3.5 w-3.5 text-error shrink-0"
+          aria-hidden="true"
+        />
+      );
     default:
-      return <FileText className="h-3.5 w-3.5 text-fg-muted shrink-0" aria-hidden="true" />;
+      return (
+        <FileText
+          className="h-3.5 w-3.5 text-fg-muted shrink-0"
+          aria-hidden="true"
+        />
+      );
   }
 }
 
@@ -104,7 +146,10 @@ function filterNode(node: TreeNode, tokens: string[]): TreeNode | null {
   if (isSelfMatch || matchingChildren.length > 0) {
     return {
       ...node,
-      children: isSelfMatch && matchingChildren.length === 0 ? node.children : matchingChildren,
+      children:
+        isSelfMatch && matchingChildren.length === 0
+          ? node.children
+          : matchingChildren,
     };
   }
 
@@ -153,9 +198,15 @@ function TreeBranch({
             aria-label={isOpen ? "Collapse branch" : "Expand branch"}
           >
             {isOpen ? (
-              <ChevronDown className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              <ChevronDown
+                className="h-3.5 w-3.5 shrink-0"
+                aria-hidden="true"
+              />
             ) : (
-              <ChevronRight className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              <ChevronRight
+                className="h-3.5 w-3.5 shrink-0"
+                aria-hidden="true"
+              />
             )}
           </button>
         ) : (
@@ -182,7 +233,7 @@ function TreeBranch({
 
         {/* Badge / Type tag */}
         {node.badge && (
-          <span className="ml-auto inline-flex items-center px-2 py-0.5 rounded text-[0.6875rem] font-mono text-fg-muted border border-border-strong bg-bg shrink-0 transition-colors duration-150 hover:border-brand hover:bg-surface-hover hover:text-fg cursor-default">
+          <span className="ml-auto inline-flex items-center px-2 py-0.5 rounded text-label font-mono text-fg-muted border border-border-strong bg-bg shrink-0 transition-colors duration-150 hover:border-brand hover:bg-surface-hover hover:text-fg cursor-default">
             {node.badge}
           </span>
         )}
@@ -422,7 +473,7 @@ export function SiteTree({ tree, totalRoutes, pagesList }: SiteTreeProps) {
                     <span className="font-mono text-xs font-medium text-brand">
                       {page.path}
                     </span>
-                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[0.6875rem] font-mono text-fg-muted border border-border-strong bg-bg-surface shrink-0">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded text-label font-mono text-fg-muted border border-border-strong bg-bg-surface shrink-0">
                       {page.badge}
                     </span>
                   </div>

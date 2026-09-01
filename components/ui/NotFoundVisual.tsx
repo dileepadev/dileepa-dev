@@ -4,6 +4,20 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
+/**
+ * Type sizes below `--text-label` in this file are deliberate and must stay.
+ *
+ * The readout panel is `sm:h-[390px]` inside an `overflow-hidden` card, so its
+ * rows are drawn to a fixed box rather than flowing. Normalising 10px and 11px
+ * up to the 12px token was tried and clipped the last row off the bottom - the
+ * DIGEST line disappeared behind the card edge. These are annotation sizes in
+ * an illustration, the way a chart's tick labels are, not UI text a reader is
+ * meant to read at the body scale. The ASCII portrait's `text-[4px]` is the
+ * same argument taken to its limit: there, the font size *is* the pixel grid.
+ *
+ * DESIGN.md section 6 covers the type scale for interface text. This is not that.
+ */
+
 const RADAR_FRAMES = [
   `
    .---.     [ RADAR: ACTIVE ]
@@ -74,7 +88,9 @@ const ASCII_404_BANNER = `
 const ASCII_RAMP = " .:-=+*#%@";
 
 export function NotFoundVisual() {
-  const [activeTab, setActiveTab] = useState<"terminal" | "operator">("terminal");
+  const [activeTab, setActiveTab] = useState<"terminal" | "operator">(
+    "terminal",
+  );
   const [frameIndex, setFrameIndex] = useState(0);
   const [isPinging, setIsPinging] = useState(false);
   const [pingCount, setPingCount] = useState(0);
@@ -141,7 +157,9 @@ export function NotFoundVisual() {
           <span className="w-2 h-2 rounded-full bg-border-strong inline-block" />
           <span className="w-2 h-2 rounded-full bg-border-strong inline-block" />
           <span className="w-2 h-2 rounded-full bg-border-strong inline-block" />
-          <span className="ml-2 text-fg-muted">telemetry://404.dileepa.dev</span>
+          <span className="ml-2 text-fg-muted">
+            telemetry://404.dileepa.dev
+          </span>
         </div>
 
         {/* Tab Toggle */}
@@ -284,7 +302,9 @@ export function NotFoundVisual() {
             <div className="space-y-2 flex-1 min-w-0 text-[0.6875rem] w-full">
               <div className="p-2.5 rounded bg-bg border border-border-strong/70 space-y-1">
                 <div className="flex items-center justify-between">
-                  <span className="text-fg font-medium text-xs">Dileepa Bandara</span>
+                  <span className="text-fg font-medium text-xs">
+                    Dileepa Bandara
+                  </span>
                   <span className="text-[0.625rem] px-1.5 py-0.5 rounded bg-brand/10 text-brand border border-brand/30">
                     Active
                   </span>
@@ -311,7 +331,9 @@ export function NotFoundVisual() {
           <div className="p-2.5 rounded bg-bg border border-border-strong/70 text-[0.6875rem] space-y-1">
             <div className="text-fg-muted font-medium">DIAGNOSTICS LOG:</div>
             <div className="text-brand">&gt; SYSTEM: Route index mismatch</div>
-            <div className="text-fg-muted">&gt; RECOMMENDATION: Explore sitemap tree</div>
+            <div className="text-fg-muted">
+              &gt; RECOMMENDATION: Explore sitemap tree
+            </div>
           </div>
 
           <div className="text-[0.6875rem] text-fg-muted pt-2 border-t border-border-strong/40 flex items-center justify-between">

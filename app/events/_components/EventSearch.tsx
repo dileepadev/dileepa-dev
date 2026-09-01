@@ -40,11 +40,7 @@ import {
 } from "@/lib/listing";
 
 type EventSortKey =
-  | "default"
-  | "newest"
-  | "oldest"
-  | "title-asc"
-  | "title-desc";
+  "default" | "newest" | "oldest" | "title-asc" | "title-desc";
 
 const SORT_OPTIONS: SortOption<EventSortKey>[] = [
   { value: "default", label: "Default order" },
@@ -72,7 +68,10 @@ export function EventSearch({
   upcoming: EventRecord[];
   completed: EventRecord[];
 }) {
-  const allEvents = useMemo(() => [...upcoming, ...completed], [upcoming, completed]);
+  const allEvents = useMemo(
+    () => [...upcoming, ...completed],
+    [upcoming, completed],
+  );
 
   const [query, setQuery] = useState("");
   const [selectedType, setSelectedType] = useState<string | null>(null);
@@ -128,7 +127,13 @@ export function EventSearch({
         status: selectedStatus,
         year: selectedYear,
       }),
-    [searchedEvents, selectedType, selectedFormat, selectedStatus, selectedYear],
+    [
+      searchedEvents,
+      selectedType,
+      selectedFormat,
+      selectedStatus,
+      selectedYear,
+    ],
   );
 
   const typeOptions: FilterOption[] = useMemo(
@@ -184,7 +189,11 @@ export function EventSearch({
 
   // Step 4: Paginate
   const hasActiveFilters = Boolean(
-    query.trim() || selectedType || selectedFormat || selectedStatus || selectedYear,
+    query.trim() ||
+    selectedType ||
+    selectedFormat ||
+    selectedStatus ||
+    selectedYear,
   );
 
   const clearAllFilters = () => {
@@ -398,16 +407,28 @@ function EventItems({ events }: { events: EventRecord[] }) {
                 <Chip>Past event</Chip>
               )}
               <span className="inline-flex items-center gap-1.5 text-fg font-medium">
-                <Calendar className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
+                <Calendar
+                  className="h-3 w-3 shrink-0 text-fg-muted"
+                  aria-hidden="true"
+                />
                 <span>{formatDate(event.startAt)}</span>
               </span>
               <span className="inline-flex items-center gap-1.5 text-fg-muted">
                 {event.format === "in_person" ? (
-                  <MapPin className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
+                  <MapPin
+                    className="h-3 w-3 shrink-0 text-fg-muted"
+                    aria-hidden="true"
+                  />
                 ) : event.format === "online" ? (
-                  <Globe className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
+                  <Globe
+                    className="h-3 w-3 shrink-0 text-fg-muted"
+                    aria-hidden="true"
+                  />
                 ) : (
-                  <Layers className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
+                  <Layers
+                    className="h-3 w-3 shrink-0 text-fg-muted"
+                    aria-hidden="true"
+                  />
                 )}
                 <span>{humanise(event.format)}</span>
               </span>
@@ -424,7 +445,10 @@ function EventItems({ events }: { events: EventRecord[] }) {
             <Badge>{humanise(event.type)}</Badge>
             {event.location?.venue && (
               <Badge className="inline-flex items-center gap-1">
-                <MapPin className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
+                <MapPin
+                  className="h-3 w-3 shrink-0 text-fg-muted"
+                  aria-hidden="true"
+                />
                 <span>{event.location.venue}</span>
               </Badge>
             )}

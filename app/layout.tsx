@@ -81,8 +81,14 @@ export const metadata: Metadata = {
   // dileepadev/docs/brand/favicon/, which is its only home.
   manifest: "/manifest.json",
   icons: {
+    // No `/favicon.ico` entry and no `shortcut`. `app/favicon.ico` is a file
+    // convention: Next serves it at `/favicon.ico` and emits its own
+    // `<link rel="icon" sizes="48x48" type="image/x-icon">` for it. Declaring
+    // it here as well put three ICO links in every page's head for one file.
+    // `public/favicon.ico` was deleted with them - it was a 16x16 copy that
+    // the 48x48 app-router one had been shadowing all along, so the better
+    // image was already winning and the other was dead weight.
     icon: [
-      { url: "/favicon.ico", sizes: "any" },
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
       { url: "/favicon-96x96.png", sizes: "96x96", type: "image/png" },
@@ -92,7 +98,6 @@ export const metadata: Metadata = {
         type: "image/png",
       },
     ],
-    shortcut: "/favicon.ico",
     apple: [
       { url: "/apple-icon-180x180.png", sizes: "180x180", type: "image/png" },
     ],

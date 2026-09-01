@@ -58,13 +58,13 @@ function CommentCard({
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
         <span
           aria-hidden="true"
-          className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border-strong bg-bg-surface font-mono text-[0.6875rem] text-fg-muted"
+          className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border-strong bg-bg-surface font-mono text-label text-fg-muted"
         >
           {initials(comment.author)}
         </span>
         <span className="font-medium">{comment.author}</span>
         {comment.authorIsOwner && (
-          <span className="rounded-sm border border-brand px-1.5 font-mono text-[0.6875rem] text-brand">
+          <span className="rounded-sm border border-brand px-1.5 font-mono text-label text-brand">
             Author
           </span>
         )}

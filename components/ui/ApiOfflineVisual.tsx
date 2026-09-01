@@ -13,6 +13,20 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+/**
+ * Type sizes below `--text-label` in this file are deliberate and must stay.
+ *
+ * The readout panel is `sm:h-[390px]` inside an `overflow-hidden` card, so its
+ * rows are drawn to a fixed box rather than flowing. Normalising 10px and 11px
+ * up to the 12px token was tried and clipped the last row off the bottom - the
+ * DIGEST line disappeared behind the card edge. These are annotation sizes in
+ * an illustration, the way a chart's tick labels are, not UI text a reader is
+ * meant to read at the body scale. The ASCII portrait's `text-[4px]` is the
+ * same argument taken to its limit: there, the font size *is* the pixel grid.
+ *
+ * DESIGN.md section 6 covers the type scale for interface text. This is not that.
+ */
+
 // Single-column frames - no trailing annotation on the same line
 const getUplinkFrames = (target: string) => [
   ` [ UPLINK PROBE ]
@@ -149,7 +163,9 @@ export function ApiOfflineVisual({
           <span className="w-2 h-2 rounded-full bg-border-strong inline-block shrink-0" />
           <span className="w-2 h-2 rounded-full bg-border-strong inline-block shrink-0" />
           <span className="w-2 h-2 rounded-full bg-border-strong inline-block shrink-0" />
-          <span className="ml-2 text-fg-muted truncate">uplink://{targetHost}/status</span>
+          <span className="ml-2 text-fg-muted truncate">
+            uplink://{targetHost}/status
+          </span>
         </div>
 
         {/* Tab Toggle */}
@@ -215,7 +231,9 @@ export function ApiOfflineVisual({
             <div className="text-[0.6875rem] text-fg-muted space-y-1 pt-2 border-t border-border-strong/40">
               <div className="flex items-center justify-between">
                 <span>GATEWAY:</span>
-                <span className="text-fg font-medium truncate ml-2">{targetHost}</span>
+                <span className="text-fg font-medium truncate ml-2">
+                  {targetHost}
+                </span>
               </div>
               <div className="flex items-center justify-between">
                 <span>STATE:</span>
@@ -237,7 +255,9 @@ export function ApiOfflineVisual({
                 disabled={isProbing}
                 className="btn btn--secondary !h-7 !px-2.5 text-xs inline-flex items-center gap-1.5 text-brand border-brand/30 hover:border-brand"
               >
-                <RefreshCw className={cn("h-3 w-3", isProbing && "animate-spin")} />
+                <RefreshCw
+                  className={cn("h-3 w-3", isProbing && "animate-spin")}
+                />
                 <span>{isProbing ? "Probing..." : "Probe gateway"}</span>
               </button>
 
@@ -271,16 +291,32 @@ export function ApiOfflineVisual({
               </span>
             </div>
             <p className="text-[0.75rem] text-fg-muted leading-relaxed">
-              While the live API is disconnected, the platform continues to serve
-              static pages and content pre-rendered from Git:
+              While the live API is disconnected, the platform continues to
+              serve static pages and content pre-rendered from Git:
             </p>
 
             <div className="space-y-1.5 pt-1">
               {[
-                { title: "Brand & Design Reference", path: "/brand", badge: "Static" },
-                { title: "Speaker Media Kit & Bios", path: "/profile", badge: "Static" },
-                { title: "Visual Sitemap & Directory", path: "/sitemap", badge: "Static" },
-                { title: "Legal & Terms of Service", path: "/privacy", badge: "Static" },
+                {
+                  title: "Brand & Design Reference",
+                  path: "/brand",
+                  badge: "Static",
+                },
+                {
+                  title: "Speaker Media Kit & Bios",
+                  path: "/profile",
+                  badge: "Static",
+                },
+                {
+                  title: "Visual Sitemap & Directory",
+                  path: "/sitemap",
+                  badge: "Static",
+                },
+                {
+                  title: "Legal & Terms of Service",
+                  path: "/privacy",
+                  badge: "Static",
+                },
               ].map((item) => (
                 <Link
                   key={item.path}

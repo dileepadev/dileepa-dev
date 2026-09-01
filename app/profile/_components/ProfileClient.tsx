@@ -161,8 +161,7 @@ export function ProfileClient({
         }));
 
   const currentRole = experiences[0]?.title || about?.title || "AI Engineer";
-  const currentCompany =
-    experiences[0]?.company || "AI Systems & Engineering";
+  const currentCompany = experiences[0]?.company || "AI Systems & Engineering";
   const location = about?.location || "Sri Lanka";
 
   const handleCopy = useCallback((key: string, text: string) => {
@@ -324,7 +323,9 @@ export function ProfileClient({
               </div>
 
               <p className="text-small text-fg-muted pt-1">
-                Pronunciation: <span className="font-mono text-fg">di-lee-pa ban-da-ra</span> · Pronouns: <span className="font-mono text-fg">He / Him</span>
+                Pronunciation:{" "}
+                <span className="font-mono text-fg">di-lee-pa ban-da-ra</span> ·
+                Pronouns: <span className="font-mono text-fg">He / Him</span>
               </p>
             </div>
           </div>
@@ -361,7 +362,8 @@ export function ProfileClient({
           <div className="section-label">Copyable copy</div>
           <h2>Speaker biographies</h2>
           <p className="mt-2 text-fg-muted">
-            Pre-approved biographies in two lengths for event schedules, introduction notes, and speaker listings.
+            Pre-approved biographies in two lengths for event schedules,
+            introduction notes, and speaker listings.
           </p>
         </div>
 
@@ -377,9 +379,7 @@ export function ProfileClient({
                   For announcements &amp; social flyers
                 </span>
               </div>
-              <p className="text-fg text-small leading-relaxed">
-                {shortBio}
-              </p>
+              <p className="text-fg text-small leading-relaxed">{shortBio}</p>
             </div>
 
             <div className="pt-5 mt-4 border-t border-border-strong/60 flex items-center justify-between">
@@ -416,9 +416,7 @@ export function ProfileClient({
                   For conference agendas &amp; programs
                 </span>
               </div>
-              <p className="text-fg text-small leading-relaxed">
-                {fullBio}
-              </p>
+              <p className="text-fg text-small leading-relaxed">{fullBio}</p>
             </div>
 
             <div className="pt-5 mt-4 border-t border-border-strong/60 flex items-center justify-between">
@@ -452,7 +450,9 @@ export function ProfileClient({
           <div className="section-label">Media kit</div>
           <h2>Official headshots &amp; portraits</h2>
           <p className="mt-2 text-fg-muted">
-            High-resolution assets for print and digital media. Hover over any photo to inspect details, click to view in full screen, download in your preferred format, or copy the direct asset URL.
+            High-resolution assets for print and digital media. Hover over any
+            photo to inspect details, click to view in full screen, download in
+            your preferred format, or copy the direct asset URL.
           </p>
         </div>
 
@@ -492,7 +492,7 @@ export function ProfileClient({
 
                 {/* Format Pill */}
                 <div className="absolute top-2.5 left-2.5 pointer-events-none">
-                  <span className="inline-flex items-center px-2 py-0.5 rounded text-[0.6875rem] font-mono font-medium bg-bg/90 backdrop-blur-sm text-fg border border-border-strong">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded text-label font-mono font-medium bg-bg/90 backdrop-blur-sm text-fg border border-border-strong">
                     {photo.format}
                   </span>
                 </div>
@@ -502,10 +502,8 @@ export function ProfileClient({
               <div className="p-4 flex flex-col justify-between flex-1 space-y-4">
                 <div className="space-y-1.5">
                   <div className="flex items-baseline justify-between gap-2">
-                    <h3 className="text-sm font-bold text-fg">
-                      {photo.title}
-                    </h3>
-                    <span className="font-mono text-[0.6875rem] text-fg-muted shrink-0">
+                    <h3 className="text-sm font-bold text-fg">{photo.title}</h3>
+                    <span className="font-mono text-label text-fg-muted shrink-0">
                       {photo.size}
                     </span>
                   </div>
@@ -551,7 +549,8 @@ export function ProfileClient({
           <div className="section-label">Sessions &amp; talks</div>
           <h2>Keynote topics &amp; workshops</h2>
           <p className="mt-2 text-fg-muted">
-            Popular technical talk themes and hands-on workshops Dileepa regularly delivers for engineering conferences and meetups.
+            Popular technical talk themes and hands-on workshops Dileepa
+            regularly delivers for engineering conferences and meetups.
           </p>
         </div>
 
@@ -567,9 +566,7 @@ export function ProfileClient({
                     {topic.title}
                   </h3>
                 </div>
-                <p className="text-small text-fg-muted pl-8">
-                  {topic.summary}
-                </p>
+                <p className="text-small text-fg-muted pl-8">{topic.summary}</p>
               </div>
             </Card>
           ))}
@@ -582,7 +579,8 @@ export function ProfileClient({
           <div className="section-label">Verification</div>
           <h2>Connect &amp; verify credentials</h2>
           <p className="mt-2 text-fg-muted">
-            Official profiles, code repositories, recorded walkthroughs, and bio links to cite in your event material.
+            Official profiles, code repositories, recorded walkthroughs, and bio
+            links to cite in your event material.
           </p>
         </div>
 
@@ -608,7 +606,7 @@ export function ProfileClient({
                         {item.name}
                       </span>
                       {item.badge && (
-                        <span className="text-[0.625rem] font-mono px-1.5 py-0.5 rounded bg-brand/10 text-brand border border-brand/20">
+                        <span className="text-label font-mono px-1.5 py-0.5 rounded bg-brand/10 text-brand border border-brand/20">
                           {item.badge}
                         </span>
                       )}
@@ -629,7 +627,10 @@ export function ProfileClient({
                     title={`Open ${item.name} in new tab`}
                   >
                     <span>Open</span>
-                    <ExternalLink className="h-3 w-3 text-fg-muted" aria-hidden="true" />
+                    <ExternalLink
+                      className="h-3 w-3 text-fg-muted"
+                      aria-hidden="true"
+                    />
                   </a>
 
                   <button
@@ -640,12 +641,18 @@ export function ProfileClient({
                   >
                     {isCopied ? (
                       <>
-                        <Check className="h-3 w-3 text-brand" aria-hidden="true" />
+                        <Check
+                          className="h-3 w-3 text-brand"
+                          aria-hidden="true"
+                        />
                         <span className="text-brand">Copied</span>
                       </>
                     ) : (
                       <>
-                        <Copy className="h-3 w-3 text-fg-muted" aria-hidden="true" />
+                        <Copy
+                          className="h-3 w-3 text-fg-muted"
+                          aria-hidden="true"
+                        />
                         <span>Copy</span>
                       </>
                     )}
