@@ -70,9 +70,15 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
   },
-  // The favicon is the portrait, not the reduced mark — decided in the brand
-  // repo's Phase 1 and recorded in brand-guide.md §3.2. The full set is
-  // vendored from dileepadev/docs/brand/favicon/, which is its only home.
+  // The favicon is the portrait at every size — brand-guide.md §3.2. There is
+  // deliberately no SVG favicon: the identity is a photograph, a photograph
+  // has no vector form, and the alternatives are both worse than not having
+  // one. A vector of the `/.` mark would put a second design in the tab while
+  // every other surface shows the face; a PNG base64'd inside an SVG wrapper
+  // is the same pixels a third larger, with none of the scaling or
+  // colour-scheme behaviour that is the only reason to want SVG. Audit tools
+  // flag the absence as a tip; it stays flagged. The set is vendored from
+  // dileepadev/docs/brand/favicon/, which is its only home.
   manifest: "/manifest.json",
   icons: {
     icon: [
@@ -90,7 +96,10 @@ export const metadata: Metadata = {
     apple: [
       { url: "/apple-icon-180x180.png", sizes: "180x180", type: "image/png" },
     ],
-    other: [{ rel: "mask-icon", url: "/android-icon-512x512.png" }],
+    // No `mask-icon`. It pointed at a PNG, and Safari's pinned-tab icon has to
+    // be a monochrome SVG with a `color` attribute — so the tag has never done
+    // anything but add a line to every page's head. Safari 12 and later use the
+    // ordinary favicon for pinned tabs anyway, and that is now an SVG.
   },
   openGraph: {
     type: "website",

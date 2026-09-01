@@ -31,8 +31,16 @@ Changes are organized into the following categories:
 
 ### Changed - Unreleased
 
-- **The site title is sentence case**: `Dileepa Bandara — AI engineer`, which is the form
-  `/brand` has documented all along while the site shipped `Dileepa Bandara - AI Engineer`.
+- **Brand guide §3.2 now says why there is no SVG favicon**, rather than only that the favicon is
+  the portrait. A vector mark was built and checked at 16px before being rejected — it is legible,
+  so the section's original "smudge" reasoning is not what settles it. One identity across every
+  surface does. The note is there so the audit tip that prompted it does not reopen the question.
+
+- **The site title fills the space a search result gives it**: `Dileepa Bandara - AI Engineer
+  building agentic systems`, where it was 29 characters of a ~60-character result. `AI Engineer`
+  stays title case — it is the name of the role, and the brand guide's sentence-case rule has
+  always excepted proper nouns. The four documents that state that rule now name this one and
+  draw the line: the role is a proper noun, the discipline ("AI engineering") is not.
 - **Brand tokens re-vendored at v2.1** and `app/globals.css` trimmed to match. The override block
   restored the neutral ramp, the radius scale, the type steps, the control height, the hairline,
   both border weights, the button fill and every derived interaction token — about a hundred
@@ -42,6 +50,10 @@ Changes are organized into the following categories:
   version of both; the 503 there had already lost the gateway-host row the real one shows, and the
   two 500s disagreed on their button copy. Both now render the same components every other route
   renders, and "Go to the homepage" / "Explore the sitemap" read the same everywhere.
+- **`/brand` reads the live metadata instead of restating it.** The social-card preview and the
+  documented metadata snippet both hard-coded the title and description, and had drifted from the
+  real values three times. Both now interpolate `SITE_CONFIG`, so they cannot disagree with what
+  the page head actually emits.
 - The favicon previews on `/brand` are served as the files themselves rather than through the
   image optimizer — a re-encoded copy of an icon is not the icon on a page whose job is to show
   what ships.
@@ -107,6 +119,10 @@ Changes are organized into the following categories:
   it; `Subsection`'s comment described an uppercase, accented title that the CSS does not draw.
 
 ### Removed - Unreleased
+
+- **The `mask-icon` link.** It pointed at a PNG, and Safari's pinned-tab icon has to be a
+  monochrome SVG carrying a `color` attribute — so the tag added a line to every page's head and
+  did nothing. Safari 12 and later use the ordinary favicon regardless.
 
 - `@next/third-parties`, which nothing imports, and a direct `shiki` dependency pinned a major
   version behind the copy `@shikijs/rehype` actually uses — two Shiki installs, one of them dead.

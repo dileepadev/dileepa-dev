@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Check, Copy } from "lucide-react";
+import { SITE_CONFIG } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 interface ColorSwatchProps {
@@ -82,9 +83,7 @@ export function ColorSwatch({
 
       <div className="space-y-1">
         <div className="flex items-center justify-between gap-2">
-          <span className="font-mono text-xs font-medium text-fg">
-            {hex}
-          </span>
+          <span className="font-mono text-xs font-medium text-fg">{hex}</span>
           {contrastBadge && (
             <span
               className={cn(
@@ -107,9 +106,7 @@ export function ColorSwatch({
           {role}
         </p>
         {contrast && (
-          <div className="text-label font-mono text-fg-muted">
-            {contrast}
-          </div>
+          <div className="text-label font-mono text-fg-muted">{contrast}</div>
         )}
       </div>
 
@@ -289,16 +286,16 @@ export function SocialCardPreview() {
                 dileepa.dev
               </div>
               <div className="font-medium text-sm text-fg truncate">
-                Dileepa Bandara — AI engineer
+                {SITE_CONFIG.title}
               </div>
               <p className="text-xs text-fg-muted line-clamp-1">
-                AI engineer. Building AI systems and the community around them.
+                {SITE_CONFIG.metaDescription}
               </p>
             </div>
           ) : (
             <div className="p-3.5 bg-bg-surface border-t border-border-strong space-y-0.5">
               <div className="font-bold text-sm text-fg truncate">
-                Dileepa Bandara — AI engineer
+                {SITE_CONFIG.title}
               </div>
               <div className="font-mono text-xs text-fg-muted">
                 dileepa.dev · 2 min read
@@ -336,4 +333,3 @@ export function SocialCardPreview() {
     </div>
   );
 }
-

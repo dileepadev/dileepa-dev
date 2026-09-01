@@ -199,7 +199,9 @@ Interactive affordances follow strict physical consistency across the platform:
 
 ### 2.6 Sentence Case Everywhere
 
-All titles, navigation links, buttons, table headers, badges, and labels use **sentence case**. Title Case and ALL-CAPS are prohibited unless rendering an acronym (e.g., API, RSS, AWS, LLM).
+All titles, navigation links, buttons, table headers, badges, and labels use **sentence case**. Title Case and ALL-CAPS are prohibited unless rendering an acronym (e.g., API, RSS, AWS, LLM) or a proper noun.
+
+**The role is a proper noun: `AI Engineer`.** Title case wherever it is a label — the site `<title>`, the Person schema's `jobTitle`, the role line under the hero portrait, the terminal profile. The *discipline* is not, and stays lowercase: "AI engineering" in a section intro, "an AI engineer" in the running prose of a biography.
 
 ---
 

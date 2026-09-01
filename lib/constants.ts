@@ -3,7 +3,9 @@
 //
 // Copy lives here, not inline in components, so the voice can be reviewed in
 // one place. Voice rules: dileepadev/docs/brand/voice.md. Plain, specific,
-// unhurried — and sentence case in every string a reader sees.
+// unhurried — and sentence case in every string a reader sees, except proper
+// nouns. The role `AI Engineer` is one of those; the discipline
+// "AI engineering" is not. See the note on SITE_CONFIG.title.
 //
 // Banned without exception: passionate about, leveraging, cutting-edge,
 // revolutionize, game-changing, unlock, seamless, AI enthusiast, thought
@@ -14,15 +16,17 @@ import type { NavLink } from "./types";
 
 export const SITE_CONFIG = {
   name: "Dileepa Bandara",
-  // Sentence case, and an em dash rather than a hyphen — the form the brand
-  // page has documented as this site's `<title>` all along, while the site
-  // itself shipped "AI Engineer" behind a hyphen. `jobTitle` in the Person
-  // schema stays title case: that is a schema.org value, not site copy.
+  // "AI Engineer" is title case here and in every other role *label* — the
+  // Person schema's `jobTitle`, the line under the hero portrait, the terminal
+  // profile's role field. It is the name of the role, and the sentence-case
+  // rule covers headings, buttons, nav and labels, not proper nouns. The
+  // discipline keeps its lowercase: "AI engineering" in the Work intro and the
+  // pillar cards, and "an AI engineer" in the running prose of a biography.
   //
   // Metadata only — no heading renders this. Long enough to fill the ~60
-  // characters a result gets before Google truncates it, which "Dileepa
-  // Bandara — AI engineer" left more than half of unused.
-  title: "Dileepa Bandara — AI engineer building agentic systems",
+  // characters a result gets before Google truncates it, which the previous
+  // 29-character form left more than half of unused.
+  title: "Dileepa Bandara - AI Engineer building agentic systems",
   // Says what is here and what the person does, without adjectives doing the
   // work. The v1 description opened with "passionate about" and closed on
   // "something amazing together"; both are gone.
@@ -33,7 +37,7 @@ export const SITE_CONFIG = {
   // sentence is right for a search result and wrong for all four, which is
   // what `metaDescription` below is for.
   description:
-    "AI engineer. Building AI systems and the community around them.",
+    "AI Engineer. Building AI systems and the community around them.",
   /**
    * The search and social description.
    *
@@ -45,7 +49,7 @@ export const SITE_CONFIG = {
    * and compose its own, short enough to survive a card intact.
    */
   metaDescription:
-    "AI engineer building agentic systems, LLM pipelines and the infrastructure that runs them. Notes, talks and workshops.",
+    "AI Engineer building agentic systems, LLM pipelines and the infrastructure that runs them. Notes, talks and workshops.",
   // The origin the site is actually served from. Canonical URLs, the sitemap
   // and the RSS feed are all composed from it, so a wrong value here points
   // every canonical tag at somewhere else.
@@ -346,7 +350,8 @@ export const PAGES = {
   blog: {
     meta: {
       title: "Writing on AI systems and engineering",
-      description: "Notes on agentic systems, LLM pipelines, evaluation, and the engineering behind AI that actually runs in production.",
+      description:
+        "Notes on agentic systems, LLM pipelines, evaluation, and the engineering behind AI that actually runs in production.",
     },
     label: "Blog",
     title: "Writing",
@@ -357,7 +362,8 @@ export const PAGES = {
   projects: {
     meta: {
       title: "Open source projects and experiments",
-      description: "Things I have built, maintained and contributed to — agent frameworks, developer tooling and cloud infrastructure work.",
+      description:
+        "Things I have built, maintained and contributed to — agent frameworks, developer tooling and cloud infrastructure work.",
     },
     label: "Projects",
     title: "Things I have built",

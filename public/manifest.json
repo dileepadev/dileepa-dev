@@ -2,18 +2,14 @@
   "id": "/",
   "name": "Dileepa Bandara",
   "short_name": "dileepadev",
-  "description": "AI engineer. Building AI systems and the community around them.",
+  "description": "AI Engineer. Building AI systems and the community around them.",
   "lang": "en",
   "dir": "ltr",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "any",
-  "categories": [
-    "personal",
-    "education",
-    "developer"
-  ],
+  "categories": ["personal", "education", "developer"],
   "theme_color": "#050505",
   "background_color": "#050505",
   "icons": [

@@ -133,7 +133,10 @@ body text rather than a heading in its own right.
 ### 2.3 Rules
 
 - **Sentence case everywhere.** Headings, buttons, nav, slide titles. Title Case is for proper
-  nouns.
+  nouns — **including the role, which is `AI Engineer`.** That covers it wherever it is used as a
+  label: the site `<title>`, the Person schema's `jobTitle`, the line under the hero portrait, the
+  terminal profile's role field. The discipline is not a proper noun and stays lowercase — "AI
+  engineering" in a section intro, "an AI engineer" in the running prose of a biography.
 - Body copy caps at ~68 characters per line.
 - Never set body text in mono. Mono is for things that are literally code, numbers, or
   identifiers.
@@ -171,6 +174,26 @@ centered on a Carbon or Paper field.
 **The favicon and app icons are the portrait, not the mark.** At 16px the `/.` reads as a smudge,
 and the face is what people already recognise across the platform's other surfaces. The reduced
 mark stays the answer for in-product square placements where a photograph would be wrong.
+
+**There is deliberately no SVG favicon, and there is not going to be one.** SEO and metadata
+audit tools flag its absence as a tip, and the tip is sound in general and inapplicable here: the
+identity is a photograph, and a photograph has no vector form. Both ways of answering the tool
+are worse than leaving it flagged.
+
+- A vector of the `/.` would put **a second design** in the browser tab while every other surface
+  — home screen, app icon, share sheet, this page — shows the face. One identity, rendered
+  consistently, beats a scalable one that disagrees with the rest of the platform. This was
+  built and measured before it was rejected: the mark does hold two distinct strokes at 16px when
+  it is drawn as geometry rather than set in type, so the original "smudge" reasoning above is
+  not the reason it was dropped. Consistency is.
+- A PNG base64'd inside an SVG wrapper satisfies the checker and nothing else: the same pixels,
+  roughly a third larger, with none of the scaling or `prefers-color-scheme` behaviour that is
+  the only reason to want SVG in the first place.
+
+> [!NOTE]
+> `logo/mark-dark.svg` and `logo/mark-light.svg` still italicise the slash. Brand tokens v2.1
+> sets it upright at weight 700 (`.mark` in `brand-tokens.css`), so those two files are stale
+> against the sheet and should be redrawn.
 
 ### 3.3 Custom mark, if commissioned later
 

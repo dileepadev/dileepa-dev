@@ -188,7 +188,7 @@ function banner(p: Palette, about: About | null): string[] {
   const bottom = `${GUTTER}${p.muted(`\u255a${"\u2550".repeat(boxInner)}\u255d`)}`;
 
   const name = first(about?.name, SITE_CONFIG.name);
-  const role = first(about?.title, "AI engineer");
+  const role = first(about?.title, "AI Engineer");
   const location = first(about?.location);
   const meta = [role, location].filter(Boolean).join(" \u00b7 ");
 

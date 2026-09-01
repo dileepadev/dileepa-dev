@@ -86,6 +86,12 @@ versions — version drift between the two apps is the thing v2.0.0 exists to en
   `og:url` and `og:image` resolve against. A preview that describes itself with the production
   origin points its card at another site: that is how every preview shipped an `og:image` of
   `https://dileepa.dev/og.png` while production was still v1 and had no such file.
+- **The favicon is the portrait at every size, and there is no SVG one.** Audit tools flag the
+  missing SVG favicon; leave it flagged. The identity is a photograph, so a vector would have to
+  be the `/.` mark — a second design in the tab while every other surface shows the face — and an
+  SVG wrapping a base64 PNG is the same pixels a third larger with none of SVG's benefits. Brand
+  guide §3.2 records both, so it does not get re-litigated. The set is vendored from
+  `dileepadev/docs/brand/favicon/`.
 - **`SITE_CONFIG.description` is UI copy, `SITE_CONFIG.metaDescription` is the search snippet.**
   The short one is the hero's fallback heading, the footer line, the terminal profile and the web
   manifest; the long one is the only thing a `<meta name="description">` or a card should carry.
@@ -115,7 +121,10 @@ never re-declare values.
 - Never Emerald Deep on Carbon. Never Emerald Bright on Paper.
 - Manrope (display + UI) and JetBrains Mono (code, dates, metadata) via `next/font`.
 - Weights **400, 500, 700 only**. No 600.
-- Sentence case everywhere — headings, buttons, nav, labels.
+- Sentence case everywhere — headings, buttons, nav, labels. Proper nouns keep their case, and
+  **the role is one: `AI Engineer`**, wherever it is a label (the site title, `jobTitle`, the
+  hero role line, the terminal profile). The discipline stays lowercase: "AI engineering", and
+  "an AI engineer" in prose. A blanket find-and-replace over this distinction breaks it.
 - Emerald appears **once per surface** as a deliberate accent, not scattered.
 - No hard-coded hex in components. If you're typing `#`, you're doing it wrong.
 - Banned in copy, without exception: *passionate about, leveraging, cutting-edge, revolutionize,

@@ -143,13 +143,13 @@ const metadataSnippet = `export const metadata: Metadata = {
   // a different site and the og:image 404s.
   metadataBase: new URL(METADATA_ORIGIN),
   title: {
-    default: "Dileepa Bandara — AI engineer building agentic systems",
+    default: "${SITE_CONFIG.title}",
     template: "%s · Dileepa Bandara",
   },
   // The long form. SITE_CONFIG.description is the short line the hero, the
   // footer and the terminal profile use; a search snippet gets ~155 characters
   // and Google writes its own when the supplied one is too thin.
-  description: SITE_CONFIG.metaDescription,
+  description: "${SITE_CONFIG.metaDescription}",
   alternates: { canonical: "/" },
   manifest: "/manifest.json",
   icons: {
@@ -167,15 +167,15 @@ const metadataSnippet = `export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: METADATA_ORIGIN,
-    title: "Dileepa Bandara — AI engineer building agentic systems",
-    description: SITE_CONFIG.metaDescription,
+    title: "${SITE_CONFIG.title}",
+    description: "${SITE_CONFIG.metaDescription}",
     siteName: "Dileepa Bandara",
     images: [{ url: "/og.png", width: 1200, height: 630, type: "image/png" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Dileepa Bandara — AI engineer building agentic systems",
-    description: SITE_CONFIG.metaDescription,
+    title: "${SITE_CONFIG.title}",
+    description: "${SITE_CONFIG.metaDescription}",
     site: "@dileepadev",
     creator: "@dileepadev",
     images: [{ url: "/og.png", width: 1200, height: 630, type: "image/png" }],
@@ -218,7 +218,7 @@ export default async function BrandPage() {
   const portraitUrl = getPortraitUrl(about?.images) || "/profile/v2.webp";
   const transparentPortrait = "/profile/v2-transparent.png";
   const name = about?.name || SITE_CONFIG.name;
-  const role = about?.title || "AI engineer";
+  const role = about?.title || "AI Engineer";
 
   const fullLockupSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 32" height="32" fill="none">
   <text x="0" y="24" font-family="Manrope, system-ui, sans-serif" font-size="20" font-weight="500" letter-spacing="-0.02em" fill="#f1f1f1">dileepadev</text>
@@ -419,7 +419,9 @@ export default async function BrandPage() {
                   </div>
                   <div className="flex justify-between pb-1">
                     <span>Forbidden</span>
-                    <span className="text-error">No neural-net / AI clichés</span>
+                    <span className="text-error">
+                      No neural-net / AI clichés
+                    </span>
                   </div>
                 </div>
               </div>
@@ -440,9 +442,13 @@ export default async function BrandPage() {
                 <span>Mark rules — do</span>
               </div>
               <ul className="text-xs text-fg-muted space-y-1.5 list-disc list-inside">
-                <li>Wordmark stays neutral; emerald is reserved for the mark `/.`</li>
+                <li>
+                  Wordmark stays neutral; emerald is reserved for the mark `/.`
+                </li>
                 <li>Set mark upright at weight 700 (bold), never italic</li>
-                <li>Maintain minimum clear space equal to the wordmark cap-height</li>
+                <li>
+                  Maintain minimum clear space equal to the wordmark cap-height
+                </li>
                 <li>Write all brand text in sentence case</li>
               </ul>
             </div>
@@ -455,7 +461,9 @@ export default async function BrandPage() {
               <ul className="text-xs text-fg-muted space-y-1.5 list-disc list-inside">
                 <li>Never color the wordmark in emerald</li>
                 <li>Never apply gradients, drop shadows, or outlines</li>
-                <li>Never use AI visual clichés: brains, robots, or circuit trees</li>
+                <li>
+                  Never use AI visual clichés: brains, robots, or circuit trees
+                </li>
                 <li>Never use Title Case or ALL-CAPS in logo copy</li>
               </ul>
             </div>
@@ -527,9 +535,9 @@ export default async function BrandPage() {
                 />
               </div>
               <p className="mt-2 text-xs text-fg-muted">
-                Emerald appears <strong>once per surface</strong> as an intentional
-                focal point. Scattering emerald links, chips, and icons dilutes
-                visual hierarchy.
+                Emerald appears <strong>once per surface</strong> as an
+                intentional focal point. Scattering emerald links, chips, and
+                icons dilutes visual hierarchy.
               </p>
             </div>
 
@@ -735,8 +743,8 @@ export default async function BrandPage() {
                     <span className="text-error font-medium">2.4:1 (Fail)</span>
                   </div>
                   <div className="p-2 text-fg-muted text-label">
-                    Never use light accent on light background, nor dark accent on
-                    dark background.
+                    Never use light accent on light background, nor dark accent
+                    on dark background.
                   </div>
                 </div>
               </div>
@@ -874,8 +882,9 @@ export default async function BrandPage() {
           <div className="mt-6">
             <Subsection title="The three portrait field grounds">
               <p className="text-xs text-fg-muted mb-4">
-                The official hero portrait for {name} ({role}) sits on verified neutral fields to guarantee contrast
-                and prevent visual clash across platform crops.
+                The official hero portrait for {name} ({role}) sits on verified
+                neutral fields to guarantee contrast and prevent visual clash
+                across platform crops.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
                 {/* Field 1: Default */}
@@ -993,7 +1002,7 @@ export default async function BrandPage() {
           <div className="mt-6">
             <Subsection
               title="Favicon suite"
-              note="The favicon is the circular portrait, not the reduced mark (decided in brand guide §3.2)."
+              note="The circular portrait at every size, and no vector — the identity is a photograph (brand guide §3.2)."
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
                 {FAVICONS.map((icon) => (
@@ -1032,7 +1041,9 @@ export default async function BrandPage() {
                     </p>
 
                     <div className="pt-2 border-t border-border-strong/60 flex items-center justify-between text-label font-mono">
-                      <span className="text-fg-muted truncate">{icon.filename}</span>
+                      <span className="text-fg-muted truncate">
+                        {icon.filename}
+                      </span>
                       <a
                         href={icon.src}
                         download={icon.filename}
@@ -1076,9 +1087,7 @@ export default async function BrandPage() {
                           {ep.type}
                         </span>
                       </div>
-                      <p className="text-xs text-fg-muted">
-                        {ep.description}
-                      </p>
+                      <p className="text-xs text-fg-muted">{ep.description}</p>
                     </div>
 
                     <a
@@ -1088,7 +1097,10 @@ export default async function BrandPage() {
                       className="btn btn--secondary !h-7 !px-2.5 text-xs inline-flex items-center gap-1 shrink-0 self-end sm:self-auto font-mono"
                     >
                       <span>Inspect</span>
-                      <ExternalLink className="h-3 w-3 text-fg-muted" aria-hidden="true" />
+                      <ExternalLink
+                        className="h-3 w-3 text-fg-muted"
+                        aria-hidden="true"
+                      />
                     </a>
                   </div>
                 ))}
@@ -1150,12 +1162,8 @@ export default async function BrandPage() {
                 <span className="text-brand">40px height</span>
               </div>
               <div className="flex flex-wrap items-center gap-3">
-                <Button variant="primary">
-                  Primary button
-                </Button>
-                <Button variant="secondary">
-                  Secondary button
-                </Button>
+                <Button variant="primary">Primary button</Button>
+                <Button variant="secondary">Secondary button</Button>
                 <LinkButton href="#mark" variant="secondary">
                   <span>Link button</span>
                   <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
@@ -1166,10 +1174,13 @@ export default async function BrandPage() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono text-fg-muted pt-3 border-t border-border-strong/40">
                 <div>
-                  <span className="text-fg font-medium">.btn--primary:</span> Solid emerald fill (`var(--brand-fill)`), dark text (`var(--on-brand)`).
+                  <span className="text-fg font-medium">.btn--primary:</span>{" "}
+                  Solid emerald fill (`var(--brand-fill)`), dark text
+                  (`var(--on-brand)`).
                 </div>
                 <div>
-                  <span className="text-fg font-medium">.btn--secondary:</span> Transparent, border (`var(--border-strong)`), hover surface.
+                  <span className="text-fg font-medium">.btn--secondary:</span>{" "}
+                  Transparent, border (`var(--border-strong)`), hover surface.
                 </div>
               </div>
             </div>
@@ -1182,7 +1193,8 @@ export default async function BrandPage() {
               <div className="space-y-3">
                 <div>
                   <div className="text-label font-mono text-fg-muted mb-1.5">
-                    Static (read-only metadata, status, tech stack — calm, no hover):
+                    Static (read-only metadata, status, tech stack — calm, no
+                    hover):
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
                     <StatusBadge>Available for work</StatusBadge>
@@ -1194,7 +1206,8 @@ export default async function BrandPage() {
                 </div>
                 <div>
                   <div className="text-label font-mono text-fg-muted mb-1.5">
-                    Interactive (links, filter buttons — cursor-pointer &amp; brand hover):
+                    Interactive (links, filter buttons — cursor-pointer &amp;
+                    brand hover):
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
                     <Badge interactive>Next.js</Badge>
@@ -1203,7 +1216,9 @@ export default async function BrandPage() {
                 </div>
               </div>
               <div className="font-mono text-label text-fg-muted pt-2 border-t border-border-strong/40">
-                Font: JetBrains Mono (Chip) / Manrope (Badge) · Size: 12px · Tracking: 0.01em · Hover reserved strictly for interactive targets
+                Font: JetBrains Mono (Chip) / Manrope (Badge) · Size: 12px ·
+                Tracking: 0.01em · Hover reserved strictly for interactive
+                targets
               </div>
             </div>
           </div>
@@ -1281,7 +1296,9 @@ export default async function BrandPage() {
             </pre>
 
             <div className="mt-6 pt-4 border-t border-border-strong flex items-center justify-between flex-wrap gap-4 text-xs font-mono text-fg-muted">
-              <div>Canonical specification: DESIGN.md & docs/brand-guide.md</div>
+              <div>
+                Canonical specification: DESIGN.md & docs/brand-guide.md
+              </div>
               <div className="flex items-center gap-3">
                 <Link
                   href="/sitemap"
