@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { GitBranch } from "lucide-react";
-import { FaGithub } from "react-icons/fa6";
-import { Container, Lockup } from "@/components/ui";
+import { FaGithub } from "@/components/icons/SocialIcons";
+import { Container, CurlHint, Lockup } from "@/components/ui";
 import { FOOTER_LINKS, SITE_CONFIG } from "@/lib/constants";
 import { SOCIAL_ICONS } from "@/lib/social-icons";
 import type { About } from "@/lib/api-types";
@@ -58,7 +58,7 @@ export function Footer({ about }: { about?: About | null }) {
 
           {FOOTER_LINKS.map((column) => (
             <div key={column.title} className="footer-col">
-              {/* Column titles are mono — they are labels, not headings. */}
+              {/* Column titles are mono - they are labels, not headings. */}
               <div className="footer-col-title">{column.title}</div>
               {column.links.map((link) => {
                 const active = isLinkActive(link.href);
@@ -89,10 +89,60 @@ export function Footer({ about }: { about?: About | null }) {
         </div>
 
         <div className="footer-bottom">
-          <span>
-            © {new Date().getFullYear()} {SITE_CONFIG.author}
-          </span>
+          <div className="footer-legal">
+            <span>
+              © {new Date().getFullYear()} {SITE_CONFIG.author}
+            </span>
+            {/* The site answers `curl` as well as a browser. This is the only
+                place that says so. */}
+            <CurlHint />
+          </div>
           <div className="footer-meta">
+            <Link
+              href="/profile"
+              className={cn(isLinkActive("/profile") && "is-active text-brand")}
+            >
+              Profile
+            </Link>
+            <span className="text-border-strong" aria-hidden="true">
+              /
+            </span>
+            <Link
+              href="/brand"
+              className={cn(isLinkActive("/brand") && "is-active text-brand")}
+            >
+              Brand
+            </Link>
+            <span className="text-border-strong" aria-hidden="true">
+              /
+            </span>
+            <Link
+              href="/privacy"
+              className={cn(isLinkActive("/privacy") && "is-active text-brand")}
+            >
+              Privacy
+            </Link>
+            <span className="text-border-strong" aria-hidden="true">
+              /
+            </span>
+            <Link
+              href="/terms"
+              className={cn(isLinkActive("/terms") && "is-active text-brand")}
+            >
+              Terms
+            </Link>
+            <span className="text-border-strong" aria-hidden="true">
+              /
+            </span>
+            <Link
+              href="/sitemap"
+              className={cn(isLinkActive("/sitemap") && "is-active text-brand")}
+            >
+              Sitemap
+            </Link>
+            <span className="text-border-strong" aria-hidden="true">
+              /
+            </span>
             <a
               href={SITE_CONFIG.repository}
               target="_blank"

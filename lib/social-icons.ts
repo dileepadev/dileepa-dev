@@ -1,4 +1,3 @@
-import type { IconType } from "react-icons";
 import {
   FaFacebook,
   FaGithub,
@@ -6,7 +5,8 @@ import {
   FaLinkedin,
   FaXTwitter,
   FaYoutube,
-} from "react-icons/fa6";
+  type SocialIconComponent,
+} from "@/components/icons/SocialIcons";
 
 /**
  * The social icon set.
@@ -20,7 +20,7 @@ export interface SocialIcon {
   label: string;
   key:
     "github" | "linkedin" | "xtwitter" | "youtube" | "instagram" | "facebook";
-  icon: IconType;
+  icon: SocialIconComponent;
 }
 
 export const SOCIAL_ICONS: SocialIcon[] = [

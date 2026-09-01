@@ -1,44 +1,57 @@
 import type { Metadata } from "next";
-import { Container, EmptyState, Section } from "@/components/ui";
-import { api } from "@/lib/api";
+import {
+  ApiOfflinePage,
+  Container,
+  EmptyState,
+  PagePath,
+  Section,
+} from "@/components/ui";
+import { api, checkApiHealth } from "@/lib/api";
+import { EMPTY_STATES, PAGES } from "@/lib/constants";
+import { pageMetadata } from "@/lib/metadata";
 import { CommunitySearch } from "./_components/CommunitySearch";
 
-export const metadata: Metadata = {
-  title: "Communities",
-  description: "Tech communities I organise with or contribute to.",
-  alternates: { canonical: "/communities" },
-};
+export const metadata: Metadata = pageMetadata({
+  title: PAGES.communities.meta.title,
+  description: PAGES.communities.meta.description,
+  path: "/communities",
+});
 
 export default async function CommunitiesPage() {
   const communities = await api.getCommunities();
   const total = communities.length;
+
+  if (total === 0) {
+    const health = await checkApiHealth();
+    if (!health.ok) {
+      return <ApiOfflinePage path="/communities" />;
+    }
+  }
 
   return (
     <Section>
       <Container>
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
-            <div className="section-label">Communities</div>
-            <h1>Communities</h1>
+            <div className="mb-2">
+              <PagePath path="/communities" />
+            </div>
+            <div className="section-label">{PAGES.communities.label}</div>
+            <h1>{PAGES.communities.title}</h1>
           </div>
           {total > 0 && (
-            <div className="font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1">
-              <span className="font-medium text-fg">{total}</span>{" "}
-              {total === 1 ? "group" : "groups"}
+            <div className="inline-flex items-center gap-1.5 font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1 transition-colors duration-150 hover:border-brand hover:bg-surface-hover hover:text-fg cursor-default">
+              <span className="font-medium text-fg">{total}</span>
+              <span>{total === 1 ? "Community" : "Communities"}</span>
             </div>
           )}
         </div>
 
-        <p className="section-intro">
-          Groups I organise with or contribute to, and what I do in each.
-        </p>
+        <p className="section-intro">{PAGES.communities.intro}</p>
 
         {communities.length === 0 ? (
           <div className="mt-10">
-            <EmptyState
-              title="No communities are listed yet."
-              hint="They appear here once they are added in the admin."
-            />
+            <EmptyState {...EMPTY_STATES.communities} />
           </div>
         ) : (
           <CommunitySearch communities={communities} />

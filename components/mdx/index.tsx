@@ -7,7 +7,7 @@ import { MarkdownImage } from "./MarkdownImage";
  * The components MDX renders into.
  *
  * Most elements are styled by `.prose` in globals.css rather than overridden
- * here — a component per tag would put the blog's styling in two places. These
+ * here - a component per tag would put the blog's styling in two places. These
  * exist because they need behaviour, not styling.
  */
 export const mdxComponents: MDXComponents = {

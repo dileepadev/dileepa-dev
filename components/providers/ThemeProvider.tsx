@@ -3,6 +3,23 @@
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { type ReactNode } from "react";
 
+// React 19 warns when next-themes injects its inline FOUC-prevention script during
+// client-side rendering. Filter this known false positive to prevent the dev overlay from triggering.
+if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
+  const originalError = console.error;
+  console.error = (...args: unknown[]) => {
+    if (
+      typeof args[0] === "string" &&
+      args[0].includes(
+        "Encountered a script tag while rendering React component",
+      )
+    ) {
+      return;
+    }
+    originalError.apply(console, args);
+  };
+}
+
 interface ThemeProviderProps {
   children: ReactNode;
 }

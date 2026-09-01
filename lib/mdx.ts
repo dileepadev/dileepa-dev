@@ -4,7 +4,7 @@
  * Shiki runs at build time and emits both themes into the same markup, keyed
  * by CSS variables, so highlighting follows the site theme without shipping a
  * second copy of every code block or a client-side highlighter. `github-light`
- * and `github-dark` are the themes the Astro blog used — same output, so the
+ * and `github-dark` are the themes the Astro blog used - same output, so the
  * migration is not a visible downgrade.
  */
 
@@ -17,7 +17,7 @@ import remarkGfm from "remark-gfm";
 export const mdxOptions: MDXRemoteProps["options"] = {
   parseFrontmatter: false,
   mdxOptions: {
-    // Parse as Markdown, not MDX. The posts are plain Markdown by contract —
+    // Parse as Markdown, not MDX. The posts are plain Markdown by contract -
     // `blog-dileepa-dev/AGENTS.md` says so, and a post needing a component is
     // a missing feature here rather than JSX in prose. Left at the default
     // `mdx`, ordinary Markdown is a syntax error: `<` starts JSX, so a bare

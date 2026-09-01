@@ -10,7 +10,7 @@ import { Engagement } from "./Engagement";
  * Owns everything about a post that changes after it is published.
  *
  * The action bar shows a comment count and the comment section shows the
- * comments — one list, read by two components, so one of them has to own it and
+ * comments - one list, read by two components, so one of them has to own it and
  * neither of them is the right one. This is.
  *
  * It also means the thread is fetched **once**. Letting the bar count comments

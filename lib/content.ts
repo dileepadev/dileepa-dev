@@ -3,7 +3,7 @@
  *
  * Three stores, each holding what it is good at: Git holds the words,
  * Cloudinary holds the images, MongoDB holds the index. This module is the Git
- * half — see `content-pipeline.md`.
+ * half - see `content-pipeline.md`.
  *
  * **The ref is pinned.** Fetching `main` would make a build's output depend on
  * when it ran, so an in-progress edit could ship by accident and a rebuild
@@ -56,7 +56,7 @@ export interface PostContent {
  * Eight of the eighteen posts carry `import SeriesBox from
  * "../../components/SeriesBox.astro"` and a `<SeriesBox …/>` call. An Astro
  * component cannot compile here, and the series navigation is rendered from
- * the `series` and `seriesOrder` front matter instead — which is what
+ * the `series` and `seriesOrder` front matter instead - which is what
  * `content-pipeline.md` §7 specifies.
  *
  * The blog repo strips these during the content move. This runs anyway: a post
@@ -74,7 +74,7 @@ function sanitise(body: string): string {
  * The slug is the file name, not the path.
  *
  * Posts are grouped as `posts/<year>/<month>/<slug>.md`. The directories are
- * grouping and were never part of the URL — the slug is the URL and a
+ * grouping and were never part of the URL - the slug is the URL and a
  * published one is never renamed. See `redirects.md`.
  */
 function slugOf(filepath: string): string {
@@ -93,16 +93,75 @@ function parse(filepath: string, raw: string): PostContent {
   };
 }
 
+/**
+ * Fetch, retrying the failures that are the network rather than the answer.
+ *
+ * A build reads a tree listing from `api.github.com`, then one file per post
+ * from `raw.githubusercontent.com`. A single connect timeout to either fails
+ * the whole build - `next build` exits non-zero on a prerender error - so a
+ * blip lasting ten seconds costs a deploy. That happened four times in one
+ * afternoon of local builds, on IPv6 addresses that resolved but would not
+ * connect.
+ *
+ * The detail that matters: those failures **throw**. undici raises
+ * `UND_ERR_CONNECT_TIMEOUT` as a `TypeError: fetch failed`, so a retry that
+ * only inspects `response.ok` never runs. This catches the throw as well as
+ * retrying 429 and 5xx.
+ *
+ * A 404 is not retried. It is a real answer, and the build should fail on it
+ * with the message that names the ref and the path.
+ *
+ * `lib/api.ts` grew the same guard for the portfolio API's rate limit. Content
+ * had none, which left the two halves of a build with different resilience for
+ * no reason beyond which one had been bitten first.
+ */
+const FETCH_RETRIES = 3;
+const FETCH_BACKOFF_MS = 400;
+
+async function fetchRetrying(
+  url: string,
+  init?: RequestInit,
+): Promise<Response> {
+  let lastError: unknown;
+
+  for (let attempt = 0; attempt <= FETCH_RETRIES; attempt += 1) {
+    if (attempt > 0) {
+      const waitMs = FETCH_BACKOFF_MS * 2 ** (attempt - 1);
+      await new Promise((resolve) => setTimeout(resolve, waitMs));
+    }
+    try {
+      const response = await fetch(url, init);
+      if (response.status === 429 || response.status >= 500) {
+        // Cancel rather than leave the socket holding a body nothing reads.
+        await response.body?.cancel();
+        lastError = new Error(`${url} returned ${response.status}`);
+        continue;
+      }
+      return response;
+    } catch (error) {
+      // Connect timeout, DNS failure, socket reset. Not an answer; ask again.
+      lastError = error;
+    }
+  }
+
+  throw lastError instanceof Error
+    ? new Error(
+        `${url} failed after ${FETCH_RETRIES + 1} attempts: ${lastError.message}`,
+        { cause: lastError },
+      )
+    : lastError;
+}
+
 async function githubJson<T>(url: string): Promise<T> {
-  const response = await fetch(url, {
+  const response = await fetchRetrying(url, {
     headers: {
       Accept: "application/vnd.github+json",
       // The repo is public so this works unauthenticated, but the anonymous
       // rate limit is low enough that a build fetching 18 files plus a listing
-      // can hit it — and the failure then looks like a content bug.
+      // can hit it - and the failure then looks like a content bug.
       ...(TOKEN ? { Authorization: `Bearer ${TOKEN}` } : {}),
     },
-    next: { revalidate: false },
+    next: { revalidate: 300 },
   });
   if (!response.ok) {
     throw new Error(
@@ -146,7 +205,7 @@ async function listRemote(): Promise<PostContent[]> {
   // The Git trees API rather than the contents API: posts are nested under
   // year and month directories, and `recursive=1` returns the whole tree in one
   // request instead of one request per month. On a repo this size the tree is
-  // never truncated, but the flag is checked rather than assumed — a silently
+  // never truncated, but the flag is checked rather than assumed - a silently
   // short list would look like posts had been deleted.
   const tree = await githubJson<{
     tree: { path: string; type: string }[];
@@ -169,9 +228,9 @@ async function listRemote(): Promise<PostContent[]> {
 
   return Promise.all(
     files.map(async (file) => {
-      const response = await fetch(
+      const response = await fetchRetrying(
         `https://raw.githubusercontent.com/${REPO}/${REF}/${file.path}`,
-        { next: { revalidate: false } },
+        { next: { revalidate: 300 } },
       );
       if (!response.ok) {
         throw new Error(`Could not read ${file.path} from ${REPO}@${REF}`);
@@ -196,7 +255,7 @@ let cache: Promise<Map<string, PostContent>> | null = null;
  * `listRemote` filters a whole-repo tree down to `POSTS_DIR`, so a ref that
  * does not carry that directory yields zero files rather than an error. The
  * index is built from the API and goes on listing every post, so the only
- * symptom is that every `/blog/[slug]` falls through to `notFound()` — a build
+ * symptom is that every `/blog/[slug]` falls through to `notFound()` - a build
  * that prerenders eighteen 404 pages and reports success.
  *
  * That is exactly what a ref pointing at the pre-v2.0.0 blog repo did, where
@@ -240,5 +299,42 @@ export async function getPostContent(
   slug: string,
 ): Promise<PostContent | null> {
   const posts = await getAllContent();
-  return posts.get(slug) ?? null;
+  const existing = posts.get(slug);
+  if (existing) return existing;
+
+  // On-demand fallback: fetch directly by date-scoped slug path if newly added
+  try {
+    const match = slug.match(/^(\d{4})-(\d{2})-\d{2}-/);
+    if (match) {
+      const [, year, month] = match;
+      const relPath = `${POSTS_DIR}/${year}/${month}/${slug}.md`;
+      if (LOCAL_PATH) {
+        const fullPath = path.resolve(LOCAL_PATH, relPath);
+        const raw = await fs.readFile(fullPath, "utf8");
+        const parsed = parse(fullPath, raw);
+        posts.set(slug, parsed);
+        return parsed;
+      }
+      const response = await fetchRetrying(
+        `https://raw.githubusercontent.com/${REPO}/${REF}/${relPath}`,
+        { next: { revalidate: 300 } },
+      );
+      if (response.ok) {
+        const raw = await response.text();
+        const parsed = parse(relPath, raw);
+        posts.set(slug, parsed);
+        return parsed;
+      }
+    }
+
+    // Fallback scan if naming doesn't match standard year/month pattern
+    const fresh = await (LOCAL_PATH ? listLocal() : listRemote());
+    for (const post of fresh) {
+      posts.set(post.slug, post);
+    }
+    return posts.get(slug) ?? null;
+  } catch (error) {
+    console.error(`[content] Failed on-demand fetch for ${slug}:`, error);
+    return null;
+  }
 }

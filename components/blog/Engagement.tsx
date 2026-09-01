@@ -2,20 +2,20 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Check, Eye, Link2, MessageSquare, Share2 } from "lucide-react";
-import { FaLinkedin, FaXTwitter } from "react-icons/fa6";
+import { FaLinkedin, FaXTwitter } from "@/components/icons/SocialIcons";
 import { api } from "@/lib/api";
 import type { BlogEngagement, ReactionKind } from "@/lib/api-types";
 import { ReactionPicker, ReactionSummary, totalReactions } from "./reactions";
 
 /**
- * The post's action bar: react, comment, share — plus the counts above it.
+ * The post's action bar: react, comment, share - plus the counts above it.
  *
  * Everything else on a post page is built once, from Git and the API. These
  * numbers cannot be: they change while the page is open. So this is a client
  * component that fetches on mount.
  *
  * **It fails quietly.** If the API is unreachable the counts and the react
- * button do not render — but *share still does*, because sharing needs nothing
+ * button do not render - but *share still does*, because sharing needs nothing
  * from the API and a reader who wanted to send the article on should not be
  * stopped by a counter being down.
  */
@@ -116,7 +116,7 @@ function ShareActions({ url, title }: { url: string; title: string }) {
 /**
  * Don't count the same reader twice in one browsing session.
  *
- * A courtesy, not the guarantee — the API de-duplicates per reader per 24 hours
+ * A courtesy, not the guarantee - the API de-duplicates per reader per 24 hours
  * and is what keeps the number honest. This avoids a request already known to
  * be a no-op, including the second one StrictMode fires in development.
  */
@@ -193,7 +193,7 @@ export function Engagement({
 
   return (
     <div className="flex flex-col gap-3">
-      {/* The counts, above the bar and separated from it — LinkedIn's shape,
+      {/* The counts, above the bar and separated from it - LinkedIn's shape,
           and the reason it works: the numbers are a summary of what happened,
           the bar is what you can do next. */}
       {hasSummary && (

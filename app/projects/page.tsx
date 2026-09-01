@@ -1,70 +1,61 @@
 import type { Metadata } from "next";
 import {
-  Chip,
+  ApiOfflinePage,
   Container,
   EmptyState,
-  Item,
-  ItemList,
+  PagePath,
   Section,
 } from "@/components/ui";
-import { api } from "@/lib/api";
-import { EMPTY_STATES } from "@/lib/constants";
-import { humanise } from "@/lib/format";
+import { api, checkApiHealth } from "@/lib/api";
+import { EMPTY_STATES, PAGES } from "@/lib/constants";
+import { pageMetadata } from "@/lib/metadata";
+import { ProjectSearch } from "./_components/ProjectSearch";
 
-export const metadata: Metadata = {
-  title: "Projects",
-  description:
-    "Things I have built and keep running, with a write-up for each.",
-  alternates: { canonical: "/projects" },
-};
+export const metadata: Metadata = pageMetadata({
+  title: PAGES.projects.meta.title,
+  description: PAGES.projects.meta.description,
+  path: "/projects",
+});
 
 export default async function ProjectsPage() {
   const projects = await api.getProjects({ limit: 100 });
+  const total = projects.length;
+
+  if (total === 0) {
+    const health = await checkApiHealth();
+    if (!health.ok) {
+      return <ApiOfflinePage path="/projects" />;
+    }
+  }
 
   return (
     <Section>
       <Container>
-        <div className="section-label">Projects</div>
-        <h1>Things I have built</h1>
-        <p className="section-intro">
-          Each one has a longer write-up: what it does, what it is made of, and
-          what I would do differently.
-        </p>
-
-        <div className="mt-10">
-          {projects.length === 0 ? (
-            <EmptyState {...EMPTY_STATES.projects} />
-          ) : (
-            <ItemList>
-              {projects.map((project) => (
-                <Item
-                  key={project.id}
-                  title={project.name}
-                  href={`/projects/${project.slug}`}
-                  description={project.tagline || project.description}
-                  meta={
-                    <>
-                      <span className="block">{humanise(project.status)}</span>
-                      {project.role && (
-                        <span className="block">{project.role}</span>
-                      )}
-                    </>
-                  }
-                >
-                  {(project.stack ?? []).length > 0 && (
-                    <ul className="flex flex-wrap gap-2">
-                      {(project.stack ?? []).slice(0, 6).map((tech) => (
-                        <li key={tech}>
-                          <Chip>{tech}</Chip>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </Item>
-              ))}
-            </ItemList>
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <div className="mb-2">
+              <PagePath path="/projects" />
+            </div>
+            <div className="section-label">{PAGES.projects.label}</div>
+            <h1>{PAGES.projects.title}</h1>
+          </div>
+          {total > 0 && (
+            <div className="inline-flex items-center gap-1.5 font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1 transition-colors duration-150 hover:border-brand hover:bg-surface-hover hover:text-fg cursor-default">
+              <span className="font-medium text-fg">{total}</span>
+              <span>{total === 1 ? "Project" : "Projects"}</span>
+            </div>
           )}
         </div>
+
+        <p className="section-intro">{PAGES.projects.intro}</p>
+
+        {total === 0 ? (
+          <div className="mt-10">
+            <EmptyState {...EMPTY_STATES.projects} />
+          </div>
+        ) : (
+          <ProjectSearch projects={projects} />
+        )}
       </Container>
     </Section>
   );

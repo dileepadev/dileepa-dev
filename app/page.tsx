@@ -6,6 +6,7 @@ import {
   Hero,
   Work,
 } from "@/components/sections";
+import { ApiOfflinePage } from "@/components/ui";
 import { getHomepageData } from "@/lib/api";
 
 /**
@@ -23,23 +24,26 @@ export default async function HomePage() {
     educations,
     tools,
     communities,
+    pillars,
     projects,
     events,
     posts,
     videos,
-    gallery,
   } = await getHomepageData();
+
+  if (!about) {
+    return <ApiOfflinePage path="/" />;
+  }
 
   return (
     <div id="top">
       <Hero about={about} />
-      <About about={about} />
+      <About about={about} pillars={pillars} />
       <Work experiences={experiences} tools={tools} projects={projects} />
       <EducationSection educations={educations} />
       <CommunitySection
         communities={communities}
         events={events}
-        gallery={gallery}
         posts={posts}
         videos={videos}
       />

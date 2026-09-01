@@ -47,6 +47,7 @@ export function LoadMore({
         <div
           className="h-1 w-36 overflow-hidden rounded-full bg-border"
           role="progressbar"
+          aria-label={`Loaded ${shown} of ${total} items`}
           aria-valuenow={percentage}
           aria-valuemin={0}
           aria-valuemax={100}

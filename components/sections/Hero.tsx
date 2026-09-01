@@ -4,6 +4,7 @@ import { Container, LinkButton, StatusBadge } from "@/components/ui";
 import type { About } from "@/lib/api-types";
 import { SITE_CONFIG } from "@/lib/constants";
 import { paragraphs, portrait as portraitUrl } from "@/lib/format";
+import { SOCIAL_ICONS } from "@/lib/social-icons";
 
 /**
  * The hero.
@@ -12,7 +13,7 @@ import { paragraphs, portrait as portraitUrl } from "@/lib/format";
  * the useful thing to read first; the name belongs beside the portrait, where
  * it identifies the face rather than announcing itself.
  *
- * The portrait is one of only two places a photograph appears on this site —
+ * The portrait is one of only two places a photograph appears on this site -
  * the other is the event gallery.
  */
 export function Hero({ about }: { about: About | null }) {
@@ -20,8 +21,8 @@ export function Hero({ about }: { about: About | null }) {
   const role = about?.title ?? "";
   const tagline = about?.tagline ?? SITE_CONFIG.description;
   // The supporting line under the tagline, and its own field on the about
-  // record. It used to be `description[1]` — the About section's second
-  // paragraph, borrowed — which meant editing the About copy silently moved
+  // record. It used to be `description[1]` - the About section's second
+  // paragraph, borrowed - which meant editing the About copy silently moved
   // the hero's lead, and the site had to know a coupling nothing declared.
   //
   // The old reading is kept as the fallback rather than removed: a record
@@ -32,7 +33,15 @@ export function Hero({ about }: { about: About | null }) {
     about?.taglineDescription?.trim() ||
     paragraphs(about?.description)[1] ||
     "";
-  const portrait = portraitUrl(about?.images);
+  const portrait = portraitUrl(about?.images) || "/profile/v2.webp";
+
+  const links = about?.links;
+  const socials = SOCIAL_ICONS.map((icon) => ({
+    ...icon,
+    href: links?.[icon.key],
+  })).filter((icon): icon is typeof icon & { href: string } =>
+    Boolean(icon.href),
+  );
 
   return (
     <Container>
@@ -65,11 +74,41 @@ export function Hero({ about }: { about: About | null }) {
                 <span>See the work</span>
               </LinkButton>
             </div>
+
+            {socials.length > 0 && (
+              <div className="mt-8 flex items-center gap-3">
+                <span className="font-mono text-small text-fg-muted">
+                  Find me on
+                </span>
+                <span
+                  className="text-border-strong select-none"
+                  aria-hidden="true"
+                >
+                  -
+                </span>
+                <div className="socials !mt-0 flex items-center gap-3">
+                  {socials.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <a
+                        key={item.label}
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={item.label}
+                      >
+                        <Icon className="h-4.5 w-4.5" aria-hidden="true" />
+                      </a>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
 
           {portrait && (
-            <aside className="hero-side">
-              <div className="hero-id">
+            <aside className="hero-side w-full flex justify-center">
+              <div className="hero-id mx-auto">
                 <Image
                   className="portrait"
                   src={portrait}
@@ -77,12 +116,20 @@ export function Hero({ about }: { about: About | null }) {
                   width={260}
                   height={260}
                   sizes="260px"
-                  priority
+                  // The LCP element on the homepage, and both attributes are
+                  // load-bearing. `fetchPriority` only sets the hint; what
+                  // decides lazy-vs-eager is `loading`, `priority` or
+                  // `preload` - so `fetchPriority` on its own leaves the LCP
+                  // image lazily loaded. `priority` was deprecated in Next 16
+                  // and `preload` is documented as the wrong choice wherever
+                  // `loading` is set, which leaves this pair.
+                  loading="eager"
+                  fetchPriority="high"
                 />
-                <div>
+                <div className="mt-4">
                   <div className="hero-name">{name}</div>
                   {role && (
-                    <div className="hero-role flex items-center justify-center gap-1.5 flex-wrap">
+                    <div className="hero-role mt-1 flex items-center justify-center gap-1.5 flex-wrap">
                       <span>{role}</span>
                       {about?.location && (
                         <>

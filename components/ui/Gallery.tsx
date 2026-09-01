@@ -13,7 +13,7 @@ import { formatMonth } from "@/lib/format";
  *
  * Each tile links to the event the photo was taken at, because a photo of a
  * room full of people is only worth showing if a reader can find out what was
- * happening in it. The caption is revealed on hover and on keyboard focus —
+ * happening in it. The caption is revealed on hover and on keyboard focus -
  * hover alone would hide it from anyone not using a mouse.
  *
  * Every photo is Cloudinary-hosted. `next.config.ts` allows that host and no
@@ -33,11 +33,22 @@ export function Gallery({ photos }: { photos: GalleryPhoto[] }) {
               alt={photo.alt || `${photo.eventTitle}`}
               width={photo.width ?? 800}
               height={photo.height ?? 600}
-              sizes="(max-width: 720px) 50vw, 240px"
+              // Three columns inside the 1020px measure, less two 12px gaps,
+              // is a 332px tile - not 240px. Understating it made the browser
+              // pick a variant a third too small for the slot it renders in,
+              // which is a soft image on every desktop screen and a worse one
+              // on a retina display.
+              sizes="(max-width: 720px) 50vw, 340px"
               // The first row is above the fold on most screens; the rest are
               // not, and eagerly loading a dozen photographs to render three
               // is the whole reason image budgets exist.
               loading={index < 3 ? "eager" : "lazy"}
+              // The first tile is the LCP element on this page, and eager alone
+              // still leaves it queued behind the stylesheet and the rest of
+              // the row. `fetchPriority` rather than `preload`: the two are
+              // documented as alternatives, and `preload` is the wrong one
+              // wherever `loading` is already set.
+              fetchPriority={index === 0 ? "high" : undefined}
             />
             <figcaption>
               {photo.caption || photo.eventTitle}

@@ -16,7 +16,7 @@ import { ReactionPicker, ReactionSummary } from "./reactions";
  *
  * **Controlled.** The thread lives in `PostInteractions`, because the action bar
  * above the article shows the comment count and the count is derived from this
- * list — two components reading the same thing means one of them owns it.
+ * list - two components reading the same thing means one of them owns it.
  *
  * Unlike the action bar, posting does **not** fail silently. A reader who typed
  * a paragraph and pressed a button is owed an answer, so a failed post says so
@@ -58,13 +58,13 @@ function CommentCard({
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
         <span
           aria-hidden="true"
-          className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border-strong bg-bg-surface font-mono text-[0.6875rem] text-fg-muted"
+          className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border-strong bg-bg-surface font-mono text-label text-fg-muted"
         >
           {initials(comment.author)}
         </span>
         <span className="font-medium">{comment.author}</span>
         {comment.authorIsOwner && (
-          <span className="rounded-sm border border-brand px-1.5 font-mono text-[0.6875rem] text-brand">
+          <span className="rounded-sm border border-brand px-1.5 font-mono text-label text-brand">
             Author
           </span>
         )}
@@ -146,7 +146,7 @@ function CommentForm({
         honeypot,
       });
       // `accepted: false` is the honeypot path. It cannot happen to a person,
-      // and saying nothing is the point — a bot that learns it was caught is a
+      // and saying nothing is the point - a bot that learns it was caught is a
       // bot that comes back working.
       if (result.comment) onPosted(result.comment, parentId);
       setBody("");
@@ -164,6 +164,7 @@ function CommentForm({
       <span>Name</span>
       <input
         type="text"
+        name="author"
         value={author}
         onChange={(e) => setAuthor(e.target.value)}
         placeholder="Jane Doe"
@@ -191,6 +192,7 @@ function CommentForm({
             </span>
             <input
               type="email"
+              name="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="jane@example.com"
@@ -206,6 +208,7 @@ function CommentForm({
         <span>{parentId ? "Reply" : "Comment"}</span>
         <textarea
           ref={formRef}
+          name="comment"
           value={body}
           onChange={(e) => setBody(e.target.value)}
           rows={compact ? 3 : 4}
@@ -219,7 +222,7 @@ function CommentForm({
       </label>
 
       {/* The honeypot. Hidden from sight and from assistive technology, and
-          skipped by the tab order — a person cannot reach it, so anything that
+          skipped by the tab order - a person cannot reach it, so anything that
           fills it is not a person. Not `display: none`: some bots skip those. */}
       <div
         aria-hidden="true"
@@ -320,7 +323,7 @@ export function Comments({
               />
 
               {(entry.replies?.length ?? 0) > 0 && (
-                // One level, and one level only — the same depth LinkedIn uses.
+                // One level, and one level only - the same depth LinkedIn uses.
                 // The indent is a border rather than padding so it still reads
                 // as nesting on a narrow screen.
                 <ol className="ml-3 flex flex-col gap-4 border-l border-border-hairline pl-4 sm:ml-4 sm:pl-6">

@@ -7,7 +7,7 @@ import type { ReactionCounts, ReactionKind } from "@/lib/api-types";
 /**
  * The reaction vocabulary, and the two pieces of UI that render it.
  *
- * One definition, three surfaces — posts, comments and replies all import this,
+ * One definition, three surfaces - posts, comments and replies all import this,
  * so they cannot drift into teaching two vocabularies.
  *
  * **Why emoji rather than a custom icon set.** §1 of the brand guide is that
@@ -20,7 +20,7 @@ import type { ReactionCounts, ReactionKind } from "@/lib/api-types";
  * Emoji sidestep it honestly rather than by loophole: they are *content*, the
  * way a photograph is content, and they introduce no token, no hex and nothing
  * the palette has to absorb. They also come from the reader's own platform, so
- * they read as familiar instead of invented — and they cost nothing to ship.
+ * they read as familiar instead of invented - and they cost nothing to ship.
  *
  * The trade is that each platform draws them slightly differently. The four
  * below were picked because they are unambiguous in every major set; the more
@@ -45,7 +45,7 @@ export function totalReactions(counts?: ReactionCounts | null): number {
   return REACTIONS.reduce((sum, { kind }) => sum + (counts[kind] ?? 0), 0);
 }
 
-/** The reactions actually used, most-used first — for the summary row. */
+/** The reactions actually used, most-used first - for the summary row. */
 function present(counts?: ReactionCounts | null) {
   if (!counts) return [];
   return REACTIONS.filter(({ kind }) => (counts[kind] ?? 0) > 0).sort(
@@ -54,7 +54,7 @@ function present(counts?: ReactionCounts | null) {
 }
 
 /**
- * Overlapping glyphs and a total — what a thread shows at a glance.
+ * Overlapping glyphs and a total - what a thread shows at a glance.
  *
  * Only reactions that were actually used appear. Four zeroes tell a reader
  * nothing and take the same space as something worth reading.
@@ -80,7 +80,7 @@ export function ReactionSummary({
         {used.map(({ kind, emoji }) => (
           <span
             key={kind}
-            className="inline-flex h-[20px] w-[20px] items-center justify-center rounded-full border border-border-hairline bg-bg-surface text-[0.6875rem]"
+            className="inline-flex h-[20px] w-[20px] items-center justify-center rounded-full border border-border-hairline bg-bg-surface text-label"
           >
             <span className="emoji" aria-hidden="true">
               {emoji}
@@ -116,7 +116,7 @@ export function ReactionSummary({
 /**
  * A single React button that opens the four choices.
  *
- * Opens on hover on a pointer device and on click everywhere — a hover-only
+ * Opens on hover on a pointer device and on click everywhere - a hover-only
  * picker is unreachable on a phone, which is where most of this will be read.
  * Escape closes it, a click outside closes it, and the trigger keeps focus so
  * the keyboard path is the same as the mouse one.
@@ -226,7 +226,7 @@ export function ReactionPicker({
             "bg-bg-surface p-1 shadow-lg " +
             // Direction is not cosmetic. On a comment the trigger sits at the
             // bottom of the card, so opening upward covers the comment being
-            // reacted to — you cannot see what you are rating. Below it is the
+            // reacted to - you cannot see what you are rating. Below it is the
             // reply row, which is cheap to cover. On the post bar the opposite
             // holds: above is the count summary, below is the whole thread.
             (compact ? "top-full mt-1" : "bottom-full mb-2")
@@ -243,7 +243,7 @@ export function ReactionPicker({
                 role="menuitemradio"
                 title={label}
                 aria-label={
-                  selected ? `${label} — press again to remove` : label
+                  selected ? `${label} - press again to remove` : label
                 }
                 aria-checked={selected}
                 disabled={disabled}
