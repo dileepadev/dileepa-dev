@@ -43,7 +43,11 @@ export function NotFoundPage({
               : undefined
           }
         >
-          <div className={aside ? "lg:col-span-6 xl:col-span-7 min-w-0" : undefined}>
+          <div
+            className={
+              aside ? "lg:col-span-6 xl:col-span-7 min-w-0" : undefined
+            }
+          >
             <div className="mb-4">
               <PagePath path={path} />
             </div>

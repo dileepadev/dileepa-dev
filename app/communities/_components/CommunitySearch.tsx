@@ -51,7 +51,10 @@ const STATUS_LABELS: Record<string, string> = {
  * option and the rows it yields on one rule instead of two.
  */
 const FACETS: FacetSpec<Community>[] = [
-  { key: "status", values: (community) => [community.current ? "current" : "past"] },
+  {
+    key: "status",
+    values: (community) => [community.current ? "current" : "past"],
+  },
 ];
 
 /** Client-side search, filtering, sorting, and progressive pagination across communities. */
@@ -76,7 +79,13 @@ export function CommunitySearch({ communities }: { communities: Community[] }) {
 
     return communities.filter((c) =>
       matchesTokens(
-        [c.name, c.role, c.description, c.period, STATUS_LABELS[c.current ? "current" : "past"]],
+        [
+          c.name,
+          c.role,
+          c.description,
+          c.period,
+          STATUS_LABELS[c.current ? "current" : "past"],
+        ],
         tokens,
       ),
     );
@@ -109,14 +118,20 @@ export function CommunitySearch({ communities }: { communities: Community[] }) {
       switch (sortBy) {
         case "current-first":
           if (a.current !== b.current) return a.current ? -1 : 1;
-          return compareNumber(a.order, b.order, "desc") || compareText(a.name, b.name);
+          return (
+            compareNumber(a.order, b.order, "desc") ||
+            compareText(a.name, b.name)
+          );
         case "name-asc":
           return compareText(a.name, b.name);
         case "name-desc":
           return compareText(b.name, a.name);
         case "default":
         default:
-          return compareNumber(a.order, b.order, "desc") || compareText(a.name, b.name);
+          return (
+            compareNumber(a.order, b.order, "desc") ||
+            compareText(a.name, b.name)
+          );
       }
     });
   }, [filteredCommunities, sortBy]);
@@ -210,11 +225,16 @@ export function CommunitySearch({ communities }: { communities: Community[] }) {
                       <Chip>Past role</Chip>
                     )}
                     {community.role && (
-                      <span className="font-medium text-fg">{community.role}</span>
+                      <span className="font-medium text-fg">
+                        {community.role}
+                      </span>
                     )}
                     {community.period && (
                       <span className="inline-flex items-center gap-1.5 text-fg-muted">
-                        <Calendar className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
+                        <Calendar
+                          className="h-3 w-3 shrink-0 text-fg-muted"
+                          aria-hidden="true"
+                        />
                         <span>{community.period}</span>
                       </span>
                     )}

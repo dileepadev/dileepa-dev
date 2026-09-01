@@ -46,8 +46,8 @@ export default function PrivacyPolicyPage() {
 
           <h3>1. Contact form</h3>
           <p>
-            When you send a message through the contact form on the homepage, the
-            following fields are collected:
+            When you send a message through the contact form on the homepage,
+            the following fields are collected:
           </p>
           <ul>
             <li>
@@ -58,16 +58,16 @@ export default function PrivacyPolicyPage() {
               inquiry.
             </li>
             <li>
-              <strong>Subject and message:</strong> The details of your
-              inquiry, project proposal, or question.
+              <strong>Subject and message:</strong> The details of your inquiry,
+              project proposal, or question.
             </li>
           </ul>
           <p>
             <strong>How it is used:</strong> Contact messages are transmitted
             over HTTPS to my private backend API, stored so I can read and reply
-            to your inquiry, and delivered to my inbox by Resend, a transactional
-            email provider. Your address is never added to marketing lists,
-            newsletters, or third-party mailing systems.
+            to your inquiry, and delivered to my inbox by Resend, a
+            transactional email provider. Your address is never added to
+            marketing lists, newsletters, or third-party mailing systems.
           </p>
 
           <h3>2. Blog comments</h3>
@@ -262,8 +262,7 @@ export default function PrivacyPolicyPage() {
               <a href={`mailto:${SITE_CONFIG.email}`}>{SITE_CONFIG.email}</a>
             </li>
             <li>
-              Website:{" "}
-              <Link href="/#contact">Contact section on homepage</Link>
+              Website: <Link href="/#contact">Contact section on homepage</Link>
             </li>
           </ul>
 

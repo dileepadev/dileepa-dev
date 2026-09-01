@@ -78,7 +78,10 @@ export function Subsection({
     <div id={id} className="subsection">
       <div className={cn("subsection-title", icon && "has-icon")}>
         {icon && (
-          <span className="subsection-icon shrink-0 text-brand" aria-hidden="true">
+          <span
+            className="subsection-icon shrink-0 text-brand"
+            aria-hidden="true"
+          >
             {icon}
           </span>
         )}

@@ -58,7 +58,10 @@ export default async function BlogPage() {
 
         <p className="section-intro">
           {PAGES.blog.intro}{" "}
-          <a href="/blog/rss.xml" className="text-brand underline hover:text-brand-hover">
+          <a
+            href="/blog/rss.xml"
+            className="text-brand underline hover:text-brand-hover"
+          >
             RSS
           </a>
         </p>

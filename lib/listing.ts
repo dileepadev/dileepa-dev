@@ -144,7 +144,11 @@ function itemValues<T>(spec: FacetSpec<T>, item: T): string[] {
   ];
 }
 
-function itemMatches<T>(spec: FacetSpec<T>, item: T, selected: string): boolean {
+function itemMatches<T>(
+  spec: FacetSpec<T>,
+  item: T,
+  selected: string,
+): boolean {
   return spec.matches
     ? spec.matches(item, selected)
     : itemValues(spec, item).includes(selected);

@@ -18,12 +18,7 @@ import {
   Subsection,
   ViewAll,
 } from "@/components/ui";
-import type {
-  BlogPost,
-  Community,
-  EventRecord,
-  Video,
-} from "@/lib/api-types";
+import type { BlogPost, Community, EventRecord, Video } from "@/lib/api-types";
 import { SECTIONS, SUBSECTIONS } from "@/lib/constants";
 import {
   formatDate,
@@ -84,11 +79,16 @@ export function CommunitySection({
                         <Chip>Past role</Chip>
                       )}
                       {community.role && (
-                        <span className="font-medium text-fg">{community.role}</span>
+                        <span className="font-medium text-fg">
+                          {community.role}
+                        </span>
                       )}
                       {community.period && (
                         <span className="inline-flex items-center gap-1.5 text-fg-muted">
-                          <Calendar className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
+                          <Calendar
+                            className="h-3 w-3 shrink-0 text-fg-muted"
+                            aria-hidden="true"
+                          />
                           <span>{community.period}</span>
                         </span>
                       )}
@@ -125,12 +125,20 @@ export function CommunitySection({
                         <Chip>Past event</Chip>
                       )}
                       <span className="inline-flex items-center gap-1.5 text-fg font-medium">
-                        <Calendar className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
+                        <Calendar
+                          className="h-3 w-3 shrink-0 text-fg-muted"
+                          aria-hidden="true"
+                        />
                         <span>{formatDate(event.startAt)}</span>
                       </span>
                       <span className="inline-flex items-center gap-1.5 text-fg-muted">
-                        <MapPin className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
-                        <span>{event.location?.venue ?? humanise(event.format)}</span>
+                        <MapPin
+                          className="h-3 w-3 shrink-0 text-fg-muted"
+                          aria-hidden="true"
+                        />
+                        <span>
+                          {event.location?.venue ?? humanise(event.format)}
+                        </span>
                       </span>
                     </>
                   }
@@ -157,12 +165,18 @@ export function CommunitySection({
                     <>
                       {post.publishedDate && (
                         <span className="inline-flex items-center gap-1.5 text-fg font-medium">
-                          <Calendar className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
+                          <Calendar
+                            className="h-3 w-3 shrink-0 text-fg-muted"
+                            aria-hidden="true"
+                          />
                           <span>{formatDate(post.publishedDate)}</span>
                         </span>
                       )}
                       <span className="inline-flex items-center gap-1.5 text-fg-muted">
-                        <Clock className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
+                        <Clock
+                          className="h-3 w-3 shrink-0 text-fg-muted"
+                          aria-hidden="true"
+                        />
                         <span>{readingTime(post.readingTimeMinutes)}</span>
                       </span>
                     </>
@@ -190,13 +204,19 @@ export function CommunitySection({
                     <>
                       {video.date && (
                         <span className="inline-flex items-center gap-1.5 text-fg font-medium">
-                          <Calendar className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
+                          <Calendar
+                            className="h-3 w-3 shrink-0 text-fg-muted"
+                            aria-hidden="true"
+                          />
                           <span>{formatMonth(video.date)}</span>
                         </span>
                       )}
                       {video.durationSeconds && (
                         <span className="inline-flex items-center gap-1.5 text-fg-muted">
-                          <Clock className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
+                          <Clock
+                            className="h-3 w-3 shrink-0 text-fg-muted"
+                            aria-hidden="true"
+                          />
                           <span>{videoDuration(video.durationSeconds)}</span>
                         </span>
                       )}

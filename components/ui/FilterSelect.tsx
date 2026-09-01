@@ -56,10 +56,7 @@ export function FilterSelect({
       : allLabel;
 
   // Options with "All" prepended
-  const allItems: FilterOption[] = [
-    { value: "", label: allLabel },
-    ...options,
-  ];
+  const allItems: FilterOption[] = [{ value: "", label: allLabel }, ...options];
 
   const activeIndex = allItems.findIndex((opt) =>
     value === null ? opt.value === "" : opt.value === value,

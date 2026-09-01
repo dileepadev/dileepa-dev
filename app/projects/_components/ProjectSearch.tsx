@@ -29,11 +29,7 @@ import {
 } from "@/lib/listing";
 
 type ProjectSortKey =
-  | "default"
-  | "newest"
-  | "oldest"
-  | "name-asc"
-  | "name-desc";
+  "default" | "newest" | "oldest" | "name-asc" | "name-desc";
 
 const SORT_OPTIONS: SortOption<ProjectSortKey>[] = [
   { value: "default", label: "Default order" },
@@ -314,14 +310,25 @@ export function ProjectSearch({ projects }: { projects: Project[] }) {
                     )}
                     {project.role && (
                       <span className="inline-flex items-center gap-1.5 text-fg font-medium">
-                        <Briefcase className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
+                        <Briefcase
+                          className="h-3 w-3 shrink-0 text-fg-muted"
+                          aria-hidden="true"
+                        />
                         <span>{project.role}</span>
                       </span>
                     )}
                     {project.period?.start && (
                       <span className="inline-flex items-center gap-1.5 text-fg-muted font-mono text-xs">
-                        <Calendar className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
-                        <span>{formatPeriod(project.period.start, project.period.end)}</span>
+                        <Calendar
+                          className="h-3 w-3 shrink-0 text-fg-muted"
+                          aria-hidden="true"
+                        />
+                        <span>
+                          {formatPeriod(
+                            project.period.start,
+                            project.period.end,
+                          )}
+                        </span>
                       </span>
                     )}
                   </>

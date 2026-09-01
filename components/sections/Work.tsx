@@ -92,7 +92,9 @@ export function Work({
                           <Chip>{humanise(project.status)}</Chip>
                         )}
                         {project.role && (
-                          <span className="font-medium text-fg">{project.role}</span>
+                          <span className="font-medium text-fg">
+                            {project.role}
+                          </span>
                         )}
                       </>
                     }

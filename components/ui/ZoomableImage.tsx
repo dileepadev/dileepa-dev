@@ -36,7 +36,9 @@ export function ZoomableImage({
         type="button"
         onClick={() => setIsOpen(true)}
         title="Click to zoom"
-        aria-label={altText ? `Click to zoom: ${altText}` : "Click to zoom image"}
+        aria-label={
+          altText ? `Click to zoom: ${altText}` : "Click to zoom image"
+        }
         className={`group relative block w-full cursor-zoom-in overflow-hidden rounded-lg border border-border-strong bg-bg-surface text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand ${className}`}
       >
         <div className={`relative w-full ${aspectRatio} overflow-hidden`}>

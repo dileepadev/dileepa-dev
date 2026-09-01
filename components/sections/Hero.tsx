@@ -80,7 +80,10 @@ export function Hero({ about }: { about: About | null }) {
                 <span className="font-mono text-small text-fg-muted">
                   Find me on
                 </span>
-                <span className="text-border-strong select-none" aria-hidden="true">
+                <span
+                  className="text-border-strong select-none"
+                  aria-hidden="true"
+                >
                   -
                 </span>
                 <div className="socials !mt-0 flex items-center gap-3">

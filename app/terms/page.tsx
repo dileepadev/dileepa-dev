@@ -28,8 +28,8 @@ export default function TermsOfServicePage() {
         <article className="prose max-w-3xl">
           <h2>1. Introduction</h2>
           <p>
-            Welcome to dileepa.dev. By accessing or using this website, you agree
-            to comply with and be bound by these Terms of Service. If you
+            Welcome to dileepa.dev. By accessing or using this website, you
+            agree to comply with and be bound by these Terms of Service. If you
             disagree with any part of these terms, please discontinue use of the
             site.
           </p>
@@ -99,10 +99,10 @@ export default function TermsOfServicePage() {
             accuracy, or fitness for a particular purpose.
           </p>
           <p>
-            In no event shall Dileepa Bandara be liable for any direct, indirect,
-            incidental, or consequential damages resulting from the use of or
-            inability to use the information, guides, or software presented on
-            this site.
+            In no event shall Dileepa Bandara be liable for any direct,
+            indirect, incidental, or consequential damages resulting from the
+            use of or inability to use the information, guides, or software
+            presented on this site.
           </p>
 
           <h2>6. Third-party links</h2>
@@ -132,8 +132,7 @@ export default function TermsOfServicePage() {
               <a href={`mailto:${SITE_CONFIG.email}`}>{SITE_CONFIG.email}</a>
             </li>
             <li>
-              Contact form:{" "}
-              <Link href="/#contact">dileepa.dev/#contact</Link>
+              Contact form: <Link href="/#contact">dileepa.dev/#contact</Link>
             </li>
             <li>
               Privacy policy:{" "}

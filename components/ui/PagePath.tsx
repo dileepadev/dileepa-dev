@@ -17,7 +17,11 @@ export function PagePath({ path, className }: PagePathProps) {
   if (!path) return null;
 
   // Normalize: strip leading `./` or `/` and trailing slashes
-  const cleanPath = path.trim().replace(/^\.\//, "").replace(/^\/+/, "").replace(/\/+$/, "");
+  const cleanPath = path
+    .trim()
+    .replace(/^\.\//, "")
+    .replace(/^\/+/, "")
+    .replace(/\/+$/, "");
   const segments = cleanPath ? cleanPath.split("/").filter(Boolean) : [];
 
   return (
@@ -45,7 +49,10 @@ export function PagePath({ path, className }: PagePathProps) {
         const isLast = index === segments.length - 1;
 
         return (
-          <span key={index} className="inline-flex items-center gap-1.5 break-all">
+          <span
+            key={index}
+            className="inline-flex items-center gap-1.5 break-all"
+          >
             <span className="text-fg-muted/40 select-none" aria-hidden="true">
               /
             </span>

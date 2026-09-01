@@ -184,13 +184,19 @@ export function VideoSearch({ videos }: { videos: Video[] }) {
                   <>
                     {video.date && (
                       <span className="inline-flex items-center gap-1.5 text-fg font-medium">
-                        <Calendar className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
+                        <Calendar
+                          className="h-3 w-3 shrink-0 text-fg-muted"
+                          aria-hidden="true"
+                        />
                         <span>{formatDate(video.date)}</span>
                       </span>
                     )}
                     {video.durationSeconds && (
                       <span className="inline-flex items-center gap-1.5 text-fg-muted">
-                        <Clock className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
+                        <Clock
+                          className="h-3 w-3 shrink-0 text-fg-muted"
+                          aria-hidden="true"
+                        />
                         <span>{videoDuration(video.durationSeconds)}</span>
                       </span>
                     )}

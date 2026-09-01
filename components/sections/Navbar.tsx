@@ -76,7 +76,10 @@ export function Navbar() {
     if (!exploreOpen) return;
 
     function handlePointerDown(e: MouseEvent | TouchEvent) {
-      if (exploreRef.current && !exploreRef.current.contains(e.target as Node)) {
+      if (
+        exploreRef.current &&
+        !exploreRef.current.contains(e.target as Node)
+      ) {
         setExploreOpen(false);
       }
     }
@@ -164,7 +167,8 @@ export function Navbar() {
                             onClick={() => setExploreOpen(false)}
                             className={cn(
                               "flex items-center justify-between rounded-sm px-3 py-2 text-small font-medium text-fg-muted transition-colors hover:bg-surface-hover hover:text-fg",
-                              isCurrent && "text-brand bg-surface-hover font-medium",
+                              isCurrent &&
+                                "text-brand bg-surface-hover font-medium",
                             )}
                             aria-current={isCurrent ? "page" : undefined}
                           >

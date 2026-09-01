@@ -12,7 +12,9 @@
  * - https://youtu.be/VIDEO_ID
  * - https://www.youtube.com/embed/VIDEO_ID
  */
-export function extractYouTubeId(url: string | null | undefined): string | null {
+export function extractYouTubeId(
+  url: string | null | undefined,
+): string | null {
   if (!url) return null;
   const trimmed = url.trim();
   if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) return trimmed;
@@ -79,7 +81,9 @@ function fetchPublicYouTubeDuration(id: string): Promise<number | null> {
           res.on("data", (chunk: Buffer) => {
             if (resolved) return;
             buffer += chunk.toString("utf8");
-            const match = buffer.match(/itemprop="duration"\s+content="([^"]+)"/);
+            const match = buffer.match(
+              /itemprop="duration"\s+content="([^"]+)"/,
+            );
             if (match?.[1]) {
               resolved = true;
               const seconds = parseIsoDuration(match[1]);
@@ -114,10 +118,12 @@ function fetchPublicYouTubeDuration(id: string): Promise<number | null> {
 
 /**
  * Fetches the duration of a YouTube video in seconds.
- * 
+ *
  * Fails soft to null if the video is private, deleted, or if the request fails.
  */
-export async function getYouTubeDuration(urlOrId: string): Promise<number | null> {
+export async function getYouTubeDuration(
+  urlOrId: string,
+): Promise<number | null> {
   const id = extractYouTubeId(urlOrId);
   if (!id) return null;
 

@@ -135,9 +135,7 @@ export function formatTimeRange(
   if (!start) return "";
 
   const hasTime =
-    start.getUTCHours() !== 0 ||
-    start.getUTCMinutes() !== 0 ||
-    Boolean(endAt);
+    start.getUTCHours() !== 0 || start.getUTCMinutes() !== 0 || Boolean(endAt);
   if (!hasTime) return "";
 
   const formatter = new Intl.DateTimeFormat("en-US", {
@@ -214,7 +212,6 @@ export function paragraphs(
     .map((entry) => entry.trim())
     .filter(Boolean);
 }
-
 
 /**
  * The portrait, from whichever formats the about record actually carries.

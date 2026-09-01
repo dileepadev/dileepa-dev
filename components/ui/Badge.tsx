@@ -52,11 +52,7 @@ interface ChipProps {
 }
 
 /** A stack chip: mono, with hover reserved strictly for interactive targets. */
-export function Chip({
-  children,
-  interactive = false,
-  className,
-}: ChipProps) {
+export function Chip({ children, interactive = false, className }: ChipProps) {
   return (
     <span
       className={cn(

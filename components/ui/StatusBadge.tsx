@@ -13,12 +13,7 @@ interface StatusBadgeProps {
  */
 export function StatusBadge({ children, className }: StatusBadgeProps) {
   return (
-    <Chip
-      className={cn(
-        "inline-flex items-center gap-2",
-        className,
-      )}
-    >
+    <Chip className={cn("inline-flex items-center gap-2", className)}>
       <span
         className="h-1.5 w-1.5 rounded-full bg-brand shrink-0"
         aria-hidden="true"

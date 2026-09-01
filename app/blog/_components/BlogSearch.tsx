@@ -71,7 +71,9 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
   const [query, setQuery] = useState("");
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [selectedYear, setSelectedYear] = useState<string | null>(null);
-  const [selectedSeriesFilter, setSelectedSeriesFilter] = useState<string | null>(null);
+  const [selectedSeriesFilter, setSelectedSeriesFilter] = useState<
+    string | null
+  >(null);
   const [sortBy, setSortBy] = useState<BlogSortKey>("newest");
   const [visibleCount, setVisibleCount] = useState(POSTS_PER_PAGE);
 
@@ -279,14 +281,20 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
                   <>
                     {post.publishedDate && (
                       <span className="inline-flex items-center gap-1.5 text-fg font-medium">
-                        <Calendar className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
+                        <Calendar
+                          className="h-3 w-3 shrink-0 text-fg-muted"
+                          aria-hidden="true"
+                        />
                         <time dateTime={toDateAttribute(post.publishedDate)}>
                           {formatDate(post.publishedDate)}
                         </time>
                       </span>
                     )}
                     <span className="inline-flex items-center gap-1.5 text-fg-muted">
-                      <Clock className="h-3 w-3 shrink-0 text-fg-muted" aria-hidden="true" />
+                      <Clock
+                        className="h-3 w-3 shrink-0 text-fg-muted"
+                        aria-hidden="true"
+                      />
                       <span>{readingTime(post.readingTimeMinutes)}</span>
                     </span>
                     {post.series && (
@@ -314,9 +322,7 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
             shown={paginatedPosts.length}
             total={sortedPosts.length}
             batchSize={POSTS_PER_PAGE}
-            onLoadMore={() =>
-              setVisibleCount((prev) => prev + POSTS_PER_PAGE)
-            }
+            onLoadMore={() => setVisibleCount((prev) => prev + POSTS_PER_PAGE)}
             onShowAll={() => setVisibleCount(sortedPosts.length)}
           />
         </div>
