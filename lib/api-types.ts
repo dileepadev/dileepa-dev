@@ -1,109 +1,123 @@
-export interface ImageDto {
-  bannerWebp: string;
-  profilePng: string;
-  profileWebp: string;
+/**
+ * The API's types, named.
+ *
+ * `lib/api-schema.ts` is generated from `openapi.json` by `openapi-typescript`
+ * and is not edited by hand. It is accurate but unreadable - every type is a
+ * path through `components["schemas"]`. This file gives the shapes the app
+ * actually uses their real names, and is the only place that reaches into the
+ * generated file.
+ *
+ * Regenerate both after an API change:
+ *
+ *     npm run api:types
+ *
+ * If a name here stops resolving, the API changed shape. That is the point:
+ * the spec wins, and this file is where the break surfaces.
+ */
+
+import type { components } from "./api-schema";
+
+type Schemas = components["schemas"];
+
+// --- Resources -------------------------------------------------------------
+
+export type About = Schemas["About"];
+export type Experience = Schemas["Experience"];
+export type Education = Schemas["Education"];
+export type Tool = Schemas["Tool"];
+export type Community = Schemas["Community"];
+// The six About cards and the speaker kit's talk themes. Both were constants in
+// `lib/constants.ts` until the API grew a collection for each; the constants
+// stay as the fallback for when the API answers with nothing.
+export type Pillar = Schemas["Pillar"];
+export type PillarIcon = Pillar["icon"];
+export type SpeakingTopic = Schemas["SpeakingTopic"];
+export type Video = Schemas["Video"] & {
+  durationSeconds?: number | null;
+};
+export type Project = Schemas["Project"];
+export type EventRecord = Schemas["Event"];
+export type BlogPost = Schemas["BlogPost"];
+
+// Engagement. Separate from `BlogPost` because a post page is static and these
+// numbers are not - the page is built without them and fetches them on mount.
+export type BlogEngagement = Schemas["BlogEngagement"];
+export type ReactionCounts = Schemas["ReactionCounts"];
+
+/** The four reactions, as a type rather than four string literals repeated. */
+export type ReactionKind = NonNullable<BlogEngagement["viewerReaction"]>;
+
+// Comments. `PublicComment` is the only comment shape this site ever sees -
+// the admin-only `Comment`, which carries the commenter's email, is not
+// reachable from here and deliberately has no type exported.
+export type PublicComment = Schemas["PublicComment"];
+export type CommentThread = Schemas["CommentThread"];
+export type CommentPosted = Schemas["CommentPosted"];
+
+// --- Shared shapes ---------------------------------------------------------
+
+// FastAPI emits `-Input` and `-Output` variants for any model used in both a
+// request and a response: the two differ where a field has a default. Reading
+// is always the `-Output` side.
+export type Image = Schemas["Image"];
+export type Logo = Schemas["Logo"];
+export type Seo = Schemas["Seo-Output"];
+export type Series = Schemas["Series"];
+export type Period = Schemas["Period"];
+export type Metric = Schemas["Metric"];
+
+export type ProjectLinks = Schemas["ProjectLinks-Output"];
+export type GalleryItem = Schemas["GalleryItem"];
+export type ProjectStatus = Project["status"];
+
+export type Speaker = Schemas["Speaker-Output"];
+export type Photo = Schemas["Photo"];
+export type Recording = Schemas["Recording-Output"];
+export type Slides = Schemas["Slides"];
+export type EventLink = Schemas["EventLink"];
+export type Location = Schemas["Location-Output"];
+/** The conference or meetup series an event ran under, not the event itself. */
+export type Host = Schemas["Host-Output"];
+export type EventStatus = EventRecord["status"];
+export type EventType = EventRecord["type"];
+export type EventFormat = EventRecord["format"];
+
+/**
+ * One photo, carrying the event it came from.
+ *
+ * The gallery is a flat grid across every event, but a photo without its
+ * event is a picture of nobody doing nothing - the caption needs the title
+ * and the date, so they travel with it.
+ */
+export interface GalleryPhoto extends Photo {
+  eventSlug: string;
+  eventTitle: string;
+  eventDate: string | null;
 }
 
-export interface LinksDto {
-  website: string;
-  email: string;
-  github: string;
-  linkedin: string;
-  xtwitter: string;
-  instagram: string;
-  youtube: string;
-  facebook?: string;
+// --- Envelopes -------------------------------------------------------------
+
+/**
+ * Every collection endpoint returns this. There is no second shape - a caller
+ * that can page one resource can page all of them.
+ */
+export interface Page<T> {
+  items: T[];
+  total: number;
+  limit: number;
+  offset: number;
 }
 
-export interface AboutDto {
-  name: string;
-  title: string;
-  tagline: string;
-  description: string[];
-  status: string;
-  images: ImageDto;
-  links: LinksDto;
-  connect: string[];
+/** The error body, on every endpoint. */
+export interface ApiErrorBody {
+  error: {
+    code: string;
+    message: string;
+    details?: unknown;
+  };
 }
 
-export interface LogoDto {
-  light: string;
-  dark: string;
-}
+// --- Requests --------------------------------------------------------------
 
-export interface ExperienceDto {
-  _id?: string;
-  title: string;
-  company: string;
-  url: string;
-  period: string;
-  description: string;
-  technologies: string[];
-  logo: LogoDto;
-  index?: number;
-}
-
-export interface EducationDto {
-  _id?: string;
-  course: string;
-  institution: string;
-  period: string;
-  description: string;
-  url: string;
-  logo: LogoDto;
-  index?: number;
-}
-
-export interface EventDto {
-  _id?: string;
-  title: string;
-  date: string;
-  location: string;
-  format: string;
-  description: string;
-  event?: string; // Optional field for UI mapping
-  type?: string; // Optional field for UI mapping
-  url: string;
-  slides?: string;
-  recording?: string;
-  audience?: string;
-  index?: number;
-}
-
-export interface VideoDto {
-  _id?: string;
-  title: string;
-  date: string;
-  link: string;
-  thumbnail: string;
-  index?: number;
-}
-
-export interface BlogDto {
-  _id?: string;
-  title: string;
-  date: string;
-  excerpt: string;
-  link: string;
-  bannerUrl?: string;
-  index?: number;
-}
-
-export interface CommunityDto {
-  _id?: string;
-  name: string;
-  role: string;
-  period: string;
-  communityUrl?: string;
-  description: string;
-  logo: LogoDto;
-  current: boolean;
-  index?: number;
-}
-
-export interface ToolDto {
-  _id?: string;
-  name: string;
-  logo: LogoDto;
-  index?: number;
-}
+export type ContactRequest = Schemas["ContactRequest"];
+export type ContactResult = Schemas["ContactResult"];

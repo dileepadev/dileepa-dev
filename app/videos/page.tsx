@@ -1,61 +1,67 @@
-import { Metadata } from "next";
-import { Container, Button } from "@/components/ui";
-import { Navbar, Footer } from "@/components/sections";
-import { FaArrowLeft, FaYoutube } from "react-icons/fa";
-import { VideoList } from "./_components/VideoList";
-import { api } from "@/lib/api";
+import type { Metadata } from "next";
+import {
+  ApiOfflinePage,
+  Container,
+  EmptyState,
+  PagePath,
+  Section,
+} from "@/components/ui";
+import { api, checkApiHealth } from "@/lib/api";
+import { EMPTY_STATES, PAGES } from "@/lib/constants";
+import { pageMetadata } from "@/lib/metadata";
+import { VideoSearch } from "./_components/VideoSearch";
 
-export const metadata: Metadata = {
-  title: "Videos | Dileepa Bandara",
-  description:
-    "Watch my tutorials, talks, and tech content on web development, cloud technologies, and software engineering.",
-};
+export const metadata: Metadata = pageMetadata({
+  title: PAGES.videos.meta.title,
+  description: PAGES.videos.meta.description,
+  path: "/videos",
+});
 
+/**
+ * Videos, as a list rather than a grid of thumbnails.
+ *
+ * Photographs appear in two places on this site - the hero portrait and the
+ * event gallery - and a wall of YouTube thumbnails is not either of them. The
+ * title and the date are what a reader is choosing between anyway.
+ */
 export default async function VideosPage() {
-  const [videosData, about] = await Promise.all([
-    api.getVideos(),
-    api.getAbout(),
-  ]);
-  const videos = videosData || [];
+  const videos = await api.getVideos();
+  const total = videos.length;
+
+  if (total === 0) {
+    const health = await checkApiHealth();
+    if (!health.ok) {
+      return <ApiOfflinePage path="/videos" />;
+    }
+  }
 
   return (
-    <>
-      <Navbar />
-      <main className="min-h-screen pt-24 pb-16 bg-bg-primary">
-        <Container>
-          {/* Header */}
-          <div className="max-w-4xl mx-auto text-center mb-16">
-            <div className="flex justify-center mb-6">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-accent-blue/10 text-accent-blue">
-                <FaYoutube className="h-10 w-10" />
-              </div>
+    <Section>
+      <Container>
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <div className="mb-2">
+              <PagePath path="/videos" />
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-text-primary mb-4">
-              Video Content
-            </h1>
-            <p className="text-xl text-text-secondary mb-6 max-w-2xl mx-auto">
-              Tutorials, talks, and insights on web development, cloud
-              technologies, and modern software engineering.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button href="/" variant="outline" leftIcon={<FaArrowLeft />}>
-                Back to Home
-              </Button>
-              <Button
-                href="https://youtube.com/@dileepadev"
-                external
-                leftIcon={<FaYoutube />}
-              >
-                Subscribe on YouTube
-              </Button>
-            </div>
+            <div className="section-label">{PAGES.videos.label}</div>
+            <h1>{PAGES.videos.title}</h1>
           </div>
+          {total > 0 && (
+            <div className="inline-flex items-center gap-1.5 font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1 transition-colors duration-150 hover:border-brand hover:bg-surface-hover hover:text-fg cursor-default">
+              <span className="font-medium text-fg">{total}</span>
+              <span>{total === 1 ? "Video" : "Videos"}</span>
+            </div>
+          )}
+        </div>
 
-          {/* Video List (Search & Sort) */}
-          <VideoList videos={videos || []} />
-        </Container>
-      </main>
-      <Footer about={about || undefined} />
-    </>
+        <p className="section-intro">{PAGES.videos.intro}</p>
+
+        {videos.length === 0 ? (
+          <EmptyState {...EMPTY_STATES.videos} />
+        ) : (
+          <VideoSearch videos={videos} />
+        )}
+      </Container>
+    </Section>
   );
 }

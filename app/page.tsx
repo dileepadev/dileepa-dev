@@ -1,39 +1,53 @@
 import {
-  Navbar,
-  Hero,
   About,
-  Experience,
-  Education,
-  Community,
-  Connect,
-  Footer,
+  CommunitySection,
+  Contact,
+  EducationSection,
+  Hero,
+  Work,
 } from "@/components/sections";
-import { ThankYou } from "@/components/sections/ThankYou";
-import { getPortfolioData } from "@/lib/api";
+import { ApiOfflinePage } from "@/components/ui";
+import { getHomepageData } from "@/lib/api";
 
-export const revalidate = 3600;
+/**
+ * The homepage is the site.
+ *
+ * Everything lives here as a section, in the order the layout reference sets:
+ * hero, about, work, education, community, contact. The index pages under
+ * /projects, /events, /blog, /communities and /videos exist for the full lists;
+ * this page is the whole picture in one scroll.
+ */
+export default async function HomePage() {
+  const {
+    about,
+    experiences,
+    educations,
+    tools,
+    communities,
+    pillars,
+    projects,
+    events,
+    posts,
+    videos,
+  } = await getHomepageData();
 
-export default async function Home() {
-  const data = await getPortfolioData();
+  if (!about) {
+    return <ApiOfflinePage path="/" />;
+  }
 
   return (
-    <>
-      <Navbar />
-      <main>
-        <Hero about={data.about} />
-        <About about={data.about} tools={data.tools} />
-        <Experience experiences={data.experiences} />
-        <Education educations={data.educations} />
-        <Community
-          communities={data.communities}
-          events={data.events}
-          videos={data.videos}
-          blogs={data.blogs}
-        />
-        <Connect about={data.about} />
-        <ThankYou about={data.about} />
-      </main>
-      <Footer about={data.about} />
-    </>
+    <div id="top">
+      <Hero about={about} />
+      <About about={about} pillars={pillars} />
+      <Work experiences={experiences} tools={tools} projects={projects} />
+      <EducationSection educations={educations} />
+      <CommunitySection
+        communities={communities}
+        events={events}
+        posts={posts}
+        videos={videos}
+      />
+      <Contact about={about} />
+    </div>
   );
 }

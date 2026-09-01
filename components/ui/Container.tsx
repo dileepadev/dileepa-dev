@@ -1,35 +1,20 @@
-import { ReactNode } from 'react';
-import { cn } from '@/lib/utils';
+import { ReactNode } from "react";
+import { cn } from "@/lib/utils";
 
-interface ContainerProps {
+/**
+ * The page measure.
+ *
+ * One width, 1020px, for every surface - `width: min(100% - 2rem, 1020px)`,
+ * in `.container`. Nav, footer, and every page share it: a wider page beside
+ * a narrower nav reads as two sites, which is what happened when the blog
+ * reader alone used a wider variant for its table-of-contents rail.
+ */
+export function Container({
+  children,
+  className,
+}: {
   children: ReactNode;
   className?: string;
-  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
-}
-
-const sizeClasses = {
-  sm: 'max-w-2xl',
-  md: 'max-w-3xl',
-  lg: 'max-w-5xl',
-  xl: 'max-w-6xl',
-  '2xl': 'max-w-7xl',
-  full: 'max-w-full',
-};
-
-export function Container({ 
-  children, 
-  className, 
-  size = 'xl' 
-}: ContainerProps) {
-  return (
-    <div 
-      className={cn(
-        'mx-auto w-full px-4 sm:px-6 lg:px-8',
-        sizeClasses[size],
-        className
-      )}
-    >
-      {children}
-    </div>
-  );
+}) {
+  return <div className={cn("container", className)}>{children}</div>;
 }

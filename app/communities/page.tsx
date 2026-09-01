@@ -1,51 +1,62 @@
-import { Metadata } from "next";
-import { Container, Button } from "@/components/ui";
-import { Navbar, Footer } from "@/components/sections";
-import { api } from "@/lib/api";
-import { FaArrowLeft, FaUsers } from "react-icons/fa";
-import { CommunityList } from "./_components/CommunityList";
+import type { Metadata } from "next";
+import {
+  ApiOfflinePage,
+  Container,
+  EmptyState,
+  PagePath,
+  Section,
+} from "@/components/ui";
+import { api, checkApiHealth } from "@/lib/api";
+import { EMPTY_STATES, PAGES } from "@/lib/constants";
+import { pageMetadata } from "@/lib/metadata";
+import { CommunitySearch } from "./_components/CommunitySearch";
 
-export const metadata: Metadata = {
-  title: "Communities | Dileepa Bandara",
-  description:
-    "All tech communities, meetups, and mentorship programs I've contributed to.",
-};
+export const metadata: Metadata = pageMetadata({
+  title: PAGES.communities.meta.title,
+  description: PAGES.communities.meta.description,
+  path: "/communities",
+});
 
 export default async function CommunitiesPage() {
-  const [communities, about] = await Promise.all([
-    api.getCommunities(),
-    api.getAbout(),
-  ]);
+  const communities = await api.getCommunities();
+  const total = communities.length;
+
+  if (total === 0) {
+    const health = await checkApiHealth();
+    if (!health.ok) {
+      return <ApiOfflinePage path="/communities" />;
+    }
+  }
 
   return (
-    <>
-      <Navbar />
-      <main className="min-h-screen pt-24 pb-16 bg-bg-primary">
-        <Container>
-          {/* Header */}
-          <div className="max-w-4xl mx-auto text-center mb-16">
-            <div className="flex justify-center mb-6">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-accent-blue/10 text-accent-blue">
-                <FaUsers className="h-10 w-10" />
-              </div>
+    <Section>
+      <Container>
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <div className="mb-2">
+              <PagePath path="/communities" />
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-text-primary mb-4">
-              Tech Communities
-            </h1>
-            <p className="text-xl text-text-secondary mb-6 max-w-2xl mx-auto">
-              Meetups, organizing, mentorship, and community contributions
-              I&apos;ve been involved with.
-            </p>
-            <Button href="/" variant="outline" leftIcon={<FaArrowLeft />}>
-              Back to Home
-            </Button>
+            <div className="section-label">{PAGES.communities.label}</div>
+            <h1>{PAGES.communities.title}</h1>
           </div>
+          {total > 0 && (
+            <div className="inline-flex items-center gap-1.5 font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1 transition-colors duration-150 hover:border-brand hover:bg-surface-hover hover:text-fg cursor-default">
+              <span className="font-medium text-fg">{total}</span>
+              <span>{total === 1 ? "Community" : "Communities"}</span>
+            </div>
+          )}
+        </div>
 
-          {/* Communities List (Search & Sort) */}
-          <CommunityList communities={communities || []} />
-        </Container>
-      </main>
-      <Footer about={about || undefined} />
-    </>
+        <p className="section-intro">{PAGES.communities.intro}</p>
+
+        {communities.length === 0 ? (
+          <div className="mt-10">
+            <EmptyState {...EMPTY_STATES.communities} />
+          </div>
+        ) : (
+          <CommunitySearch communities={communities} />
+        )}
+      </Container>
+    </Section>
   );
 }

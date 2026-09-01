@@ -1,139 +1,175 @@
+"use client";
+
 import Link from "next/link";
-import { Container, IconButton } from "@/components/ui";
-import { NAV_LINKS, EXTERNAL_LINKS } from "@/lib/constants";
-import { AboutDto } from "@/lib/api-types";
-import {
-  FaGithub,
-  FaLinkedin,
-  FaYoutube,
-  FaInstagram,
-  FaEnvelope,
-  FaFacebook,
-} from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
-import packageJson from "@/package.json";
+import { usePathname } from "next/navigation";
+import { GitBranch } from "lucide-react";
+import { FaGithub } from "@/components/icons/SocialIcons";
+import { Container, CurlHint, Lockup } from "@/components/ui";
+import { FOOTER_LINKS, SITE_CONFIG } from "@/lib/constants";
+import { SOCIAL_ICONS } from "@/lib/social-icons";
+import type { About } from "@/lib/api-types";
+import { cn } from "@/lib/utils";
 
-const iconMap: Record<string, React.ElementType> = {
-  github: FaGithub,
-  linkedin: FaLinkedin,
-  xtwitter: FaXTwitter,
-  youtube: FaYoutube,
-  instagram: FaInstagram,
-  facebook: FaFacebook,
-  email: FaEnvelope,
-};
+export function Footer({ about }: { about?: About | null }) {
+  const pathname = usePathname();
+  const links = about?.links;
+  const socials = SOCIAL_ICONS.map((icon) => ({
+    ...icon,
+    href: links?.[icon.key],
+  })).filter((icon): icon is typeof icon & { href: string } =>
+    Boolean(icon.href),
+  );
 
-export function Footer({ about }: { about?: AboutDto | null }) {
-  const currentYear = new Date().getFullYear();
-
-  // Use data from API or defaults/empty
-  const name = about?.name || "Dileepa Bandara";
-  const description = about?.tagline || "Personal Developer Portfolio";
+  const isLinkActive = (href: string) => {
+    if (href.startsWith("http") || href.startsWith("/#")) return false;
+    if (href === "/") return pathname === "/";
+    return pathname === href || pathname.startsWith(`${href}/`);
+  };
 
   return (
-    <footer className="bg-bg-secondary text-text-primary border-t border-accent-blue/20">
+    <footer className="site-footer">
       <Container>
-        <div className="py-16">
-          <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
-            {/* Brand */}
-            <div className="lg:col-span-2">
-              <Link href="/" className="inline-block text-2xl font-bold mb-4">
-                {name.split(" ")[0]}
-                <span className="text-accent-blue">.</span>
-              </Link>
-              <p className="text-text-secondary max-w-md mb-6">{description}</p>
+        <div className="footer-grid">
+          <div>
+            {/* Not a link to `/` here: the footer's lockup sits at the bottom
+                of the page a reader is already on. */}
+            <Lockup href="/#top" />
+            <p className="footer-tagline">{SITE_CONFIG.description}</p>
 
-              {/* Social Icons */}
-              <div className="flex items-center gap-5 text-text-muted flex-wrap">
-                {about?.links &&
-                  Object.entries(about.links).map(([key, url]) => {
-                    // Filter out non-socials
-                    if (key === "website" || key === "email" || !url)
-                      return null;
-
-                    const platformKey = key.toLowerCase();
-                    const IconComponent = iconMap[platformKey];
-
-                    if (!IconComponent) return null;
-
-                    return (
-                      <IconButton
-                        key={key}
-                        href={url}
-                        external={true}
-                        variant="ghost"
-                        className="hover:text-accent-blue hover:bg-transparent"
-                        aria-label={key}
-                      >
-                        <IconComponent className="size-5" />
-                      </IconButton>
-                    );
-                  })}
-              </div>
-            </div>
-
-            {/* Quick Links */}
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
-              <ul className="space-y-3">
-                {NAV_LINKS.map((link) => {
-                  // ensure hash-based quick links always navigate back to home
-                  const href = link.href.startsWith("#")
-                    ? `/${link.href}`
-                    : link.href;
-
+            {socials.length > 0 && (
+              <div className="socials">
+                {socials.map((item) => {
+                  const Icon = item.icon;
                   return (
-                    <li key={link.href}>
-                      <Link
-                        href={href}
-                        className="text-text-secondary hover:text-accent-blue transition-colors duration-500"
-                      >
-                        {link.label}
-                      </Link>
-                    </li>
+                    <a
+                      key={item.label}
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={item.label}
+                    >
+                      <Icon className="h-4.5 w-4.5" aria-hidden="true" />
+                    </a>
                   );
                 })}
-              </ul>
-            </div>
-
-            {/* External Links */}
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Explore</h4>
-              <ul className="space-y-3">
-                {EXTERNAL_LINKS.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="text-text-secondary hover:text-accent-blue transition-colors duration-500 inline-flex items-center gap-2"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+              </div>
+            )}
           </div>
+
+          {FOOTER_LINKS.map((column) => (
+            <div key={column.title} className="footer-col">
+              {/* Column titles are mono - they are labels, not headings. */}
+              <div className="footer-col-title">{column.title}</div>
+              {column.links.map((link) => {
+                const active = isLinkActive(link.href);
+                return link.isExternal ? (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={cn(active && "is-active")}
+                    aria-current={active ? "page" : undefined}
+                  >
+                    {link.label}
+                  </a>
+                ) : (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={cn(active && "is-active")}
+                    aria-current={active ? "page" : undefined}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
+            </div>
+          ))}
         </div>
 
-        {/* Bottom Bar */}
-        <div className="py-6 border-t border-border-light">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-text-secondary text-sm text-center md:text-left">
-              © {currentYear} {name}. All rights reserved.
-            </p>
-            <div className="flex items-center gap-3 text-text-secondary text-sm">
-              <Link
-                href="https://github.com/dileepadev/dileepa-dev"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 hover:text-accent-blue transition-colors duration-300"
-              >
-                <FaGithub className="h-4 w-4" />
-                <span>View Source</span>
-              </Link>
-              <div className="w-0.5 h-4 bg-border-medium rounded-sm"></div>
-              <span>v{packageJson.version}</span>
-            </div>
+        <div className="footer-bottom">
+          <div className="footer-legal">
+            <span>
+              © {new Date().getFullYear()} {SITE_CONFIG.author}
+            </span>
+            {/* The site answers `curl` as well as a browser. This is the only
+                place that says so. */}
+            <CurlHint />
+          </div>
+          <div className="footer-meta">
+            <Link
+              href="/profile"
+              className={cn(isLinkActive("/profile") && "is-active text-brand")}
+            >
+              Profile
+            </Link>
+            <span className="text-border-strong" aria-hidden="true">
+              /
+            </span>
+            <Link
+              href="/brand"
+              className={cn(isLinkActive("/brand") && "is-active text-brand")}
+            >
+              Brand
+            </Link>
+            <span className="text-border-strong" aria-hidden="true">
+              /
+            </span>
+            <Link
+              href="/privacy"
+              className={cn(isLinkActive("/privacy") && "is-active text-brand")}
+            >
+              Privacy
+            </Link>
+            <span className="text-border-strong" aria-hidden="true">
+              /
+            </span>
+            <Link
+              href="/terms"
+              className={cn(isLinkActive("/terms") && "is-active text-brand")}
+            >
+              Terms
+            </Link>
+            <span className="text-border-strong" aria-hidden="true">
+              /
+            </span>
+            <Link
+              href="/sitemap"
+              className={cn(isLinkActive("/sitemap") && "is-active text-brand")}
+            >
+              Sitemap
+            </Link>
+            <span className="text-border-strong" aria-hidden="true">
+              /
+            </span>
+            <a
+              href={SITE_CONFIG.repository}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="View source on GitHub"
+              className="inline-flex items-center gap-1.5"
+            >
+              <FaGithub className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              <span>Source</span>
+            </a>
+            <span className="text-border-strong" aria-hidden="true">
+              /
+            </span>
+            <a
+              href={`${SITE_CONFIG.repository}/tree/${SITE_CONFIG.branch}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`View branch ${SITE_CONFIG.branch} on GitHub`}
+              className="inline-flex items-center gap-1.5"
+            >
+              <GitBranch
+                className="h-3.5 w-3.5 shrink-0"
+                strokeWidth={1.75}
+                aria-hidden="true"
+              />
+              <span>v{SITE_CONFIG.version}</span>
+            </a>
           </div>
         </div>
       </Container>

@@ -1,75 +1,94 @@
 import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-interface SectionProps {
-  id?: string;
-  children: ReactNode;
-  className?: string;
-  background?: "primary" | "secondary" | "tertiary";
-}
-
-const backgroundClasses = {
-  primary: "bg-bg-primary",
-  secondary: "bg-bg-secondary",
-  tertiary: "bg-bg-tertiary",
-};
-
+/**
+ * A page section.
+ *
+ * Every section carries a hairline top border and `--space-16` of vertical
+ * padding, so the page reads as a set of rules rather than a stack of boxes.
+ * The hero is the exception and does not use this.
+ */
 export function Section({
   id,
   children,
   className,
-  background = "primary",
-}: SectionProps) {
+}: {
+  id?: string;
+  children: ReactNode;
+  className?: string;
+}) {
   return (
-    <section
-      id={id}
-      className={cn(
-        "py-16 md:py-24 lg:py-32",
-        backgroundClasses[background],
-        className,
-      )}
-    >
+    <section id={id} className={cn("section", className)}>
       {children}
     </section>
   );
 }
 
-interface SectionHeaderProps {
+/**
+ * A mono `--brand` label, an H2, and an intro in `--fg-muted`.
+ *
+ * The label carries the accent and the heading stays `--fg` - design system §6.
+ * Colouring the heading too would put two emerald elements in one block, which
+ * is what stops the accent reading as a signal.
+ */
+export function SectionHeading({
+  label,
+  title,
+  intro,
+}: {
+  label: string;
   title: string;
-  subtitle?: string;
-  description?: string;
-  align?: "left" | "center" | "right";
-  className?: string;
+  intro?: string;
+}) {
+  return (
+    <>
+      <div className="section-label">{label}</div>
+      <h2>{title}</h2>
+      {intro && <p className="section-intro">{intro}</p>}
+    </>
+  );
 }
 
-export function SectionHeader({
+/**
+ * A subsection inside a section - communities, events, posts, videos.
+ *
+ * The title is `--text-small` at weight 700, sentence case, marked with a 2px
+ * emerald rule that the accent is spent on rather than the text - the words
+ * stay `--fg`, so the block has one accented element and it is the rule.
+ *
+ * It is a `<span>`, not a heading, on purpose. A section that groups several
+ * lists would otherwise put an `h3` between its `h2` and the item titles that
+ * are already `h3`, and the outline would have to gain a level to describe
+ * something the page does not treat as a level.
+ */
+export function Subsection({
+  id,
   title,
-  subtitle,
-  description,
-  align = "center",
-  className,
-}: SectionHeaderProps) {
-  const alignClasses = {
-    left: "text-left",
-    center: "text-center mx-auto",
-    right: "text-right ml-auto",
-  };
-
+  note,
+  icon,
+  children,
+}: {
+  id?: string;
+  title: string;
+  note?: string;
+  icon?: ReactNode;
+  children: ReactNode;
+}) {
   return (
-    <div
-      className={cn("mb-12 md:mb-16 max-w-3xl", alignClasses[align], className)}
-    >
-      {subtitle && (
-        <span className="mb-2 inline-block text-lg font-semibold uppercase tracking-wider text-accent-blue">
-          {subtitle}
-        </span>
-      )}
-      <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl">
-        {title}
-      </h2>
-      {description && (
-        <p className="text-lg text-text-secondary md:text-xl">{description}</p>
-      )}
+    <div id={id} className="subsection">
+      <div className={cn("subsection-title", icon && "has-icon")}>
+        {icon && (
+          <span
+            className="subsection-icon shrink-0 text-brand"
+            aria-hidden="true"
+          >
+            {icon}
+          </span>
+        )}
+        <span>{title}</span>
+      </div>
+      {note && <p className="subsection-note">{note}</p>}
+      {children}
     </div>
   );
 }

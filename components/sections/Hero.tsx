@@ -1,176 +1,157 @@
-"use client";
-
 import Image from "next/image";
-import { Container, IconButton, Tooltip } from "@/components/ui";
-import { AboutDto } from "@/lib/api-types";
-import {
-  FaGithub,
-  FaLinkedin,
-  FaYoutube,
-  FaInstagram,
-  FaFacebook,
-  FaArrowDown,
-} from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
-import { motion } from "framer-motion";
+import { Briefcase, Mail, MapPin } from "lucide-react";
+import { Container, LinkButton, StatusBadge } from "@/components/ui";
+import type { About } from "@/lib/api-types";
+import { SITE_CONFIG } from "@/lib/constants";
+import { paragraphs, portrait as portraitUrl } from "@/lib/format";
+import { SOCIAL_ICONS } from "@/lib/social-icons";
 
-const iconMap: Record<string, React.ElementType> = {
-  github: FaGithub,
-  linkedin: FaLinkedin,
-  xtwitter: FaXTwitter,
-  youtube: FaYoutube,
-  instagram: FaInstagram,
-  facebook: FaFacebook,
-};
+/**
+ * The hero.
+ *
+ * The display heading is the **tagline**, not the name. What someone does is
+ * the useful thing to read first; the name belongs beside the portrait, where
+ * it identifies the face rather than announcing itself.
+ *
+ * The portrait is one of only two places a photograph appears on this site -
+ * the other is the event gallery.
+ */
+export function Hero({ about }: { about: About | null }) {
+  const name = about?.name ?? SITE_CONFIG.name;
+  const role = about?.title ?? "";
+  const tagline = about?.tagline ?? SITE_CONFIG.description;
+  // The supporting line under the tagline, and its own field on the about
+  // record. It used to be `description[1]` - the About section's second
+  // paragraph, borrowed - which meant editing the About copy silently moved
+  // the hero's lead, and the site had to know a coupling nothing declared.
+  //
+  // The old reading is kept as the fallback rather than removed: a record
+  // written before the field existed still renders the sentence it always
+  // did, and it comes from the same `/about` response either way. There is no
+  // second request here and there never was one to save.
+  const lead =
+    about?.taglineDescription?.trim() ||
+    paragraphs(about?.description)[1] ||
+    "";
+  const portrait = portraitUrl(about?.images) || "/profile/v2.webp";
 
-export function Hero({ about }: { about?: AboutDto | null }) {
-  const handleScrollDown = () => {
-    const aboutSection = document.getElementById("about");
-    if (aboutSection) aboutSection.scrollIntoView({ behavior: "smooth" });
-  };
+  const links = about?.links;
+  const socials = SOCIAL_ICONS.map((icon) => ({
+    ...icon,
+    href: links?.[icon.key],
+  })).filter((icon): icon is typeof icon & { href: string } =>
+    Boolean(icon.href),
+  );
 
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-bg-primary">
-      {/* Subtle dot pattern */}
-      <div
-        className="absolute inset-0 opacity-[0.4] dark:opacity-30 pointer-events-none"
-        style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)`,
-          backgroundSize: "32px 32px",
-        }}
-        aria-hidden
-      />
-      <div
-        className="absolute inset-0 bg-linear-to-b from-transparent via-bg-primary/50 to-bg-primary pointer-events-none"
-        aria-hidden
-      />
+    <Container>
+      <div className="hero">
+        <div className="hero-inner">
+          <div className="min-w-0">
+            {about?.status && (
+              <div className="hero-meta">
+                <StatusBadge>{about.status}</StatusBadge>
+              </div>
+            )}
+            <h1 className="display">{tagline}</h1>
+            {lead && <p className="hero-lead">{lead}</p>}
 
-      <Container className="relative z-10 flex flex-col items-center text-center">
-        {/* Profile photo */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.4 }}
-          className="relative mb-8 size-28 sm:size-32 md:size-36 rounded-full overflow-hidden ring-2 ring-border-light dark:ring-white/10 shadow-xl"
-        >
-          {about?.images.profileWebp && (
-            <Image
-              src={about.images.profileWebp}
-              alt={about.name}
-              fill
-              sizes="(max-width: 640px) 128px, (max-width: 768px) 144px, 160px"
-              className="object-cover"
-              priority
-            />
-          )}
-        </motion.div>
+            <div className="hero-actions">
+              <LinkButton href="/#contact">
+                <Mail
+                  className="h-4 w-4 shrink-0"
+                  strokeWidth={1.75}
+                  aria-hidden="true"
+                />
+                <span>Get in touch</span>
+              </LinkButton>
+              <LinkButton href="/#work" variant="secondary">
+                <Briefcase
+                  className="h-4 w-4 shrink-0"
+                  strokeWidth={1.75}
+                  aria-hidden="true"
+                />
+                <span>See the work</span>
+              </LinkButton>
+            </div>
 
-        {/* Terminal-style prompt line */}
-        <Tooltip
-          content={
-            "You've opened my terminal. I'm a developer. Let me show you what I can do."
-          }
-        >
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="flex flex-wrap items-center justify-center gap-2 font-mono text-base sm:text-lg text-text-muted mb-6 cursor-default"
-            tabIndex={0}
-          >
-            <span className="text-accent-blue select-none">$</span>
-            <span className="text-text-tertiary">dileepadev</span>
-            <span
-              className="inline-flex h-4 w-0.5 bg-accent-blue ml-0.5 animate-pulse"
-              aria-hidden
-            />
-          </motion.div>
-        </Tooltip>
-
-        {/* Name: single bold line */}
-        <motion.h1
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.15 }}
-          className="text-5xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-transparent bg-clip-text bg-linear-to-r from-text-primary via-accent-blue to-accent-purple mb-8 animate-fade-in tracking-tight"
-        >
-          {about?.name}
-        </motion.h1>
-
-        {/* Tagline with monospace accent */}
-        <motion.p
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.3 }}
-          className="font-mono font-semibold text-xl sm:text-2xl text-text-muted tracking-wide mb-6"
-        >
-          {about?.title}
-        </motion.p>
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.35 }}
-          className="text-text-tertiary text-lg md:text-xl max-w-lg mb-10"
-        >
-          {about?.tagline}
-        </motion.p>
-
-        {/* Availability chip */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.3, delay: 0.45 }}
-        >
-          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-bg-elevated border border-border-light text-text-secondary text-xs font-medium uppercase tracking-wider">
-            <span className="size-1.5 rounded-full status-available-dot" />
-            {about?.status}
-          </span>
-        </motion.div>
-
-        {/* Social links */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.65 }}
-          className="flex items-center gap-5 text-text-muted mt-8 flex-wrap"
-        >
-          {about?.links &&
-            Object.entries(about.links).map(([key, url]) => {
-              if (key === "website" || key === "email") return null;
-              if (!url) return null;
-
-              const platformKey = key.toLowerCase();
-              const IconComponent = iconMap[platformKey];
-
-              if (!IconComponent) return null;
-
-              return (
-                <IconButton
-                  key={key}
-                  href={url}
-                  external
-                  variant="ghost"
-                  className="hover:text-accent-blue hover:bg-transparent"
-                  aria-label={key}
+            {socials.length > 0 && (
+              <div className="mt-8 flex items-center gap-3">
+                <span className="font-mono text-small text-fg-muted">
+                  Find me on
+                </span>
+                <span
+                  className="text-border-strong select-none"
+                  aria-hidden="true"
                 >
-                  <IconComponent className="size-5" />
-                </IconButton>
-              );
-            })}
-        </motion.div>
-      </Container>
+                  -
+                </span>
+                <div className="socials !mt-0 flex items-center gap-3">
+                  {socials.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <a
+                        key={item.label}
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={item.label}
+                      >
+                        <Icon className="h-4.5 w-4.5" aria-hidden="true" />
+                      </a>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
 
-      {/* Scroll */}
-      <motion.button
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1, duration: 0.5 }}
-        onClick={handleScrollDown}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 text-text-muted hover:text-accent-blue transition-colors"
-        aria-label="Scroll to content"
-      >
-        <FaArrowDown className="size-4 animate-bounce" />
-      </motion.button>
-    </section>
+          {portrait && (
+            <aside className="hero-side w-full flex justify-center">
+              <div className="hero-id mx-auto">
+                <Image
+                  className="portrait"
+                  src={portrait}
+                  alt={name}
+                  width={260}
+                  height={260}
+                  sizes="260px"
+                  // The LCP element on the homepage, and both attributes are
+                  // load-bearing. `fetchPriority` only sets the hint; what
+                  // decides lazy-vs-eager is `loading`, `priority` or
+                  // `preload` - so `fetchPriority` on its own leaves the LCP
+                  // image lazily loaded. `priority` was deprecated in Next 16
+                  // and `preload` is documented as the wrong choice wherever
+                  // `loading` is set, which leaves this pair.
+                  loading="eager"
+                  fetchPriority="high"
+                />
+                <div className="mt-4">
+                  <div className="hero-name">{name}</div>
+                  {role && (
+                    <div className="hero-role mt-1 flex items-center justify-center gap-1.5 flex-wrap">
+                      <span>{role}</span>
+                      {about?.location && (
+                        <>
+                          <span className="text-fg-muted">·</span>
+                          <span className="inline-flex items-center gap-1">
+                            <MapPin
+                              className="h-3.5 w-3.5 text-fg-muted"
+                              strokeWidth={1.75}
+                              aria-hidden="true"
+                            />
+                            <span>{about.location}</span>
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </aside>
+          )}
+        </div>
+      </div>
+    </Container>
   );
 }

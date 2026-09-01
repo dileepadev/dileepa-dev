@@ -1,48 +1,68 @@
-import { Metadata } from "next";
-import { Container, Button } from "@/components/ui";
-import { Navbar, Footer } from "@/components/sections";
-import { api } from "@/lib/api";
-import { FaArrowLeft, FaCalendarAlt } from "react-icons/fa";
-import { EventList } from "./_components/EventList";
+import type { Metadata } from "next";
+import {
+  ApiOfflinePage,
+  Container,
+  EmptyState,
+  PagePath,
+  Section,
+} from "@/components/ui";
+import { api, checkApiHealth } from "@/lib/api";
+import { EMPTY_STATES, PAGES } from "@/lib/constants";
+import { pageMetadata } from "@/lib/metadata";
+import { EventSearch } from "./_components/EventSearch";
 
-export const metadata: Metadata = {
-  title: "Events | Dileepa Bandara",
-  description:
-    "Explore my past and upcoming events, conference talks, workshops, and podcast appearances on web development and software engineering topics.",
-};
+export const metadata: Metadata = pageMetadata({
+  title: PAGES.events.meta.title,
+  description: PAGES.events.meta.description,
+  path: "/events",
+});
 
 export default async function EventsPage() {
-  const [events, about] = await Promise.all([api.getEvents(), api.getAbout()]);
+  // Two queries rather than one filtered in the browser: upcoming sorts
+  // soonest-first and completed sorts most-recent-first, which is two opposite
+  // orders and cannot be one query.
+  const [upcoming, completed] = await Promise.all([
+    api.getEvents({ status: "upcoming", limit: 50 }),
+    api.getEvents({ status: "completed", limit: 100 }),
+  ]);
+
+  const total = upcoming.length + completed.length;
+  if (total === 0) {
+    const health = await checkApiHealth();
+    if (!health.ok) {
+      return <ApiOfflinePage path="/events" />;
+    }
+  }
+
+  const empty = total === 0;
 
   return (
-    <>
-      <Navbar />
-      <main className="min-h-screen pt-24 pb-16 bg-bg-primary">
-        <Container>
-          {/* Header */}
-          <div className="max-w-4xl mx-auto text-center mb-16">
-            <div className="flex justify-center mb-6">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-accent-blue/10 text-accent-blue">
-                <FaCalendarAlt className="h-10 w-10" />
-              </div>
+    <Section>
+      <Container>
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <div className="mb-2">
+              <PagePath path="/events" />
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-text-primary mb-4">
-              Events
-            </h1>
-            <p className="text-xl text-text-secondary mb-6 max-w-2xl mx-auto">
-              Conference talks, workshops, meetups, and podcast appearances
-              where I share knowledge and insights with the tech community.
-            </p>
-            <Button href="/" variant="outline" leftIcon={<FaArrowLeft />}>
-              Back to Home
-            </Button>
+            <div className="section-label">{PAGES.events.label}</div>
+            <h1>{PAGES.events.title}</h1>
           </div>
+          {total > 0 && (
+            <div className="inline-flex items-center gap-1.5 font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1 transition-colors duration-150 hover:border-brand hover:bg-surface-hover hover:text-fg cursor-default">
+              <span className="font-medium text-fg">{total}</span>
+              <span>{total === 1 ? "Event" : "Events"}</span>
+            </div>
+          )}
+        </div>
 
-          {/* Events List (Search & Sort) */}
-          <EventList initialEvents={events || []} />
-        </Container>
-      </main>
-      <Footer about={about || undefined} />
-    </>
+        <p className="section-intro">{PAGES.events.intro}</p>
+
+        {empty ? (
+          <EmptyState {...EMPTY_STATES.events} />
+        ) : (
+          <EventSearch upcoming={upcoming} completed={completed} />
+        )}
+      </Container>
+    </Section>
   );
 }

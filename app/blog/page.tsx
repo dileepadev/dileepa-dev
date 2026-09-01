@@ -1,48 +1,79 @@
-import { Metadata } from "next";
-import { Container, Button } from "@/components/ui";
-import { Navbar, Footer } from "@/components/sections";
-import { FaArrowLeft, FaPen } from "react-icons/fa";
-import { api } from "@/lib/api";
-import { BlogList } from "./_components/BlogList";
+import type { Metadata } from "next";
+import {
+  ApiOfflinePage,
+  Container,
+  EmptyState,
+  PagePath,
+  Section,
+} from "@/components/ui";
+import { api, checkApiHealth } from "@/lib/api";
+import { EMPTY_STATES, PAGES } from "@/lib/constants";
+import { pageMetadata } from "@/lib/metadata";
+import { BlogSearch } from "./_components/BlogSearch";
+
+const blogMetadata = pageMetadata({
+  title: PAGES.blog.meta.title,
+  description: PAGES.blog.meta.description,
+  path: "/blog",
+});
 
 export const metadata: Metadata = {
-  title: "Blog",
-  description:
-    "Read my thoughts on software development, technology, and more.",
+  ...blogMetadata,
+  // The feed is announced from the index, so a reader who lands here with a
+  // feed reader installed is offered it without having to find the link.
+  alternates: {
+    ...blogMetadata.alternates,
+    types: { "application/rss+xml": "/blog/rss.xml" },
+  },
 };
 
 export default async function BlogPage() {
-  const [blogs, about] = await Promise.all([api.getBlogs(), api.getAbout()]);
+  const posts = (await api.getAllBlogs()) ?? [];
+
+  if (posts.length === 0) {
+    const health = await checkApiHealth();
+    if (!health.ok) {
+      return <ApiOfflinePage path="/blog" />;
+    }
+  }
 
   return (
-    <>
-      <Navbar />
-      <main className="min-h-screen pt-24 pb-16 bg-bg-primary">
-        <Container>
-          {/* Header */}
-          <div className="max-w-4xl mx-auto text-center mb-16">
-            <div className="flex justify-center mb-6">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-accent-blue/10 text-accent-blue">
-                <FaPen className="h-10 w-10" />
-              </div>
+    <Section>
+      <Container>
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <div className="mb-2">
+              <PagePath path="/blog" />
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-text-primary mb-4">
-              Blog
-            </h1>
-            <p className="text-xl text-text-secondary mb-6 max-w-2xl mx-auto">
-              I share my thoughts on software development, technology trends,
-              and personal experiences through articles and guides.
-            </p>
-            <Button href="/" variant="outline" leftIcon={<FaArrowLeft />}>
-              Back to Home
-            </Button>
+            <div className="section-label">{PAGES.blog.label}</div>
+            <h1>{PAGES.blog.title}</h1>
           </div>
+          {posts.length > 0 && (
+            <div className="inline-flex items-center gap-1.5 font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1 transition-colors duration-150 hover:border-brand hover:bg-surface-hover hover:text-fg cursor-default">
+              <span className="font-medium text-fg">{posts.length}</span>
+              <span>{posts.length === 1 ? "Post" : "Posts"}</span>
+            </div>
+          )}
+        </div>
 
-          {/* Blog Content */}
-          <BlogList initialBlogs={blogs || []} />
-        </Container>
-      </main>
-      <Footer about={about || undefined} />
-    </>
+        <p className="section-intro">
+          {PAGES.blog.intro}{" "}
+          <a
+            href="/blog/rss.xml"
+            className="text-brand underline hover:text-brand-hover"
+          >
+            RSS
+          </a>
+        </p>
+
+        {posts.length === 0 ? (
+          <div className="mt-10">
+            <EmptyState {...EMPTY_STATES.posts} />
+          </div>
+        ) : (
+          <BlogSearch posts={posts} />
+        )}
+      </Container>
+    </Section>
   );
 }

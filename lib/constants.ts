@@ -1,58 +1,673 @@
 // ============================================
-// Constants and Site Data - dileepa.dev
+// Site configuration and copy
+//
+// Copy lives here, not inline in components, so the voice can be reviewed in
+// one place. Voice rules: dileepadev/docs/brand/voice.md. Plain, specific,
+// unhurried - and sentence case in every string a reader sees, except proper
+// nouns. The role `AI Engineer` is one of those; the discipline
+// "AI engineering" is not. See the note on SITE_CONFIG.title.
+//
+// Banned without exception: passionate about, leveraging, cutting-edge,
+// revolutionize, game-changing, unlock, seamless, AI enthusiast, thought
+// leader, journey, humbled to announce, 10x.
 // ============================================
 
-import type { NavLink, AboutWhatIDoItem } from "./types";
+import type { NavLink } from "./types";
 
-// Site Configuration
 export const SITE_CONFIG = {
   name: "Dileepa Bandara",
-  title: "Dileepa Bandara | AI Engineer",
+  // "AI Engineer" is title case here and in every other role *label*: the
+  // Person schema's `jobTitle`, the line under the hero portrait, the terminal
+  // profile's role field. It is the name of the role, and the sentence-case
+  // rule covers headings, buttons, nav and labels, not proper nouns. The
+  // discipline keeps its lowercase: "AI engineering" in the Work intro and the
+  // pillar cards, and "an AI engineer" in the running prose of a biography.
+  //
+  // The handle is last, after a pipe, and that placement is the point. It is
+  // worth carrying - `dileepadev` is the lockup, the manifest short_name and
+  // the GitHub org, and someone who knows the handle and searches it should
+  // land here, which the `dileepa.dev` domain does not cover. But "Dileepa
+  // Bandara (@dileepadev)" is X's and GitHub's own profile-title format, so
+  // putting it after the name makes a search result read as a social profile
+  // rather than this site - and it pushes "AI Engineer", the strongest term
+  // after the name, out of the front of the string.
+  //
+  // Metadata only - no heading renders this.
+  title: "Dileepa Bandara - AI Engineer | @dileepadev",
+  // Says what is here and what the person does, without adjectives doing the
+  // work. The v1 description opened with "passionate about" and closed on
+  // "something amazing together"; both are gone.
+  //
+  // **Short on purpose.** This is UI copy: the hero falls back to it as the
+  // display heading when the API has no tagline, the footer prints it, and the
+  // terminal profile and the web manifest both carry it. A 150-character
+  // sentence is right for a search result and wrong for all four, which is
+  // what `metaDescription` below is for.
   description:
-    "I'm an AI Engineer passionate about building intelligent solutions that make a difference. Here you'll find my work, experience, and ways to connect. Let's create something amazing together!",
-  url: "https://dileepa.dev",
+    "AI Engineer. Building AI systems and the community around them.",
+  /**
+   * The search and social description.
+   *
+   * Sized to the tighter of the two consumers, not the looser. A result
+   * snippet runs to roughly 155 characters, but a social card truncates around
+   * 125 - and an ellipsis through the middle of a sentence on a shared link is
+   * a worse failure than leaving thirty characters of a search snippet unused.
+   * So these sit around 110-125: long enough that Google does not discard it
+   * and compose its own, short enough to survive a card intact.
+   *
+   * The words are the owner's, not invented here: this is `taglineDescription`
+   * on the `about` record, which is also the sentence rendered under the hero.
+   * A search snippet that matches the first thing a reader sees on the page is
+   * the point. It is duplicated rather than read from the API because the root
+   * layout exports a static `metadata` object; if it ever needs to follow what
+   * the admin says, the layout becomes `generateMetadata` and this stays as
+   * the fallback, which is the pattern the rest of the copy already uses.
+   */
+  metaDescription:
+    "I build AI systems end to end, from agent architectures and infrastructure to the interfaces people actually use.",
+  // The origin the site is actually served from. Canonical URLs, the sitemap
+  // and the RSS feed are all composed from it, so a wrong value here points
+  // every canonical tag at somewhere else.
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://dileepa.dev",
   email: "contact@dileepa.dev",
   author: "Dileepa Bandara",
   locale: "en_US",
   twitterHandle: "@dileepadev",
+  // The link-in-bio page. It left the footer when Projects took its place
+  // there, and is surfaced in the Contact section instead - a reader
+  // looking for somewhere to follow rather than somewhere to read.
+  linksUrl: "https://links.dileepa.dev",
+  repository: "https://github.com/dileepadev/dileepa-dev",
+  branch: "feat/v2.0.0",
+  version: "2.0.0",
 } as const;
 
-// Navigation Links
+/**
+ * The terminal rendering - what `curl` gets instead of the homepage.
+ *
+ * Additive. `proxy.ts` looks at the User-Agent on `/` and rewrites terminal
+ * clients to `TERMINAL.path`; a browser is never matched and the site it gets
+ * is byte-for-byte the one it got before this existed.
+ */
+export const TERMINAL = {
+  /**
+   * The command the site advertises, and the one the output echoes back.
+   *
+   * `-L` is not decoration and it is not a stylistic choice. `curl dileepa.dev`
+   * resolves to `http://dileepa.dev`, and Vercel answers plaintext HTTP on a
+   * custom domain with a `308` to the HTTPS origin - at the edge, before any
+   * code in this repository runs. curl does not follow redirects unless told
+   * to, so the bare command prints Vercel's two-word `Redirecting...` body and
+   * exits 0. There is no application-level fix: the redirect is not ours to
+   * remove. So the advertised command carries the flag that makes it work in
+   * one shot, and `TERMINAL.commandHttps` is the equally short alternative for
+   * anyone who would rather type the scheme than the flag.
+   */
+  command: "curl -L dileepa.dev",
+  /** The other one-shot form. Reaches HTTPS directly, so it needs no `-L`. */
+  commandHttps: "curl https://dileepa.dev",
+  /**
+   * Content width inside the two-space gutter.
+   *
+   * 72 + 2 leaves an 80-column terminal - still the floor worth designing for -
+   * with room to spare, and keeps the output readable when it is pasted into a
+   * chat window or an issue.
+   */
+  columns: 72,
+  /** The rewrite destination, and a stable URL in its own right. */
+  path: "/terminal",
+  /**
+   * The boot sequence plays by default for a terminal client, and these force
+   * it on for anyone else - a browser at `/terminal`, or a client the
+   * User-Agent matcher does not recognise.
+   */
+  introKeys: ["intro", "boot", "animate"],
+  /**
+   * The query keys that skip the boot sequence and return the document at once.
+   *
+   * This is the escape hatch, and it exists because of a limit that cannot be
+   * engineered away: the server cannot tell whether the reader's `stdout` is a
+   * terminal or a redirect into a file. curl answers `isatty` locally and sends
+   * nothing about it, so `curl -L dileepa.dev > profile.txt` looks identical on
+   * the wire to a person watching their screen - and the animation lands in the
+   * file, carriage returns and all.
+   *
+   * Playing by default is a deliberate trade of that case for the common one.
+   * Anyone piping, scripting or saving reaches for one of these, and
+   * `?nocolor` - which they already want, to drop the escape codes - implies it
+   * without having to be told twice.
+   */
+  staticKeys: ["static", "fast", "now", "nointro"],
+  /**
+   * How many rows each section may spend.
+   *
+   * A profile is a summary. The index pages exist for the full lists and every
+   * section prints the URL of its own, so a cap costs a reader nothing.
+   */
+  limits: {
+    experiences: 4,
+    educations: 2,
+    projects: 4,
+    posts: 4,
+    communities: 3,
+    events: 2,
+    tools: 28,
+  },
+} as const;
+
+/**
+ * Primary navigation.
+ *
+ * The homepage is the site: everything is a section on it, and the index pages
+ * exist for the full lists. So the nav points at sections, not routes - which
+ * is what the layout reference does, and why the links are all hashes.
+ */
 export const NAV_LINKS: NavLink[] = [
   { label: "About", href: "/#about" },
-  { label: "Experience", href: "/#experience" },
+  { label: "Work", href: "/#work" },
   { label: "Education", href: "/#education" },
   { label: "Community", href: "/#community" },
-  { label: "Connect", href: "/#connect" },
+  { label: "Contact", href: "/#contact" },
 ];
 
-// External Links (for future pages)
-export const EXTERNAL_LINKS: NavLink[] = [
-  { label: "Communities", href: "/communities", isExternal: false },
-  { label: "Events", href: "/events", isExternal: false },
-  { label: "Videos", href: "/videos", isExternal: false },
-  { label: "Blog", href: "/blog", isExternal: false },
+export const FOOTER_LINKS: { title: string; links: NavLink[] }[] = [
+  {
+    title: "Site",
+    links: [
+      { label: "About", href: "/#about" },
+      { label: "Work", href: "/#work" },
+      { label: "Education", href: "/#education" },
+      { label: "Community", href: "/#community" },
+      { label: "Contact", href: "/#contact" },
+    ],
+  },
+  {
+    title: "Elsewhere",
+    links: [
+      { label: "Projects", href: "/projects" },
+      { label: "Communities", href: "/communities" },
+      { label: "Events", href: "/events" },
+      { label: "Videos", href: "/videos" },
+      { label: "Blog", href: "/blog" },
+    ],
+  },
 ];
 
-export const ABOUT_WHAT_I_DO: AboutWhatIDoItem[] = [
-  {
-    icon: "FaRobot",
-    title: "AI Engineering",
-    desc: "Design, build, and deploy AI solutions",
+/**
+ * Section copy - one label, one heading, one intro. Design system §6.
+ *
+ * The label is a plain word rather than a numbered index: numbering sections
+ * makes the page claim an order it does not have, and breaks the moment one is
+ * added in the middle.
+ */
+export const SECTIONS = {
+  about: {
+    label: "About",
+    title: "An engineer who builds systems and explains them to a room.",
   },
-  {
-    icon: "FaServer",
-    title: "Cloud & Backend",
-    desc: "Build APIs, serverless systems, and infrastructure",
+  work: {
+    label: "Work",
+    title: "Where I have worked",
+    intro:
+      "Roles spanning AI engineering, software development, and building production systems.",
   },
-  {
-    icon: "FaCodeBranch",
-    title: "Open Source",
-    desc: "Contribute to open-source projects and mentor others",
+  education: {
+    label: "Education",
+    title: "Academic background",
+    intro: "Where I studied and what I learned along the way.",
   },
-  {
-    icon: "FaMicrophone",
+  community: {
+    label: "Community",
+    title: "Speaking, writing, building",
+    intro:
+      "Sharing ideas, bringing developers together, and contributing to the tech community.",
+  },
+  contact: {
+    label: "Contact",
+    title: "Let us talk",
+    intro:
+      "Open to AI engineering roles, workshop invitations, and questions about anything above.",
+  },
+} as const;
+
+/** Subsection copy, inside Work and Community. */
+export const SUBSECTIONS = {
+  tools: {
+    title: "Tools I reach for",
+    note: "The tools behind the systems, experiments, and products I build.",
+  },
+  projects: {
+    title: "Open source projects",
+    note: "Projects I build, maintain, and contribute to.",
+  },
+  communities: {
+    title: "Communities",
+    note: "Communities I organise with, contribute to, or volunteer for.",
+  },
+  events: {
     title: "Events",
-    desc: "Speak at tech events and foster community",
+    note: "Talks and workshops I've delivered, with the most recent first.",
+  },
+  gallery: {
+    title: "Event gallery",
+    note: "Moments from events, talks, and workshops I've joined.",
+  },
+
+  blogs: {
+    title: "Blog",
+    note: "Notes I write on AI systems, engineering, and production.",
+  },
+  videos: {
+    title: "Videos",
+    note: "Walkthroughs I create on AI systems and software engineering.",
+  },
+} as const;
+
+/**
+ * What the six cards under About say.
+ *
+ * These represent the core areas of work and activity: AI engineering,
+ * open-source projects, public speaking, technical writing, videos,
+ * and community volunteering.
+ */
+/**
+ * The fallback for the six About cards.
+ *
+ * They are served by `GET /pillars` now, so this list is only what renders when
+ * that call comes back empty - an API outage, or a deployment where the
+ * collection has not been seeded yet. `icon` names the same closed set the API
+ * does; `components/sections/About.tsx` resolves it either way.
+ */
+export const PILLARS = [
+  {
+    key: "ai-engineering",
+    icon: "cpu",
+    title: "AI engineering",
+    description:
+      "Building agentic systems, orchestrating LLM workflows, and designing evaluation pipelines for production applications.",
+  },
+  {
+    key: "open-source",
+    icon: "code",
+    title: "Open source",
+    description:
+      "Developing tools, contributing to projects, and sharing technical implementations across AI and software engineering.",
+  },
+  {
+    key: "public-speaking",
+    icon: "mic",
+    title: "Public speaking",
+    description:
+      "Speaking at conferences and meetups, leading technical workshops, and sharing lessons from building AI systems.",
+  },
+  {
+    key: "technical-writing",
+    icon: "book",
+    title: "Technical writing",
+    description:
+      "Writing about agentic systems, engineering practices, and lessons from building AI in production.",
+  },
+  {
+    key: "technical-videos",
+    icon: "video",
+    title: "Technical videos",
+    description:
+      "Creating technical tutorials and walkthroughs on AI systems, software engineering, and cloud infrastructure.",
+  },
+  {
+    key: "community-building",
+    icon: "users",
+    title: "Community building",
+    description:
+      "Organising technical meetups, mentoring engineers, and creating spaces for people and AI agents to learn and build.",
+  },
+] as const;
+
+/** Copy for pages that can legitimately be empty. */
+export const EMPTY_STATES = {
+  projects: {
+    title: "No projects are published yet.",
+    hint: "They appear here once they are marked published in the admin.",
+  },
+  events: {
+    title: "No events are published yet.",
+    hint: "Talks and workshops appear here once they are added.",
+  },
+  posts: {
+    title: "No posts are published yet.",
+    hint: "New writing appears here as it goes out.",
+  },
+  tag: {
+    title: "No posts carry this tag.",
+    hint: "Try another tag, or read everything from the blog index.",
+  },
+  gallery: {
+    title: "No event photographs yet.",
+    hint: "They appear here once photos are attached to an event in the admin.",
+  },
+  communities: {
+    title: "No communities are listed yet.",
+    hint: "They appear here once they are added in the admin.",
+  },
+  videos: {
+    title: "No videos are listed yet.",
+    hint: "Recordings appear here once they are added in the admin.",
+  },
+} as const;
+
+/**
+ * Page copy and metadata for standalone and index routes.
+ *
+ * Keeping titles, headings, and descriptions in one place guarantees consistent
+ * voice (sentence case, no banned buzzwords) and single-source maintainability.
+ */
+export const PAGES = {
+  blog: {
+    meta: {
+      title: "Writing on AI systems and engineering",
+      description:
+        "Notes on agentic systems, LLM pipelines, evaluation, and the engineering behind AI that actually runs in production.",
+    },
+    label: "Blog",
+    title: "Writing",
+    intro:
+      "Notes I write on what I build, what I learn, and what breaks along the way.",
+  },
+
+  projects: {
+    meta: {
+      title: "Open source projects and experiments",
+      description:
+        "Things I have built, maintained and contributed to - agent frameworks, developer tooling and cloud infrastructure work.",
+    },
+    label: "Projects",
+    title: "Things I have built",
+    intro:
+      "Projects I have built, with notes on what they do, how they're built, and what I'd change.",
+  },
+
+  events: {
+    meta: {
+      title: "Workshops, talks and conference sessions",
+      description:
+        "Workshops and sessions I have delivered at meetups, conferences and online, on agentic AI, Azure and production work.",
+    },
+    label: "Events",
+    title: "Workshops and sessions",
+    intro:
+      "Workshops and sessions I've delivered at meetups, conferences, and online.",
+  },
+
+  communities: {
+    meta: {
+      title: "Developer communities I help run",
+      description:
+        "Tech communities I organise with, contribute to or volunteer for, across Sri Lanka and online, on and off the stage.",
+    },
+    label: "Communities",
+    title: "Communities",
+    intro: "Communities I organise with, contribute to, or volunteer for.",
+  },
+
+  videos: {
+    meta: {
+      title: "Technical walkthroughs and demos",
+      description:
+        "Walkthroughs and demos on AI systems, Azure and software engineering, recorded from first principles to a deployment.",
+    },
+    label: "Videos",
+    title: "Walkthroughs and demos",
+    intro:
+      "Technical walkthroughs and demos I create on AI systems and software engineering.",
+  },
+
+  gallery: {
+    meta: {
+      title: "Photographs from events and workshops",
+      description:
+        "Photographs from the events, talks and workshops I have been part of, newest first, from across Sri Lanka and online.",
+    },
+    label: "Gallery",
+    title: "Event photographs",
+    intro:
+      "Photos from events, sessions, and workshops I've been part of, with the newest first.",
+  },
+
+  sitemap: {
+    meta: {
+      title: "Site tree & architecture",
+      description:
+        "An interactive directory of every published page, post, project and resource on dileepa.dev, with each route's status.",
+    },
+    label: "Architecture",
+    title: "Site tree & routes",
+    intro:
+      "A visual directory of every published page, post, project, and resource across dileepa.dev.",
+  },
+
+  privacy: {
+    meta: {
+      title: "Privacy policy",
+      description:
+        "How your information is collected, used, and protected when you visit dileepa.dev or interact with its forms and comments.",
+    },
+    label: "Legal",
+    title: "Privacy policy",
+    intro:
+      "A clear, straightforward explanation of what data is collected, how it is handled, and why.",
+  },
+
+  terms: {
+    meta: {
+      title: "Terms of service",
+      description:
+        "Terms and conditions for using dileepa.dev, reading its articles, and participating in comments and interactive features.",
+    },
+    label: "Legal",
+    title: "Terms of service",
+    intro:
+      "The rules and guidelines for using this website, its content, and interactive features.",
+  },
+
+  brand: {
+    meta: {
+      title: "Brand & design reference",
+      description:
+        "Living visual design system, color tokens, typography scale, logo mark, and portrait guidelines for dileepadev.",
+    },
+    label: "Identity",
+    title: "Brand & design reference",
+    intro:
+      "A living visual reference for the dileepadev identity - colors, typography, mark, photography, and UI patterns.",
+  },
+
+  profile: {
+    meta: {
+      title: "Speaker profile & media kit",
+      description:
+        "Official speaker biographies, high-resolution headshots, current role, contact details, and keynote topics for event organizers.",
+    },
+    label: "Speaker kit",
+    title: "Speaker profile & media kit",
+    intro:
+      "A dedicated reference for event organizers, conference committees, and podcast hosts. Includes official bios, photos with instant download, and credentials.",
+  },
+
+  notFound: {
+    meta: {
+      title: "Page not found (404)",
+      description:
+        "The requested resource or page could not be located on dileepa.dev.",
+    },
+    label: "System",
+    title: "Not found (404)",
+    intro:
+      "Fallback route rendered when a path does not exist. Features interactive radar telemetry and operator ID.",
+  },
+
+  error500: {
+    meta: {
+      title: "Runtime fault (500)",
+      description:
+        "Server-side render error boundary and recovery diagnostic unit on dileepa.dev.",
+    },
+    label: "System",
+    title: "Runtime fault (500)",
+    intro:
+      "Runtime fault boundary rendered when a render pipeline fails. Features oscilloscope wave telemetry and node reboot.",
+  },
+
+  apiOffline: {
+    meta: {
+      title: "API service unavailable (503)",
+      description:
+        "Upstream API connection status and fallback diagnostics on dileepa.dev.",
+    },
+    label: "System",
+    title: "API unavailable (503)",
+    intro:
+      "Fallback route displayed when the upstream API (api.dileepa.dev) is unreachable or disconnected.",
+  },
+} as const;
+
+export interface PageSummary {
+  key: keyof typeof PAGES;
+  path: string;
+  label: string;
+  title: string;
+  intro: string;
+  description: string;
+  badge: string;
+}
+
+/**
+ * Ordered list of all standalone pages across the site.
+ */
+export const PAGES_LIST: PageSummary[] = [
+  {
+    key: "projects",
+    path: "/projects",
+    label: PAGES.projects.label,
+    title: PAGES.projects.title,
+    intro: PAGES.projects.intro,
+    description: PAGES.projects.meta.description,
+    badge: "Projects",
+  },
+  {
+    key: "events",
+    path: "/events",
+    label: PAGES.events.label,
+    title: PAGES.events.title,
+    intro: PAGES.events.intro,
+    description: PAGES.events.meta.description,
+    badge: "Events",
+  },
+  {
+    key: "blog",
+    path: "/blog",
+    label: PAGES.blog.label,
+    title: PAGES.blog.title,
+    intro: PAGES.blog.intro,
+    description: PAGES.blog.meta.description,
+    badge: "Blog",
+  },
+  {
+    key: "communities",
+    path: "/communities",
+    label: PAGES.communities.label,
+    title: PAGES.communities.title,
+    intro: PAGES.communities.intro,
+    description: PAGES.communities.meta.description,
+    badge: "Community",
+  },
+  {
+    key: "videos",
+    path: "/videos",
+    label: PAGES.videos.label,
+    title: PAGES.videos.title,
+    intro: PAGES.videos.intro,
+    description: PAGES.videos.meta.description,
+    badge: "Videos",
+  },
+  {
+    key: "gallery",
+    path: "/gallery",
+    label: PAGES.gallery.label,
+    title: PAGES.gallery.title,
+    intro: PAGES.gallery.intro,
+    description: PAGES.gallery.meta.description,
+    badge: "Gallery",
+  },
+  {
+    key: "brand",
+    path: "/brand",
+    label: PAGES.brand.label,
+    title: PAGES.brand.title,
+    intro: PAGES.brand.intro,
+    description: PAGES.brand.meta.description,
+    badge: "Reference",
+  },
+  {
+    key: "profile",
+    path: "/profile",
+    label: PAGES.profile.label,
+    title: PAGES.profile.title,
+    intro: PAGES.profile.intro,
+    description: PAGES.profile.meta.description,
+    badge: "Speaker kit",
+  },
+  {
+    key: "sitemap",
+    path: "/sitemap",
+    label: PAGES.sitemap.label,
+    title: PAGES.sitemap.title,
+    intro: PAGES.sitemap.intro,
+    description: PAGES.sitemap.meta.description,
+    badge: "Architecture",
+  },
+  {
+    key: "privacy",
+    path: "/privacy",
+    label: PAGES.privacy.label,
+    title: PAGES.privacy.title,
+    intro: PAGES.privacy.intro,
+    description: PAGES.privacy.meta.description,
+    badge: "Legal",
+  },
+  {
+    key: "terms",
+    path: "/terms",
+    label: PAGES.terms.label,
+    title: PAGES.terms.title,
+    intro: PAGES.terms.intro,
+    description: PAGES.terms.meta.description,
+    badge: "Legal",
+  },
+  {
+    key: "notFound",
+    path: "/404",
+    label: PAGES.notFound.label,
+    title: PAGES.notFound.title,
+    intro: PAGES.notFound.intro,
+    description: PAGES.notFound.meta.description,
+    badge: "404",
+  },
+  {
+    key: "error500",
+    path: "/500",
+    label: PAGES.error500.label,
+    title: PAGES.error500.title,
+    intro: PAGES.error500.intro,
+    description: PAGES.error500.meta.description,
+    badge: "500",
+  },
+  {
+    key: "apiOffline",
+    path: "/503",
+    label: PAGES.apiOffline.label,
+    title: PAGES.apiOffline.title,
+    intro: PAGES.apiOffline.intro,
+    description: PAGES.apiOffline.meta.description,
+    badge: "503",
   },
 ];

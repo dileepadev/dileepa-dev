@@ -1,455 +1,1769 @@
+/* The cascade order, declared before anything else so that this is the order
+   that holds - a layer's position is fixed by where it is first named.
+
+   `brand` sits between Tailwind's `base` and `components` because the token
+   sheet is a base layer that has to lose to a utility. Unlayered rules beat
+   every layer, so importing the sheet *unlayered* - which is what a bare
+   `@import` does - put `a { color: var(--brand) }` and `p { max-width: 68ch }`
+   above every Tailwind class in the app. A `<a className="text-brand">` and a
+   `<p className="max-w-none">` were both silently doing nothing. */
+@layer theme, base, brand, components, utilities;
+
 @import "tailwindcss";
 
-/* ============================================
-   DESIGN SYSTEM - dileepa.dev
-   Brand Color: #030a14 (Deep Navy)
-   ============================================ */
+/* The vendored canonical token sheet. Every colour, type step, space and
+   motion value in this app resolves through it. Do not declare a colour here
+   or in a component - if you are typing a `#`, you are creating the drift the
+   design system exists to prevent.
 
-/* 1. TAILWIND THEME INTEGRATION
-   -------------------------------------------- */
+   Imported into `brand` rather than unlayered, per the order above. The
+   overrides in this file stay unlayered and therefore still win over it. */
+@import "./brand-tokens.css" layer(brand);
+
+/* next-themes writes data-theme on <html>. The token sheet keys its light
+   overrides off [data-theme="light"], so this tells Tailwind's dark: variant
+   to follow the same attribute rather than the .dark class it defaults to. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* ============================================================
+   Tailwind theme - the semantic tokens, and only those.
+
+   The raw palette (--emerald-bright, --ink-700, --paper-200, …) is
+   deliberately not exposed. It exists so the semantic layer can be defined
+   once; a component that reaches past --brand into --emerald-deep looks
+   correct on Paper and fails on Carbon.
+   ============================================================ */
 @theme inline {
-  --color-brand-primary: var(--brand-primary);
-  --color-brand-light: var(--brand-primary-light);
-  --color-brand-dark: var(--brand-primary-dark);
+  --color-bg: var(--bg);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-raised: var(--bg-raised);
+  --color-surface-hover: var(--surface-hover);
+  /* Two edge weights, not one. `--border` draws the page's structural rules -
+     section tops, entry and item separators - and stays quiet enough that a
+     long list reads as text rather than a table. `--border-strong` draws the
+     edge of a *thing*: a card, an input, a chip, the nav. A single value had
+     to serve both, so either the rules shouted or the components dissolved. */
+  --color-border-hairline: var(--border);
+  --color-border-strong: var(--border-strong);
 
-  --color-accent-blue: var(--accent-blue);
-  --color-on-accent: var(--text-on-accent);
-  /* other accents intentionally unified to brand */
-  --color-accent-purple: var(--accent-blue);
-  --color-accent-teal: var(--accent-blue);
-  --color-accent-orange: var(--accent-blue);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
 
-  --color-bg-primary: var(--bg-primary);
-  --color-bg-secondary: var(--bg-secondary);
-  --color-bg-tertiary: var(--bg-tertiary);
-  --color-bg-elevated: var(--bg-elevated);
+  --color-brand: var(--brand);
+  --color-brand-fill: var(--brand-fill);
+  --color-on-brand: var(--on-brand);
 
-  --color-text-primary: var(--text-primary);
-  --color-text-secondary: var(--text-secondary);
-  --color-text-tertiary: var(--text-tertiary);
-  --color-text-muted: var(--text-muted);
-
-  --color-border-light: var(--border-light);
-  --color-border-medium: var(--border-medium);
+  --color-success: var(--success);
+  --color-error: var(--error);
+  --color-warning: var(--warning);
 
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
+  --font-code: var(--font-code);
+
+  --text-display: var(--text-display);
+  --text-display--line-height: var(--lh-display);
+  --text-h1: var(--text-h1);
+  --text-h1--line-height: var(--lh-h1);
+  --text-h2: var(--text-h2);
+  --text-h2--line-height: var(--lh-h2);
+  --text-h3: var(--text-h3);
+  --text-h3--line-height: var(--lh-h3);
+  --text-body: var(--text-body);
+  --text-body--line-height: var(--lh-body);
+  --text-small: var(--text-small);
+  --text-small--line-height: var(--lh-small);
+  --text-label: var(--text-label);
+  --text-label--line-height: var(--lh-label);
+
+  --radius-sm: var(--radius-sm);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+
+  --ease-brand: var(--ease);
 }
 
-/* 2. CSS CUSTOM PROPERTIES (VARIABLES)
-   -------------------------------------------- */
+/* Tailwind 4 keeps bare `rounded` as a 0.25rem legacy alias and does not read
+   it from the theme, so every `rounded` in the app was drawing 4px against a
+   token that says 8px. Redefining the utility fixes all of them at once. */
+@utility rounded {
+  border-radius: var(--radius);
+}
 
-/* Light Mode (Default) */
+/* ============================================================
+   Local overrides - the fonts, and the two text-on-emerald stops
+
+   Everything else comes from `brand-tokens.css` above. This block used to
+   restore the neutral ramp, the radius scale, the type steps, the control
+   height, the hairline, both border weights, the button fill and every
+   derived interaction token - around a hundred declarations - because the
+   vendored sheet was still at v2.0 and the shipped site had moved past it.
+   v2.1 reconciled the sheet against this site, so all of it was re-stating
+   values the sheet already sets. Two files declaring one neutral ramp is the
+   drift the token sheet exists to prevent, and it was here.
+
+   What is left is what genuinely differs, and each one says why.
+   ============================================================ */
 :root {
-  /* --- Brand Colors (deep blue only) --- */
-  --brand-primary: #030a14;
-  --brand-primary-light: #030a14; /* keep same — avoid other color variants */
-  --brand-primary-dark: #010204; /* deeper blue for dark mode accents */
+  /* The token sheet names the families; next/font provides the files. The
+     variables are declared on <html> in app/layout.tsx, which is what makes
+     them resolvable here at :root. */
+  --font-sans: var(--font-manrope), system-ui, -apple-system, sans-serif;
+  /* The reference aliases its mono stack to Manrope: dates, labels, chips and
+     footer metadata are Manrope at --text-small, not a monospace face. */
+  --font-mono: var(--font-manrope), system-ui, -apple-system, sans-serif;
+  /* Real monospace is still needed for the one thing the reference has no
+     example of - code - so JetBrains Mono keeps a name of its own. */
+  --font-code: var(--font-jetbrains-mono), ui-monospace, "SF Mono", monospace;
 
-  /* --- Accent Colors (silver — matches primary palette) --- */
-  --accent-blue: #475569; /* slate-600 — cool silver */
-  --accent-blue-light: rgba(71, 85, 105, 0.12);
-  --accent-blue-dark: #334155;
-  --text-on-accent: #ffffff; /* Text on accent background */
+  /* Emoji, named so reaction glyphs render from the platform's own set rather
+     than whatever Manrope falls back to.
 
-  /* --- Background Colors --- */
-  --bg-primary: #ffffff;
-  --bg-secondary: #f8fafc;
-  --bg-tertiary: #f1f5f9;
-  --bg-elevated: #ffffff;
+     This is deliberately NOT a palette entry. §1 of the brand guide is that
+     emerald is the only accent and there is no second hue, and reaction glyphs
+     carry a lot of colour - so they are treated as content, the way a
+     photograph is, rather than as chrome. Nothing here defines a colour: the
+     colour belongs to the reader's platform, which is also why these read as
+     familiar rather than invented. */
+  --font-emoji:
+    "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji",
+    "Twemoji Mozilla", "EmojiOne Color", "Android Emoji", sans-serif;
 
-  /* --- Text Colors --- */
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-tertiary: #64748b;
-  --text-muted: #727d8f;
-  --text-inverse: #ffffff;
+  /* Text on a saturated emerald fill - the primary button, the filled badge.
+     The sheet pairs Emerald Bright with #062B20 and Emerald Deep with
+     #F7F7F7; this reuses the page's own foundation colours instead, which is
+     both a step more contrast and one fewer bespoke pair to keep in sync -
+     the pairing follows the foundation automatically if it ever moves. */
+  --on-emerald-dark: var(--ink-900); /* 8.0:1 on Emerald Bright - AAA */
+  --on-emerald-light: var(--paper-0); /* 5.0:1 on Emerald Deep - AA */
 
-  /* --- Border Colors --- */
-  --border-light: #e2e8f0;
-  --border-medium: #cbd5e1;
-  --border-dark: #94a3b8;
-
-  /* --- Shadow Colors --- */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg:
-    0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-xl:
-    0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-
-  /* --- Typography --- */
-  --font-sans: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-
-  /* --- Spacing Scale --- */
-  --space-xs: 0.25rem;
-  --space-sm: 0.5rem;
-  --space-md: 1rem;
-  --space-lg: 1.5rem;
-  --space-xl: 2rem;
-  --space-2xl: 3rem;
-  --space-3xl: 4rem;
-  --space-4xl: 6rem;
-
-  /* --- Border Radius --- */
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
-  --radius-2xl: 1.5rem;
-  --radius-full: 9999px;
-
-  /* --- Transitions --- */
-  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
-
-  /* --- Z-Index Scale --- */
-  --z-dropdown: 50;
-  --z-sticky: 100;
-  --z-fixed: 150;
-  --z-modal: 200;
-  --z-tooltip: 250;
-
-  /* --- Component: Badges (Light) --- */
-  --badge-bg-default: var(--bg-tertiary);
-  --badge-text-default: var(--text-secondary);
-
-  --badge-bg-primary: var(--accent-blue-light);
-  --badge-text-primary: var(--accent-blue);
-
-  --badge-bg-secondary: var(--accent-blue-light);
-  --badge-text-secondary: var(--accent-blue);
-
-  --badge-bg-success: rgba(16, 185, 129, 0.12); /* emerald-500/12 */
-  --badge-text-success: #10b981; /* emerald-500 */
-
-  --badge-bg-warning: rgba(245, 158, 11, 0.12); /* amber-500/12 */
-  --badge-text-warning: #f59e0b; /* amber-500 */
-
-  --badge-bg-error: rgba(239, 68, 68, 0.12); /* red-500/12 */
-  --badge-text-error: #ef4444; /* red-500 */
-
-  /* Active/inactive/in-person/online */
-  --badge-bg-active: rgba(16, 185, 129, 0.12);
-  --badge-text-active: #10b981;
-
-  --badge-bg-inactive: rgba(148, 163, 184, 0.08);
-  --badge-text-inactive: #94a3b8;
-
-  --badge-bg-inperson: rgba(168, 85, 247, 0.12);
-  --badge-text-inperson: #a855f7;
-
-  --badge-bg-online: rgba(14, 165, 233, 0.12);
-  --badge-text-online: #0ea5e9;
+  /* `--track-wide: 0.06em` used to sit here and was referenced by nothing -
+     the components that want open tracking under an uppercase mono label
+     reach for Tailwind's `tracking-wider` instead. Removed rather than
+     documented: an unused token is a value the next person has to check
+     before they can change anything near it. */
 }
 
-/* Dark Mode Overrides */
-.dark {
-  /* --- Brand & Accents --- */
-  --brand-primary: #030a14;
-  --brand-primary-light: #030a14;
-  --brand-primary-dark: #010204;
-
-  --accent-blue: #cbd5e1; /* slate-300 — bright silver */
-  --accent-blue-light: rgba(203, 213, 225, 0.15);
-  --accent-blue-dark: #94a3b8;
-  --text-on-accent: #0f172a; /* Dark text on silver */
-
-  /* --- Backgrounds --- */
-  --bg-primary: #010204; /* very deep blue background */
-  --bg-secondary: #01070e; /* primary brand as secondary layer */
-  --bg-tertiary: #06121a; /* slightly lighter than secondary */
-  --bg-elevated: #030a14;
-
-  /* --- Text --- */
-  --text-primary: #f8fafc;
-  --text-secondary: #e2e8f0;
-  --text-tertiary: #cbd5e1;
-  --text-muted: #94a3b8;
-  --text-inverse: #010204;
-
-  /* --- Borders (Visible slate blues) --- */
-  --border-light: #1e293b;
-  --border-medium: #334155;
-  --border-dark: #475569;
-
-  /* --- Shadows --- */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.5);
-  --shadow-md:
-    0 4px 6px -1px rgb(0 0 0 / 0.45), 0 2px 4px -2px rgb(0 0 0 / 0.35);
-  --shadow-lg:
-    0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.4);
-  --shadow-xl:
-    0 20px 25px -5px rgb(0 0 0 / 0.6), 0 8px 10px -6px rgb(0 0 0 / 0.45);
-
-  /* --- Component: Badges (Dark) --- */
-  --badge-bg-default: var(--bg-tertiary);
-  --badge-text-default: var(--text-secondary);
-
-  --badge-bg-primary: var(--accent-blue-light);
-  --badge-text-primary: var(--accent-blue);
-
-  --badge-bg-secondary: var(--accent-blue-light);
-  --badge-text-secondary: var(--accent-blue);
-
-  --badge-bg-success: rgba(16, 185, 129, 0.12);
-  --badge-text-success: #10b981;
-
-  --badge-bg-warning: rgba(245, 158, 11, 0.12);
-  --badge-text-warning: #f59e0b;
-
-  --badge-bg-error: rgba(239, 68, 68, 0.12);
-  --badge-text-error: #ef4444;
-
-  /* Active/inactive/in-person/online (Dark) */
-  --badge-bg-active: rgba(16, 185, 129, 0.12);
-  --badge-text-active: #10b981;
-
-  --badge-bg-inactive: rgba(148, 163, 184, 0.08);
-  --badge-text-inactive: #94a3b8;
-
-  --badge-bg-inperson: rgba(168, 85, 247, 0.15);
-  --badge-text-inperson: #c084fc;
-
-  --badge-bg-online: rgba(14, 165, 233, 0.12);
-  --badge-text-online: #0ea5e9;
-}
-
-/* 3. BASE STYLES & RESETS
-   -------------------------------------------- */
-
-/* Box Sizing */
+/* ============================================================
+   Base
+   ============================================================ */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
-/* HTML Defaults */
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 6rem; /* clear fixed navbar (top-5 + h-16) */
+  -webkit-text-size-adjust: 100%;
+  /* Sections clear the sticky header with their own `scroll-margin-top`;
+     scroll-padding here would compose with it and land hash links low. */
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) var(--bg);
 }
 
-/* Body Defaults */
-body {
-  font-family: var(--font-sans);
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Focus Handling */
-:focus-visible {
-  outline: 2px solid var(--brand-primary);
-  outline-offset: 2px;
-}
-
-/* Selection Styling */
-::selection {
-  background-color: var(--brand-primary);
-  color: white;
-}
-::-moz-selection {
-  background-color: var(--brand-primary);
-  color: white;
-}
-
-/* Dark mode selection */
-html.dark ::selection,
-.dark ::selection {
-  background-color: var(--accent-blue);
-  color: var(--text-on-accent);
-}
-html.dark ::-moz-selection,
-.dark ::-moz-selection {
-  background-color: var(--accent-blue);
-  color: var(--text-on-accent);
-}
-
-/* Scrollbar Customization */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
+
 ::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
+  background: var(--bg);
 }
+
 ::-webkit-scrollbar-thumb {
-  background: var(--border-medium);
-  border-radius: var(--radius-full);
+  background: var(--border);
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--bg);
 }
+
+/* Not emerald. The accent is a signal, and a scrollbar is not signalling
+   anything - spending the one accent here is part of why it stopped reading as
+   deliberate where it is spent deliberately. */
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--border-dark);
+  background: var(--fg-muted);
 }
 
-/* 4. UTILITY CLASSES
-   -------------------------------------------- */
-
-/* Glass Morphism */
-.glass {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-.dark .glass {
-  background: rgba(3, 10, 20, 0.8);
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
-/* Cursor & Interaction */
+body {
+  min-height: 100dvh;
+  text-rendering: optimizeLegibility;
+}
+
+/* ============================================================
+   RADIAL SPOTLIGHT THEME TRANSITION
+   ============================================================ */
+
+::view-transition-old(root) {
+  animation: none;
+  mix-blend-mode: normal;
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+  z-index: 9999;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* The 68ch cap from the token sheet stands, because the reference relies on
+   it: the About intro, entry bodies and item descriptions all wrap on it
+   rather than on the column they sit in. A paragraph used as a layout element
+   opts out with `max-w-none`. */
+
+/* The reference's links inherit their colour and carry no underline; every
+   coloured link on the page states its own colour. The token sheet's blanket
+   `a { color: var(--brand) }` is unlayered, so it beat every Tailwind text
+   utility in the app - including the primary button's label, which was
+   rendering emerald-on-emerald. */
+/* These three sit in `brand` - the same layer as the token sheet, later in it,
+   so they win there - rather than unlayered, because they are defaults and a
+   default has to lose to a utility. Unlayered, `a { color: inherit }` beat
+   `className="text-brand"` on every anchor in the app, and the token sheet's
+   own unlayered `h1, h2, h3 { margin: 0 }` beat `className="mt-4"` on the blog
+   post title. Both were silently doing nothing. */
+@layer brand {
+  a {
+    color: inherit;
+    text-decoration: none;
+    transition: color var(--dur) var(--ease);
+  }
+
+  /* The token sheet sets h2 at 500, which on this page put a heading a single
+     step above the paragraph beneath it while the display sat at 48px - so the
+     ramp jumped, then went missing in the middle. Headings are ranked by
+     weight here; size only carries rank where it is already doing work. */
+  h1,
+  h2,
+  .display {
+    letter-spacing: var(--track-tight);
+  }
+
+  h2 {
+    font-weight: 700;
+  }
+}
+
+/* One focus treatment for the whole site, and the same soft ring the hover
+   states use - four different hard 1px emerald outlines used to answer this. */
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+/* Interactive cursor rules */
 a,
 button,
+[role="button"],
+[role="tab"],
+select,
+summary,
 input[type="button"],
 input[type="submit"],
-input[type="reset"],
-[role="button"],
-summary,
-label[for] {
+input[type="reset"] {
   cursor: pointer;
 }
 
 button:disabled,
-[disabled] {
+[role="button"][aria-disabled="true"],
+input:disabled,
+select:disabled,
+textarea:disabled {
   cursor: not-allowed;
+}
+
+/* Badges and chips: atomic UI tokens with clean default arrow cursor */
+.badge,
+.chip,
+.stack span,
+.hero-status-pill {
+  cursor: default;
+}
+
+/* Badges and chips: pointer when interactive buttons, direct links, or marked interactive */
+a > .badge,
+a > .chip,
+a.badge,
+a.chip,
+button > .badge,
+button > .chip,
+button .badge,
+button .chip,
+.badge--interactive,
+.chip--interactive {
+  cursor: pointer;
+}
+
+a:hover > .badge:not(.badge-filled),
+a.badge:hover:not(.badge-filled),
+a:hover > .chip,
+a.chip:hover,
+button:hover > .badge:not(.badge-filled),
+button:hover .badge:not(.badge-filled),
+button:hover > .chip,
+button:hover .chip,
+.badge--interactive:hover:not(.badge-filled),
+.chip--interactive:hover {
+  border-color: var(--brand);
+  background-color: var(--surface-hover);
+  color: var(--fg);
+}
+
+/* Long-form copy is the one place a link should announce itself. */
+.prose a:not(.heading-anchor) {
+  color: var(--brand);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+/* An external link takes a small arrow. Social icons and elements with their
+   own explicit icons (.item a, .entry-org a, .view-all, .btn, .no-external) are excluded to prevent duplicate icons. */
+a[target="_blank"]:not(.socials a):not(.item a):not(.entry-org a):not(
+    .view-all
+  ):not(.btn):not(.no-external)::after {
+  content: "";
+  display: inline-block;
+  width: 0.85em;
+  height: 0.85em;
+  margin-left: 0.25em;
+  vertical-align: -0.05em;
+  background-color: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 7h10v10'/%3E%3Cpath d='M7 17 17 7'/%3E%3C/svg%3E")
+    no-repeat center / contain;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 7h10v10'/%3E%3Cpath d='M7 17 17 7'/%3E%3C/svg%3E")
+    no-repeat center / contain;
+  opacity: 0.65;
+  transition:
+    opacity var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+
+a[target="_blank"]:not(.socials a):not(.item a):not(.entry-org a):not(
+    .view-all
+  ):not(.btn):not(.no-external):hover::after {
+  opacity: 1;
+  transform: translate(1px, -1px);
+}
+
+::selection {
+  background: color-mix(in srgb, var(--brand) 28%, transparent);
+  color: inherit;
+}
+
+/* Code is the one place the real monospace face is wanted. The token sheet
+   points bare `code`/`pre` at --font-mono, which is now Manrope. */
+code,
+pre {
+  font-family: var(--font-code);
+}
+
+/* ============================================================
+   Layout - the reference implementation
+
+   `docs/design/reference/index.html` in the platform repo is the structural
+   contract for this site: container measure, section rhythm, the floating nav,
+   the entry and item grids, the subsection rule. It is reproduced here rather
+   than approximated in utility classes, because "the same layout" is a thing
+   that has to keep being true after the next edit.
+
+   Every value below is the reference's, resolved through the semantic token
+   names rather than copied as a literal. The reference declares `--cyan` and
+   `--gold` but references neither, so emerald remains the only accent that
+   reaches the page.
+   ============================================================ */
+
+/* One measure, everywhere: nav, footer, every section, every page. This used
+   to be 760px, with a wider 1020px variant reserved for the blog reader (760px
+   of article plus its 220px table-of-contents rail). That made the reader the
+   one page whose content didn't line up with the nav above it or the footer
+   below it - the exact "two sites" mismatch a single shared container exists
+   to prevent. 1020px is the reader's already-tuned figure, adopted as the
+   one width rather than inventing a third number: it's what the two-column
+   reader needs at minimum, and everything else has the same 68ch caps on
+   running text (`p { max-width: 68ch }`) regardless of the container around
+   it, so widening them costs nothing but unused text width - the flexible
+   grids (pillar cards, gallery, the contact form) simply get more room. */
+.container {
+  width: min(100% - var(--space-8), 1020px);
+  /* Tailwind 4 also generates a `container` utility whose breakpoint
+     max-widths would otherwise apply on top of this one. */
+  max-width: none;
+  margin-inline: auto;
+}
+
+.section {
+  padding: var(--space-16) 0;
+  border-top: var(--hairline) solid var(--border);
+  scroll-margin-top: 80px;
+}
+
+#top {
+  scroll-margin-top: 80px;
+}
+
+/* --- Logo lockup -------------------------------------------------------- */
+
+/* The token sheet draws the mark italic at 700 with a `margin-left`; the
+   reference draws it upright at 600, spaces the pair with a flex gap, and
+   trails the node dot rather than leading it. */
+.lockup {
+  display: inline-flex;
+  align-items: baseline;
+  /* ≈ the width of an 'i' */
+  gap: 0.34em;
+  /* The lockup never shrinks and never breaks. As a flex item next to a nav
+     that wants the space, it was being squeezed narrow enough on a phone that
+     the mark's trailing dot wrapped onto its own line under the slash. */
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.lockup .wordmark {
+  font-family: var(--font-sans);
+  font-size: var(--text-h3);
+  font-weight: 500;
+  line-height: 1;
+  /* Never emerald - brand guide §3.2. */
+  color: var(--fg);
+  letter-spacing: var(--track-tight);
+}
+
+.lockup .mark {
+  font-family: var(--font-sans);
+  font-size: var(--text-h3);
+  /* 700, not 600. Three elements on the page reached for weights outside the
+     400/500/700 scale, which meant loading five Manrope faces to draw three
+     exceptions. */
+  font-weight: 700;
+  font-style: normal;
+  line-height: 1;
+  color: var(--brand);
+  letter-spacing: var(--track-tight);
+  margin-left: 0;
+}
+
+.lockup .mark::after {
+  content: "";
+  display: inline-block;
+  width: 0.22em;
+  height: 0.22em;
+  margin-left: 0;
+  margin-right: 0.1em;
+  border-radius: 50%;
+  background: var(--brand);
+  vertical-align: baseline;
+}
+
+/* --- Header & Navigation ------------------------------------------------ */
+
+.site-header {
+  position: sticky;
+  top: 1rem;
+  z-index: 40;
+  padding-top: 0.75rem;
+}
+
+.nav-wrapper {
+  position: relative;
+}
+
+.nav {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: 0 var(--space-4);
+  background: var(--bg-surface);
+  border: var(--hairline) solid var(--border-strong);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-nav);
+  transition:
+    background-color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease);
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.nav-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.nav-links {
+  display: none;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+@media (min-width: 768px) {
+  .nav-links {
+    display: flex;
+  }
+}
+
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--space-3);
+  height: 36px;
+  border-radius: var(--radius);
+  border: var(--hairline) solid transparent;
+  font-size: var(--text-small);
+  font-weight: 500;
+  letter-spacing: var(--track-label);
+  color: var(--fg-muted);
+  text-decoration: none;
+  transition:
+    color var(--dur) var(--ease),
+    background-color var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+
+.nav-link:hover {
+  color: var(--fg);
+  background: var(--surface-hover);
+}
+
+.nav-link:active {
+  background: var(--raised-hover);
+  transform: scale(0.96);
+}
+
+.nav-link.is-active,
+.nav-link[aria-current="true"],
+.nav-link[aria-current="page"] {
+  color: var(--brand);
+  font-weight: 500;
+  background: var(--surface-hover);
+}
+
+.nav-mobile-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: var(--hairline) solid transparent;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--fg-muted);
+  cursor: pointer;
+  transition:
+    background-color var(--dur) var(--ease),
+    color var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+
+@media (min-width: 768px) {
+  .nav-mobile-toggle {
+    display: none;
+  }
+}
+
+.nav-mobile-toggle:hover,
+.nav-mobile-toggle.is-open {
+  background: var(--surface-hover);
+  color: var(--fg);
+}
+
+.nav-mobile-toggle:active {
+  background: var(--raised-hover);
+  transform: scale(0.96);
+}
+
+.nav-mobile-toggle:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 var(--ring-width) var(--ring);
+}
+
+/* Mobile dropdown menu */
+.nav-mobile-menu {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  left: 0;
+  right: 0;
+  z-index: 50;
+  padding: var(--space-3);
+  background: var(--bg-surface);
+  border: var(--hairline) solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-nav);
+  animation: dropdown-in var(--dur) var(--ease);
+}
+
+.nav-mobile-section-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  line-height: var(--lh-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  padding: var(--space-1) var(--space-2);
+  margin-bottom: var(--space-1);
+}
+
+.nav-mobile-links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.nav-mobile-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius);
+  font-size: var(--text-body);
+  font-weight: 500;
+  color: var(--fg-muted);
+  text-decoration: none;
+  transition:
+    background-color var(--dur) var(--ease),
+    color var(--dur) var(--ease);
+}
+
+.nav-mobile-link:hover {
+  background: var(--surface-hover);
+  color: var(--fg);
+}
+
+.nav-mobile-link.is-active,
+.nav-mobile-link[aria-current="true"] {
+  color: var(--brand);
+  font-weight: 500;
+  background: var(--surface-hover);
+}
+
+.nav-mobile-divider {
+  height: var(--hairline);
+  background: var(--border);
+  margin: var(--space-3) 0;
+}
+
+.nav-mobile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-1);
+}
+
+.nav-mobile-sublink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius);
+  font-size: var(--text-small);
+  font-weight: 500;
+  color: var(--fg-muted);
+  text-decoration: none;
+  transition:
+    background-color var(--dur) var(--ease),
+    color var(--dur) var(--ease);
+}
+
+.nav-mobile-sublink:hover {
+  background: var(--surface-hover);
+  color: var(--fg);
+}
+
+.nav-mobile-sublink.is-active,
+.nav-mobile-sublink[aria-current="page"] {
+  color: var(--brand);
+  font-weight: 500;
+  background: var(--surface-hover);
+}
+
+.nav-active-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--brand);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--brand) 60%, transparent);
+  flex-shrink: 0;
+}
+
+/* --- Theme toggle ------------------------------------------------------- */
+
+.theme-toggle {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: var(--hairline) solid transparent;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--fg-muted);
+  cursor: pointer;
+  transition:
+    background-color var(--dur) var(--ease),
+    color var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+
+.theme-toggle:hover {
+  background: var(--surface-hover);
+  color: var(--fg);
+}
+
+.theme-toggle:active {
+  background: var(--raised-hover);
+  transform: scale(0.96);
+}
+
+.theme-toggle:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 var(--ring-width) var(--ring);
+}
+
+.theme-toggle svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+}
+
+/* Both icons ship in the markup and CSS picks one, so the server and the
+   client render identical HTML and there is nothing to reconcile. */
+.theme-toggle .sun {
+  display: none;
+}
+
+[data-theme="dark"] .theme-toggle .sun {
+  display: block;
+}
+
+[data-theme="dark"] .theme-toggle .moon {
+  display: none;
+}
+
+/* --- Hero --------------------------------------------------------------- */
+
+.hero {
+  padding: var(--space-16) 0;
+  border-top: 0;
+}
+
+.hero-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(220px, 280px);
+  gap: var(--space-8);
+  align-items: start;
+}
+
+.hero-side {
+  display: flex;
+  justify-content: center;
+  padding-top: 0.25rem;
+}
+
+.hero-id {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  width: 100%;
+  max-width: 240px;
+  text-align: center;
+}
+
+.portrait {
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--bg-surface);
+  border: var(--hairline) solid var(--border-strong);
+  max-width: none;
+  flex: 0 0 auto;
+}
+
+.hero-name {
+  font-size: var(--text-h3);
+  line-height: var(--lh-h3);
+  font-weight: 500;
+  letter-spacing: var(--track-tight);
+}
+
+.hero-role {
+  font-size: var(--text-small);
+  line-height: var(--lh-small);
+  color: var(--fg-muted);
+}
+
+.hero .display {
+  max-width: 20ch;
+}
+
+.hero-lead {
+  margin-top: var(--space-5);
+  color: var(--fg-muted);
+  max-width: 62ch;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-8);
+}
+
+.hero-meta {
+  margin-bottom: var(--space-4);
+}
+
+.hero-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  border: var(--hairline) solid var(--border-strong);
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  line-height: 1;
+  letter-spacing: var(--track-label);
+  color: var(--fg-muted);
+  cursor: default;
+}
+
+.hero-status-dot {
+  display: inline-block;
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 50%;
+  background-color: var(--brand);
+  flex-shrink: 0;
+}
+
+/* --- Buttons ------------------------------------------------------------ */
+
+/* The token sheet's `.btn` sets its type with a `font` shorthand, which resets
+   any longhand set elsewhere, so the full definition lives here where the
+   reference's values are.
+
+   Height rather than vertical padding, so a button and an input placed on the
+   same row are the same object: 40px, both of them, in every theme. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--control-h);
+  font-family: var(--font-sans);
+  font-size: var(--text-small);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: var(--track-label);
+  padding: 0 var(--space-5);
+  border-radius: var(--radius);
+  border: var(--hairline) solid transparent;
+  cursor: pointer;
+  transition:
+    background var(--dur) var(--ease),
+    border-color var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease),
+    color var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+
+/* The accent, as a fill. */
+.btn--primary {
+  background: var(--brand-fill);
+  color: var(--on-brand);
+  border-color: var(--brand-fill);
+}
+
+.btn--primary:hover {
+  background: var(--brand-fill-hover);
+  border-color: var(--brand-fill-hover);
+}
+
+.btn--primary:active {
+  background: var(--brand-fill-active);
+  transform: scale(0.98);
+}
+
+.btn--secondary {
+  background: transparent;
+  color: var(--fg);
+  border-color: var(--border-strong);
+}
+
+.btn--secondary:hover {
+  background: var(--surface-hover);
+  border-color: var(--brand);
+  color: var(--fg);
+}
+
+.btn--secondary:active {
+  background: var(--raised-hover);
+}
+
+.btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 var(--ring-width) var(--ring);
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.btn:disabled:hover {
+  background: var(--brand-fill);
+}
+
+.btn--secondary:disabled:hover {
+  background: transparent;
+  border-color: var(--border-strong);
+}
+
+/* --- Section headings --------------------------------------------------- */
+
+/* The section label and the subsection title are the same label, at two ranks.
+
+   They used to be two unrelated systems on one page: a sentence-case emerald
+   label at 0.875rem for sections, and an uppercase 0.16em-tracked 800-weight
+   label at 0.72rem with a glowing bar for subsections. Same size and case now;
+   colour and the accent rule are what separate them. */
+.section-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+  line-height: var(--lh-small);
+  font-weight: 500;
+  letter-spacing: var(--track-label);
+  color: var(--brand);
+  /* Attached to the heading it labels. At --space-4 it floated a full line
+     above and read as a separate element. */
+  margin-bottom: var(--space-2);
+}
+
+.section-intro {
+  color: var(--fg-muted);
+  margin-top: var(--space-3);
+  margin-bottom: var(--space-10);
+}
+
+/* --- Section copy ------------------------------------------------------- */
+
+/* The About block: muted paragraphs a space-4 apart, with emphasis stepping up
+   to --fg. Deliberately not `.prose`, which is the blog reader's article style
+   and sets both a larger rhythm and full-contrast text. */
+.section-copy p {
+  color: var(--fg-muted);
+}
+
+.section-copy p + p {
+  margin-top: var(--space-4);
+}
+
+.section-copy strong {
+  color: var(--fg);
+  font-weight: 500;
+}
+
+/* --- Entry list - experience, education --------------------------------- */
+
+.entry {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: var(--space-8);
+  padding: var(--space-6) 0;
+  border-top: var(--hairline) solid var(--border);
+}
+
+.entry:last-child {
+  border-bottom: var(--hairline) solid var(--border);
+}
+
+.entry-date {
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+  line-height: var(--lh-small);
+  letter-spacing: var(--track-label);
+  color: var(--fg-muted);
+}
+
+.entry-org {
+  font-size: var(--text-small);
+  line-height: var(--lh-small);
+  color: var(--brand);
+  font-weight: 500;
+}
+
+.entry-org a {
+  color: inherit;
+  text-decoration: none;
+  transition: opacity var(--dur) var(--ease);
+}
+
+.entry-org a:hover {
+  opacity: 0.85;
+}
+
+.entry-title {
+  font-size: var(--text-h3);
+  line-height: var(--lh-h3);
+  font-weight: 500;
+  letter-spacing: var(--track-tight);
+  margin-top: var(--space-1);
+}
+
+.entry-body {
+  margin-top: var(--space-2);
+  color: var(--fg-muted);
+  font-size: var(--text-small);
+  line-height: var(--lh-small);
+}
+
+/* --- Stack chips -------------------------------------------------------- */
+
+.stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.stack span {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  line-height: 1;
+  letter-spacing: var(--track-label);
+  color: var(--fg-muted);
+  background: var(--bg-surface);
+  border: var(--hairline) solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+  cursor: default;
+}
+
+/* --- Card grid ---------------------------------------------------------- */
+
+/* A 12px gutter between cards carrying 24px of padding read as a seam rather
+   than a gap. Half the padding is the proportion the rest of the page uses. */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  margin-top: var(--space-10);
+}
+
+.card {
+  border-color: var(--border-strong);
+  transition:
+    background var(--dur) var(--ease),
+    border-color var(--dur) var(--ease);
+}
+
+.card:hover {
+  background: var(--surface-hover);
+  border-color: var(--brand);
+}
+
+.card h3 {
+  margin-bottom: var(--space-2);
+  letter-spacing: var(--track-tight);
+}
+
+.card p {
+  color: var(--fg-muted);
+  font-size: var(--text-small);
+  line-height: var(--lh-small);
+}
+
+/* --- Subsections and item lists ----------------------------------------- */
+
+.subsection {
+  margin-top: var(--space-16);
+}
+
+.subsection:first-of-type {
+  margin-top: 0;
+}
+
+.subsection-title {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+  padding-left: var(--space-3);
+  color: var(--fg);
+  font-size: var(--text-small);
+  line-height: var(--lh-small);
+  font-weight: 700;
+  letter-spacing: var(--track-label);
+}
+
+.subsection-title.has-icon {
+  padding-left: 0;
+}
+
+.subsection-title:not(.has-icon)::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 2px;
+  height: 1em;
+  border-radius: var(--radius-pill);
+  transform: translateY(-50%);
+  background: var(--brand);
+}
+
+.subsection-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--brand);
+}
+
+/* Supporting text under a label sat at 0.96rem while the label above it sat at
+   0.72rem - the note outweighed its own heading. It is the small step now. */
+.subsection-note {
+  color: var(--fg-muted);
+  font-size: var(--text-small);
+  line-height: var(--lh-small);
+  margin-bottom: var(--space-5);
+  max-width: 52ch;
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-6);
+  align-items: start;
+  padding: var(--space-5) 0;
+  border-top: var(--hairline) solid var(--border);
+}
+
+/* The item title carries the H3 type step whichever element it is. On an
+   index page it is an `h2` - there is no section heading between the page's
+   `h1` and the list, so an `h3` there skips a level - and an item title is
+   not the size a section heading is. The level is the outline's business;
+   the step is the type scale's. */
+.item-title {
+  font-size: var(--text-h3);
+  line-height: var(--lh-h3);
+  font-weight: 500;
+  letter-spacing: var(--track-tight);
+}
+
+.item:last-of-type {
+  border-bottom: var(--hairline) solid var(--border);
+}
+
+.item-title a {
+  color: inherit;
+  text-decoration: none;
+  transition: color var(--dur) var(--ease);
+}
+
+.item-title a:hover {
+  color: var(--brand);
+}
+
+.item p {
+  margin-top: var(--space-1);
+  color: var(--fg-muted);
+  font-size: var(--text-small);
+  line-height: var(--lh-small);
+}
+
+.item-meta {
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+  line-height: var(--lh-small);
+  letter-spacing: var(--track-label);
+  color: var(--fg-muted);
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-1);
+}
+
+.item-meta a {
+  display: inline-block;
+  margin-top: var(--space-2);
+  color: var(--brand);
+  text-decoration: none;
+  transition: opacity var(--dur) var(--ease);
+}
+
+.item-meta a:hover {
+  opacity: 0.85;
+}
+
+.view-all {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-5);
+  font-size: var(--text-small);
+  font-weight: 500;
+  letter-spacing: var(--track-label);
+  color: var(--brand);
+  text-decoration: none;
+}
+
+.view-all svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  transition: transform var(--dur) var(--ease);
+}
+
+.view-all:hover svg {
+  transform: translateX(3px);
+}
+
+/* --- Gallery ------------------------------------------------------------ */
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+}
+
+.gallery figure {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--radius);
+  border: var(--hairline) solid var(--border-strong);
+  background: var(--bg-surface);
+  aspect-ratio: 4 / 3;
+  transition: border-color var(--dur) var(--ease);
+}
+
+.gallery figure:hover {
+  border-color: var(--brand);
+}
+
+.gallery img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--dur) var(--ease);
+}
+
+.gallery a:hover img {
+  transform: scale(1.03);
+}
+
+.gallery figcaption {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  line-height: var(--lh-label);
+  color: var(--ink-100);
+  /* The scrim is what makes a caption legible over an arbitrary photograph;
+     it is fixed rather than themed, because the photo underneath is not. */
+  background: linear-gradient(to top, rgb(0 0 0 / 0.72), rgb(0 0 0 / 0));
+  opacity: 0;
+  transition: opacity var(--dur) var(--ease);
+}
+
+.gallery a:focus-visible figcaption,
+.gallery figure:hover figcaption {
+  opacity: 1;
+}
+
+/* --- Contact ------------------------------------------------------------ */
+
+/* No top margin of its own: `.section-intro` already sets the gap below the
+   heading block, and the two together left 72px of empty page between the
+   intro and the address. */
+.contact-email {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-h3);
+  font-weight: 500;
+  letter-spacing: var(--track-tight);
+  color: var(--brand);
+  text-decoration: none;
+}
+
+.contact-email svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.contact-email:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* The link-in-bio line, under the contact address.
+
+   Deliberately not `--brand`: the email above it is this surface's single
+   accent, and a second emerald link beside it is exactly the scattering the
+   brand guide rules out. Muted body colour, and the external arrow every
+   outbound link on the site already gets. */
+.contact-links {
+  margin-top: var(--space-3);
+  font-size: var(--text-small);
+  line-height: var(--lh-small);
+  color: var(--fg-muted);
+}
+
+.contact-links a {
+  color: var(--fg);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--border-strong);
+  transition: text-decoration-color var(--dur) var(--ease);
+}
+
+.contact-links a:hover {
+  text-decoration-color: var(--fg);
+}
+
+.form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-5);
+  margin-top: var(--space-10);
+  padding-top: var(--space-8);
+  border-top: var(--hairline) solid var(--border);
+}
+
+.form label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-size: var(--text-small);
+  line-height: var(--lh-small);
+  font-weight: 500;
+  letter-spacing: var(--track-label);
+  color: var(--fg);
+}
+
+.form label:nth-of-type(3),
+.form label:nth-of-type(4),
+.form button {
+  grid-column: 1 / -1;
+}
+
+.form .req {
+  color: var(--brand);
+  margin-left: 2px;
+}
+
+/* Form controls.
+   The appearance is shared, the layout is not. `.form` is the contact form's
+   four-field grid; `.field` is the opt-in for any other form - the comment
+   form - that wants the same controls without inheriting that grid. */
+.form input,
+.form textarea,
+.field input,
+.field textarea {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-surface);
+  border: var(--hairline) solid var(--border-strong);
+  border-radius: var(--radius);
+  color: var(--fg);
+  -webkit-text-fill-color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--text-small);
+  outline: none;
+  transition:
+    background-color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease);
+}
+
+/* An input is a replaced element and takes `normal`, not the body's 1.65 -
+   inheriting it makes every field 3px taller than the reference draws it. The
+   fixed height is what puts a field and a button on the same 40px baseline;
+   padding alone had them at 45px and 38px. */
+.form input,
+.field input {
+  height: var(--control-h);
+  padding-block: 0;
+  line-height: normal;
+}
+
+.form input:hover:not(:disabled):not(:focus),
+.form textarea:hover:not(:disabled):not(:focus),
+.field input:hover:not(:disabled):not(:focus),
+.field textarea:hover:not(:disabled):not(:focus) {
+  background: var(--surface-hover);
+  border-color: color-mix(in srgb, var(--fg) 20%, var(--border-strong));
+}
+
+.form input:invalid,
+.form textarea:invalid,
+.field input:invalid,
+.field textarea:invalid {
+  box-shadow: none;
+}
+
+.form input:user-invalid:not(:focus),
+.form textarea:user-invalid:not(:focus),
+.field input:user-invalid:not(:focus),
+.field textarea:user-invalid:not(:focus) {
+  border-color: var(--error);
+}
+
+.form input::placeholder,
+.form textarea::placeholder,
+.field input::placeholder,
+.field textarea::placeholder {
+  color: var(--fg-muted);
+  -webkit-text-fill-color: var(--fg-muted);
   opacity: 0.6;
 }
 
-.cursor-pointer {
-  cursor: pointer !important;
+.form input:focus,
+.form textarea:focus,
+.field input:focus,
+.field textarea:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 var(--ring-width) var(--ring);
 }
 
-/* Accent Utilities */
-.text-accent-blue {
-  color: var(--accent-blue) !important;
-}
-.text-on-accent {
-  color: var(--text-on-accent) !important;
-}
-.hover\:text-on-accent:hover {
-  color: var(--text-on-accent) !important;
-}
-.bg-accent-blue {
-  background-color: var(--accent-blue) !important;
-}
-.border-accent-blue {
-  border-color: var(--accent-blue) !important;
-}
-.hover\:text-accent-blue:hover {
-  color: var(--accent-blue) !important;
-}
-.active-accent {
-  color: var(--accent-blue) !important;
-  font-weight: 600;
+.form input:disabled,
+.form textarea:disabled,
+.field input:disabled,
+.field textarea:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-/* Badge Utility Classes */
-.bg-badge-default {
-  background-color: var(--badge-bg-default) !important;
-}
-.text-badge-default {
-  color: var(--badge-text-default) !important;
-}
-.bg-badge-primary {
-  background-color: var(--badge-bg-primary) !important;
-}
-.text-badge-primary {
-  color: var(--badge-text-primary) !important;
-}
-.bg-badge-secondary {
-  background-color: var(--badge-bg-secondary) !important;
-}
-.text-badge-secondary {
-  color: var(--badge-text-secondary) !important;
-}
-.bg-badge-success {
-  background-color: var(--badge-bg-success) !important;
-}
-.text-badge-success {
-  color: var(--badge-text-success) !important;
-}
-.bg-badge-warning {
-  background-color: var(--badge-bg-warning) !important;
-}
-.text-badge-warning {
-  color: var(--badge-text-warning) !important;
-}
-.bg-badge-error {
-  background-color: var(--badge-bg-error) !important;
-}
-.text-badge-error {
-  color: var(--badge-text-error) !important;
-}
-.bg-badge-active {
-  background-color: var(--badge-bg-active) !important;
-}
-.text-badge-active {
-  color: var(--badge-text-active) !important;
-}
-.bg-badge-inactive {
-  background-color: var(--badge-bg-inactive) !important;
-}
-.text-badge-inactive {
-  color: var(--badge-text-inactive) !important;
-}
-.bg-badge-inperson {
-  background-color: var(--badge-bg-inperson) !important;
-}
-.text-badge-inperson {
-  color: var(--badge-text-inperson) !important;
-}
-.bg-badge-online {
-  background-color: var(--badge-bg-online) !important;
-}
-.text-badge-online {
-  color: var(--badge-text-online) !important;
+.form textarea {
+  min-height: 140px;
+  resize: vertical;
+  line-height: var(--lh-body);
 }
 
-/* Status Available Dot */
-.status-available-dot {
-  background-color: var(--badge-text-success) !important;
-}
-.dark .status-available-dot {
-  background-color: #34d399 !important;
-}
-
-/* Container Width Utilities */
-.container-sm {
-  max-width: 640px;
-}
-.container-md {
-  max-width: 768px;
-}
-.container-lg {
-  max-width: 1024px;
-}
-.container-xl {
-  max-width: 1280px;
-}
-.container-2xl {
-  max-width: 1536px;
+/* Shorter than the contact form's: a comment is a paragraph, not a brief. */
+.field textarea {
+  min-height: 96px;
+  resize: vertical;
+  line-height: var(--lh-body);
 }
 
-/* 5. ANIMATIONS
-   -------------------------------------------- */
+.field label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-size: var(--text-small);
+  line-height: var(--lh-small);
+  font-weight: 500;
+  letter-spacing: var(--track-label);
+  color: var(--fg);
+}
 
-/* Keyframes */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
+.form button {
+  justify-self: start;
+  margin-top: var(--space-2);
+}
+
+/* --- Reaction glyphs ---------------------------------------------------- */
+
+/* One class, three states, used identically on posts, comments and replies.
+
+   Colour is the platform's, not the palette's - see --font-emoji. What this
+   controls is *how much* of it shows: an unreacted row should read as calm, and
+   a chosen reaction should be unmistakable without a second accent hue
+   appearing anywhere in the chrome. */
+.emoji {
+  font-family: var(--font-emoji);
+  font-size: 1em;
+  line-height: 1;
+  /* Emoji sit on the text baseline oddly across platforms; this centres them
+     against a label of the same size instead. */
+  display: inline-block;
+  vertical-align: middle;
+  /* Slightly held back at rest, full strength once engaged. Saturation rather
+     than opacity, so the glyph keeps its shape against any surface. */
+  filter: saturate(0.85);
+  transition:
+    transform var(--dur) var(--ease),
+    filter var(--dur) var(--ease);
+}
+
+.emoji-btn:hover .emoji,
+.emoji-btn:focus-visible .emoji {
+  filter: saturate(1.15);
+  transform: scale(1.15);
+}
+
+.emoji-btn[aria-checked="true"] .emoji,
+.emoji-btn[data-selected="true"] .emoji {
+  filter: saturate(1.2);
+}
+
+/* The one motion rule the guide is explicit about. */
+@media (prefers-reduced-motion: reduce) {
+  .emoji {
+    transition: none;
   }
-  to {
-    opacity: 1;
+
+  .emoji-btn:hover .emoji,
+  .emoji-btn:focus-visible .emoji {
+    transform: none;
   }
 }
 
-@keyframes slideUp {
+/* --- List toolbar (search + sort) --------------------------------------- */
+
+.list-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-8);
+}
+
+@media (min-width: 640px) {
+  .list-toolbar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.search-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.search-input-icon {
+  position: absolute;
+  left: var(--space-3);
+  width: 16px;
+  height: 16px;
+  color: var(--fg-muted);
+  pointer-events: none;
+  transition: color var(--dur) var(--ease);
+}
+
+.search-input-wrap:focus-within .search-input-icon {
+  color: var(--brand);
+}
+
+.search-input {
+  width: 100%;
+  height: var(--control-h);
+  padding: 0 var(--space-4);
+  padding-left: calc(var(--space-3) + 24px);
+  padding-right: calc(var(--space-3) + 24px);
+  background: var(--bg-surface);
+  border: var(--hairline) solid var(--border-strong);
+  border-radius: var(--radius);
+  color: var(--fg);
+  -webkit-text-fill-color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--text-small);
+  line-height: normal;
+  outline: none;
+  transition:
+    background-color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease);
+}
+
+.search-input:hover:not(:focus) {
+  background: var(--surface-hover);
+  border-color: color-mix(in srgb, var(--fg) 20%, var(--border-strong));
+}
+
+.search-input:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 var(--ring-width) var(--ring);
+}
+
+.search-input::placeholder {
+  color: var(--fg-muted);
+  -webkit-text-fill-color: var(--fg-muted);
+  opacity: 0.6;
+}
+
+/* Removes the default clear button in WebKit so the custom one takes over. */
+.search-input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.search-kbd {
+  position: absolute;
+  right: var(--space-3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+  min-width: 20px;
+  padding: 0 5px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--fg-muted);
+  background: var(--bg-surface);
+  border: var(--hairline) solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  pointer-events: none;
+}
+
+.search-input-clear {
+  position: absolute;
+  right: var(--space-2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--fg-muted);
+  cursor: pointer;
+  transition:
+    background-color var(--dur) var(--ease),
+    color var(--dur) var(--ease);
+}
+
+.search-input-clear:hover {
+  background: var(--surface-hover);
+  color: var(--fg);
+}
+
+/* --- Sort custom dropdown ----------------------------------------------- */
+
+.sort-dropdown-wrap {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.sort-dropdown-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: var(--control-h);
+  padding: 0 var(--space-4);
+  background: var(--bg-surface);
+  border: var(--hairline) solid var(--border-strong);
+  border-radius: var(--radius);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--text-small);
+  font-weight: 500;
+  line-height: normal;
+  outline: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background-color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease);
+}
+
+.sort-dropdown-trigger:hover {
+  background: var(--surface-hover);
+  border-color: var(--brand);
+}
+
+.sort-dropdown-trigger:focus-visible,
+.sort-dropdown-trigger.is-open {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 var(--ring-width) var(--ring);
+}
+
+.sort-dropdown-icon {
+  width: 15px;
+  height: 15px;
+  color: var(--fg-muted);
+  flex-shrink: 0;
+  transition: color var(--dur) var(--ease);
+}
+
+.sort-dropdown-trigger:hover .sort-dropdown-icon,
+.sort-dropdown-trigger.is-open .sort-dropdown-icon {
+  color: var(--brand);
+}
+
+.sort-dropdown-label {
+  color: var(--fg);
+}
+
+.sort-dropdown-chevron {
+  width: 14px;
+  height: 14px;
+  color: var(--fg-muted);
+  flex-shrink: 0;
+  margin-left: var(--space-1);
+  transition: transform var(--dur) var(--ease);
+}
+
+.sort-dropdown-menu {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  right: 0;
+  z-index: 50;
+  min-width: 190px;
+  padding: var(--space-1);
+  background: var(--bg-surface);
+  border: var(--hairline) solid var(--border-strong);
+  border-radius: var(--radius);
+  box-shadow:
+    0 10px 30px -5px rgb(0 0 0 / 0.35),
+    0 4px 6px -2px rgb(0 0 0 / 0.15);
+  list-style: none;
+  margin: 0;
+  animation: dropdown-in var(--dur) var(--ease);
+}
+
+@keyframes dropdown-in {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(-4px);
   }
   to {
     opacity: 1;
@@ -457,36 +1771,728 @@ button:disabled,
   }
 }
 
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+.sort-dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-sans);
+  font-size: var(--text-small);
+  font-weight: 500;
+  color: var(--fg-muted);
+  cursor: pointer;
+  transition:
+    background-color var(--dur) var(--ease),
+    color var(--dur) var(--ease);
+}
+
+.sort-dropdown-item:hover,
+.sort-dropdown-item.is-highlighted {
+  background: var(--surface-hover);
+  color: var(--fg);
+}
+
+.sort-dropdown-item.is-selected {
+  color: var(--brand);
+}
+
+.sort-dropdown-item.is-selected .sort-dropdown-item-text {
+  font-weight: 500;
+}
+
+.sort-dropdown-check {
+  width: 14px;
+  height: 14px;
+  color: var(--brand);
+  flex-shrink: 0;
+}
+
+/* --- Filter status & reset ---------------------------------------------- */
+
+.filter-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  line-height: var(--lh-label);
+  color: var(--fg-muted);
+}
+
+.filter-reset-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  color: var(--brand);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color var(--dur) var(--ease);
+}
+
+.filter-reset-btn:hover {
+  color: var(--fg);
+}
+
+/* --- View tabs (All / Series) ------------------------------------------- */
+
+.view-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 3px;
+  background: var(--bg-surface);
+  border: var(--hairline) solid var(--border-strong);
+  border-radius: var(--radius);
+  margin-bottom: var(--space-6);
+}
+
+.view-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-3);
+  height: 32px;
+  border-radius: var(--radius-sm);
+  border: var(--hairline) solid transparent;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-size: var(--text-small);
+  font-weight: 500;
+  color: var(--fg-muted);
+  cursor: pointer;
+  transition:
+    background-color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease),
+    color var(--dur) var(--ease);
+}
+
+.view-tab:hover {
+  color: var(--fg);
+  background: var(--surface-hover);
+  border-color: var(--border-strong);
+}
+
+.view-tab.is-active {
+  color: var(--brand);
+  background: var(--surface-hover);
+  border-color: var(--brand);
+}
+
+.view-tab-count {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  background: var(--raised-hover);
+  color: var(--fg-muted);
+}
+
+.view-tab.is-active .view-tab-count {
+  color: var(--brand);
+}
+
+/* --- Series cards & grid ------------------------------------------------ */
+
+.series-grid {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.series-card {
+  border: var(--hairline) solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  padding: var(--space-6);
+  transition:
+    border-color var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease);
+}
+
+.series-card:hover {
+  border-color: var(--brand);
+}
+
+.series-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.series-card-title {
+  font-size: var(--text-h3);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+  margin-top: var(--space-1);
+}
+
+.series-card-desc {
+  margin-top: var(--space-3);
+  color: var(--fg-muted);
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
+}
+
+.series-posts-list {
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: var(--hairline) solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.series-post-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  font-size: var(--text-small);
+}
+
+.series-post-num {
+  font-family: var(--font-mono);
+  color: var(--fg-muted);
+  flex-shrink: 0;
+  width: 1.5rem;
+}
+
+.series-post-title {
+  color: var(--fg);
+  text-decoration: none;
+  transition: color var(--dur) var(--ease);
+}
+
+.series-post-title:hover {
+  color: var(--brand);
+}
+
+.series-detail-header {
+  margin-bottom: var(--space-8);
+  padding-bottom: var(--space-6);
+  border-bottom: var(--hairline) solid var(--border);
+}
+
+.series-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+  color: var(--brand);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: color var(--dur) var(--ease);
+}
+
+.series-back-btn:hover {
+  color: var(--fg);
+}
+
+/* --- Back to top -------------------------------------------------------- */
+
+.back-to-top {
+  position: fixed;
+  bottom: var(--space-6);
+  right: var(--space-6);
+  z-index: 30;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: var(--radius);
+  border: var(--hairline) solid var(--border-strong);
+  background: var(--bg-surface);
+  color: var(--fg-muted);
+  box-shadow: var(--shadow-nav);
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(8px) scale(0.94);
+  pointer-events: none;
+  transition:
+    opacity var(--dur) var(--ease),
+    transform var(--dur) var(--ease),
+    background-color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease),
+    color var(--dur) var(--ease);
+}
+
+.back-to-top.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.back-to-top:hover {
+  background: var(--surface-hover);
+  color: var(--fg);
+  border-color: var(--brand);
+}
+
+.back-to-top:active {
+  background: var(--raised-hover);
+  transform: scale(0.96);
+}
+
+.back-to-top:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 var(--ring-width) var(--ring);
+}
+
+@media (max-width: 640px) {
+  .back-to-top {
+    bottom: var(--space-4);
+    right: var(--space-4);
+    width: 36px;
+    height: 36px;
   }
 }
 
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
+/* --- Footer ------------------------------------------------------------- */
+
+.site-footer {
+  border-top: var(--hairline) solid var(--border);
+  padding-top: var(--space-12);
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.7fr 1fr 1fr;
+  gap: var(--space-8);
+  padding-bottom: var(--space-12);
+}
+
+.footer-tagline {
+  margin-top: var(--space-4);
+  color: var(--fg-muted);
+  font-size: var(--text-small);
+  line-height: var(--lh-small);
+  max-width: 30ch;
+}
+
+.socials {
+  display: flex;
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+}
+
+.socials a {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  color: var(--fg-muted);
+  transition: color var(--dur) var(--ease);
+}
+
+.socials a:hover {
+  color: var(--brand);
+}
+
+.socials svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+/* A column title and the links under it were the same size, weight and family
+   in near-enough the same colour, so the footer read as three lists with a
+   stray item on top of each. Weight ranks them. */
+.footer-col-title {
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+  line-height: var(--lh-small);
+  font-weight: 500;
+  letter-spacing: var(--track-label);
+  color: var(--fg);
+  margin-bottom: var(--space-3);
+}
+
+.footer-col a {
+  display: block;
+  padding: var(--space-2) 0;
+  font-size: var(--text-small);
+  line-height: var(--lh-small);
+  color: var(--fg-muted);
+  text-decoration: none;
+  transition:
+    color var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+
+.footer-col a:hover {
+  color: var(--fg);
+}
+
+.footer-col a.is-active,
+.footer-col a[aria-current="page"] {
+  color: var(--brand);
+  font-weight: 500;
+}
+
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  padding: var(--space-6) 0;
+  border-top: var(--hairline) solid var(--border);
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+  line-height: var(--lh-small);
+  letter-spacing: var(--track-label);
+  color: var(--fg-muted);
+}
+
+.footer-legal {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+/* The `curl` hint. Sized and coloured to disappear into the copyright line it
+   sits beside - it is an invitation, not a call to action, and it earns its
+   place by being findable rather than by being loud. Emerald arrives on hover
+   only, which is the same bargain `.footer-meta a` makes. */
+.curl-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0;
+  font-family: var(--font-mono);
+  font-size: inherit;
+  line-height: inherit;
+  letter-spacing: var(--track-label);
+  color: var(--fg-muted);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  transition: color var(--dur) var(--ease);
+}
+.curl-hint:hover {
+  color: var(--brand);
+}
+.curl-hint:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+.footer-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.footer-meta a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--font-mono);
+  color: var(--fg-muted);
+  text-decoration: none;
+}
+
+.footer-meta a:hover {
+  color: var(--brand);
+}
+
+.footer-meta svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* --- Responsive --------------------------------------------------------- */
+
+@media (max-width: 720px) {
+  :root {
+    --text-display: 2.125rem;
   }
-  50% {
-    opacity: 0.5;
+
+  .nav {
+    height: 56px;
+    gap: var(--space-4);
+    padding: 0 var(--space-3);
+  }
+
+  .section {
+    padding: var(--space-12) 0;
+    scroll-margin-top: 72px;
+  }
+
+  #top {
+    scroll-margin-top: 72px;
+  }
+
+  .hero .display {
+    max-width: none;
+  }
+
+  .hero-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-side {
+    justify-content: center;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .hero-id {
+    margin: 0 auto;
+    align-items: center;
+    text-align: center;
+  }
+
+  .entry,
+  .item {
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+  }
+
+  .item-meta {
+    text-align: left;
+    align-items: flex-start;
+  }
+
+  .gallery {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grid-2,
+  .form,
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 
-/* Animation Utilities */
-.animate-fade-in {
-  animation: fadeIn 0.5s ease-out forwards;
+/* ============================================================
+   Long-form content
+
+   Used by the blog reader and any markdown the API returns. Scoped rather
+   than global so a card containing a paragraph is not styled like an article.
+   ============================================================ */
+.prose {
+  color: var(--fg);
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
 }
 
-.animate-slide-up {
-  animation: slideUp 0.5s ease-out forwards;
+.prose > * + * {
+  margin-top: var(--space-6);
 }
 
-.animate-slide-down {
-  animation: slideDown 0.5s ease-out forwards;
+.prose > :first-child,
+.prose > h2:first-child,
+.prose > h3:first-child {
+  margin-top: 0;
+}
+
+.prose p,
+.prose li {
+  max-width: 68ch;
+}
+
+.prose h2 {
+  font-size: var(--text-h2);
+  line-height: var(--lh-h2);
+  font-weight: 700;
+  letter-spacing: var(--track-tight);
+  margin-top: var(--space-12);
+  scroll-margin-top: 6rem;
+}
+
+.prose h3 {
+  font-size: var(--text-h3);
+  line-height: var(--lh-h3);
+  font-weight: 500;
+  letter-spacing: var(--track-tight);
+  margin-top: var(--space-8);
+  scroll-margin-top: 6rem;
+}
+
+.prose ul,
+.prose ol {
+  padding-left: var(--space-6);
+}
+
+.prose ul {
+  list-style: disc;
+}
+
+.prose ol {
+  list-style: decimal;
+}
+
+.prose li + li {
+  margin-top: var(--space-2);
+}
+
+.prose blockquote {
+  border-left: 2px solid var(--brand);
+  padding-left: var(--space-4);
+  color: var(--fg-muted);
+}
+
+.prose hr {
+  border: 0;
+  border-top: var(--hairline) solid var(--border);
+}
+
+.prose img {
+  border-radius: var(--radius-lg);
+  border: var(--hairline) solid var(--border-strong);
+}
+
+.prose :not(pre) > code {
+  font-family: var(--font-code);
+  font-size: 0.875em;
+  background: var(--bg-raised);
+  border: var(--hairline) solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: 0.1em 0.35em;
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-small);
+}
+
+.prose th,
+.prose td {
+  border-bottom: var(--hairline) solid var(--border);
+  padding: var(--space-3);
+  text-align: left;
+}
+
+.prose th {
+  font-weight: 500;
+  color: var(--fg-muted);
+}
+
+/* Anchored headings: the link is the heading, and the marker only appears on
+   hover or focus so it never competes with the text. */
+.prose .heading-anchor {
+  color: inherit;
+  text-decoration: none;
+}
+
+.prose .heading-anchor::after {
+  content: "#";
+  color: var(--brand);
+  margin-left: var(--space-2);
+  opacity: 0;
+  transition: opacity var(--dur) var(--ease);
+}
+
+.prose .heading-anchor:hover::after,
+.prose .heading-anchor:focus-visible::after {
+  opacity: 1;
+}
+
+/* ============================================================
+   Code blocks
+
+   Shiki emits both themes and swaps them with CSS variables, so highlighting
+   follows the site theme without shipping a second copy of the markup.
+   ============================================================ */
+.shiki,
+.shiki span {
+  color: var(--shiki-light);
+  font-style: var(--shiki-light-font-style);
+  font-weight: var(--shiki-light-font-weight);
+  text-decoration: var(--shiki-light-text-decoration);
+}
+
+[data-theme="dark"] .shiki,
+[data-theme="dark"] .shiki span,
+.dark .shiki,
+.dark .shiki span {
+  color: var(--shiki-dark) !important;
+  font-style: var(--shiki-dark-font-style) !important;
+  font-weight: var(--shiki-dark-font-weight) !important;
+  text-decoration: var(--shiki-dark-text-decoration) !important;
+}
+
+.prose pre {
+  border: var(--hairline) solid var(--border-strong);
+  background: var(--bg-raised) !important;
+  font-size: var(--text-small);
+  line-height: var(--lh-small);
+  tab-size: 2;
+}
+
+.prose pre code {
+  display: grid;
+  font-family: var(--font-code);
+}
+
+/* Inline code within prose */
+.prose :not(pre) > code {
+  font-family: var(--font-code);
+  font-size: 0.875em;
+  font-weight: 500;
+  padding: 0.15em 0.4em;
+  border-radius: var(--radius-sm);
+  background: var(--surface-hover);
+  border: var(--hairline) solid var(--border-strong);
+  color: var(--brand);
+}
+
+/* Code block scrollbars */
+.code-block-pre::-webkit-scrollbar {
+  height: 6px;
+}
+
+.code-block-pre::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.code-block-pre::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: var(--radius-pill);
+}
+
+.code-block-pre::-webkit-scrollbar-thumb:hover {
+  background: var(--brand);
+}
+
+/* ============================================================
+   Forms
+
+   Browser autofill overrides both background and text colour, which breaks the
+   dark theme entirely - the field goes pale blue with near-black text. The
+   inset shadow is the only way to repaint it, and the fill-color the only way
+   to reclaim the text. Design system §6.
+   ============================================================ */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px var(--bg-surface) inset;
+  -webkit-text-fill-color: var(--fg);
+  caret-color: var(--fg);
+  transition: background-color 9999s ease-in-out 0s;
 }

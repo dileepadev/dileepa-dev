@@ -1,51 +1,93 @@
-'use client';
+"use client";
 
-import { useTheme } from 'next-themes';
-import { useEffect, useState } from 'react';
-import { FiSun, FiMoon, FiMonitor } from 'react-icons/fi';
+import { useRef } from "react";
+import { useTheme } from "next-themes";
+import { Moon, Sun } from "lucide-react";
 
+/**
+ * ThemeToggle
+ *
+ * Implements Concept 2 - Radial Spotlight Theme Transition:
+ * An aperture circle of the target theme expands radially from the center of the
+ * toggle button across the entire viewport using the View Transitions API.
+ *
+ * If the browser does not support startViewTransition or if the user prefers reduced
+ * motion, it switches theme immediately with zero delay.
+ */
 export function ThemeToggle() {
-  const [mounted, setMounted] = useState(false);
   const { setTheme, resolvedTheme } = useTheme();
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
-  useEffect(() => {
-    // Defer setting mounted to avoid synchronous setState in effect body
-    // and potential cascading renders. Using requestAnimationFrame schedules
-    // the update after paint.
-    const rafId = requestAnimationFrame(() => setMounted(true));
-    return () => cancelAnimationFrame(rafId);
-  }, []);
+  function handleToggle() {
+    const currentTheme =
+      (typeof document !== "undefined"
+        ? document.documentElement.getAttribute("data-theme")
+        : null) ||
+      resolvedTheme ||
+      "dark";
+    const nextTheme = currentTheme === "dark" ? "light" : "dark";
 
-  if (!mounted) {
-    // Render a neutral placeholder to avoid hydration mismatch on SSR
-    return (
-      <button
-        className="cursor-pointer flex h-10 w-10 items-center justify-center rounded-lg bg-bg-secondary transition-colors hover:bg-bg-tertiary"
-        aria-label="Toggle theme"
-        aria-pressed={false}
-      >
-        <FiMonitor className="h-5 w-5" />
-      </button>
+    // Immediate fallback if View Transitions is unsupported or reduced motion is preferred
+    if (
+      typeof document === "undefined" ||
+      !("startViewTransition" in document) ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      document.documentElement.setAttribute("data-theme", nextTheme);
+      setTheme(nextTheme);
+      return;
+    }
+
+    // Origin coordinates: Center of the clicked toggle button
+    const rect = buttonRef.current?.getBoundingClientRect();
+    const x = rect ? rect.left + rect.width / 2 : window.innerWidth / 2;
+    const y = rect ? rect.top + rect.height / 2 : 0;
+
+    // Radius required to reach the furthest corner of the viewport
+    const endRadius = Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y),
     );
-  }
 
-  // Cycle through themes: light <-> dark
-  const cycleTheme = () => {
-    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
-  };
+    // Execute View Transition
+    const transition = (
+      document as unknown as {
+        startViewTransition: (callback: () => void) => {
+          ready: Promise<void>;
+        };
+      }
+    ).startViewTransition(() => {
+      document.documentElement.setAttribute("data-theme", nextTheme);
+      setTheme(nextTheme);
+    });
+
+    transition.ready.then(() => {
+      document.documentElement.animate(
+        {
+          clipPath: [
+            `circle(0px at ${x}px ${y}px)`,
+            `circle(${endRadius}px at ${x}px ${y}px)`,
+          ],
+        },
+        {
+          duration: 2000,
+          easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+          pseudoElement: "::view-transition-new(root)",
+        } as KeyframeAnimationOptions,
+      );
+    });
+  }
 
   return (
     <button
-      onClick={cycleTheme}
-      className="cursor-pointer flex h-10 w-10 items-center justify-center rounded-lg bg-bg-secondary text-text-primary transition-all hover:bg-bg-tertiary hover:scale-105"
-      aria-label={`Current theme: ${resolvedTheme}. Click to toggle.`}
-      aria-pressed={resolvedTheme === 'dark'}
+      ref={buttonRef}
+      type="button"
+      className="theme-toggle"
+      onClick={handleToggle}
+      aria-label="Switch colour theme"
     >
-      {resolvedTheme === 'dark' ? (
-        <FiMoon className="h-5 w-5" />
-      ) : (
-        <FiSun className="h-5 w-5" />
-      )}
+      <Moon className="moon" size={16} strokeWidth={1.75} aria-hidden="true" />
+      <Sun className="sun" size={16} strokeWidth={1.75} aria-hidden="true" />
     </button>
   );
 }
