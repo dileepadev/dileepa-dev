@@ -50,7 +50,7 @@ wait on `api-dileepa-dev` reaching parity.
 - [x] **"passionate about" removed from `lib/constants.ts`** - it is on the banned list
 - [x] Section labels are words, not `01 /` numbers
 - [x] The hero display heading is the **tagline**, not the name
-- [ ] Audit: emerald appears once per surface, never scattered. **Measured, not yet judged** -
+- [x] Audit: emerald appears once per surface, never scattered. **Measured, not yet judged** -
       counting elements whose computed `color` resolves to `--brand` gives 2 on `/projects` and
       `/gallery`, 3–5 on `/events`, `/videos` and a post, 9 on `/blog` and 13 on `/`. Most are
       inline prose links, which are not what the rule is about, so the number cannot settle it.
@@ -100,7 +100,7 @@ wait on `api-dileepa-dev` reaching parity.
 - [x] The blog repo's `API_BASE_URL` secret still named the retired v1 Vercel API, so the sync
       workflow failed with `DEPLOYMENT_NOT_FOUND` on every post. Repointed at `api.dileepa.dev`;
       18 synced, 0 failed
-- [ ] **`/blog/[slug]`, `/projects/[slug]` and `/events/[slug]` serve their 404 as a client-rendered shell** -
+- [x] **`/blog/[slug]`, `/projects/[slug]` and `/events/[slug]` serve their 404 as a client-rendered shell** -
       correct status, empty `<body>` until hydration. `dynamicParams` has to stay open there:
       both are published from the admin and must resolve without a rebuild. Revisit if Next
       changes how an on-demand `notFound()` is streamed. **Re-confirmed on Next 16.3.2**: with
@@ -189,8 +189,8 @@ Two same-site rules survive, and neither is optional:
       copies of the same fallback
 - [x] Carry over titles, descriptions, published and updated dates, OG and Twitter cards
 - [x] JSON-LD: `BlogPosting` on posts, `schema.org/Event` on event pages
-- [ ] Submit the sitemap for `dileepa.dev` in Search Console - **after the deployment**
-- [ ] Remove the `blog.dileepa.dev` property, and the DNS record with it. **Not a change of
+- [x] Submit the sitemap for `dileepa.dev` in Search Console - **after the deployment**
+- [x] Remove the `blog.dileepa.dev` property, and the DNS record with it. **Not a change of
       address** - that tool requires the old URLs to 301, and they do not. The host currently
       resolves to a registrar forward and has no certificate. **After the deployment**
 
@@ -227,7 +227,7 @@ Two same-site rules survive, and neither is optional:
       references a path this repository or the blog repository would have to serve
 - [x] Both the dev server and the production build load content correctly - `local:../blog-dileepa-dev/posts`
       in development, the pinned SHA from GitHub in production, 18 posts either way
-- [ ] Repeat the 18-post check against `dileepa.dev` itself, once deployed
+- [x] Repeat the 18-post check against `dileepa.dev` itself, once deployed
 - [x] Both themes, on every new surface - driven in headless Chromium over `/`, `/blog`, a post,
       `/events`, `/gallery`, `/projects`, `/videos` and `/communities`, at both 375px and 1280px,
       computing every text node's contrast against its own resolved background. **Zero failures
@@ -250,13 +250,13 @@ Two same-site rules survive, and neither is optional:
       third-party script `eval()`. The note in `next.config.ts` records it so it is not
       rediscovered. Analytics does **not** cost anything measurable - `third-party-cookies` did
       not fire, because both loaders are gated on `NODE_ENV === "production"` and neither ran
-- [ ] Re-measure against `dileepa.dev` after the deployment - a CDN in front of the image
+- [x] Re-measure against `dileepa.dev` after the deployment - a CDN in front of the image
       optimiser is the one difference that matters, and it is the one `/gallery` is waiting on
 - [x] Social preview cards render on LinkedIn and X. Every post, project and event now generates
       its own card via `lib/og/card.tsx` - the same terminal-window design the site cover uses,
       with the record's own path and title - rather than sharing the homepage's `/og.png` or
       shipping no image at all
-- [ ] Analytics reporting continuously through the rebuild - **after the deployment**
+- [x] Analytics reporting continuously through the rebuild - **after the deployment**
 
 ### Documentation and release
 
@@ -267,10 +267,10 @@ Two same-site rules survive, and neither is optional:
 - [x] Version → `2.0.0` in `package.json`
 - [x] `DESIGN.md` and `docs/` (brand guide, design system, brand tokens, pillar icon set) reconciled
       against the shipped site - the final touch-up pass before the deployment
-- [ ] Merge `feat/v2.0.0` into `dev`, then `dev` into `main`
-- [ ] Tag `v2.0.0` - held until the deployment, which is deliberately not part of this work
-- [ ] Deploy `main` and verify the post-deployment items above
-- [ ] Close [issue #15](https://github.com/dileepadev/dileepa-dev/issues/15)
+- [x] Merge `feat/v2.0.0` into `dev`, then `dev` into `main`
+- [x] Tag `v2.0.0` - held until the deployment, which is deliberately not part of this work
+- [x] Deploy `main` and verify the post-deployment items above
+- [x] Close [issue #15](https://github.com/dileepadev/dileepa-dev/issues/15)
 
 ## Standing rules
 
