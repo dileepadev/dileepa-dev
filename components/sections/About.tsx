@@ -1,44 +1,45 @@
 import {
-  BookOpen,
-  Code2,
-  Cpu,
-  Globe,
-  GraduationCap,
-  Mic,
-  PenTool,
-  Rocket,
-  Sparkles,
-  Terminal,
-  Users,
-  Video,
-  type LucideIcon,
-} from "lucide-react";
+  IconAiEngineering,
+  IconCommunityBuilding,
+  IconOpenSource,
+  IconPublicSpeaking,
+  IconTechnicalVideos,
+  IconTechnicalWriting,
+  type PillarIconComponent,
+} from "@/components/icons/PillarIcons";
 import { Card, Container, Section, SectionHeading } from "@/components/ui";
 import type { About as AboutData, Pillar, PillarIcon } from "@/lib/api-types";
 import { PILLARS, SECTIONS } from "@/lib/constants";
 import { paragraphs as splitParagraphs } from "@/lib/format";
 
 /**
- * The icon names the API serves, resolved to components.
+ * The icon names the API serves, resolved to the six brand marks.
  *
- * `PillarIcon` is a closed set in the spec, so this map is exhaustive by
- * construction - dropping a name here stops compiling rather than rendering a
- * blank card. `??` in the lookup covers the other direction: an API newer than
- * this build draws `Cpu` rather than nothing.
+ * `PillarIcon` is a closed set of twelve names in the spec and the brand set is
+ * six marks, so this maps by concept rather than one-to-one: `pen` and
+ * `graduation-cap` both land on the writing mark, `terminal` on open source,
+ * `sparkles` and `rocket` on AI engineering. That is a deliberate collapse. Six
+ * marks drawn for these six ideas beat twelve where half are Lucide and half
+ * are brand, which is what a partial swap would have produced in one grid.
+ *
+ * The map stays exhaustive by construction, so a name added to the spec stops
+ * compiling here rather than rendering a blank card. `??` in the lookup covers
+ * the other direction: an API newer than this build draws the AI engineering
+ * mark rather than nothing.
  */
-const PILLAR_ICONS: Record<PillarIcon, LucideIcon> = {
-  cpu: Cpu,
-  code: Code2,
-  mic: Mic,
-  book: BookOpen,
-  video: Video,
-  users: Users,
-  sparkles: Sparkles,
-  rocket: Rocket,
-  terminal: Terminal,
-  pen: PenTool,
-  globe: Globe,
-  "graduation-cap": GraduationCap,
+const PILLAR_ICONS: Record<PillarIcon, PillarIconComponent> = {
+  cpu: IconAiEngineering,
+  sparkles: IconAiEngineering,
+  rocket: IconAiEngineering,
+  code: IconOpenSource,
+  terminal: IconOpenSource,
+  mic: IconPublicSpeaking,
+  book: IconTechnicalWriting,
+  pen: IconTechnicalWriting,
+  "graduation-cap": IconTechnicalWriting,
+  video: IconTechnicalVideos,
+  users: IconCommunityBuilding,
+  globe: IconCommunityBuilding,
 };
 
 /**
@@ -70,13 +71,13 @@ export function About({
           key: pillar.id,
           title: pillar.title,
           description: pillar.description,
-          icon: PILLAR_ICONS[pillar.icon] ?? Cpu,
+          icon: PILLAR_ICONS[pillar.icon] ?? IconAiEngineering,
         }))
       : PILLARS.map((pillar) => ({
           key: pillar.key,
           title: pillar.title,
           description: pillar.description,
-          icon: PILLAR_ICONS[pillar.icon] ?? Cpu,
+          icon: PILLAR_ICONS[pillar.icon] ?? IconAiEngineering,
         }));
 
   return (
@@ -102,11 +103,7 @@ export function About({
               <Card key={card.key} className="card flex flex-col">
                 <div>
                   <div className="mb-4 inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border-strong bg-bg text-brand">
-                    <Icon
-                      className="h-4.5 w-4.5"
-                      strokeWidth={1.75}
-                      aria-hidden="true"
-                    />
+                    <Icon className="h-4.5 w-4.5" aria-hidden="true" />
                   </div>
                   <h3>{card.title}</h3>
                   <p>{card.description}</p>

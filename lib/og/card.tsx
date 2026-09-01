@@ -3,55 +3,55 @@ import { join } from "node:path";
 import { ImageResponse } from "next/og";
 
 /**
- * The social card, generated per record.
+ * The social card, generated per record, in the official design.
  *
- * Every post, project and event shared the same `/og.png` before this: 29
- * records, one picture. The tag was valid, so no audit tool flagged it, and it
- * cost more real click-through than anything an audit tool did flag.
+ * There is one card design on this platform and this is it - the terminal
+ * window from `docs/brand/covers/source-1584x396.svg`, which is also what
+ * `public/og.png` and every uploaded profile cover carry. What varies here is
+ * the record: the command line names the path, and the title is the record's.
  *
- * Satori, not a browser. Flexbox and a subset of CSS only - no grid, no
- * `gap` shorthand quirks, and every element that contains more than one child
- * needs an explicit `display: flex`. Colours are literal here rather than
- * `var(--bg)`: this renders outside the document, so there is no cascade to
- * read them from. They are the v2.1 token values, and the comment beside each
- * one names the token it must track.
+ * Satori, not a browser. Flexbox only, every multi-child node needs an explicit
+ * `display: flex`, and the colours are literal because there is no cascade out
+ * here to read tokens from - each names the token it tracks.
  */
 export const OG_SIZE = { width: 1200, height: 630 };
 export const OG_CONTENT_TYPE = "image/png";
 
 const CARBON = "#050505"; // --ink-900 / --bg
-const EDGE = "#1f1f1f"; // --ink-600 / --border
-const TEXT = "#f1f1f1"; // --ink-100 / --fg
-const MUTED = "#8d8d8d"; // --ink-400 / --fg-muted
-const EMERALD = "#23b888"; // --emerald-bright / --brand on Carbon
+const SURFACE = "#0D0D0D"; // --ink-800 / --bg-surface
+const EDGE = "#2E2E2E"; // --ink-500 / --border-strong
+const TEXT = "#F1F1F1"; // --ink-100 / --fg
+const MUTED = "#8D8D8D"; // --ink-400 / --fg-muted
+const EMERALD = "#23B888"; // --emerald-bright / --brand on Carbon
 
 /**
- * Manrope, vendored beside this file. Satori reads ttf, not the woff2 that
- * next/font serves, which is why these are here rather than reused from there.
+ * JetBrains Mono, vendored beside this file with its OFL licence.
  *
- * Read from disk, not `fetch(new URL(..., import.meta.url))`. That form is the
- * one the examples use and it throws `not implemented... yet...` here: the URL
- * resolves to `file:`, and this runtime's fetch does not do `file:`. It fails
- * at request time rather than build time, because an `opengraph-image` in a
- * dynamic segment renders on demand - so the build stays green and every card
- * 500s. `outputFileTracingIncludes` in next.config.ts is what puts the two
- * files in the deployed bundle for this read to find.
+ * The whole card is mono, so Manrope is not loaded here at all - two faces
+ * rather than four keeps the bundle well inside `@vercel/og`'s 500KB ceiling.
+ *
+ * Read from disk, not `fetch(new URL(..., import.meta.url))`. That form is what
+ * the examples use and it throws `not implemented... yet...`: the URL resolves
+ * to `file:` and this runtime's fetch does not do `file:`. It fails at request
+ * time rather than build time, because an `opengraph-image` in a dynamic
+ * segment renders on demand - so the build stays green and every card 500s.
+ * `outputFileTracingIncludes` in next.config.ts puts the files in the bundle.
  */
 async function fonts() {
   const dir = join(process.cwd(), "lib", "og");
-  const [medium, bold] = await Promise.all([
-    readFile(join(dir, "Manrope-Medium.ttf")),
-    readFile(join(dir, "Manrope-Bold.ttf")),
+  const [regular, bold] = await Promise.all([
+    readFile(join(dir, "JetBrainsMono-Regular.ttf")),
+    readFile(join(dir, "JetBrainsMono-Bold.ttf")),
   ]);
   return [
     {
-      name: "Manrope",
-      data: medium,
-      weight: 500 as const,
+      name: "JetBrains Mono",
+      data: regular,
+      weight: 400 as const,
       style: "normal" as const,
     },
     {
-      name: "Manrope",
+      name: "JetBrains Mono",
       data: bold,
       weight: 700 as const,
       style: "normal" as const,
@@ -62,25 +62,66 @@ async function fonts() {
 /**
  * Long titles have to fit rather than overflow.
  *
- * Satori will not shrink text to fit, so the step comes from the length. The
- * breakpoints are where a title stops fitting three lines at the size above.
+ * Satori will not shrink text to fit, so the step comes from the length. Mono
+ * is the reason the breakpoints are tighter than they would be for Manrope:
+ * every glyph is the same width, so a title's length predicts its rendered
+ * width almost exactly.
  */
 function titleSize(title: string): number {
-  if (title.length > 95) return 46;
-  if (title.length > 65) return 56;
-  if (title.length > 40) return 66;
-  return 76;
+  if (title.length > 90) return 34;
+  if (title.length > 62) return 40;
+  if (title.length > 38) return 48;
+  return 56;
+}
+
+/**
+ * The command line is one line, or it is nonsense.
+ *
+ * Satori wraps it otherwise, and a wrapped `curl -L` breaks across "curl -" and
+ * "L" - a command that would not run, on a card whose whole idea is a terminal.
+ * Mono makes the fix exact rather than approximate: every glyph is 0.6em, so at
+ * 22px inside the card's 1024px of inner width the line holds 77 characters,
+ * and `$ curl -L dileepa.dev` plus its two gaps spends 23 of them.
+ */
+const COMMAND_PATH_CHARS = 52;
+
+function commandPath(path: string): string {
+  return path.length <= COMMAND_PATH_CHARS
+    ? path
+    : `${path.slice(0, COMMAND_PATH_CHARS - 1)}\u2026`;
 }
 
 export interface OgCard {
   /** The emerald kicker: "Blog", "Project", "Event". */
   label: string;
   title: string;
-  /** Date, reading time, status - whatever the record has. Mono-ish metadata. */
+  /** The site-relative path, echoed in the command line. */
+  path: string;
+  /** Date, reading time, status - whatever the record has. */
   meta?: string;
 }
 
-export function ogCard({ label, title, meta }: OgCard) {
+/** The three window dots, in the order the design draws them. */
+function Dots() {
+  return (
+    <div style={{ display: "flex", alignItems: "center" }}>
+      {[0, 1, 2].map((i) => (
+        <div
+          key={i}
+          style={{
+            width: 10,
+            height: 10,
+            borderRadius: 999,
+            background: EDGE,
+            marginRight: i < 2 ? 12 : 0,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+export function ogCard({ label, title, path, meta }: OgCard) {
   return fonts().then(
     (loaded) =>
       new ImageResponse(
@@ -89,115 +130,153 @@ export function ogCard({ label, title, meta }: OgCard) {
             width: "100%",
             height: "100%",
             display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
             background: CARBON,
-            padding: "72px 80px",
-            fontFamily: "Manrope",
-            // The one emerald element on the surface is the rule down the
-            // left edge, the kicker and the mark. Brand guide section 1:
-            // emerald appears once per surface as a deliberate accent.
-            borderLeft: `10px solid ${EMERALD}`,
+            padding: 48,
+            fontFamily: "JetBrains Mono",
           }}
         >
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <div
-              style={{
-                display: "flex",
-                fontSize: 26,
-                fontWeight: 700,
-                letterSpacing: "0.01em",
-                color: EMERALD,
-                textTransform: "none",
-              }}
-            >
-              {label}
-            </div>
-            <div
-              style={{
-                display: "flex",
-                marginTop: 28,
-                fontSize: titleSize(title),
-                lineHeight: 1.12,
-                fontWeight: 700,
-                letterSpacing: "-0.02em",
-                color: TEXT,
-                // Satori has no line clamp; the width cap plus the size step
-                // above is what keeps a long title inside the card.
-                maxWidth: 960,
-              }}
-            >
-              {title}
-            </div>
-          </div>
-
+          {/* The terminal window. Same chrome as the cover artwork. */}
           <div
             style={{
               display: "flex",
-              alignItems: "flex-end",
-              justifyContent: "space-between",
-              borderTop: `2px solid ${EDGE}`,
-              paddingTop: 28,
+              flexDirection: "column",
+              width: "100%",
+              borderRadius: 20,
+              border: `2px solid ${EDGE}`,
+              background: SURFACE,
             }}
           >
-            {/* The lockup: neutral wordmark, emerald "/." - never the reverse. */}
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <div
-                style={{
-                  display: "flex",
-                  fontSize: 30,
-                  fontWeight: 500,
-                  color: TEXT,
-                }}
-              >
-                dileepadev
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  // 0.34em at this size, matching `.lockup`'s gap. The dot
-                  // that follows gets almost none: the brand guide has it
-                  // "flush against its base" so the pair reads as one
-                  // character, "/.", not two with daylight between them.
-                  marginLeft: 10,
-                  fontSize: 30,
-                  fontWeight: 700,
-                  color: EMERALD,
-                }}
-              >
-                /
-              </div>
-              <div
-                style={{
-                  width: 7,
-                  height: 7,
-                  marginLeft: 2,
-                  // The row is centred, and a dot centred against a 30px
-                  // glyph floats at its middle. This drops it to the
-                  // baseline, which is where the lockup puts it.
-                  marginTop: 13,
-                  borderRadius: 999,
-                  background: EMERALD,
-                }}
-              />
-            </div>
-
+            {/* Title bar */}
             <div
               style={{
                 display: "flex",
-                fontSize: 24,
-                fontWeight: 500,
-                color: MUTED,
+                alignItems: "center",
+                height: 58,
+                paddingLeft: 26,
+                paddingRight: 26,
+                borderBottom: `1px solid ${EDGE}`,
               }}
             >
-              {meta ?? "dileepa.dev"}
+              <Dots />
+              <div
+                style={{
+                  display: "flex",
+                  marginLeft: 34,
+                  fontSize: 17,
+                  color: MUTED,
+                }}
+              >
+                dileepadev - zsh
+              </div>
+            </div>
+
+            {/* Body */}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                flex: 1,
+                padding: "34px 40px 32px 40px",
+              }}
+            >
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                {/* The command that would fetch this very page. */}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    fontSize: 22,
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  <div style={{ display: "flex", color: EMERALD }}>$</div>
+                  <div
+                    style={{ display: "flex", marginLeft: 12, color: MUTED }}
+                  >
+                    curl -L
+                  </div>
+                  <div
+                    style={{ display: "flex", marginLeft: 12, color: EMERALD }}
+                  >
+                    dileepa.dev{commandPath(path)}
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    marginTop: 30,
+                    fontSize: 19,
+                    fontWeight: 700,
+                    color: EMERALD,
+                  }}
+                >
+                  {label}
+                </div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    marginTop: 16,
+                    fontSize: titleSize(title),
+                    lineHeight: 1.22,
+                    fontWeight: 700,
+                    color: TEXT,
+                    maxWidth: 1000,
+                  }}
+                >
+                  {title}
+                </div>
+              </div>
+
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "flex-end",
+                  justifyContent: "space-between",
+                }}
+              >
+                {/* The lockup: neutral wordmark, emerald "/." flush at its base. */}
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <div style={{ display: "flex", fontSize: 26, color: TEXT }}>
+                    dileepadev
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      marginLeft: 9,
+                      fontSize: 26,
+                      fontWeight: 700,
+                      color: EMERALD,
+                    }}
+                  >
+                    /
+                  </div>
+                  <div
+                    style={{
+                      width: 6,
+                      height: 6,
+                      marginLeft: 2,
+                      marginTop: 11,
+                      borderRadius: 999,
+                      background: EMERALD,
+                    }}
+                  />
+                </div>
+
+                {meta ? (
+                  <div style={{ display: "flex", fontSize: 20, color: MUTED }}>
+                    {meta}
+                  </div>
+                ) : (
+                  <div style={{ display: "flex" }} />
+                )}
+              </div>
             </div>
           </div>
         </div>,
-        {
-          ...OG_SIZE,
-          fonts: loaded,
-        },
+        { ...OG_SIZE, fonts: loaded },
       ),
   );
 }

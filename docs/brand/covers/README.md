@@ -35,6 +35,14 @@ cropped composition for that size rather than a smaller scale of this one.
 **One image covers every link preview.** OG, X's large image card, Facebook and
 LinkedIn all accept 1200x630; cutting 630/628/627 separately buys nothing.
 
+## The generated cards share this design
+
+`lib/og/card.tsx` draws the per-post, per-project and per-event cards, and it is
+the same terminal window - same chrome, same lockup, same palette. What varies is
+the record: the command line names that page's path and the title is its own. So
+there is one card design on the platform, not a cover design and a card design.
+If this artwork changes, that component changes with it.
+
 ## Regenerating
 
 The generator lives in the commit that added this directory. It reads

@@ -15,6 +15,7 @@ export default async function Image({
   const event = await api.getEvent(slug);
 
   return ogCard({
+    path: `/events/${slug}`,
     label: "Event",
     title: event?.title ?? slug,
     meta: event?.startAt ? formatDate(event.startAt) : undefined,

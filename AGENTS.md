@@ -86,6 +86,13 @@ versions - version drift between the two apps is the thing v2.0.0 exists to end.
   `og:url` and `og:image` resolve against. A preview that describes itself with the production
   origin points its card at another site: that is how every preview shipped an `og:image` of
   `https://dileepa.dev/og.png` while production was still v1 and had no such file.
+- **Three icon conventions, and they do not mix.** Lucide for interface controls, `SocialIcons.tsx`
+  for third-party brand marks, `PillarIcons.tsx` for the six About-card marks. The pillar marks are
+  brand assets: the source is `docs/brand/icons/`, and the app ports the `-symbol.svg` variant
+  because it strokes `currentColor` and therefore follows the theme.
+- **One social card design.** The terminal window in `docs/brand/covers/source-1584x396.svg` is it -
+  `public/og.png`, every uploaded profile cover, and the per-record cards that `lib/og/card.tsx`
+  generates all carry it. A second design is not a variant, it is a fork.
 - **The favicon is the portrait at every size, and there is no SVG one.** Audit tools flag the
   missing SVG favicon; leave it flagged. The identity is a photograph, so a vector would have to
   be the `/.` mark - a second design in the tab while every other surface shows the face - and an

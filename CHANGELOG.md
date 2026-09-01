@@ -31,6 +31,18 @@ Changes are organized into the following categories:
 
 ### Changed - Unreleased
 
+- **One social card design, everywhere.** The generated per-record cards were a second design
+  sitting beside the official cover artwork. `lib/og/card.tsx` now draws the same terminal window -
+  same chrome, same lockup, same palette - with the record supplying the command line's path and
+  the title. The card's fonts changed with it: JetBrains Mono replaces Manrope in `lib/og/`,
+  because the design is entirely mono and two faces rather than four keeps the bundle inside
+  `@vercel/og`'s 500KB ceiling.
+- **The six About cards carry the brand marks**, not Lucide. `docs/brand/icons/` is the source;
+  `components/icons/PillarIcons.tsx` ports the `-symbol.svg` variant, which strokes `currentColor`
+  so each mark follows the theme rather than being right on Carbon and a contrast failure on
+  Paper. The API's twelve `PillarIcon` names collapse onto the six marks by concept, so a card
+  cannot fall back into a different icon system mid-grid.
+
 - **Brand guide §3.2 now says why there is no SVG favicon**, rather than only that the favicon is
   the portrait. A vector mark was built and checked at 16px before being rejected - it is legible,
   so the section's original "smudge" reasoning is not what settles it. One identity across every

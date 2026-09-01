@@ -468,6 +468,8 @@ deliberate section only when photographs are otherwise rare.
 
 The platform uses two complementary icon conventions:
 
+**Pillar marks (brand SVG).** The six About-card marks, drawn for the six things that section names. They live in `docs/brand/icons/` and are ported into `components/icons/PillarIcons.tsx` from the `-symbol.svg` variant - the one that strokes `currentColor` rather than a literal `#23B888`, so the mark follows the theme's accent instead of being right in one theme and wrong in the other. The API serves twelve `PillarIcon` names against six marks; the map collapses them by concept so a card never falls back to a different icon system.
+
 **Interface icons (Lucide):** Standardized on **`lucide-react`** across all UI components (navigation controls, form inputs, toggles, action buttons, search, sorting, and feedback states). Stroke width is standardized at `1.75`–`2.0` (optical weight: 1.75 for standard 16px controls, 2.0 for compact 14px badges/toggles). Common sizes: 14px (`h-3.5 w-3.5`), 16px (`h-4 w-4`), 18–20px (`h-4.5 w-4.5` / `h-5 w-5`).
 
 **Brand & social glyphs (Inline SVG):** Filled marks for third-party platforms (GitHub, LinkedIn, X, YouTube, Instagram, Facebook) are hand-authored inline SVGs with path data centralized in `lib/social-icons.ts` (24×24 viewBox, `fill="currentColor"`, no stroke). Rendered at 18px glyph inside a 20px hit area, `--fg-muted` at rest, stepping to `--brand` on hover.

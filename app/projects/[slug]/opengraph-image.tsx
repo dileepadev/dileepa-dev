@@ -15,6 +15,7 @@ export default async function Image({
   const project = await api.getProject(slug);
 
   return ogCard({
+    path: `/projects/${slug}`,
     label: "Project",
     title: project?.name ?? slug,
     meta: project?.status ? humanise(project.status) : undefined,

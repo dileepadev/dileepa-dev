@@ -24,6 +24,7 @@ export default async function Image({
     .join("  ·  ");
 
   return ogCard({
+    path: `/blog/${slug}`,
     label: "Blog",
     title: post?.title ?? slug,
     meta: meta || undefined,

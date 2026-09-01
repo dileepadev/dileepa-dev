@@ -728,9 +728,10 @@ Tables with more than 3 columns must wrap in an overflow container (`overflow-x:
 
 ## 13. Icons, Media & Visual Assets
 
-### 13.1 Icon System (Lucide + Inline Brand SVGs)
+### 13.1 Icon System (Three Conventions)
 
 - **Interface Icons**: Standardized on **Lucide Icons** (`lucide-react`) across UI controls, search, dropdowns, and toggles.
+- **Pillar Marks**: The six About-card marks - AI engineering, open source, public speaking, technical writing, technical videos, community building. Source of truth is `docs/brand/icons/`, where each ships as a plain `.svg`, a `-badge.svg` on a Carbon field, a `-symbol.svg`, and a `.png`. `components/icons/PillarIcons.tsx` ports the **`-symbol`** variant, because it strokes `currentColor`: the card colours the mark through `text-brand`, so it resolves to Emerald Bright on Carbon and Emerald Deep on Paper. A hard-coded `#23B888` would be correct in one theme and a contrast failure in the other. The API serves twelve `PillarIcon` names against six marks, and the map collapses them by concept - **never mix a Lucide fallback into that grid**.
 - **Brand & Social Glyphs**: Third-party marks (GitHub, LinkedIn, X, YouTube, etc.) use hand-authored inline SVGs centralized in `lib/social-icons.ts` (`24×24` viewBox, `fill="currentColor"`).
 - **Stroke Width**: Standardized at `1.75` (or `2.0` for compact 14px icons). Do not use thin 1.0 or heavy 3.0 strokes.
 - **Icon Sizing**:
