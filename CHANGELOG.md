@@ -51,6 +51,20 @@ Changes are organized into the following categories:
 
 ### Fixed - Unreleased
 
+- **Every preview deployment shipped a broken `og:image`.** `metadataBase` and every absolute URL
+  came from `SITE_CONFIG.url`, so a preview described itself with the production origin and its
+  card resolved to `https://dileepa.dev/og.png` — a file production does not have while it is
+  still serving v1. `METADATA_ORIGIN` follows the deployment on preview and the canonical site
+  everywhere else, so a card can be checked before it ships rather than after. `SITE_CONFIG.url`
+  keeps its old meaning and its old value for the media kit, the terminal profile, `llms.txt`,
+  the sitemap and the feed.
+- **The search snippet was too thin to be used.** The homepage title was 29 characters of a
+  ~60-character result and the description 63 of ~155, which is short enough that Google composes
+  its own. `metaDescription` is separate from `description` because the short line is UI copy —
+  the hero falls back to it as a display heading — and a 138-character sentence is wrong there.
+  The seven index pages' titles and descriptions were lengthened the same way; `meta.title` is
+  metadata-only, so no visible heading changed.
+
 - **Twenty-nine of sixty-eight tag pages were empty.** `generateStaticParams` returned
   `encodeURIComponent(tag)` and Next encoded it again, so `"Advanced Git"` arrived as
   `"Advanced%20Git"` after one decode — a string no post carries. The page rendered that as its

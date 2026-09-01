@@ -138,12 +138,18 @@ const METADATA_ENDPOINTS = [
 ];
 
 const metadataSnippet = `export const metadata: Metadata = {
-  metadataBase: new URL("https://dileepa.dev"),
+  // The origin this deployment is served from, not the site's identity: on a
+  // preview, absolute URLs must resolve on the preview or every card points at
+  // a different site and the og:image 404s.
+  metadataBase: new URL(METADATA_ORIGIN),
   title: {
-    default: "Dileepa Bandara — AI engineer",
+    default: "Dileepa Bandara — AI engineer building agentic systems",
     template: "%s · Dileepa Bandara",
   },
-  description: "AI engineer. Building AI systems and the community around them.",
+  // The long form. SITE_CONFIG.description is the short line the hero, the
+  // footer and the terminal profile use; a search snippet gets ~155 characters
+  // and Google writes its own when the supplied one is too thin.
+  description: SITE_CONFIG.metaDescription,
   alternates: { canonical: "/" },
   manifest: "/manifest.json",
   icons: {
@@ -160,16 +166,16 @@ const metadataSnippet = `export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://dileepa.dev",
-    title: "Dileepa Bandara — AI engineer",
-    description: "AI engineer. Building AI systems and the community around them.",
+    url: METADATA_ORIGIN,
+    title: "Dileepa Bandara — AI engineer building agentic systems",
+    description: SITE_CONFIG.metaDescription,
     siteName: "Dileepa Bandara",
     images: [{ url: "/og.png", width: 1200, height: 630, type: "image/png" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Dileepa Bandara — AI engineer",
-    description: "AI engineer. Building AI systems and the community around them.",
+    title: "Dileepa Bandara — AI engineer building agentic systems",
+    description: SITE_CONFIG.metaDescription,
     site: "@dileepadev",
     creator: "@dileepadev",
     images: [{ url: "/og.png", width: 1200, height: 630, type: "image/png" }],

@@ -18,12 +18,32 @@ export const SITE_CONFIG = {
   // page has documented as this site's `<title>` all along, while the site
   // itself shipped "AI Engineer" behind a hyphen. `jobTitle` in the Person
   // schema stays title case: that is a schema.org value, not site copy.
-  title: "Dileepa Bandara — AI engineer",
+  //
+  // Metadata only — no heading renders this. Long enough to fill the ~60
+  // characters a result gets before Google truncates it, which "Dileepa
+  // Bandara — AI engineer" left more than half of unused.
+  title: "Dileepa Bandara — AI engineer building agentic systems",
   // Says what is here and what the person does, without adjectives doing the
   // work. The v1 description opened with "passionate about" and closed on
   // "something amazing together"; both are gone.
+  //
+  // **Short on purpose.** This is UI copy: the hero falls back to it as the
+  // display heading when the API has no tagline, the footer prints it, and the
+  // terminal profile and the web manifest both carry it. A 150-character
+  // sentence is right for a search result and wrong for all four, which is
+  // what `metaDescription` below is for.
   description:
     "AI engineer. Building AI systems and the community around them.",
+  /**
+   * The search and social description — the one a result snippet shows.
+   *
+   * Google gives a snippet roughly 155 characters before it truncates, and it
+   * will compose its own from the page when the supplied one is too thin to be
+   * useful. The 63-character `description` above was thin enough to invite
+   * that, so this says what the site actually contains.
+   */
+  metaDescription:
+    "AI engineer building agentic systems, LLM pipelines and the infrastructure that runs them. Notes, talks and workshops on AI in production.",
   // The origin the site is actually served from. Canonical URLs, the sitemap
   // and the RSS feed are all composed from it, so a wrong value here points
   // every canonical tag at somewhere else.
@@ -323,8 +343,8 @@ export const EMPTY_STATES = {
 export const PAGES = {
   blog: {
     meta: {
-      title: "Blog",
-      description: "Notes I write on AI systems, engineering, and production.",
+      title: "Writing on AI systems and engineering",
+      description: "Notes on agentic systems, LLM pipelines, evaluation and the engineering behind AI that runs in production — written as I build.",
     },
     label: "Blog",
     title: "Writing",
@@ -334,8 +354,8 @@ export const PAGES = {
 
   projects: {
     meta: {
-      title: "Projects",
-      description: "Things I have built, maintained, and contributed to.",
+      title: "Open source projects and experiments",
+      description: "Things I have built, maintained and contributed to — agent frameworks, developer tooling and cloud infrastructure, with notes on each.",
     },
     label: "Projects",
     title: "Things I have built",
@@ -345,9 +365,9 @@ export const PAGES = {
 
   events: {
     meta: {
-      title: "Events",
+      title: "Workshops, talks and conference sessions",
       description:
-        "Workshops and sessions I have delivered at meetups, conferences, and online.",
+        "Workshops and sessions delivered at meetups, conferences and online — on agentic AI, Azure, Microsoft Foundry and shipping to production.",
     },
     label: "Events",
     title: "Workshops and sessions",
@@ -357,9 +377,9 @@ export const PAGES = {
 
   communities: {
     meta: {
-      title: "Communities",
+      title: "Developer communities I help run",
       description:
-        "Tech communities I organise with, contribute to, or volunteer for.",
+        "Tech communities I organise with, contribute to or volunteer for across Sri Lanka and online — meetups, student programmes and open source.",
     },
     label: "Communities",
     title: "Communities",
@@ -368,9 +388,9 @@ export const PAGES = {
 
   videos: {
     meta: {
-      title: "Videos",
+      title: "Technical walkthroughs and demos",
       description:
-        "Technical walkthroughs and demos on AI systems and software engineering.",
+        "Walkthroughs and demos on AI systems, Azure and software engineering — recorded end to end, from first principles to a working deployment.",
     },
     label: "Videos",
     title: "Walkthroughs and demos",
@@ -380,9 +400,9 @@ export const PAGES = {
 
   gallery: {
     meta: {
-      title: "Event gallery",
+      title: "Photographs from events and workshops",
       description:
-        "Photos from events, sessions, and workshops I have been part of.",
+        "Photographs from the events, talks and workshops I have been part of, newest first — meetups, conferences and hands-on sessions.",
     },
     label: "Gallery",
     title: "Event photographs",
@@ -394,7 +414,7 @@ export const PAGES = {
     meta: {
       title: "Site tree & architecture",
       description:
-        "Interactive directory of the pages, projects, articles, and resources across dileepa.dev.",
+        "An interactive directory of every published page, post, project and resource on dileepa.dev, with the route tree and the status of each.",
     },
     label: "Architecture",
     title: "Site tree & routes",

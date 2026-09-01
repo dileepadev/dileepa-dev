@@ -10,6 +10,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import MicrosoftClarity from "@/components/analytics/MicrosoftClarity";
 import { SITE_CONFIG } from "@/lib/constants";
+import { METADATA_ORIGIN } from "@/lib/metadata";
 import { portrait as portraitUrl } from "@/lib/format";
 import "./globals.css";
 
@@ -33,12 +34,16 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE_CONFIG.url),
+  // The deployment's own origin, not the site's identity — see
+  // `deploymentOrigin` in lib/metadata.ts. Every relative URL in this object
+  // and in every page's resolves against it, which is what makes a preview's
+  // `og:image` a file that exists.
+  metadataBase: new URL(METADATA_ORIGIN),
   title: {
     default: SITE_CONFIG.title,
     template: `%s · ${SITE_CONFIG.name}`,
   },
-  description: SITE_CONFIG.description,
+  description: SITE_CONFIG.metaDescription,
   applicationName: SITE_CONFIG.name,
   category: "Personal website",
   generator: "Next.js",
@@ -90,9 +95,12 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: SITE_CONFIG.locale,
-    url: SITE_CONFIG.url,
+    // The deployment's origin, not the site's identity — a hard-coded
+    // production URL here would survive `metadataBase` and point a preview's
+    // card at another site.
+    url: METADATA_ORIGIN,
     title: SITE_CONFIG.title,
-    description: SITE_CONFIG.description,
+    description: SITE_CONFIG.metaDescription,
     siteName: SITE_CONFIG.name,
     emails: SITE_CONFIG.email,
     images: [
@@ -108,7 +116,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: SITE_CONFIG.title,
-    description: SITE_CONFIG.description,
+    description: SITE_CONFIG.metaDescription,
     creator: SITE_CONFIG.twitterHandle,
     site: SITE_CONFIG.twitterHandle,
     images: [

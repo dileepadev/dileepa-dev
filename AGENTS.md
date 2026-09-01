@@ -79,6 +79,16 @@ versions — version drift between the two apps is the thing v2.0.0 exists to en
   Next replaces the layout's `openGraph` wholesale when a page declares one and inherits it
   wholesale when a page does not, so hand-written page metadata silently produces either the
   homepage's card or a card with no image. Add a route by calling the helper.
+- **`SITE_CONFIG.url` and `METADATA_ORIGIN` are different values and are not interchangeable.**
+  `SITE_CONFIG.url` is the site's identity — always `dileepa.dev` — and is what the media kit,
+  the terminal profile, `llms.txt`, the sitemap and the feed print. `METADATA_ORIGIN` is the
+  origin the running deployment is served from, and is what `metadataBase`, the canonical,
+  `og:url` and `og:image` resolve against. A preview that describes itself with the production
+  origin points its card at another site: that is how every preview shipped an `og:image` of
+  `https://dileepa.dev/og.png` while production was still v1 and had no such file.
+- **`SITE_CONFIG.description` is UI copy, `SITE_CONFIG.metaDescription` is the search snippet.**
+  The short one is the hero's fallback heading, the footer line, the terminal profile and the web
+  manifest; the long one is the only thing a `<meta name="description">` or a card should carry.
 
 ## Brand rules — v2.0.0
 

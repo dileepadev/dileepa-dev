@@ -67,9 +67,42 @@ function toImage(image: PageMetadataInput["image"]): PageImage {
   return image.url?.trim() ? image : { ...DEFAULT_OG_IMAGE };
 }
 
-/** The absolute form of a site-relative path. */
+/**
+ * The origin this deployment is actually served from.
+ *
+ * `SITE_CONFIG.url` is the site's *identity* — what it calls itself in the
+ * media kit, the terminal profile and `llms.txt` — and that is always
+ * `dileepa.dev`. It is the wrong value for a card, because a preview
+ * deployment that describes itself with the production origin points every
+ * absolute URL at a different site: `og:image` resolved to
+ * `https://dileepa.dev/og.png`, production was still v1 and had no such file,
+ * and every social preview of every preview deployment failed to fetch its
+ * image. The card could not be checked until after it shipped, which is the
+ * one moment checking it is no longer useful.
+ *
+ * So metadata — `metadataBase`, and therefore the canonical, `og:url`,
+ * `og:image` and `twitter:image` composed against it — follows the deployment.
+ * `VERCEL_ENV` and `VERCEL_BRANCH_URL` are read unprefixed because this module
+ * is only ever imported by a `metadata` export or a `generateMetadata`, both of
+ * which run on the server; nothing here reaches a client bundle.
+ *
+ * `VERCEL_BRANCH_URL` before `VERCEL_URL`: the branch alias is stable across
+ * redeploys of the same branch, so a card checked once keeps resolving.
+ */
+function deploymentOrigin(): string {
+  if (process.env.VERCEL_ENV === "preview") {
+    const host = process.env.VERCEL_BRANCH_URL || process.env.VERCEL_URL;
+    if (host) return `https://${host}`;
+  }
+  return SITE_CONFIG.url;
+}
+
+/** Resolved once: the value cannot change within a build. */
+export const METADATA_ORIGIN = deploymentOrigin();
+
+/** The absolute form of a site-relative path, on this deployment's origin. */
 export function absoluteUrl(path: string): string {
-  return path === "/" ? SITE_CONFIG.url : `${SITE_CONFIG.url}${path}`;
+  return path === "/" ? METADATA_ORIGIN : `${METADATA_ORIGIN}${path}`;
 }
 
 export function pageMetadata(input: PageMetadataInput): Metadata {
