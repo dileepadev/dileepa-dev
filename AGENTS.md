@@ -89,6 +89,10 @@ versions — version drift between the two apps is the thing v2.0.0 exists to en
 - **`SITE_CONFIG.description` is UI copy, `SITE_CONFIG.metaDescription` is the search snippet.**
   The short one is the hero's fallback heading, the footer line, the terminal profile and the web
   manifest; the long one is the only thing a `<meta name="description">` or a card should carry.
+- **Every `meta.description` sits in 110-125 characters.** Two consumers, two limits: a search
+  snippet runs to roughly 155, a social card truncates around 125. Write to the card — an
+  ellipsis through the middle of a shared link reads worse than an unused half-line in a search
+  result. Under about 100 and Google discards it and composes its own from the page.
 
 ## Brand rules — v2.0.0
 

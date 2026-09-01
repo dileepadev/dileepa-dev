@@ -35,15 +35,17 @@ export const SITE_CONFIG = {
   description:
     "AI engineer. Building AI systems and the community around them.",
   /**
-   * The search and social description — the one a result snippet shows.
+   * The search and social description.
    *
-   * Google gives a snippet roughly 155 characters before it truncates, and it
-   * will compose its own from the page when the supplied one is too thin to be
-   * useful. The 63-character `description` above was thin enough to invite
-   * that, so this says what the site actually contains.
+   * Sized to the tighter of the two consumers, not the looser. A result
+   * snippet runs to roughly 155 characters, but a social card truncates around
+   * 125 — and an ellipsis through the middle of a sentence on a shared link is
+   * a worse failure than leaving thirty characters of a search snippet unused.
+   * So these sit around 110-125: long enough that Google does not discard it
+   * and compose its own, short enough to survive a card intact.
    */
   metaDescription:
-    "AI engineer building agentic systems, LLM pipelines and the infrastructure that runs them. Notes, talks and workshops on AI in production.",
+    "AI engineer building agentic systems, LLM pipelines and the infrastructure that runs them. Notes, talks and workshops.",
   // The origin the site is actually served from. Canonical URLs, the sitemap
   // and the RSS feed are all composed from it, so a wrong value here points
   // every canonical tag at somewhere else.
@@ -344,7 +346,7 @@ export const PAGES = {
   blog: {
     meta: {
       title: "Writing on AI systems and engineering",
-      description: "Notes on agentic systems, LLM pipelines, evaluation and the engineering behind AI that runs in production — written as I build.",
+      description: "Notes on agentic systems, LLM pipelines, evaluation, and the engineering behind AI that actually runs in production.",
     },
     label: "Blog",
     title: "Writing",
@@ -355,7 +357,7 @@ export const PAGES = {
   projects: {
     meta: {
       title: "Open source projects and experiments",
-      description: "Things I have built, maintained and contributed to — agent frameworks, developer tooling and cloud infrastructure, with notes on each.",
+      description: "Things I have built, maintained and contributed to — agent frameworks, developer tooling and cloud infrastructure work.",
     },
     label: "Projects",
     title: "Things I have built",
@@ -367,7 +369,7 @@ export const PAGES = {
     meta: {
       title: "Workshops, talks and conference sessions",
       description:
-        "Workshops and sessions delivered at meetups, conferences and online — on agentic AI, Azure, Microsoft Foundry and shipping to production.",
+        "Workshops and sessions I have delivered at meetups, conferences and online, on agentic AI, Azure and production work.",
     },
     label: "Events",
     title: "Workshops and sessions",
@@ -379,7 +381,7 @@ export const PAGES = {
     meta: {
       title: "Developer communities I help run",
       description:
-        "Tech communities I organise with, contribute to or volunteer for across Sri Lanka and online — meetups, student programmes and open source.",
+        "Tech communities I organise with, contribute to or volunteer for, across Sri Lanka and online, on and off the stage.",
     },
     label: "Communities",
     title: "Communities",
@@ -390,7 +392,7 @@ export const PAGES = {
     meta: {
       title: "Technical walkthroughs and demos",
       description:
-        "Walkthroughs and demos on AI systems, Azure and software engineering — recorded end to end, from first principles to a working deployment.",
+        "Walkthroughs and demos on AI systems, Azure and software engineering, recorded from first principles to a deployment.",
     },
     label: "Videos",
     title: "Walkthroughs and demos",
@@ -402,7 +404,7 @@ export const PAGES = {
     meta: {
       title: "Photographs from events and workshops",
       description:
-        "Photographs from the events, talks and workshops I have been part of, newest first — meetups, conferences and hands-on sessions.",
+        "Photographs from the events, talks and workshops I have been part of, newest first, from across Sri Lanka and online.",
     },
     label: "Gallery",
     title: "Event photographs",
@@ -414,7 +416,7 @@ export const PAGES = {
     meta: {
       title: "Site tree & architecture",
       description:
-        "An interactive directory of every published page, post, project and resource on dileepa.dev, with the route tree and the status of each.",
+        "An interactive directory of every published page, post, project and resource on dileepa.dev, with each route's status.",
     },
     label: "Architecture",
     title: "Site tree & routes",

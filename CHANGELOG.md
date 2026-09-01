@@ -61,9 +61,11 @@ Changes are organized into the following categories:
 - **The search snippet was too thin to be used.** The homepage title was 29 characters of a
   ~60-character result and the description 63 of ~155, which is short enough that Google composes
   its own. `metaDescription` is separate from `description` because the short line is UI copy —
-  the hero falls back to it as a display heading — and a 138-character sentence is wrong there.
-  The seven index pages' titles and descriptions were lengthened the same way; `meta.title` is
-  metadata-only, so no visible heading changed.
+  the hero falls back to it as a display heading — and a sentence sized for a search result is
+  wrong there. The seven index pages' titles and descriptions were lengthened the same way;
+  `meta.title` is metadata-only, so no visible heading changed. All eight descriptions are sized
+  to the social card's ~125-character truncation rather than the search snippet's ~155: an
+  ellipsis through a shared link is a worse failure than an unused half-line in a result.
 
 - **Twenty-nine of sixty-eight tag pages were empty.** `generateStaticParams` returned
   `encodeURIComponent(tag)` and Next encoded it again, so `"Advanced Git"` arrived as
