@@ -90,6 +90,10 @@ versions - version drift between the two apps is the thing v2.0.0 exists to end.
   for third-party brand marks, `PillarIcons.tsx` for the six About-card marks. The pillar marks are
   brand assets: the source is `docs/brand/icons/`, and the app ports the `-symbol.svg` variant
   because it strokes `currentColor` and therefore follows the theme.
+- **There is no `og:logo`.** Open Graph defines twenty-three properties and that is not one of
+  them; audit tools ask for it anyway. The logo a search engine reads is `Person.image` in the
+  JSON-LD in `app/layout.tsx`, which is the portrait - the same image the favicon is. Do not add
+  the tag to satisfy a checker.
 - **One social card design.** The terminal window in `docs/brand/covers/source-1584x396.svg` is it -
   `public/og.png`, every uploaded profile cover, and the per-record cards that `lib/og/card.tsx`
   generates all carry it. A second design is not a variant, it is a fork.

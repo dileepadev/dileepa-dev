@@ -181,10 +181,30 @@ export default async function RootLayout({
   // reads. The fetch is deduplicated by Next's cache, so this costs nothing.
   const about = await api.getAbout();
 
+  // Two nodes, joined by `@id`, rather than two strangers.
+  //
+  // There is no `og:logo` - the Open Graph protocol defines twenty-three
+  // properties and that is not one of them, whatever an audit tool says. The
+  // logo a search engine actually reads is here, in the structured data, and
+  // for a person it is `Person.image`: the portrait, which is also the favicon
+  // by brand-guide.md section 3.2. So the logo is declared; it is just not
+  // declared where a checker looking for a tag that does not exist can see it.
+  //
+  // These identifiers are fragments on the canonical origin on purpose. They
+  // name the *entity*, not the page it happens to be served from, so they stay
+  // stable across a preview deployment - unlike `METADATA_ORIGIN`, which
+  // deliberately follows the deployment.
+  const personId = `${SITE_CONFIG.url}/#person`;
+  const websiteId = `${SITE_CONFIG.url}/#website`;
+
   const personSchema = {
     "@context": "https://schema.org",
     "@type": "Person",
+    "@id": personId,
     name: SITE_CONFIG.name,
+    // The handle carries as much recognition as the name and now sits in the
+    // page title too; this is what ties the two to one entity.
+    alternateName: "dileepadev",
     url: SITE_CONFIG.url,
     jobTitle: "AI Engineer",
     sameAs: [
@@ -195,14 +215,20 @@ export default async function RootLayout({
     ].filter(Boolean),
     image: portraitUrl(about?.images) || undefined,
     description: SITE_CONFIG.description,
+    ...(about?.location ? { address: about.location } : {}),
   };
 
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
+    "@id": websiteId,
     name: SITE_CONFIG.name,
     url: SITE_CONFIG.url,
     description: SITE_CONFIG.description,
+    inLanguage: "en",
+    // The site is published by the person above. Without this the two nodes
+    // describe the same thing and say nothing about each other.
+    publisher: { "@id": personId },
   };
 
   return (

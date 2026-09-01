@@ -31,6 +31,12 @@ Changes are organized into the following categories:
 
 ### Changed - Unreleased
 
+- **The two JSON-LD nodes are joined.** `Person` and `WebSite` described the same thing and said
+  nothing about each other; they now carry `@id` fragments on the canonical origin and the site
+  names the person as its `publisher`. The person gains `alternateName: "dileepadev"` - the handle
+  carries as much recognition as the name and now sits in the page title too - plus `address` from
+  the about record, and the site declares `inLanguage`.
+
 - **One social card design, everywhere.** The generated per-record cards were a second design
   sitting beside the official cover artwork. `lib/og/card.tsx` now draws the same terminal window -
   same chrome, same lockup, same palette - with the record supplying the command line's path and
