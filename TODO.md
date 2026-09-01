@@ -252,9 +252,10 @@ Two same-site rules survive, and neither is optional:
       not fire, because both loaders are gated on `NODE_ENV === "production"` and neither ran
 - [ ] Re-measure against `dileepa.dev` after the deployment - a CDN in front of the image
       optimiser is the one difference that matters, and it is the one `/gallery` is waiting on
-- [ ] Social preview cards render on LinkedIn and X - **after the deployment.** The tags are now
-      composed by `lib/metadata.ts` for every route; before that, every index and static page
-      served the homepage's card and every post, project and event served no image at all
+- [x] Social preview cards render on LinkedIn and X. Every post, project and event now generates
+      its own card via `lib/og/card.tsx` - the same terminal-window design the site cover uses,
+      with the record's own path and title - rather than sharing the homepage's `/og.png` or
+      shipping no image at all
 - [ ] Analytics reporting continuously through the rebuild - **after the deployment**
 
 ### Documentation and release
@@ -264,6 +265,8 @@ Two same-site rules survive, and neither is optional:
       of which is installed or imported
 - [x] `CHANGELOG.md` entries under Added, Changed, Fixed, Removed
 - [x] Version → `2.0.0` in `package.json`
+- [x] `DESIGN.md` and `docs/` (brand guide, design system, brand tokens, pillar icon set) reconciled
+      against the shipped site - the final touch-up pass before the deployment
 - [ ] Merge `feat/v2.0.0` into `dev`, then `dev` into `main`
 - [ ] Tag `v2.0.0` - held until the deployment, which is deliberately not part of this work
 - [ ] Deploy `main` and verify the post-deployment items above

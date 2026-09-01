@@ -28,6 +28,18 @@ Changes are organized into the following categories:
   `h1`. `.item-title` carries the H3 type step either way, so only the outline changes.
 - **A bounded retry on `429`** in the API client, honouring `Retry-After`. The API allows sixty
   requests a minute; a build renders 150 pages across seven workers.
+- **`getPostContent` retries a thrown fetch, not just a bad status.** Four builds died in one
+  afternoon on ten-second connect timeouts to `api.github.com` and `raw.githubusercontent.com`,
+  before any other change on this branch. undici raises `UND_ERR_CONNECT_TIMEOUT` as a
+  `TypeError: fetch failed`, so a retry that only inspects `response.ok` never runs.
+  `fetchRetrying` in `lib/content.ts` catches the throw as well as retrying `429` and `5xx`, and
+  wraps the tree listing, the per-file read and the on-demand read below. A `404` is not
+  retried - it is a real answer.
+- **A post published since the last build resolves without a redeploy.** `getPostContent` reads
+  the file directly from `blog-dileepa-dev` at `BLOG_CONTENT_REF` when the build-time map misses,
+  and `/blog/[slug]` reopens `dynamicParams` to let an unknown slug reach it. Both the tree read
+  and the direct read carry a 300s `revalidate` rather than the build-time cache, so a slug that
+  resolves once does not have to hit GitHub again for five minutes.
 
 ### Changed - Unreleased
 
@@ -105,6 +117,16 @@ Changes are organized into the following categories:
   to the social card's ~125-character truncation rather than the search snippet's ~155: an
   ellipsis through a shared link is a worse failure than an unused half-line in a result.
 
+- **The CSP blocked Vercel's own preview toolbar.** `script-src`, `style-src`, `font-src`,
+  `img-src`, `connect-src` and `frame-src` now allow `vercel.live` and the Vercel script and font
+  hosts it loads, so the feedback toolbar and Vercel's own preview chrome work on a deployed
+  preview rather than only on `next start`.
+- **`favicon.ico` sat on a different field colour than every PNG beside it** - `#CBC4BA` where the
+  vendored set, and the portrait itself, sit on `#D2D2D2`. Visible in a browser tab next to any
+  other surface. It is now built from the vendored `favicon-16x16`, `favicon-32x32` and
+  `android-icon-48x48` PNGs packed into one container, so the colour comes from the same source as
+  the rest of the set - and it gains 16px and 32px entries where it previously carried one 48px
+  image.
 - **Twenty-nine of sixty-eight tag pages were empty.** `generateStaticParams` returned
   `encodeURIComponent(tag)` and Next encoded it again, so `"Advanced Git"` arrived as
   `"Advanced%20Git"` after one decode - a string no post carries. The page rendered that as its
