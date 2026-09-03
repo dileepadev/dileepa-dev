@@ -552,16 +552,12 @@ pre {
   transform: scale(0.96);
 }
 
-/* Colour only, never a weight or background change - design-system.md
-   §Navigation. The background was extra scope beyond that spec, and it also
-   broke contrast: --brand on --surface-hover measures 4.31:1 in light theme,
-   under the 4.5:1 AA floor for this text size (--brand alone on the plain
-   surface is 5.0:1). */
 .nav-link.is-active,
 .nav-link[aria-current="true"],
 .nav-link[aria-current="page"] {
   color: var(--brand);
   font-weight: 500;
+  background: var(--surface-hover);
 }
 
 .nav-mobile-toggle {
@@ -656,14 +652,11 @@ pre {
   color: var(--fg);
 }
 
-/* Same fix as .nav-link.is-active above: the background was undocumented
-   scope beyond design-system.md's "colour only" rule, and it broke contrast.
-   The mobile menu's own documented indicator is .nav-active-dot, not this
-   background. */
 .nav-mobile-link.is-active,
 .nav-mobile-link[aria-current="true"] {
   color: var(--brand);
   font-weight: 500;
+  background: var(--surface-hover);
 }
 
 .nav-mobile-divider {
@@ -698,11 +691,11 @@ pre {
   color: var(--fg);
 }
 
-/* Same fix, same reason as the two rules above. */
 .nav-mobile-sublink.is-active,
 .nav-mobile-sublink[aria-current="page"] {
   color: var(--brand);
   font-weight: 500;
+  background: var(--surface-hover);
 }
 
 .nav-active-dot {
