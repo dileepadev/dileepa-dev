@@ -22,7 +22,6 @@ import {
   FaYoutube,
 } from "@/components/icons/SocialIcons";
 import {
-  ApiOfflinePage,
   Badge,
   Chip,
   Container,
@@ -31,7 +30,7 @@ import {
   Section,
   ZoomableImage,
 } from "@/components/ui";
-import { api, checkApiHealth } from "@/lib/api";
+import { api } from "@/lib/api";
 import type { EventRecord } from "@/lib/api-types";
 import { SITE_CONFIG } from "@/lib/constants";
 import { pageMetadata } from "@/lib/metadata";
@@ -156,14 +155,13 @@ function eventJsonLd(event: EventRecord) {
 
 export default async function EventPage({ params }: Params) {
   const { slug } = await params;
+  // A missing record is the only thing that reaches here: `optional()` rethrows
+  // anything that is not a 404, so an outage fails the render and ISR keeps
+  // serving the last good copy rather than arriving as `event === null`. The
+  // `checkApiHealth()` probe that stood here therefore had nothing to detect,
+  // and cost a 500 in place of every 404 - see `checkApiHealth` in `lib/api.ts`.
   const event = await api.getEvent(slug);
-  if (!event) {
-    const health = await checkApiHealth();
-    if (!health.ok) {
-      return <ApiOfflinePage path={`/events/${slug}`} />;
-    }
-    notFound();
-  }
+  if (!event) notFound();
 
   const photos = [...(event.photos ?? [])].sort((a, b) => a.order - b.order);
   const timeRange = formatTimeRange(event.startAt, event.endAt, event.timezone);

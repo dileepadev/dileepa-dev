@@ -20,13 +20,17 @@ import { streamTerminalIntro } from "@/lib/terminal-intro";
  */
 
 /**
- * Fifteen minutes, matching `REVALIDATE.content` in `lib/api.ts`.
+ * An hour, matching `REVALIDATE.content` in `lib/api.ts`.
  *
  * The route itself is dynamic - it reads the query string - but every fetch
  * underneath it goes through the same Next data cache the homepage uses, so a
  * request that misses the CDN still does not hit the API.
+ *
+ * This was fifteen minutes, and it tracked `REVALIDATE.content` then too. The
+ * constant moved for the reason recorded beside it; this follows, because the
+ * two being the same number is the point.
  */
-export const revalidate = 900;
+export const revalidate = 3600;
 
 /**
  * Seconds the platform may let this route run.

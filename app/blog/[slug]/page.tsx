@@ -11,14 +11,8 @@ import {
   TableOfContents,
 } from "@/components/blog";
 import { mdxComponents } from "@/components/mdx";
-import {
-  ApiOfflinePage,
-  Badge,
-  Container,
-  PagePath,
-  Section,
-} from "@/components/ui";
-import { api, checkApiHealth } from "@/lib/api";
+import { Badge, Container, PagePath, Section } from "@/components/ui";
+import { api } from "@/lib/api";
 import type { BlogPost } from "@/lib/api-types";
 import { getPostContent } from "@/lib/content";
 import { SITE_CONFIG } from "@/lib/constants";
@@ -123,19 +117,21 @@ export default async function BlogPostPage({ params }: Params) {
 
   // Metadata comes from the API, the body from Git. A post that has one but
   // not the other is a pipeline fault, and a 404 is the honest answer.
+  //
+  // A missing record is the only thing that reaches here, so it is the only
+  // thing this branch has to answer. `optional()` rethrows anything that is
+  // not a 404, which means an API outage never arrives as `post === null` - it
+  // arrives as a thrown error, the render fails, and ISR goes on serving the
+  // last good copy of this post. That is the better outcome, and it is why the
+  // `checkApiHealth()` probe that used to stand here had nothing to detect:
+  // all it did was turn every 404 into a 500, because an uncached fetch
+  // de-opts a prerendered route at runtime. See `checkApiHealth` in
+  // `lib/api.ts`.
   const [post, content] = await Promise.all([
     api.getBlog(slug),
     getPostContent(slug),
   ]);
-  if (!post || !content) {
-    if (!post) {
-      const health = await checkApiHealth();
-      if (!health.ok) {
-        return <ApiOfflinePage path={`/blog/${slug}`} />;
-      }
-    }
-    notFound();
-  }
+  if (!post || !content) notFound();
 
   const url = postUrl(post);
   const headings = extractHeadings(content.body);

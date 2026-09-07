@@ -37,7 +37,10 @@ export const metadata: Metadata = pageMetadata({
   path: "/brand",
 });
 
-export const revalidate = 900;
+// An hour, matching `REVALIDATE` in `lib/api.ts`. It was 900, which is
+// shorter than the gap between two visits to this page - so every arrival
+// found an expired entry and paid for a regeneration. See `TODO.md`.
+export const revalidate = 3600;
 
 const FAVICONS = [
   {
