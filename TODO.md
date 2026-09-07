@@ -52,7 +52,14 @@ being handed to recruiters.
 - [ ] `x-vercel-cache` returns `HIT` on `/`, `/blog` and a post within the hour after a warm-up
 - [ ] `curl -o /dev/null -w '%{http_code}' https://dileepa.dev/blog/does-not-exist` returns **404**
 - [ ] Fluid Active CPU falls back inside the 4h allowance over the following week
-- [ ] Bump `package.json` to `2.0.1` and tag at release time, per [VERSIONING.md](VERSIONING.md)
+
+### At release
+
+- [x] `package.json` and `package-lock.json` at `2.0.1`
+- [x] `CHANGELOG.md` carries a `v2.0.1` section
+- [ ] Set the release date on that section - it reads `Unreleased` until the tag exists
+- [ ] Merge to `dev`, then `dev` into `main`, and tag `v2.0.1` per [VERSIONING.md](VERSIONING.md)
+- [ ] Close [issue #21](https://github.com/dileepadev/dileepa-dev/issues/21)
 
 ### Not code
 

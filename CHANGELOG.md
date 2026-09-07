@@ -11,14 +11,20 @@ Changes are organized into the following categories:
 
 ## [Unreleased]
 
-> [!NOTE]
-> Readying `v2.0.1`. The site was over its Vercel Hobby Fluid Active CPU allowance - 4h 49m
-> against 4h - while serving roughly four real pageviews a day. Every ISR revalidate window was
-> shorter than the gap between two visits, so essentially every request found an expired entry,
-> was served the stale body **and** spawned a background regeneration: ~1,500 server renders a
-> day, and ISR saving nothing. See [issue #21](https://github.com/dileepadev/dileepa-dev/issues/21).
+Unreleased changes go here.
 
-### Changed - Unreleased
+## [v2.0.1] - Unreleased
+
+> [!NOTE]
+> The site was over its Vercel Hobby Fluid Active CPU allowance - 4h 49m against 4h - while
+> serving roughly four real pageviews a day. Every ISR revalidate window was shorter than the gap
+> between two visits, so essentially every request found an expired entry, was served the stale
+> body **and** spawned a background regeneration: ~1,500 server renders a day, and ISR saving
+> nothing. See [issue #21](https://github.com/dileepadev/dileepa-dev/issues/21).
+>
+> Set the release date above when this is tagged.
+
+### Changed - v2.0.1
 
 - **Every revalidate window is an hour.** `REVALIDATE` in `lib/api.ts` held `blog` at 300 and
   `content` and `events` at 900, and a page inherits the *smallest* window of any fetch in its
@@ -40,7 +46,7 @@ Changes are organized into the following categories:
   and it is invisible unless you read the revalidate column. Safe to lengthen on its own terms:
   the ref is pinned, and content at a pinned ref cannot change.
 
-### Fixed - Unreleased
+### Fixed - v2.0.1
 
 - **An unknown blog slug returns `404` again instead of `500`.** `checkApiHealth` probed the API
   with `next: { revalidate: 0 }`, and an uncached fetch inside a route Next is serving from its
@@ -587,6 +593,7 @@ Changes are organized into the following categories:
 <!-- v0.0.1 -->
 
 [Unreleased]: https://github.com/dileepadev/dileepa-dev/branches
+[v2.0.1]: https://github.com/dileepadev/dileepa-dev/releases/tag/v2.0.1
 [v2.0.0]: https://github.com/dileepadev/dileepa-dev/releases/tag/v2.0.0
 [v1.3.0]: https://github.com/dileepadev/dileepa-dev/releases/tag/v1.3.0
 [v1.2.0]: https://github.com/dileepadev/dileepa-dev/releases/tag/v1.2.0
