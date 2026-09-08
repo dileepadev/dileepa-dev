@@ -11,7 +11,10 @@ export const metadata: Metadata = pageMetadata({
   path: "/sitemap",
 });
 
-export const revalidate = 300;
+// An hour, matching `REVALIDATE` in `lib/api.ts`. It was 300, which is
+// shorter than the gap between two visits to this page - so every arrival
+// found an expired entry and paid for a regeneration. See `TODO.md`.
+export const revalidate = 3600;
 
 export default async function SitemapPage() {
   const [rawPosts, rawProjects, rawEvents] = await Promise.all([

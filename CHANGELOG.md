@@ -13,6 +13,60 @@ Changes are organized into the following categories:
 
 Unreleased changes go here.
 
+## [v2.0.1] - 2026-09-08
+
+> [!NOTE]
+> The site was over its Vercel Hobby Fluid Active CPU allowance - 4h 49m against 4h - while
+> serving roughly four real pageviews a day. Every ISR revalidate window was shorter than the gap
+> between two visits, so essentially every request found an expired entry, was served the stale
+> body **and** spawned a background regeneration: ~1,500 server renders a day, and ISR saving
+> nothing. See [issue #21](https://github.com/dileepadev/dileepa-dev/issues/21).
+
+### Changed - v2.0.1
+
+- **Every revalidate window is an hour.** `REVALIDATE` in `lib/api.ts` held `blog` at 300 and
+  `content` and `events` at 900, and a page inherits the *smallest* window of any fetch in its
+  tree - so the shortest of them set the window for the busiest routes on the site. Those numbers
+  were shorter than the gap between two visits to a personal site, which is the whole failure:
+  a window that expires before anyone arrives is never used twice, so the cache entry costs a
+  render and returns a stale body. An hour is not a claim about how fresh the content should be,
+  it is the point where a window outlives the gap between arrivals. Confirmed in the build output:
+  every route now reports `1h` where the table previously ran from `5m` to `15m`.
+- **The route segments that pinned their own shorter windows follow.** `app/sitemap/page.tsx` was
+  300, and `app/brand/page.tsx`, `app/profile/page.tsx` and `app/terminal/route.ts` were 900. The
+  production logs showed them regenerating 65-77 times a day for pages that change a few times a
+  year.
+- **Reads of the content repository are cached for an hour rather than five minutes.**
+  `lib/content.ts` fetched the Git tree and every post body with `revalidate: 300`. Because
+  `getAllContent` memoises into a module variable, exactly one page per worker actually performs
+  those fetches - and *that* page inherited the five-minute window while every other route got an
+  hour. It surfaced as a single blog post building with `5m` beside it, varying with build order,
+  and it is invisible unless you read the revalidate column. Safe to lengthen on its own terms:
+  the ref is pinned, and content at a pinned ref cannot change.
+
+### Fixed - v2.0.1
+
+- **An unknown blog slug returns `404` again instead of `500`.** `checkApiHealth` probed the API
+  with `next: { revalidate: 0 }`, and an uncached fetch inside a route Next is serving from its
+  prerender flips the page static → dynamic *at runtime* - which is not a fallback but a thrown
+  error and a 500. The probe sat on exactly the path a missing post takes, so every unknown slug
+  hit it: `/blog/robots.txt`, `/blog/${1}` and `/blog/blog/<slug>` were 500ing continuously. The
+  probe is now cached for thirty seconds, which still catches an outage and cannot de-opt its
+  caller.
+- **The health probe is gone from `/blog/[slug]`, `/events/[slug]` and `/projects/[slug]`.** It
+  had nothing to detect there: `optional()` rethrows anything that is not a 404, so an API outage
+  never arrives as a missing record - it fails the render, and ISR goes on serving the last good
+  copy. All the probe did on those three routes was turn every 404 into a 500. The index pages
+  keep it, where `degradePage` swallows the failure and an empty list genuinely is ambiguous.
+- **A slug that cannot name a post costs no network calls.** `getPostContent` fell back to
+  `listRemote()` - a GitHub tree listing, one raw fetch per post and a `gray-matter` parse each -
+  for anything it could not resolve. That is the right answer for a real post filed somewhere
+  unexpected and a wildly expensive one for scanner traffic, which is what actually arrives:
+  every probe for `/blog/robots.txt` re-listed the entire content repository. Post slugs are
+  `YYYY-MM-DD-title` by the content contract, so a slug that is not is now answered from memory.
+  A date-shaped one still gets both the direct read and the rescan behind it, so a post published
+  since the last build resolves exactly as before.
+
 ## [v2.0.0] - 2026-09-01
 
 > [!NOTE]
@@ -537,6 +591,7 @@ Unreleased changes go here.
 <!-- v0.0.1 -->
 
 [Unreleased]: https://github.com/dileepadev/dileepa-dev/branches
+[v2.0.1]: https://github.com/dileepadev/dileepa-dev/releases/tag/v2.0.1
 [v2.0.0]: https://github.com/dileepadev/dileepa-dev/releases/tag/v2.0.0
 [v1.3.0]: https://github.com/dileepadev/dileepa-dev/releases/tag/v1.3.0
 [v1.2.0]: https://github.com/dileepadev/dileepa-dev/releases/tag/v1.2.0

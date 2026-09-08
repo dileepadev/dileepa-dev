@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import { ExternalLink, FileText, Globe } from "lucide-react";
 import { FaGithub } from "@/components/icons/SocialIcons";
 import {
-  ApiOfflinePage,
   Badge,
   Chip,
   Container,
@@ -12,7 +11,7 @@ import {
   PagePath,
   Section,
 } from "@/components/ui";
-import { api, checkApiHealth } from "@/lib/api";
+import { api } from "@/lib/api";
 import { pageMetadata } from "@/lib/metadata";
 import { formatMonth, humanise, paragraphs } from "@/lib/format";
 
@@ -54,14 +53,13 @@ function period(start?: string | null, end?: string | null): string {
 
 export default async function ProjectPage({ params }: Params) {
   const { slug } = await params;
+  // A missing record is the only thing that reaches here: `optional()` rethrows
+  // anything that is not a 404, so an outage fails the render and ISR keeps
+  // serving the last good copy rather than arriving as `project === null`. The
+  // `checkApiHealth()` probe that stood here therefore had nothing to detect,
+  // and cost a 500 in place of every 404 - see `checkApiHealth` in `lib/api.ts`.
   const project = await api.getProject(slug);
-  if (!project) {
-    const health = await checkApiHealth();
-    if (!health.ok) {
-      return <ApiOfflinePage path={`/projects/${slug}`} />;
-    }
-    notFound();
-  }
+  if (!project) notFound();
 
   const links = Object.entries(project.links ?? {}).filter(
     (entry): entry is [string, string] => Boolean(entry[1]),

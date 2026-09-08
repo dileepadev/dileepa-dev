@@ -17,11 +17,21 @@ gains Projects and an event gallery, and adopts the new brand. Whatever ships he
 `admin-dileepa-dev` and `links-dileepa-dev` follow - this repo is the design reference for the
 whole platform, so a shortcut taken here propagates to three applications.
 
-Currently on branch `feat/v2.0.0`. `package.json` is at `2.0.0`; the release is what this
-branch is being readied for.
+v2.0.0 is shipped, tagged and deployed; issue **#15** is closed. `package.json` is at `2.0.1`,
+which is the patch being readied on `fix/v2.0.1-fluid-cpu-overage` - see issue **#21**.
 
-[TODO.md](TODO.md) holds this repo's slice of the migration. Issue **#15** holds the full scope.
-The cross-repository roadmap lives in `dileepadev/TODO.md`.
+[TODO.md](TODO.md) holds this repo's current slice. The cross-repository roadmap lives in
+`dileepadev/TODO.md`.
+
+**Caching is load-bearing here, and the numbers are not arbitrary.** Every ISR window on the
+site is an hour: `REVALIDATE` in `lib/api.ts`, `CONTENT_REVALIDATE` in `lib/content.ts`, and the
+four route segments that state their own. They were 300 and 900, which is shorter than the gap
+between two visits to a personal site - so every request found an expired entry, was served the
+stale body *and* spawned a background regeneration. ISR saved nothing, the site rendered ~1,500
+pages a day to serve ~4 human pageviews, and the project went over its Vercel Hobby Fluid Active
+CPU allowance. **Do not shorten a revalidate window without a reason that survives that
+arithmetic.** Freshness is coming back through on-demand `revalidatePath` in v2.1.0, not through
+smaller numbers.
 
 ## Layout
 
@@ -203,6 +213,22 @@ There is no test suite. Before calling a change done:
   three, is that a genuinely unknown slug 404s from the client: Next serves an on-demand
   `notFound()` as a client-rendered shell, correct status and empty `<body>`, where a slug the
   router rejects would have rendered `not-found.tsx` on the server.
+- **An uncached fetch inside a prerendered route is a 500, not a fallback.** `next: {
+  revalidate: 0 }` (and `cache: "no-store"`) flips a page static → dynamic *at runtime*, which
+  Next answers by throwing. `checkApiHealth` did exactly this, and because it sat on the path a
+  missing record takes, every unknown `/blog/[slug]` answered 500 instead of 404 - scanner
+  traffic hit it continuously. The probe is cached for thirty seconds now. **If a server render
+  needs live data, it needs a short window, not a zero one.**
+- **The health probe belongs on the index pages and nowhere else.** `/blog/[slug]`,
+  `/events/[slug]` and `/projects/[slug]` had it and it had nothing to detect: `optional`
+  rethrows anything that is not a 404, so an outage never arrives as a missing record - it fails
+  the render, and ISR goes on serving the last good copy. On the index pages `degradePage`
+  swallows the failure, so an empty list genuinely is ambiguous and the probe earns its place.
+  **Do not add it back to a detail route.**
+- **A slug that cannot name a post must not reach the network.** `getPostContent` used to fall
+  back to a full `listRemote()` - a tree listing, one raw fetch per post, a `gray-matter` parse
+  each - for anything it could not resolve, so every probe for `/blog/robots.txt` re-listed the
+  content repository. Post slugs are `YYYY-MM-DD-title` by contract; `SLUG_PATTERN` gates on it.
 - **A post page is static; three things on it are not.** Reactions, views and comments are fetched
   in the browser by `PostInteractions`, which owns the comment thread - the action bar's count and
   the comment list are the same data, and fetching it twice is waste nobody notices. Anything else
