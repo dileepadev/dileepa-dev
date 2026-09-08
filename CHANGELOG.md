@@ -13,7 +13,7 @@ Changes are organized into the following categories:
 
 Unreleased changes go here.
 
-## [v2.0.1] - Unreleased
+## [v2.0.1] - 2026-09-08
 
 > [!NOTE]
 > The site was over its Vercel Hobby Fluid Active CPU allowance - 4h 49m against 4h - while
@@ -21,8 +21,6 @@ Unreleased changes go here.
 > between two visits, so essentially every request found an expired entry, was served the stale
 > body **and** spawned a background regeneration: ~1,500 server renders a day, and ISR saving
 > nothing. See [issue #21](https://github.com/dileepadev/dileepa-dev/issues/21).
->
-> Set the release date above when this is tagged.
 
 ### Changed - v2.0.1
 

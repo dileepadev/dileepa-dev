@@ -47,7 +47,23 @@ being handed to recruiters.
       are date-prefixed by the content contract, so a slug that is not is answered from memory
 - [x] `npm run lint`, `npm run typecheck`, `npm run format:check` and `npm run build` all clean
 
-### Verify after the deploy
+### Verified on the preview deployment
+
+`dpl_7BLZAybcP1nYYGoALfYNp4NSbLMP` (`883aab9`), built clean with no warnings.
+
+- [x] **Vercel's own build log reports `1h` on every route** - the table previously ran from `5m`
+      to `15m`. This is the authoritative check; a local build is not
+- [x] All four previously-500ing slug shapes return **404** - `/blog/does-not-exist-xyz`,
+      `/blog/robots.txt`, `/blog/${1}`, `/blog/2026-01-01-not-a-real-post` - as do
+      `/events/nope`, `/projects/nope` and `/nonexistent-page`
+- [x] **Runtime logs: 33× 200, 7× 404 (the probes above), zero 500s, zero errors, zero warnings**
+- [x] 16 routes return 200 and prerendered; `/terminal`, `/blog/rss.xml`, `/sitemap.xml`,
+      `/robots.txt`, `/llms.txt` and all three `opengraph-image` routes healthy
+- [x] `x-nextjs-stale-time: 300` on responses is the **client router cache**, not ISR - production
+      sends the same header while serving a `HIT` at `age` 2004, which a 300s ISR window could not
+      do. Do not read it as a revalidate window
+
+### Verify on production, after the merge
 
 - [ ] `x-vercel-cache` returns `HIT` on `/`, `/blog` and a post within the hour after a warm-up
 - [ ] `curl -o /dev/null -w '%{http_code}' https://dileepa.dev/blog/does-not-exist` returns **404**
@@ -56,9 +72,11 @@ being handed to recruiters.
 ### At release
 
 - [x] `package.json` and `package-lock.json` at `2.0.1`
-- [x] `CHANGELOG.md` carries a `v2.0.1` section
-- [ ] Set the release date on that section - it reads `Unreleased` until the tag exists
-- [ ] Merge to `dev`, then `dev` into `main`, and tag `v2.0.1` per [VERSIONING.md](VERSIONING.md)
+- [x] `CHANGELOG.md` carries a `v2.0.1` section, dated **2026-09-08**
+- [ ] Merge [PR #23](https://github.com/dileepadev/dileepa-dev/pull/23) into `dev`
+- [ ] Open a PR from `dev` into `main` and merge it
+- [ ] Tag `v2.0.1` on `main` and push the tag, per [VERSIONING.md](VERSIONING.md)
+- [ ] Optionally create the GitHub release, pasting the `v2.0.1` changelog section
 - [ ] Close [issue #21](https://github.com/dileepadev/dileepa-dev/issues/21)
 
 ### Not code
