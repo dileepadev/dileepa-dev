@@ -118,6 +118,24 @@ function parse(filepath: string, raw: string): PostContent {
 const FETCH_RETRIES = 3;
 const FETCH_BACKOFF_MS = 400;
 
+/**
+ * How long a read of the content repository may be reused, in seconds.
+ *
+ * **This sets the ISR window of whichever page happens to load the posts.** A
+ * page inherits the smallest `revalidate` of every fetch in its tree, and
+ * `getAllContent` memoises into a module variable - so in any given worker
+ * exactly one page performs these fetches and is pulled down to their window,
+ * while the rest read the Map and are unaffected. At 300 that showed up as a
+ * single blog post building with a five-minute window and every other route at
+ * an hour, varying with build order. Non-deterministic, and invisible unless
+ * you read the revalidate column.
+ *
+ * An hour, matching `REVALIDATE` in `lib/api.ts`. Safe on its own terms: the
+ * ref is meant to be pinned (see the standing rule in `TODO.md`), and content
+ * at a pinned ref cannot change at all.
+ */
+const CONTENT_REVALIDATE = 3600;
+
 async function fetchRetrying(
   url: string,
   init?: RequestInit,
@@ -161,7 +179,7 @@ async function githubJson<T>(url: string): Promise<T> {
       // can hit it - and the failure then looks like a content bug.
       ...(TOKEN ? { Authorization: `Bearer ${TOKEN}` } : {}),
     },
-    next: { revalidate: 300 },
+    next: { revalidate: CONTENT_REVALIDATE },
   });
   if (!response.ok) {
     throw new Error(
@@ -230,7 +248,7 @@ async function listRemote(): Promise<PostContent[]> {
     files.map(async (file) => {
       const response = await fetchRetrying(
         `https://raw.githubusercontent.com/${REPO}/${REF}/${file.path}`,
-        { next: { revalidate: 300 } },
+        { next: { revalidate: CONTENT_REVALIDATE } },
       );
       if (!response.ok) {
         throw new Error(`Could not read ${file.path} from ${REPO}@${REF}`);
@@ -295,6 +313,29 @@ export function getAllContent(): Promise<Map<string, PostContent>> {
   return cache;
 }
 
+/**
+ * What a post slug looks like, and the gate on the on-demand fallback.
+ *
+ * Every post is `YYYY-MM-DD-title` - that is the content contract, it is what
+ * `slugOf` reads off the filename, and it is what the redirect rules in
+ * `next.config.ts` name on both sides.
+ *
+ * The pattern was already here, used to derive the year and month directories.
+ * It is lifted out and made a gate because of what sat *after* it: a slug that
+ * did not match fell through to a full `listRemote()` - a tree listing, one
+ * raw fetch per post and a `gray-matter` parse each. That is the correct
+ * answer for a real post filed somewhere unexpected. It is a wildly expensive
+ * one for `/blog/robots.txt`, `/blog/${1}` and `/blog/blog/<slug>`, which is
+ * what actually arrives: scanners and broken links, continuously, each one
+ * re-listing the whole content repository.
+ *
+ * A slug that cannot name a post is now answered from memory, before any
+ * network call. A date-shaped one still gets both the direct read and the
+ * rescan behind it, so a post published since the last build resolves exactly
+ * as before.
+ */
+const SLUG_PATTERN = /^(\d{4})-(\d{2})-\d{2}-/;
+
 export async function getPostContent(
   slug: string,
 ): Promise<PostContent | null> {
@@ -302,32 +343,34 @@ export async function getPostContent(
   const existing = posts.get(slug);
   if (existing) return existing;
 
+  const match = SLUG_PATTERN.exec(slug);
+  if (!match) return null;
+
   // On-demand fallback: fetch directly by date-scoped slug path if newly added
+  const [, year, month] = match;
+  const relPath = `${POSTS_DIR}/${year}/${month}/${slug}.md`;
+
   try {
-    const match = slug.match(/^(\d{4})-(\d{2})-\d{2}-/);
-    if (match) {
-      const [, year, month] = match;
-      const relPath = `${POSTS_DIR}/${year}/${month}/${slug}.md`;
-      if (LOCAL_PATH) {
-        const fullPath = path.resolve(LOCAL_PATH, relPath);
-        const raw = await fs.readFile(fullPath, "utf8");
-        const parsed = parse(fullPath, raw);
-        posts.set(slug, parsed);
-        return parsed;
-      }
-      const response = await fetchRetrying(
-        `https://raw.githubusercontent.com/${REPO}/${REF}/${relPath}`,
-        { next: { revalidate: 300 } },
-      );
-      if (response.ok) {
-        const raw = await response.text();
-        const parsed = parse(relPath, raw);
-        posts.set(slug, parsed);
-        return parsed;
-      }
+    if (LOCAL_PATH) {
+      const fullPath = path.resolve(LOCAL_PATH, relPath);
+      const raw = await fs.readFile(fullPath, "utf8");
+      const parsed = parse(fullPath, raw);
+      posts.set(slug, parsed);
+      return parsed;
     }
 
-    // Fallback scan if naming doesn't match standard year/month pattern
+    const response = await fetchRetrying(
+      `https://raw.githubusercontent.com/${REPO}/${REF}/${relPath}`,
+      { next: { revalidate: CONTENT_REVALIDATE } },
+    );
+    if (response.ok) {
+      const raw = await response.text();
+      const parsed = parse(relPath, raw);
+      posts.set(slug, parsed);
+      return parsed;
+    }
+
+    // Fallback scan for a dated post filed outside its year/month directory.
     const fresh = await (LOCAL_PATH ? listLocal() : listRemote());
     for (const post of fresh) {
       posts.set(post.slug, post);

@@ -127,16 +127,40 @@ function getClientApiUrl(): string {
   return API_URL;
 }
 
-/** How long a resource may be served stale, in seconds. */
+/**
+ * How long a resource may be served stale, in seconds.
+ *
+ * **An hour everywhere, and the number is the whole point.** A page inherits
+ * the *smallest* `revalidate` of every fetch in its tree, so the shortest
+ * window here set the window for the busiest routes on the site.
+ *
+ * These were 300 and 900, which is shorter than the gap between two visits to
+ * a personal site. Every request therefore arrived at an expired entry, was
+ * served the stale body *and* spawned a background regeneration - so ISR
+ * saved nothing and the site paid a full server render per request. Measured
+ * over 24 hours in production: ~1,500 renders to serve ~4 human pageviews,
+ * which is what put the project over its Fluid Active CPU allowance.
+ *
+ * An hour is not a guess about how fresh the content should be; it is the
+ * point where a window is longer than the gap between arrivals, so a cache
+ * entry gets *used* more than once. Freshness comes back properly with
+ * on-demand `revalidatePath` after a publish - see `TODO.md` - and these can
+ * go to a day once that exists. Until then an hour is the cost of publishing
+ * from the admin and waiting to see it.
+ *
+ * The names stay per-resource rather than collapsing to one constant: they
+ * record *why* each one may lag, and they are what the v2.1.0 work will move
+ * apart again once a publish can purge its own paths.
+ */
 const REVALIDATE = {
   /** Rarely changes and is edited deliberately. */
   profile: 3600,
   /** Published from the admin; an hour of staleness is invisible. */
-  content: 900,
+  content: 3600,
   /** Events gain photos and recordings after the fact. */
-  events: 900,
+  events: 3600,
   /** The blog index is what a reader hits after a post goes out. */
-  blog: 300,
+  blog: 3600,
 } as const;
 
 export class ApiError extends Error {
@@ -177,17 +201,37 @@ export function getApiHost(): string {
 }
 
 /**
+ * How long a health probe may be reused, in seconds.
+ *
+ * Short enough that an outage is noticed in the time it takes to reload, long
+ * enough that the fetch is *cached* - which is the property that matters. See
+ * `checkApiHealth`.
+ */
+const HEALTH_REVALIDATE = 30;
+
+/**
  * Checks whether the upstream API is reachable and healthy.
  *
  * Wrapped in React `cache()` so multiple components or server routes can verify
  * upstream connectivity within a single request without generating redundant network probes.
+ *
+ * **This may not be an uncached fetch.** It was `next: { revalidate: 0 }`, and
+ * an uncached fetch inside a route Next is trying to serve from its prerender
+ * flips the page static → dynamic *at runtime* - which is not a fallback, it
+ * is a thrown error and a 500. On `/blog/[slug]` that meant every unknown slug
+ * answered 500 instead of 404, because the probe sat on exactly the path a
+ * missing post takes. Scanner traffic (`/blog/robots.txt`, `/blog/${1}`) hit
+ * it continuously.
+ *
+ * Thirty seconds fixes that without weakening the check: the probe is still
+ * live enough to catch an outage, and a cached fetch cannot de-opt its caller.
  */
 export const checkApiHealth = cache(
   async (): Promise<{ ok: boolean; host: string; error?: string }> => {
     const host = getApiHost();
     try {
       const response = await fetch(buildUrl("/health"), {
-        next: { revalidate: 0 },
+        next: { revalidate: HEALTH_REVALIDATE },
         signal: AbortSignal.timeout(3000),
       });
       if (!response.ok) {
