@@ -67,6 +67,21 @@ being handed to recruiters.
       deploy - with ~4 real visitors a day, crawlers are effectively the entire bill. Keep
       Googlebot and Bingbot allowed; being deindexed is a worse trade than a few CPU-minutes
 
+## Found while verifying v2.0.1, unrelated to it
+
+- [ ] **The proxy rewrite drops the query string on Vercel, so `curl dileepa.dev?nocolor` is
+      ignored.** `/terminal?nocolor` is correct - 8,112 bytes of plain text. The same request to
+      `/`, which `proxy.ts` rewrites there, returns 15,521 bytes *byte-identical to `/terminal`
+      with no query at all*, with `Cache-Control: no-store`, meaning it took the intro-stream
+      branch: the route handler ran and saw an empty query. `proxy.ts` does read the query - a
+      curl client asking for `/?html` correctly gets the markup - so the loss is at
+      `NextResponse.rewrite`, and it does not reproduce under `next start`. Every flag README
+      documents on `/` is affected: `?nocolor`, `?static`, `?plain`, `?raw`, `?fast`, `?now`,
+      `?nointro`. **Pre-existing and identical on production**, so it is not a v2.0.1 regression -
+      confirmed by running the same probes against `dileepa.dev`. Deliberately left out of the
+      CPU patch: the fix needs iteration against preview deployments, which is not something to
+      attach to an urgent release.
+
 ## Deferred to v2.1.0
 
 Not needed to get back under the allowance, and each one carries more risk than a patch should.
