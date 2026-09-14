@@ -13,6 +13,64 @@ Changes are organized into the following categories:
 
 Unreleased changes go here.
 
+## [v2.0.2] - 2026-09-14
+
+> [!NOTE]
+> v2.0.1 took the ISR windows to an hour and the render count fell with them,
+> but Active CPU kept climbing - because an hour was never measured against the allowance. This
+> release sizes the windows from the budget, moves the social cards to build time, and declines
+> the crawlers that were the traffic all along. See
+> [issue #21](https://github.com/dileepadev/dileepa-dev/issues/21).
+
+### Changed - v2.0.2
+
+- **Every revalidate window is a day, and the number is arithmetic rather than taste.** The site
+  prerenders ~150 pages and the traffic reaching them is almost entirely crawlers walking the
+  sitemap, so a window of length `w` costs roughly `150 * (24h / w)` regenerations a day. At an
+  hour that is ~3,600 a day, ~108,000 a month, and at the ~0.2s of Active CPU a render of this
+  app costs, **~6 CPU-hours a month - still over the 4-hour Hobby allowance.** v2.0.1 moved to an
+  hour because an hour looked generous next to five minutes; it was never checked against the
+  budget. A day is ~150 a day, ~15 CPU-minutes a month, a 16x margin. Applied to `REVALIDATE` in
+  `lib/api.ts`, `CONTENT_REVALIDATE` in `lib/content.ts`, and the five route segments that state
+  their own - `/sitemap`, `/brand`, `/profile`, `/terminal` and `/blog/rss.xml`. The build now
+  reports `1d` on all 39 entries, with no window left shorter.
+- **`robots.txt` declines the bulk AI and SEO crawlers by name.** Roughly four humans a day read
+  this site against thousands of automated requests, so nearly all the compute ever billed was
+  spent rendering pages for crawlers. A day-long window caps what a crawl can cost, but the cap
+  still scales with how many distinct pages get walked - declining the broadest crawlers is what
+  turns a cap into headroom. **Search and social are deliberately untouched**: Googlebot, Bingbot
+  and DuckDuckBot match the default rule, and so do `LinkedInBot`, `Twitterbot`, `Slackbot` and
+  `facebookexternalhit`, which fetch the `opengraph-image` when a link is shared - blocking those
+  would strip the preview card off every link handed to a recruiter. `Google-Extended` and
+  `Applebot-Extended` are declined because each governs AI training only and neither affects
+  Google Search or Siri. A `Crawl-delay` of 10 applies to the catch-all rule.
+- **Every social card is drawn at build time rather than per request.** A metadata route always
+  attempts build-time prerendering, but in a dynamic segment it has no list of slugs to prerender
+  for, so all three `opengraph-image` routes bailed to on-demand rendering - visible in the
+  v2.0.1 build output as `ƒ /blog/[slug]/opengraph-image`, and caught in production at
+  `cache=MISS`. Every card was therefore a Satori layout pass and a resvg PNG encode **per
+  request**, which is the most CPU-expensive thing this site can be asked for, and a crawler asks
+  for one per post. Adding `generateStaticParams` - the same list each page already prerenders
+  from - moves all 59 cards to once per deploy. The build output now reports them as `●`.
+  `dynamicParams` stays open on the pages, so a record published since the last build still
+  renders its card on demand.
+- **The blog card reads `readingTimeMinutes` off the API record instead of the Git body.** It is
+  the same number the page already prefers, but reading it meant calling `getPostContent`, which
+  loads and parses *every* post to produce one integer - a GitHub tree, 22 raw files and 22
+  `gray-matter` parses, spent on one line of a card.
+
+### Fixed - v2.0.2
+
+- **The junk-slug gate runs before the content load, not after it.** v2.0.1 added
+  `SLUG_PATTERN` to stop a slug that cannot name a post from re-listing the content repository,
+  but placed it *below* `getAllContent()` - which stopped the second full listing and left the
+  first one standing. A cold instance asked for `/blog/robots.txt` still pulled a GitHub tree, 22
+  raw files and 22 `gray-matter` parses before returning null. Production logs showed it exactly:
+  a 404 answered by a serverless invocation logging `[content] 22 posts` on its way out. Parsing
+  is CPU, and CPU is what the platform bills; the gate is first now, so such a slug costs a regex
+  test. Verified against `next build && next start`: four junk-slug shapes, two cards and a post
+  render, and **zero** `[content]` loads.
+
 ## [v2.0.1] - 2026-09-08
 
 > [!NOTE]
@@ -591,6 +649,7 @@ Unreleased changes go here.
 <!-- v0.0.1 -->
 
 [Unreleased]: https://github.com/dileepadev/dileepa-dev/branches
+[v2.0.2]: https://github.com/dileepadev/dileepa-dev/releases/tag/v2.0.2
 [v2.0.1]: https://github.com/dileepadev/dileepa-dev/releases/tag/v2.0.1
 [v2.0.0]: https://github.com/dileepadev/dileepa-dev/releases/tag/v2.0.0
 [v1.3.0]: https://github.com/dileepadev/dileepa-dev/releases/tag/v1.3.0

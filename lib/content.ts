@@ -130,11 +130,13 @@ const FETCH_BACKOFF_MS = 400;
  * an hour, varying with build order. Non-deterministic, and invisible unless
  * you read the revalidate column.
  *
- * An hour, matching `REVALIDATE` in `lib/api.ts`. Safe on its own terms: the
- * ref is meant to be pinned (see the standing rule in `TODO.md`), and content
- * at a pinned ref cannot change at all.
+ * A day, matching `REVALIDATE` in `lib/api.ts`. Safe on its own terms, and
+ * more so than the API windows: the ref is meant to be pinned (see the
+ * standing rule in `TODO.md`), and content at a pinned ref cannot change at
+ * all - so this window only ever governs how long a *stale ref* would linger,
+ * and bumping the ref is a deploy, which rebuilds everything anyway.
  */
-const CONTENT_REVALIDATE = 3600;
+const CONTENT_REVALIDATE = 86400;
 
 async function fetchRetrying(
   url: string,
@@ -321,30 +323,45 @@ export function getAllContent(): Promise<Map<string, PostContent>> {
  * `next.config.ts` name on both sides.
  *
  * The pattern was already here, used to derive the year and month directories.
- * It is lifted out and made a gate because of what sat *after* it: a slug that
- * did not match fell through to a full `listRemote()` - a tree listing, one
- * raw fetch per post and a `gray-matter` parse each. That is the correct
- * answer for a real post filed somewhere unexpected. It is a wildly expensive
- * one for `/blog/robots.txt`, `/blog/${1}` and `/blog/blog/<slug>`, which is
- * what actually arrives: scanners and broken links, continuously, each one
- * re-listing the whole content repository.
+ * It is lifted out and made a gate because of what surrounds it: a slug that
+ * does not match has no file to find, and every lookup path below is a tree
+ * listing, one raw fetch per post and a `gray-matter` parse each. That is the
+ * correct cost for a real post. It is a wildly expensive one for
+ * `/blog/robots.txt`, `/blog/${1}` and `/blog/blog/<slug>`, which is what
+ * actually arrives: scanners and broken links, continuously.
  *
- * A slug that cannot name a post is now answered from memory, before any
- * network call. A date-shaped one still gets both the direct read and the
- * rescan behind it, so a post published since the last build resolves exactly
- * as before.
+ * **The gate has to run before `getAllContent()`, not after it.** v2.0.1 put
+ * it after, which stopped the second full listing and left the first one
+ * standing - so a junk slug on a cold instance still paid for the whole
+ * repository. Production logs showed a 404 answered by a serverless
+ * invocation that logged `[content] 22 posts` on its way out. See
+ * `getPostContent`.
+ *
+ * A date-shaped slug still gets the direct read and the rescan behind it, so a
+ * post published since the last build resolves exactly as before.
  */
 const SLUG_PATTERN = /^(\d{4})-(\d{2})-\d{2}-/;
 
 export async function getPostContent(
   slug: string,
 ): Promise<PostContent | null> {
+  // **The gate comes first, and that ordering is the whole point.**
+  //
+  // It used to sit below `getAllContent()`, which made it half a guard: it
+  // stopped the *second* full listing but not the first, so `/blog/robots.txt`
+  // on a cold instance still pulled a GitHub tree, 22 raw files and ran 22
+  // `gray-matter` parses before returning null. Production logs showed exactly
+  // that - a 404 answered by a serverless invocation that logged
+  // `[content] 22 posts` on its way out.
+  //
+  // Parsing is CPU, and CPU is what this platform bills. A slug that cannot
+  // name a post now costs a regex test.
+  const match = SLUG_PATTERN.exec(slug);
+  if (!match) return null;
+
   const posts = await getAllContent();
   const existing = posts.get(slug);
   if (existing) return existing;
-
-  const match = SLUG_PATTERN.exec(slug);
-  if (!match) return null;
 
   // On-demand fallback: fetch directly by date-scoped slug path if newly added
   const [, year, month] = match;

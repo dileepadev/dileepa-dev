@@ -130,23 +130,35 @@ function getClientApiUrl(): string {
 /**
  * How long a resource may be served stale, in seconds.
  *
- * **An hour everywhere, and the number is the whole point.** A page inherits
- * the *smallest* `revalidate` of every fetch in its tree, so the shortest
- * window here set the window for the busiest routes on the site.
+ * **A day everywhere, and the number is arithmetic rather than taste.** A page
+ * inherits the *smallest* `revalidate` of every fetch in its tree, so the
+ * shortest window here sets the window for the whole site - the root layout
+ * reads `/about` for the footer and the JSON-LD, which puts one of these
+ * numbers on every route there is.
  *
- * These were 300 and 900, which is shorter than the gap between two visits to
- * a personal site. Every request therefore arrived at an expired entry, was
- * served the stale body *and* spawned a background regeneration - so ISR
- * saved nothing and the site paid a full server render per request. Measured
- * over 24 hours in production: ~1,500 renders to serve ~4 human pageviews,
- * which is what put the project over its Fluid Active CPU allowance.
+ * The budget is the thing to reason from. This site prerenders ~150 pages, and
+ * the traffic that reaches them is almost entirely crawlers walking the
+ * sitemap - roughly four human pageviews a day against thousands of requests.
+ * A window of length `w` therefore costs about `150 * (24h / w)` regenerations
+ * a day, because a crawler comes back long before any window closes:
  *
- * An hour is not a guess about how fresh the content should be; it is the
- * point where a window is longer than the gap between arrivals, so a cache
- * entry gets *used* more than once. Freshness comes back properly with
- * on-demand `revalidatePath` after a publish - see `TODO.md` - and these can
- * go to a day once that exists. Until then an hour is the cost of publishing
- * from the admin and waiting to see it.
+ * - 300s  →  ~43,000/day.  This is what v2.0.0 shipped, and the site was
+ *            rendering on essentially every request.
+ * - 3600s →  ~3,600/day, ~108,000/month. At the ~0.2s of Active CPU a render
+ *            of this app costs, that is ~6 CPU-hours a month - **still over
+ *            the 4-hour Hobby allowance.** v2.0.1 moved here and the usage
+ *            kept climbing, which is the whole reason for this change.
+ * - 86400 →  ~150/day, ~4,500/month, ~15 CPU-minutes. A 16x margin.
+ *
+ * An hour looked generous next to five minutes and was never measured against
+ * the allowance. A day is, with room for the crawl to get broader.
+ *
+ * **The staleness costs less than it appears.** A post cannot ship without a
+ * deploy anyway - `BLOG_CONTENT_REF` is a pinned SHA, bumped when publishing
+ * (see the standing rule in `TODO.md`) - and a deploy rebuilds every page, so
+ * blog content is never waiting on a window at all. Only records edited in the
+ * admin without a deploy (projects, events, the about record) can lag, and for
+ * those a day is the price until on-demand `revalidatePath` lands in v2.1.0.
  *
  * The names stay per-resource rather than collapsing to one constant: they
  * record *why* each one may lag, and they are what the v2.1.0 work will move
@@ -154,13 +166,13 @@ function getClientApiUrl(): string {
  */
 const REVALIDATE = {
   /** Rarely changes and is edited deliberately. */
-  profile: 3600,
-  /** Published from the admin; an hour of staleness is invisible. */
-  content: 3600,
+  profile: 86400,
+  /** Published from the admin, which is also a deploy. */
+  content: 86400,
   /** Events gain photos and recordings after the fact. */
-  events: 3600,
+  events: 86400,
   /** The blog index is what a reader hits after a post goes out. */
-  blog: 3600,
+  blog: 86400,
 } as const;
 
 export class ApiError extends Error {

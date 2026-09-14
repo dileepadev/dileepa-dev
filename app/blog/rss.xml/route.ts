@@ -12,7 +12,16 @@ function escapeXml(value: string): string {
     .replace(/'/g, "&apos;");
 }
 
-export const revalidate = 3600;
+/**
+ * A day, matching `REVALIDATE` in `lib/api.ts`.
+ *
+ * A feed reader polling hourly was the argument for an hour, and it is a weak
+ * one here: a post cannot ship without a deploy (`BLOG_CONTENT_REF` is a pinned
+ * SHA), and a deploy rebuilds this feed. The window therefore never decides
+ * when a new post appears - it only decides how often a *crawler* can make the
+ * feed regenerate for nothing, and feed URLs are walked as hard as pages are.
+ */
+export const revalidate = 86400;
 
 export async function GET() {
   const posts = (await api.getAllBlogs()) ?? [];
