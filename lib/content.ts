@@ -130,11 +130,13 @@ const FETCH_BACKOFF_MS = 400;
  * an hour, varying with build order. Non-deterministic, and invisible unless
  * you read the revalidate column.
  *
- * An hour, matching `REVALIDATE` in `lib/api.ts`. Safe on its own terms: the
- * ref is meant to be pinned (see the standing rule in `TODO.md`), and content
- * at a pinned ref cannot change at all.
+ * A day, matching `REVALIDATE` in `lib/api.ts`. Safe on its own terms, and
+ * more so than the API windows: the ref is meant to be pinned (see the
+ * standing rule in `TODO.md`), and content at a pinned ref cannot change at
+ * all - so this window only ever governs how long a *stale ref* would linger,
+ * and bumping the ref is a deploy, which rebuilds everything anyway.
  */
-const CONTENT_REVALIDATE = 3600;
+const CONTENT_REVALIDATE = 86400;
 
 async function fetchRetrying(
   url: string,

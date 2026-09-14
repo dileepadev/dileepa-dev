@@ -9,10 +9,25 @@ this repository.
 > [CHANGELOG.md](CHANGELOG.md) for what it covered. The cross-repository roadmap lives in
 > [`dileepadev/TODO.md`](https://github.com/dileepadev/dileepadev/blob/main/TODO.md).
 
-## v2.0.2 - the CPU the ISR fix did not touch
+## v2.0.2 - sizing the cache from the budget
 
 v2.0.1 took every ISR window to an hour and the render count fell with it, but Active CPU kept
-climbing. Production logs found why: the remaining cost was not page rendering at all.
+climbing. Two reasons, and the first is the important one.
+
+**An hour was never measured against the allowance.** The site prerenders ~150 pages and the
+traffic reaching them is almost entirely crawlers walking the sitemap, so a window of length `w`
+costs about `150 * (24h / w)` regenerations a day:
+
+| Window | Regenerations/day | CPU/month at ~0.2s | Verdict |
+| --- | --- | --- | --- |
+| 300s (v2.0.0) | ~43,000 | far over | rendering on every request |
+| 3600s (v2.0.1) | ~3,600 | **~6 hours** | **still over the 4h allowance** |
+| 86400s (this) | ~150 | ~15 minutes | 16x margin |
+
+An hour looked generous next to five minutes. That is the whole of why it was chosen, and it was
+the wrong way to choose it.
+
+**And the rest of the cost was not page rendering at all.** Production logs found it.
 
 - [x] **Every social card was being drawn per request.** A metadata route always attempts
       build-time prerendering, but in a dynamic segment it has no slugs to prerender for, so all
@@ -28,7 +43,17 @@ climbing. Production logs found why: the remaining cost was not page rendering a
       returning null; the logs show a 404 invocation printing `[content] 22 posts`. Verified
       after the fix: four junk-slug shapes, two cards and a post render produce **zero**
       `[content]` loads
+- [x] **Every revalidate window is a day**, applied to `REVALIDATE`, `CONTENT_REVALIDATE` and the
+      five route segments that state their own. The build reports `1d` on all 39 entries, with
+      no window left shorter
+- [x] **`robots.txt` declines the bulk AI and SEO crawlers by name.** The day-long window caps
+      what a crawl can cost, but the cap scales with how many distinct pages get walked -
+      declining the broadest crawlers is what turns a cap into headroom. Search and social stay
+      allowed: Googlebot, Bingbot, DuckDuckBot, and the `LinkedInBot` / `Twitterbot` / `Slackbot`
+      / `facebookexternalhit` group that fetches the card when a link is shared
 - [x] `npm run lint`, `npm run typecheck`, `npm run format:check` and `npm run build` all clean
+- [x] Full pass against `next build && next start`: 19 pages, 3 junk slugs, 3 cards and the
+      terminal feature - all correct, **zero** `[content]` loads, zero errors
 
 ### Still to confirm
 
