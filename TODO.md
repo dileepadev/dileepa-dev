@@ -9,6 +9,39 @@ this repository.
 > [CHANGELOG.md](CHANGELOG.md) for what it covered. The cross-repository roadmap lives in
 > [`dileepadev/TODO.md`](https://github.com/dileepadev/dileepadev/blob/main/TODO.md).
 
+## v2.0.2 - the CPU the ISR fix did not touch
+
+v2.0.1 took every ISR window to an hour and the render count fell with it, but Active CPU kept
+climbing. Production logs found why: the remaining cost was not page rendering at all.
+
+- [x] **Every social card was being drawn per request.** A metadata route always attempts
+      build-time prerendering, but in a dynamic segment it has no slugs to prerender for, so all
+      three `opengraph-image` routes bailed to on-demand - `ƒ` in the v2.0.1 build output, and
+      caught in production at `cache=MISS`. Each card is a Satori layout pass and a resvg PNG
+      encode, the most CPU-expensive thing this site can be asked for, and a crawler asks for one
+      per post. `generateStaticParams` moves all 59 to once per deploy; the build now reports `●`
+- [x] **The blog card loaded every post to print one integer.** `readingTimeMinutes` comes off
+      the API record now, not out of the Git body via `getPostContent`
+- [x] **The v2.0.1 junk-slug gate was placed after the content load rather than before it** - so
+      it stopped the second full listing and left the first standing. `/blog/robots.txt` on a cold
+      instance still pulled a GitHub tree, 22 raw files and 22 `gray-matter` parses before
+      returning null; the logs show a 404 invocation printing `[content] 22 posts`. Verified
+      after the fix: four junk-slug shapes, two cards and a post render produce **zero**
+      `[content]` loads
+- [x] `npm run lint`, `npm run typecheck`, `npm run format:check` and `npm run build` all clean
+
+### Still to confirm
+
+- [ ] Active CPU growth per day, measured against the dashboard rather than inferred. Hobby
+      retains **one hour** of runtime logs - a `24h` query returns the same rows as a `1h` one,
+      and asking for anything older fails with `ExceedsBillingLimitError` - so the daily rate
+      cannot be read from logs and has to come from the usage page
+- [ ] **Cold instances still parse all 22 posts to render one post page.** `getPostContent` calls
+      `getAllContent()` before trying the single file it needs. Reordering would make it one
+      parse, but `getAllContent` is the only caller of `assertNotEmpty`, and AGENTS.md says that
+      guard must not be softened - so this needs the guard moved to an explicit build-time check
+      first, not a reorder
+
 ## v2.0.1 - the Fluid Active CPU overage
 
 `dileepa.dev` is over its Vercel Hobby Fluid Active CPU allowance - **4h 49m against 4h** - while

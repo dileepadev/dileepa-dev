@@ -11,7 +11,40 @@ Changes are organized into the following categories:
 
 ## [Unreleased]
 
-Unreleased changes go here.
+> [!NOTE]
+> Readying `v2.0.2`. v2.0.1 took the ISR windows to an hour and the render count fell with them,
+> but Active CPU kept climbing. Production logs found the two things it had not touched, both of
+> which spend CPU parsing or drawing rather than rendering pages. See
+> [issue #21](https://github.com/dileepadev/dileepa-dev/issues/21).
+
+### Changed - Unreleased
+
+- **Every social card is drawn at build time rather than per request.** A metadata route always
+  attempts build-time prerendering, but in a dynamic segment it has no list of slugs to prerender
+  for, so all three `opengraph-image` routes bailed to on-demand rendering - visible in the
+  v2.0.1 build output as `ƒ /blog/[slug]/opengraph-image`, and caught in production at
+  `cache=MISS`. Every card was therefore a Satori layout pass and a resvg PNG encode **per
+  request**, which is the most CPU-expensive thing this site can be asked for, and a crawler asks
+  for one per post. Adding `generateStaticParams` - the same list each page already prerenders
+  from - moves all 59 cards to once per deploy. The build output now reports them as `●`.
+  `dynamicParams` stays open on the pages, so a record published since the last build still
+  renders its card on demand.
+- **The blog card reads `readingTimeMinutes` off the API record instead of the Git body.** It is
+  the same number the page already prefers, but reading it meant calling `getPostContent`, which
+  loads and parses *every* post to produce one integer - a GitHub tree, 22 raw files and 22
+  `gray-matter` parses, spent on one line of a card.
+
+### Fixed - Unreleased
+
+- **The junk-slug gate runs before the content load, not after it.** v2.0.1 added
+  `SLUG_PATTERN` to stop a slug that cannot name a post from re-listing the content repository,
+  but placed it *below* `getAllContent()` - which stopped the second full listing and left the
+  first one standing. A cold instance asked for `/blog/robots.txt` still pulled a GitHub tree, 22
+  raw files and 22 `gray-matter` parses before returning null. Production logs showed it exactly:
+  a 404 answered by a serverless invocation logging `[content] 22 posts` on its way out. Parsing
+  is CPU, and CPU is what the platform bills; the gate is first now, so such a slug costs a regex
+  test. Verified against `next build && next start`: four junk-slug shapes, two cards and a post
+  render, and **zero** `[content]` loads.
 
 ## [v2.0.1] - 2026-09-08
 
