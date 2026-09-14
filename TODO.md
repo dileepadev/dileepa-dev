@@ -55,6 +55,13 @@ the wrong way to choose it.
 - [x] Full pass against `next build && next start`: 19 pages, 3 junk slugs, 3 cards and the
       terminal feature - all correct, **zero** `[content]` loads, zero errors
 
+### At release
+
+- [x] `package.json` and `package-lock.json` at `2.0.2`
+- [x] `CHANGELOG.md` carries a `v2.0.2` section, dated **2026-09-14**
+- [ ] Merge [PR #25](https://github.com/dileepadev/dileepa-dev/pull/25) into `dev`, then `dev`
+      into `main`, and tag `v2.0.2` per [VERSIONING.md](VERSIONING.md)
+
 ### Still to confirm
 
 - [ ] Active CPU growth per day, measured against the dashboard rather than inferred. Hobby

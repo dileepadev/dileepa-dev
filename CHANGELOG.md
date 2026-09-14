@@ -11,14 +11,18 @@ Changes are organized into the following categories:
 
 ## [Unreleased]
 
+Unreleased changes go here.
+
+## [v2.0.2] - 2026-09-14
+
 > [!NOTE]
-> Readying `v2.0.2`. v2.0.1 took the ISR windows to an hour and the render count fell with them,
+> v2.0.1 took the ISR windows to an hour and the render count fell with them,
 > but Active CPU kept climbing - because an hour was never measured against the allowance. This
 > release sizes the windows from the budget, moves the social cards to build time, and declines
 > the crawlers that were the traffic all along. See
 > [issue #21](https://github.com/dileepadev/dileepa-dev/issues/21).
 
-### Changed - Unreleased
+### Changed - v2.0.2
 
 - **Every revalidate window is a day, and the number is arithmetic rather than taste.** The site
   prerenders ~150 pages and the traffic reaching them is almost entirely crawlers walking the
@@ -40,7 +44,6 @@ Changes are organized into the following categories:
   would strip the preview card off every link handed to a recruiter. `Google-Extended` and
   `Applebot-Extended` are declined because each governs AI training only and neither affects
   Google Search or Siri. A `Crawl-delay` of 10 applies to the catch-all rule.
-
 - **Every social card is drawn at build time rather than per request.** A metadata route always
   attempts build-time prerendering, but in a dynamic segment it has no list of slugs to prerender
   for, so all three `opengraph-image` routes bailed to on-demand rendering - visible in the
@@ -56,7 +59,7 @@ Changes are organized into the following categories:
   loads and parses *every* post to produce one integer - a GitHub tree, 22 raw files and 22
   `gray-matter` parses, spent on one line of a card.
 
-### Fixed - Unreleased
+### Fixed - v2.0.2
 
 - **The junk-slug gate runs before the content load, not after it.** v2.0.1 added
   `SLUG_PATTERN` to stop a slug that cannot name a post from re-listing the content repository,
@@ -646,6 +649,7 @@ Changes are organized into the following categories:
 <!-- v0.0.1 -->
 
 [Unreleased]: https://github.com/dileepadev/dileepa-dev/branches
+[v2.0.2]: https://github.com/dileepadev/dileepa-dev/releases/tag/v2.0.2
 [v2.0.1]: https://github.com/dileepadev/dileepa-dev/releases/tag/v2.0.1
 [v2.0.0]: https://github.com/dileepadev/dileepa-dev/releases/tag/v2.0.0
 [v1.3.0]: https://github.com/dileepadev/dileepa-dev/releases/tag/v1.3.0
