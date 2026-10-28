@@ -1,0 +1,348 @@
+import type { LucideIcon } from "lucide-react";
+import {
+  AlertCircle,
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
+  ArrowUp,
+  ArrowUpDown,
+  ArrowUpRight,
+  Briefcase,
+  Building2,
+  Calendar,
+  Check,
+  CheckCircle2,
+  ChevronDown,
+  ChevronRight,
+  Clock,
+  Code2,
+  Copy,
+  Download,
+  ExternalLink,
+  Eye,
+  FileCode,
+  FileText,
+  Folder,
+  FolderGit2,
+  FolderOpen,
+  FolderSearch,
+  Globe,
+  Hash,
+  History,
+  House,
+  ImageIcon,
+  Link2,
+  List,
+  Mail,
+  MapPin,
+  Maximize2,
+  Megaphone,
+  Menu,
+  MessageSquare,
+  Mic,
+  Moon,
+  PenLine,
+  Presentation,
+  RefreshCw,
+  Reply,
+  RotateCcw,
+  Rss,
+  Search,
+  Send,
+  Share2,
+  ShieldCheck,
+  SlidersHorizontal,
+  SmilePlus,
+  Sparkles,
+  Sun,
+  Tag,
+  Terminal,
+  Ticket,
+  Users,
+  Video,
+  X,
+  XCircle,
+  ZoomIn,
+} from "lucide-react";
+import { Subsection } from "@/components/ui";
+import {
+  IconAiEngineering,
+  IconCommunityBuilding,
+  IconOpenSource,
+  IconPublicSpeaking,
+  IconTechnicalVideos,
+  IconTechnicalWriting,
+  type PillarIconComponent,
+} from "@/components/icons/PillarIcons";
+import { SOCIAL_ICONS } from "@/lib/social-icons";
+
+/**
+ * Every icon the site draws, on one page (v2.1.0 draft).
+ *
+ * The interface set is Lucide, listed by where it is used. When a component
+ * starts importing a new icon, add it here too - the catalog is only useful
+ * while it is the whole set.
+ */
+
+type Entry = [icon: LucideIcon, name: string, use: string];
+
+const INTERFACE_ICONS: { title: string; icons: Entry[] }[] = [
+  {
+    title: "Navigation and direction",
+    icons: [
+      [House, "House", "Home, in the rail"],
+      [Menu, "Menu", "Open the mobile nav"],
+      [X, "X", "Close, clear, remove a filter"],
+      [ChevronDown, "ChevronDown", "Dropdowns, submenus, contents"],
+      [ChevronRight, "ChevronRight", "Sitemap tree"],
+      [ArrowRight, "ArrowRight", "Internal link buttons"],
+      [ArrowLeft, "ArrowLeft", "Back to all posts, in the rail"],
+      [ArrowUpRight, "ArrowUpRight", "External links in lists"],
+      [ArrowUp, "ArrowUp", "Back to top"],
+      [ArrowDown, "ArrowDown", "Load more"],
+      [ArrowUpDown, "ArrowUpDown", "Sort"],
+      [ExternalLink, "ExternalLink", "External link buttons"],
+    ],
+  },
+  {
+    title: "Actions",
+    icons: [
+      [Mail, "Mail", "Email, get in touch"],
+      [Send, "Send", "Send a message"],
+      [Reply, "Reply", "Reply to a comment"],
+      [Copy, "Copy", "Copy code, hex, snippets"],
+      [Check, "Check", "Copied, selected"],
+      [Download, "Download", "Download an asset"],
+      [Share2, "Share2", "Share a post"],
+      [Link2, "Link2", "Copy a link"],
+      [Search, "Search", "Search fields"],
+      [SlidersHorizontal, "SlidersHorizontal", "Filters"],
+      [RotateCcw, "RotateCcw", "Retry after an error"],
+      [RefreshCw, "RefreshCw", "Reconnect when offline"],
+      [ZoomIn, "ZoomIn", "Open an image"],
+      [Maximize2, "Maximize2", "Expand an image"],
+      [SmilePlus, "SmilePlus", "Add a reaction"],
+      [Sun, "Sun", "Switch to light"],
+      [Moon, "Moon", "Switch to dark"],
+    ],
+  },
+  {
+    title: "Content and records",
+    icons: [
+      [Calendar, "Calendar", "Dates"],
+      [Clock, "Clock", "Reading time, duration"],
+      [History, "History", "Past events"],
+      [Sparkles, "Sparkles", "Upcoming, independent host"],
+      [Ticket, "Ticket", "Registration"],
+      [Megaphone, "Megaphone", "Event type"],
+      [Presentation, "Presentation", "Slides"],
+      [Video, "Video", "Videos, recordings"],
+      [Mic, "Mic", "Talks"],
+      [PenLine, "PenLine", "Writing"],
+      [Users, "Users", "Communities, audience"],
+      [Building2, "Building2", "Host, organisation"],
+      [MapPin, "MapPin", "Location"],
+      [Briefcase, "Briefcase", "Work, role"],
+      [FolderGit2, "FolderGit2", "Projects"],
+      [Globe, "Globe", "Website"],
+      [Eye, "Eye", "Views"],
+      [MessageSquare, "MessageSquare", "Comments"],
+      [Terminal, "Terminal", "Code blocks, curl hint"],
+      [Code2, "Code2", "Source, project pages"],
+      [FileText, "FileText", "Pages, documents"],
+      [FileCode, "FileCode", "System files"],
+      [Folder, "Folder", "Sitemap folder"],
+      [FolderOpen, "FolderOpen", "Open sitemap folder"],
+      [FolderSearch, "FolderSearch", "No results"],
+      [Hash, "Hash", "Page sections"],
+      [Tag, "Tag", "Release, tags"],
+      [Rss, "Rss", "Feed"],
+      [List, "List", "Table of contents"],
+      [ImageIcon, "ImageIcon", "Image placeholder"],
+    ],
+  },
+  {
+    title: "States",
+    icons: [
+      [CheckCircle2, "CheckCircle2", "Do"],
+      [XCircle, "XCircle", "Don't"],
+      [AlertCircle, "AlertCircle", "Error"],
+      [ShieldCheck, "ShieldCheck", "Fallback active"],
+    ],
+  },
+];
+
+const PILLAR_ICONS: [PillarIconComponent, string][] = [
+  [IconAiEngineering, "AI engineering"],
+  [IconOpenSource, "Open source"],
+  [IconPublicSpeaking, "Public speaking"],
+  [IconTechnicalWriting, "Technical writing"],
+  [IconTechnicalVideos, "Technical videos"],
+  [IconCommunityBuilding, "Community building"],
+];
+
+/**
+ * The icon-only buttons, drawn at their real size, radius and stroke. A
+ * specimen rather than the live control: several are fixed to the viewport
+ * or live inside a dialog, and would not sit still on this page.
+ */
+const ICON_BUTTONS: {
+  label: string;
+  icon: LucideIcon;
+  box: number;
+  glyph: number;
+  stroke: number;
+  radius: string;
+}[] = [
+  {
+    label: "Home (rail)",
+    icon: House,
+    box: 38,
+    glyph: 16,
+    stroke: 1.75,
+    radius: "var(--radius-pill)",
+  },
+  {
+    label: "Theme (rail photo)",
+    icon: Moon,
+    box: 40,
+    glyph: 16,
+    stroke: 1.75,
+    radius: "var(--radius-pill)",
+  },
+  {
+    label: "Theme (nav)",
+    icon: Sun,
+    box: 36,
+    glyph: 16,
+    stroke: 1.75,
+    radius: "var(--radius)",
+  },
+  {
+    label: "Menu (mobile nav)",
+    icon: Menu,
+    box: 36,
+    glyph: 16,
+    stroke: 2,
+    radius: "var(--radius)",
+  },
+  {
+    label: "Back to top",
+    icon: ArrowUp,
+    box: 40,
+    glyph: 16,
+    stroke: 2,
+    radius: "var(--radius)",
+  },
+  {
+    label: "Close (lightbox)",
+    icon: X,
+    box: 36,
+    glyph: 16,
+    stroke: 2.5,
+    radius: "var(--radius-sm)",
+  },
+  {
+    label: "Clear (search)",
+    icon: X,
+    box: 26,
+    glyph: 14,
+    stroke: 2,
+    radius: "var(--radius-sm)",
+  },
+];
+
+export const INTERFACE_ICON_COUNT = INTERFACE_ICONS.reduce(
+  (total, group) => total + group.icons.length,
+  0,
+);
+
+function Caption({ name, use }: { name: string; use: string }) {
+  return (
+    <span className="min-w-0">
+      <span className="block font-mono text-xs text-fg">{name}</span>
+      <span className="block text-label text-fg-muted">{use}</span>
+    </span>
+  );
+}
+
+const tile =
+  "flex items-center gap-3 rounded-md border border-border-strong bg-bg-surface p-3";
+
+export function IconCatalog() {
+  return (
+    <div className="space-y-8 mt-6">
+      {INTERFACE_ICONS.map((group) => (
+        <Subsection key={group.title} title={group.title}>
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            {group.icons.map(([Icon, name, use]) => (
+              <li key={name} className={tile}>
+                <Icon
+                  className="h-5 w-5 shrink-0 text-fg"
+                  strokeWidth={1.75}
+                  aria-hidden="true"
+                />
+                <Caption name={name} use={use} />
+              </li>
+            ))}
+          </ul>
+        </Subsection>
+      ))}
+
+      <Subsection title="Icon buttons">
+        <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
+          {ICON_BUTTONS.map(
+            ({ label, icon: Icon, box, glyph, stroke, radius }) => (
+              <li
+                key={label}
+                className="flex flex-col items-center gap-3 rounded-md border border-border-strong bg-bg-surface p-4 text-center"
+              >
+                <span
+                  className="inline-flex items-center justify-center border border-border-strong bg-bg text-fg"
+                  style={{ width: box, height: box, borderRadius: radius }}
+                  aria-hidden="true"
+                >
+                  <Icon
+                    style={{ width: glyph, height: glyph }}
+                    strokeWidth={stroke}
+                  />
+                </span>
+                <Caption
+                  name={label}
+                  use={`${box}px · ${glyph}px glyph · ${stroke} stroke`}
+                />
+              </li>
+            ),
+          )}
+        </ul>
+      </Subsection>
+
+      <Subsection title="Pillar marks">
+        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+          {PILLAR_ICONS.map(([Icon, name]) => (
+            <li key={name} className={tile}>
+              <Icon className="h-6 w-6 shrink-0 text-fg" aria-hidden="true" />
+              <Caption name={name} use="About, pillar cards" />
+            </li>
+          ))}
+        </ul>
+      </Subsection>
+
+      <Subsection title="Social marks">
+        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+          {SOCIAL_ICONS.map(({ icon: Icon, label }) => (
+            <li key={label} className={tile}>
+              <Icon className="h-5 w-5 shrink-0 text-fg" aria-hidden="true" />
+              <Caption name={label} use="Rail, hero, footer" />
+            </li>
+          ))}
+        </ul>
+      </Subsection>
+
+      <div className="font-mono text-label text-fg-muted pt-3 border-t border-border-strong/40">
+        Lucide · 16px in controls, 14px in small buttons · stroke 1.75, 2 for
+        direction glyphs · always currentColor, never a colour of its own
+      </div>
+    </div>
+  );
+}

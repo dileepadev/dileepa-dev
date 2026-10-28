@@ -5,6 +5,7 @@ import {
   ArrowRight,
   CheckCircle2,
   Code2,
+  Download,
   ExternalLink,
   XCircle,
 } from "lucide-react";
@@ -20,6 +21,7 @@ import {
   Badge,
   Chip,
   StatusBadge,
+  buttonClasses,
 } from "@/components/ui";
 import { api, getGallery } from "@/lib/api";
 import { PAGES, SITE_CONFIG } from "@/lib/constants";
@@ -30,6 +32,26 @@ import {
   CopySnippetButton,
   SocialCardPreview,
 } from "./_components/BrandInteractive";
+import { IconCatalog, INTERFACE_ICON_COUNT } from "./_components/IconCatalog";
+import { RailContents } from "@/components/providers/RailContents";
+import type { Heading } from "@/lib/mdx";
+
+/**
+ * The page's contents, shown in the profile rail on a wide screen. Short
+ * labels rather than the section titles: a contents list is scanned, and
+ * "Favicons, Open Graph, and metadata" does not scan.
+ */
+const CONTENTS: Heading[] = [
+  { depth: 2, id: "mark", text: "Mark and lockup" },
+  { depth: 2, id: "colors", text: "Color" },
+  { depth: 2, id: "typography", text: "Typography" },
+  { depth: 2, id: "portrait", text: "Portrait and media" },
+  { depth: 2, id: "metadata", text: "Metadata and assets" },
+  { depth: 2, id: "components", text: "UI components" },
+  { depth: 2, id: "icons", text: "Icons" },
+  { depth: 2, id: "voice", text: "Voice and copy" },
+  { depth: 2, id: "tokens", text: "Tokens" },
+];
 
 export const metadata: Metadata = pageMetadata({
   title: PAGES.brand.meta.title,
@@ -223,22 +245,19 @@ export default async function BrandPage() {
   const name = about?.name || SITE_CONFIG.name;
   const role = about?.title || "AI Engineer";
 
-  const fullLockupSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 32" height="32" fill="none">
-  <text x="0" y="24" font-family="Manrope, system-ui, sans-serif" font-size="20" font-weight="500" letter-spacing="-0.02em" fill="#f1f1f1">dileepadev</text>
-  <text x="118" y="24" font-family="Manrope, system-ui, sans-serif" font-size="20" font-weight="700" fill="#23b888">/</text>
-  <circle cx="131" cy="22" r="2.5" fill="#23b888" />
+  const fullLockupSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 136 32" height="32" fill="none">
+  <text x="0" y="24" font-family="Manrope, system-ui, sans-serif" font-size="20" font-weight="500" letter-spacing="-0.02em"><tspan fill="#8d8d8d">@</tspan><tspan fill="#f1f1f1">dileepadev</tspan></text>
 </svg>`;
 
   const reducedMarkSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" fill="none">
   <rect width="32" height="32" rx="6" fill="#0d0d0d" stroke="#1f1f1f" stroke-width="1" />
-  <text x="10" y="22" font-family="Manrope, system-ui, sans-serif" font-size="20" font-weight="700" fill="#23b888">/</text>
-  <circle cx="21" cy="20" r="2" fill="#23b888" />
+  <text x="16" y="22" text-anchor="middle" font-family="Manrope, system-ui, sans-serif" font-size="20" font-weight="500" fill="#f1f1f1">@</text>
 </svg>`;
 
   const cssTokensSnippet = `:root {
-  /* Brand accent stops */
-  --emerald-bright: #23b888; /* WCAG AAA on Carbon (7.7:1) */
-  --emerald-deep: #087f5b;   /* WCAG AA on Paper (4.7:1) */
+  /* Accent: the text colour itself (v2.1.0 draft) */
+  --brand: var(--ink-100);   /* on Carbon, 18.0:1 */
+  /* light theme: --brand: var(--paper-900), 17.3:1 on Paper */
 
   /* Dark foundation */
   --carbon: #050505;
@@ -282,7 +301,7 @@ export default async function BrandPage() {
               <div className="section-label">{PAGES.brand.label}</div>
               <h1>{PAGES.brand.title}</h1>
             </div>
-            <div className="inline-flex items-center gap-1.5 font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1 transition-colors hover:border-brand cursor-default">
+            <div className="count-badge inline-flex items-center gap-1.5 font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1 transition-colors cursor-default">
               <span className="font-medium text-fg">v2.0</span>
               <span>Design system</span>
             </div>
@@ -294,57 +313,38 @@ export default async function BrandPage() {
             aria-label="Brand reference sections"
             className="mt-6 flex flex-wrap items-center gap-2"
           >
-            <a
-              href="#mark"
-              className="px-2.5 py-1 rounded-sm bg-bg-surface text-fg-muted hover:text-fg hover:border-brand border border-border-strong transition-colors font-mono text-xs"
-            >
+            <a href="#mark" className="chip chip--interactive">
               #mark
             </a>
-            <a
-              href="#colors"
-              className="px-2.5 py-1 rounded-sm bg-bg-surface text-fg-muted hover:text-fg hover:border-brand border border-border-strong transition-colors font-mono text-xs"
-            >
+            <a href="#colors" className="chip chip--interactive">
               #colors
             </a>
-            <a
-              href="#typography"
-              className="px-2.5 py-1 rounded-sm bg-bg-surface text-fg-muted hover:text-fg hover:border-brand border border-border-strong transition-colors font-mono text-xs"
-            >
+            <a href="#typography" className="chip chip--interactive">
               #typography
             </a>
-            <a
-              href="#portrait"
-              className="px-2.5 py-1 rounded-sm bg-bg-surface text-fg-muted hover:text-fg hover:border-brand border border-border-strong transition-colors font-mono text-xs"
-            >
+            <a href="#portrait" className="chip chip--interactive">
               #portrait-and-media
             </a>
-            <a
-              href="#metadata"
-              className="px-2.5 py-1 rounded-sm bg-bg-surface text-fg-muted hover:text-fg hover:border-brand border border-border-strong transition-colors font-mono text-xs"
-            >
+            <a href="#metadata" className="chip chip--interactive">
               #metadata-and-assets
             </a>
-            <a
-              href="#components"
-              className="px-2.5 py-1 rounded-sm bg-bg-surface text-fg-muted hover:text-fg hover:border-brand border border-border-strong transition-colors font-mono text-xs"
-            >
+            <a href="#components" className="chip chip--interactive">
               #ui-components
             </a>
-            <a
-              href="#voice"
-              className="px-2.5 py-1 rounded-sm bg-bg-surface text-fg-muted hover:text-fg hover:border-brand border border-border-strong transition-colors font-mono text-xs"
-            >
+            <a href="#icons" className="chip chip--interactive">
+              #icons
+            </a>
+            <a href="#voice" className="chip chip--interactive">
               #voice-and-copy
             </a>
-            <a
-              href="#tokens"
-              className="px-2.5 py-1 rounded-sm bg-bg-surface text-fg-muted hover:text-fg hover:border-brand border border-border-strong transition-colors font-mono text-xs"
-            >
+            <a href="#tokens" className="chip chip--interactive">
               #tokens-code
             </a>
           </nav>
         </Container>
       </Section>
+
+      <RailContents headings={CONTENTS} />
 
       {/* 1. The Mark & Lockup */}
       <Section id="mark">
@@ -352,7 +352,7 @@ export default async function BrandPage() {
           <SectionHeading
             label="Identity"
             title="The mark and logo lockup"
-            intro="The platform lockup is an understated developer identity: a neutral wordmark paired with an upright emerald terminal prompt and dot."
+            intro="The platform lockup is the handle: @dileepadev, with the @ one step muted and the wordmark at full contrast. No hue - the split is in contrast alone."
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
@@ -378,12 +378,14 @@ export default async function BrandPage() {
                     <span className="text-fg">Neutral (var(--fg))</span>
                   </div>
                   <div className="flex justify-between border-b border-border-strong/40 pb-1">
-                    <span>Mark slash & dot</span>
-                    <span className="text-brand">Emerald (var(--brand))</span>
+                    <span>Mark (@)</span>
+                    <span className="text-fg">Muted (var(--fg-muted))</span>
                   </div>
                   <div className="flex justify-between pb-1">
                     <span>Mark weight</span>
-                    <span className="text-fg">Bold (700), upright</span>
+                    <span className="text-fg">
+                      Medium (500), as the wordmark
+                    </span>
                   </div>
                 </div>
               </div>
@@ -403,8 +405,8 @@ export default async function BrandPage() {
                   <span>Square placements</span>
                 </div>
                 <div className="py-8 flex items-center justify-center border border-border-strong/60 rounded bg-bg">
-                  <div className="w-16 h-16 rounded-md border border-border-strong bg-bg-surface flex items-center justify-center font-sans font-bold text-2xl text-brand">
-                    <span>/.</span>
+                  <div className="w-16 h-16 rounded-md border border-border-strong bg-bg-surface flex items-center justify-center font-sans font-medium text-2xl text-fg">
+                    <span>@</span>
                   </div>
                 </div>
                 <div className="mt-4 space-y-2 text-xs font-mono text-fg-muted">
@@ -414,7 +416,7 @@ export default async function BrandPage() {
                   </div>
                   <div className="flex justify-between border-b border-border-strong/40 pb-1">
                     <span>Character</span>
-                    <span className="text-brand">/. (terminal closer)</span>
+                    <span className="text-fg">@ (the handle)</span>
                   </div>
                   <div className="flex justify-between border-b border-border-strong/40 pb-1">
                     <span>Min width</span>
@@ -445,10 +447,10 @@ export default async function BrandPage() {
                 <span>Mark rules - do</span>
               </div>
               <ul className="text-xs text-fg-muted space-y-1.5 list-disc list-inside">
+                <li>Wordmark at full contrast; the @ one step muted</li>
                 <li>
-                  Wordmark stays neutral; emerald is reserved for the mark `/.`
+                  Set the @ at the wordmark&apos;s weight (500), never bold
                 </li>
-                <li>Set mark upright at weight 700 (bold), never italic</li>
                 <li>
                   Maintain minimum clear space equal to the wordmark cap-height
                 </li>
@@ -462,7 +464,7 @@ export default async function BrandPage() {
                 <span>Mark rules - don&apos;t</span>
               </div>
               <ul className="text-xs text-fg-muted space-y-1.5 list-disc list-inside">
-                <li>Never color the wordmark in emerald</li>
+                <li>Never color the lockup - it is black and white only</li>
                 <li>Never apply gradients, drop shadows, or outlines</li>
                 <li>
                   Never use AI visual clichés: brains, robots, or circuit trees
@@ -480,31 +482,31 @@ export default async function BrandPage() {
           <SectionHeading
             label="Palette"
             title="Color system and contrast"
-            intro="Emerald is the single accent. Everything else is neutral. The contrast between emerald and deep carbon or crisp paper carries the brand."
+            intro="Black to white, no hue. The accent is the text colour itself, so emphasis comes from contrast, weight and fill. Color appears only to report a state: success, error, warning."
           />
 
-          {/* Emerald Stops */}
+          {/* Accent stops: the ends of the neutral ramp */}
           <div className="mt-6">
             <Subsection title="Accent stops">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
                 <ColorSwatch
-                  name="Emerald Bright"
-                  token="--emerald-bright"
-                  hex="#23B888"
-                  role="Primary accent on dark (Carbon) surfaces. Links, buttons, tags."
-                  contrast="8.0:1 on Carbon (#050505)"
+                  name="Ink (accent on dark)"
+                  token="--brand / --ink-100"
+                  hex="#F1F1F1"
+                  role="Accent on Carbon: primary buttons, status dots, focus rings, links in prose."
+                  contrast="18.0:1 on Carbon (#050505)"
                   contrastBadge="WCAG AAA"
-                  bgHex="#23B888"
+                  bgHex="#F1F1F1"
                   textHex="#050505"
                 />
                 <ColorSwatch
-                  name="Emerald Deep"
-                  token="--emerald-deep"
-                  hex="#087F5B"
-                  role="Primary accent on light (Paper) surfaces. Links, buttons, tags."
-                  contrast="4.7:1 on Paper (#F7F7F7)"
-                  contrastBadge="WCAG AA"
-                  bgHex="#087F5B"
+                  name="Ink (accent on light)"
+                  token="--brand / --paper-900"
+                  hex="#131313"
+                  role="Accent on Paper: primary buttons, status dots, focus rings, links in prose."
+                  contrast="17.3:1 on Paper (#F7F7F7)"
+                  contrastBadge="WCAG AAA"
+                  bgHex="#131313"
                   textHex="#ffffff"
                 />
               </div>
@@ -514,7 +516,7 @@ export default async function BrandPage() {
             <div className="p-4 rounded-lg border border-border-strong bg-bg-surface mb-8">
               <div className="flex items-center justify-between text-xs font-mono text-fg-muted mb-2">
                 <span>Palette proportion budget</span>
-                <span className="text-brand">Deliberate accent</span>
+                <span className="text-fg">Contrast, not hue</span>
               </div>
               <div className="h-4 w-full rounded overflow-hidden flex font-mono text-label text-bg font-bold">
                 <div
@@ -527,7 +529,7 @@ export default async function BrandPage() {
                 <div
                   style={{ width: "14%" }}
                   className="bg-brand flex items-center justify-center truncate text-bg"
-                  title="14% Emerald"
+                  title="14% Full-contrast ink"
                 >
                   14%
                 </div>
@@ -538,9 +540,9 @@ export default async function BrandPage() {
                 />
               </div>
               <p className="mt-2 text-xs text-fg-muted">
-                Emerald appears <strong>once per surface</strong> as an
-                intentional focal point. Scattering emerald links, chips, and
-                icons dilutes visual hierarchy.
+                Full-contrast ink is the emphasis. One filled primary action per
+                surface stays the focal point; everything around it sits on the
+                muted and surface steps.
               </p>
             </div>
 
@@ -680,14 +682,14 @@ export default async function BrandPage() {
                   name="Success"
                   token="--success"
                   hex="#23B888 / #087F5B"
-                  role="Reuses emerald accent - no new hue needed."
+                  role="Success states only - confirmations, sent, saved. Never decoration."
                   bgHex="#23B888"
                   textHex="#050505"
                 />
                 {/* Error and Warning carry dark ink rather than white: white on
                     those fills is 3.9:1 and 3.2:1, under the 4.5:1 a 12px label
                     needs. Both read as light surfaces in the WCAG luminance
-                    sense, the same way Emerald Bright does. */}
+                    sense, the same way the success green does. */}
                 <ColorSwatch
                   name="Error"
                   token="--error"
@@ -720,16 +722,18 @@ export default async function BrandPage() {
                     Allowed pairings:
                   </div>
                   <div className="flex items-center justify-between p-2 rounded bg-bg border border-border">
-                    <span>Emerald Bright on Carbon</span>
-                    <span className="text-brand font-medium">8.0:1 (AAA)</span>
-                  </div>
-                  <div className="flex items-center justify-between p-2 rounded bg-bg border border-border">
-                    <span>Emerald Deep on Paper</span>
-                    <span className="text-brand font-medium">4.7:1 (AA)</span>
-                  </div>
-                  <div className="flex items-center justify-between p-2 rounded bg-bg border border-border">
-                    <span>Primary text on Carbon</span>
+                    <span>Ink 100 on Carbon</span>
                     <span className="text-brand font-medium">18.0:1 (AAA)</span>
+                  </div>
+                  <div className="flex items-center justify-between p-2 rounded bg-bg border border-border">
+                    <span>Paper 900 on Paper</span>
+                    <span className="text-brand font-medium">17.3:1 (AAA)</span>
+                  </div>
+                  <div className="flex items-center justify-between p-2 rounded bg-bg border border-border">
+                    <span>Muted text on Carbon / Paper</span>
+                    <span className="text-brand font-medium">
+                      6.1 / 5.0:1 (AA)
+                    </span>
                   </div>
                 </div>
 
@@ -738,16 +742,16 @@ export default async function BrandPage() {
                     Forbidden pairings (never ship):
                   </div>
                   <div className="flex items-center justify-between p-2 rounded bg-error/10 border border-error/30">
-                    <span>Emerald Deep on Carbon</span>
-                    <span className="text-error font-medium">4.1:1 (Fail)</span>
+                    <span>Ink 500 (border) as text on Carbon</span>
+                    <span className="text-error font-medium">1.5:1 (Fail)</span>
                   </div>
                   <div className="flex items-center justify-between p-2 rounded bg-error/10 border border-error/30">
-                    <span>Emerald Bright on Paper</span>
-                    <span className="text-error font-medium">2.4:1 (Fail)</span>
+                    <span>Paper 300 (border) as text on Paper</span>
+                    <span className="text-error font-medium">1.4:1 (Fail)</span>
                   </div>
                   <div className="p-2 text-fg-muted text-label">
-                    Never use light accent on light background, nor dark accent
-                    on dark background.
+                    Border and surface steps are for edges and fills, never for
+                    text.
                   </div>
                 </div>
               </div>
@@ -979,7 +983,7 @@ export default async function BrandPage() {
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-bg/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-2 flex items-end">
-                        <span className="font-mono text-label text-fg truncate">
+                        <span className="font-mono text-label text-fg line-clamp-2">
                           {photo.eventTitle}
                         </span>
                       </div>
@@ -1007,11 +1011,11 @@ export default async function BrandPage() {
               title="Favicon suite"
               note="The circular portrait at every size, and no vector - the identity is a photograph (brand guide §3.2)."
             >
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 mb-8">
                 {FAVICONS.map((icon) => (
                   <div
                     key={icon.filename}
-                    className="rounded-lg border border-border-strong bg-bg-surface p-4 flex flex-col justify-between gap-3 shadow-xs hover:border-brand/40 transition-colors"
+                    className="rounded-lg border border-border-strong bg-bg-surface p-4 flex flex-col justify-between gap-3 shadow-xs transition-colors"
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 rounded border border-border-strong bg-bg flex items-center justify-center p-1 shrink-0 overflow-hidden">
@@ -1030,7 +1034,7 @@ export default async function BrandPage() {
                         />
                       </div>
                       <div className="min-w-0">
-                        <div className="font-bold text-xs text-fg truncate">
+                        <div className="font-bold text-xs text-fg">
                           {icon.label}
                         </div>
                         <div className="font-mono text-label text-brand">
@@ -1043,15 +1047,19 @@ export default async function BrandPage() {
                       {icon.target}
                     </p>
 
-                    <div className="pt-2 border-t border-border-strong/60 flex items-center justify-between text-label font-mono">
-                      <span className="text-fg-muted truncate">
+                    {/* The filename on its own line, whole: it is the
+                        thing being documented, so it never gives way to the
+                        button beside it. */}
+                    <div className="pt-3 border-t border-border-strong/60 flex flex-col items-start gap-2 text-label font-mono">
+                      <span className="text-fg-muted break-all">
                         {icon.filename}
                       </span>
                       <a
                         href={icon.src}
                         download={icon.filename}
-                        className="text-brand hover:underline font-medium ml-2 shrink-0"
+                        className={buttonClasses({ size: "sm" })}
                       >
+                        <Download aria-hidden="true" />
                         Download
                       </a>
                     </div>
@@ -1086,9 +1094,7 @@ export default async function BrandPage() {
                         <span className="font-mono text-xs font-bold text-fg">
                           {ep.path}
                         </span>
-                        <span className="text-label font-mono px-1.5 py-0.2 rounded bg-brand/10 text-brand border border-brand/20">
-                          {ep.type}
-                        </span>
+                        <span className="chip">{ep.type}</span>
                       </div>
                       <p className="text-xs text-fg-muted">{ep.description}</p>
                     </div>
@@ -1097,13 +1103,13 @@ export default async function BrandPage() {
                       href={ep.path}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="btn btn--secondary !h-7 !px-2.5 text-xs inline-flex items-center gap-1 shrink-0 self-end sm:self-auto font-mono"
+                      className={buttonClasses({
+                        size: "sm",
+                        className: "shrink-0 self-end sm:self-auto",
+                      })}
                     >
                       <span>Inspect</span>
-                      <ExternalLink
-                        className="h-3 w-3 text-fg-muted"
-                        aria-hidden="true"
-                      />
+                      <ExternalLink aria-hidden="true" />
                     </a>
                   </div>
                 ))}
@@ -1178,7 +1184,7 @@ export default async function BrandPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono text-fg-muted pt-3 border-t border-border-strong/40">
                 <div>
                   <span className="text-fg font-medium">.btn--primary:</span>{" "}
-                  Solid emerald fill (`var(--brand-fill)`), dark text
+                  Solid ink fill (`var(--brand-fill)`), the page colour as text
                   (`var(--on-brand)`).
                 </div>
                 <div>
@@ -1225,6 +1231,18 @@ export default async function BrandPage() {
               </div>
             </div>
           </div>
+        </Container>
+      </Section>
+
+      {/* 6b. Icons */}
+      <Section id="icons">
+        <Container>
+          <SectionHeading
+            label="Icons"
+            title="Every icon on the site"
+            intro={`${INTERFACE_ICON_COUNT} interface icons from Lucide, six pillar marks and six social marks. Icons take the text colour they sit in - no icon carries a colour of its own.`}
+          />
+          <IconCatalog />
         </Container>
       </Section>
 

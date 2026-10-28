@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, Download } from "lucide-react";
+import { buttonClasses, ToggleGroup } from "@/components/ui";
 import { SITE_CONFIG } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
@@ -43,7 +44,7 @@ export function ColorSwatch({
 
   // No `aria-label` on the button. An override there replaces the visible
   // text with a string that does not contain it, which is the "Label in Name"
-  // failure (WCAG 2.5.3): someone saying "Emerald Bright" hits a control named
+  // failure (WCAG 2.5.3): someone saying "Carbon" hits a control named
   // "Copy hex code for…". The name is built from the swatch's own content
   // instead, with the action appended after it by the `sr-only` span below.
   return (
@@ -52,7 +53,7 @@ export function ColorSwatch({
       onClick={handleCopy}
       className={cn(
         "group relative flex flex-col justify-between p-3.5 rounded-sm border text-left transition-all duration-150 cursor-pointer w-full",
-        "border-border-strong bg-bg hover:border-brand hover:bg-surface-hover focus:outline-none focus-visible:ring-1 focus-visible:ring-brand",
+        "border-border-strong bg-bg hover:bg-surface-hover focus:outline-none focus-visible:ring-1 focus-visible:ring-brand",
       )}
     >
       {/* Color tile representation */}
@@ -144,26 +145,23 @@ export function CopySnippetButton({
 
   // No `aria-label` on the button. An override there replaces the visible
   // text with a string that does not contain it, which is the "Label in Name"
-  // failure (WCAG 2.5.3): someone saying "Emerald Bright" hits a control named
+  // failure (WCAG 2.5.3): someone saying "Carbon" hits a control named
   // "Copy hex code for…". The name is built from the swatch's own content
   // instead, with the action appended after it by the `sr-only` span below.
   return (
     <button
       type="button"
       onClick={handleCopy}
-      className={cn(
-        "inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-sm font-mono text-xs text-fg-muted border border-border-strong bg-bg-surface hover:text-brand hover:border-brand transition-colors cursor-pointer",
-        className,
-      )}
+      className={buttonClasses({ size: "sm", className })}
     >
       {copied ? (
         <>
-          <Check className="h-3.5 w-3.5 text-brand" aria-hidden="true" />
-          <span className="text-brand">Copied to clipboard</span>
+          <Check aria-hidden="true" />
+          <span>Copied</span>
         </>
       ) : (
         <>
-          <Copy className="h-3.5 w-3.5" aria-hidden="true" />
+          <Copy aria-hidden="true" />
           <span>{label}</span>
         </>
       )}
@@ -202,60 +200,26 @@ export function SocialCardPreview() {
         <div className="flex items-center gap-2">
           <span className="text-fg font-medium">Social card simulator</span>
           <span className="text-border-strong select-none">/</span>
-          <div className="flex items-center rounded border border-border-strong overflow-hidden text-label">
-            <button
-              type="button"
-              onClick={() => setVariant("standard")}
-              className={cn(
-                "px-2 py-0.5 transition-colors cursor-pointer",
-                variant === "standard"
-                  ? "bg-brand-fill text-on-brand font-medium"
-                  : "bg-bg-surface text-fg-muted hover:text-fg hover:bg-surface-hover",
-              )}
-            >
-              Default (1200×630)
-            </button>
-            <button
-              type="button"
-              onClick={() => setVariant("detailed")}
-              className={cn(
-                "px-2 py-0.5 transition-colors cursor-pointer border-l border-border-strong",
-                variant === "detailed"
-                  ? "bg-brand-fill text-on-brand font-medium"
-                  : "bg-bg-surface text-fg-muted hover:text-fg hover:bg-surface-hover",
-              )}
-            >
-              Detailed (1600×900)
-            </button>
-          </div>
+          <ToggleGroup
+            label="Card size"
+            value={variant}
+            onChange={setVariant}
+            options={[
+              { value: "standard", label: "Default (1200×630)" },
+              { value: "detailed", label: "Detailed (1600×900)" },
+            ]}
+          />
         </div>
 
-        <div className="flex items-center rounded border border-border-strong overflow-hidden text-label">
-          <button
-            type="button"
-            onClick={() => setPlatform("twitter")}
-            className={cn(
-              "px-2.5 py-1 transition-colors cursor-pointer",
-              platform === "twitter"
-                ? "bg-brand-fill text-on-brand font-medium"
-                : "bg-bg-surface text-fg-muted hover:text-fg hover:bg-surface-hover",
-            )}
-          >
-            Twitter / X
-          </button>
-          <button
-            type="button"
-            onClick={() => setPlatform("linkedin")}
-            className={cn(
-              "px-2.5 py-1 transition-colors cursor-pointer border-l border-border-strong",
-              platform === "linkedin"
-                ? "bg-brand-fill text-on-brand font-medium"
-                : "bg-bg-surface text-fg-muted hover:text-fg hover:bg-surface-hover",
-            )}
-          >
-            LinkedIn / Slack
-          </button>
-        </div>
+        <ToggleGroup
+          label="Platform"
+          value={platform}
+          onChange={setPlatform}
+          options={[
+            { value: "twitter", label: "Twitter / X" },
+            { value: "linkedin", label: "LinkedIn / Slack" },
+          ]}
+        />
       </div>
 
       {/* Preview container */}
@@ -317,16 +281,22 @@ export function SocialCardPreview() {
           <a
             href={currentImage}
             download={currentFilename}
-            className="btn btn--secondary !h-7 !px-2.5 text-xs inline-flex items-center gap-1.5"
+            className={buttonClasses({ size: "sm" })}
           >
+            <Download aria-hidden="true" />
             Download image
           </a>
           <button
             type="button"
             onClick={handleCopyUrl}
-            className="btn btn--secondary !h-7 !px-2.5 text-xs inline-flex items-center gap-1.5"
+            className={buttonClasses({ size: "sm" })}
           >
-            {copied ? "Copied URL!" : "Copy image URL"}
+            {copied ? (
+              <Check aria-hidden="true" />
+            ) : (
+              <Copy aria-hidden="true" />
+            )}
+            {copied ? "Copied" : "Copy image URL"}
           </button>
         </div>
       </div>
