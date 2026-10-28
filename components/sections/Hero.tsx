@@ -1,9 +1,10 @@
 import Image from "next/image";
-import { Briefcase, Mail, MapPin } from "lucide-react";
-import { Container, LinkButton, StatusBadge } from "@/components/ui";
-import type { About } from "@/lib/api-types";
+import Link from "next/link";
+import { Briefcase, Mail } from "lucide-react";
+import { Container, LinkButton } from "@/components/ui";
+import type { About, BlogPost, EventRecord, Video } from "@/lib/api-types";
 import { SITE_CONFIG } from "@/lib/constants";
-import { paragraphs, portrait as portraitUrl } from "@/lib/format";
+import { formatDate, paragraphs, portrait as portraitUrl } from "@/lib/format";
 import { SOCIAL_ICONS } from "@/lib/social-icons";
 
 /**
@@ -16,7 +17,25 @@ import { SOCIAL_ICONS } from "@/lib/social-icons";
  * The portrait is one of only two places a photograph appears on this site -
  * the other is the event gallery.
  */
-export function Hero({ about }: { about: About | null }) {
+/**
+ * The newest record of each kind the homepage already fetched - one post, one
+ * event, one video - shown under the hero as proof of what is going on now.
+ * Nothing extra is requested for it; it reads the head of lists the sections
+ * below render in full.
+ */
+export interface HeroNow {
+  post?: BlogPost;
+  event?: EventRecord;
+  video?: Video;
+}
+
+export function Hero({
+  about,
+  now = {},
+}: {
+  about: About | null;
+  now?: HeroNow;
+}) {
   const name = about?.name ?? SITE_CONFIG.name;
   const role = about?.title ?? "";
   const tagline = about?.tagline ?? SITE_CONFIG.description;
@@ -43,17 +62,50 @@ export function Hero({ about }: { about: About | null }) {
     Boolean(icon.href),
   );
 
+  const { post, event, video } = now;
+
+  // Three records, one format: what kind it is, its title as the only link,
+  // and its date. Every one is the newest of a list the page already holds.
+  const latest = [
+    post && {
+      key: "post",
+      label: "Latest writing",
+      title: post.title,
+      href: post.path || `/blog/${post.slug}`,
+      external: false,
+      date: formatDate(post.publishedDate),
+    },
+    event && {
+      key: "event",
+      label: event.status === "upcoming" ? "Next talk" : "Latest talk",
+      title: event.title,
+      href: `/events/${event.slug}`,
+      external: false,
+      date: formatDate(event.startAt, event.timezone),
+    },
+    video && {
+      key: "video",
+      label: "Latest video",
+      title: video.title,
+      href: video.link,
+      external: true,
+      date: formatDate(video.date),
+    },
+  ].filter(Boolean) as {
+    key: string;
+    label: string;
+    title: string;
+    href: string;
+    external: boolean;
+    date: string;
+  }[];
+
   return (
-    <Container>
-      <div className="hero">
-        <div className="hero-inner">
-          <div className="min-w-0">
-            {about?.status && (
-              <div className="hero-meta">
-                <StatusBadge>{about.status}</StatusBadge>
-              </div>
-            )}
-            <h1 className="display">{tagline}</h1>
+    <div className="hero-wrap">
+      <Container>
+        <div className="hero">
+          <div className="hero-copy">
+            <h1 className="display hero-title">{tagline}</h1>
             {lead && <p className="hero-lead">{lead}</p>}
 
             <div className="hero-actions">
@@ -76,22 +128,12 @@ export function Hero({ about }: { about: About | null }) {
             </div>
 
             {socials.length > 0 && (
-              <div className="mt-8 flex items-center gap-3">
-                <span className="font-mono text-small text-fg-muted">
-                  Find me on
-                </span>
-                <span
-                  className="text-border-strong select-none"
-                  aria-hidden="true"
-                >
-                  -
-                </span>
-                <div className="socials !mt-0 flex items-center gap-3">
-                  {socials.map((item) => {
-                    const Icon = item.icon;
-                    return (
+              <ul className="socials hero-socials" aria-label="Find me on">
+                {socials.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <li key={item.label}>
                       <a
-                        key={item.label}
                         href={item.href}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -99,59 +141,69 @@ export function Hero({ about }: { about: About | null }) {
                       >
                         <Icon className="h-4.5 w-4.5" aria-hidden="true" />
                       </a>
-                    );
-                  })}
-                </div>
-              </div>
+                    </li>
+                  );
+                })}
+              </ul>
             )}
           </div>
 
-          {portrait && (
-            <aside className="hero-side w-full flex justify-center">
-              <div className="hero-id mx-auto">
+          <div className="hero-side">
+            {/* A phone has no profile rail, so the hero carries the face and
+                name there. Hidden at the width the rail appears. */}
+            <div className="hero-mobile-id">
+              {portrait && (
                 <Image
                   className="portrait"
                   src={portrait}
                   alt={name}
-                  width={260}
-                  height={260}
-                  sizes="260px"
-                  // The LCP element on the homepage, and both attributes are
-                  // load-bearing. `fetchPriority` only sets the hint; what
-                  // decides lazy-vs-eager is `loading`, `priority` or
-                  // `preload` - so `fetchPriority` on its own leaves the LCP
-                  // image lazily loaded. `priority` was deprecated in Next 16
-                  // and `preload` is documented as the wrong choice wherever
-                  // `loading` is set, which leaves this pair.
-                  loading="eager"
-                  fetchPriority="high"
+                  width={240}
+                  height={240}
+                  sizes="88px"
                 />
-                <div className="mt-4">
-                  <div className="hero-name">{name}</div>
-                  {role && (
-                    <div className="hero-role mt-1 flex items-center justify-center gap-1.5 flex-wrap">
-                      <span>{role}</span>
-                      {about?.location && (
-                        <>
-                          <span className="text-fg-muted">·</span>
-                          <span className="inline-flex items-center gap-1">
-                            <MapPin
-                              className="h-3.5 w-3.5 text-fg-muted"
-                              strokeWidth={1.75}
-                              aria-hidden="true"
-                            />
-                            <span>{about.location}</span>
-                          </span>
-                        </>
-                      )}
-                    </div>
-                  )}
-                </div>
+              )}
+              <div className="min-w-0">
+                <p className="hero-name">{name}</p>
+                {role && (
+                  <p className="hero-role">
+                    {role}
+                    {about?.location && <>, {about.location}</>}
+                  </p>
+                )}
               </div>
-            </aside>
-          )}
+            </div>
+            {latest.length > 0 && (
+              <ul className="hero-latest" aria-label="Latest">
+                {latest.map((item) => (
+                  <li key={item.key} className="hero-latest-item">
+                    <span className="hero-latest-label">{item.label}</span>
+                    {item.external ? (
+                      <a
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hero-latest-title text-link"
+                      >
+                        {item.title}
+                      </a>
+                    ) : (
+                      <Link
+                        href={item.href}
+                        className="hero-latest-title text-link"
+                      >
+                        {item.title}
+                      </Link>
+                    )}
+                    {item.date && (
+                      <span className="hero-latest-date">{item.date}</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
-      </div>
-    </Container>
+      </Container>
+    </div>
   );
 }

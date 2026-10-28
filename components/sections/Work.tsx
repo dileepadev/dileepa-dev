@@ -1,14 +1,10 @@
+import Link from "next/link";
 import { FolderGit2, Terminal } from "lucide-react";
 import {
   Chip,
-  Container,
   Entry,
   EntryList,
-  Item,
-  ItemList,
-  Section,
-  SectionHeading,
-  StatusBadge,
+  IndexSection,
   Subsection,
   ViewAll,
 } from "@/components/ui";
@@ -37,12 +33,18 @@ export function Work({
   if (!hasContent) return null;
 
   return (
-    <Section id="work">
-      <Container>
-        <SectionHeading {...SECTIONS.work} />
-
+    <IndexSection
+      id="work"
+      {...SECTIONS.work}
+      meta={
+        experiences.length > 0
+          ? `${experiences.length} ${experiences.length === 1 ? "role" : "roles"}`
+          : undefined
+      }
+    >
+      <div className="work-grid">
         {experiences.length > 0 && (
-          <EntryList>
+          <EntryList className="timeline">
             {experiences.map((item) => (
               <Entry
                 key={item.id}
@@ -51,72 +53,77 @@ export function Work({
                 org={item.company}
                 orgUrl={item.url || undefined}
                 description={item.description}
+                // `period` is free text; "Present" is the only signal.
+                current={/present/i.test(item.period)}
               />
             ))}
           </EntryList>
         )}
 
         {tools.length > 0 && (
-          <div className="mt-12">
-            <Subsection
-              {...SUBSECTIONS.tools}
-              icon={<Terminal className="h-4 w-4" />}
-            >
-              <div className="stack">
-                {tools.map((tool) => (
-                  <Chip key={tool.id}>{tool.name}</Chip>
-                ))}
-              </div>
-            </Subsection>
-          </div>
+          <aside className="tools-panel" aria-labelledby="tools-title">
+            <div className="tools-panel-head">
+              <Terminal className="h-4 w-4" aria-hidden="true" />
+              <h3 id="tools-title">{SUBSECTIONS.tools.title}</h3>
+            </div>
+            {SUBSECTIONS.tools.note && (
+              <p className="tools-panel-note">{SUBSECTIONS.tools.note}</p>
+            )}
+            <ul className="tools-list">
+              {tools.map((tool) => (
+                <li key={tool.id}>{tool.name}</li>
+              ))}
+            </ul>
+          </aside>
         )}
+      </div>
 
-        {projects.length > 0 && (
-          <div className="mt-12">
-            <Subsection
-              {...SUBSECTIONS.projects}
-              icon={<FolderGit2 className="h-4 w-4" />}
-            >
-              <ItemList>
-                {projects.map((project) => (
-                  <Item
-                    key={project.id}
-                    title={project.name}
-                    href={`/projects/${project.slug}`}
-                    description={project.tagline || project.description}
-                    meta={
-                      <>
-                        {project.status === "active" ? (
-                          <StatusBadge>Active</StatusBadge>
-                        ) : (
-                          <Chip>{humanise(project.status)}</Chip>
-                        )}
-                        {project.role && (
-                          <span className="font-medium text-fg">
-                            {project.role}
-                          </span>
-                        )}
-                      </>
-                    }
-                  >
-                    {(project.stack ?? []).length > 0 && (
-                      <ul className="flex flex-wrap gap-1.5 mt-2">
-                        {(project.stack ?? []).slice(0, 4).map((tech) => (
-                          <li key={tech}>
-                            <Chip>{tech}</Chip>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </Item>
-                ))}
-              </ItemList>
-              <ViewAll href="/projects">All projects</ViewAll>
-            </Subsection>
-          </div>
-        )}
-      </Container>
-    </Section>
+      {projects.length > 0 && (
+        <div className="mt-20">
+          <Subsection
+            {...SUBSECTIONS.projects}
+            icon={<FolderGit2 className="h-4 w-4" />}
+          >
+            <ul className="tile-grid">
+              {projects.map((project) => (
+                <li key={project.id} className="tile-card">
+                  <div className="tile-meta">
+                    <span>{project.role}</span>
+                    <span className="tile-pill">
+                      {project.status === "active" && (
+                        <span className="hero-status-dot" aria-hidden="true" />
+                      )}
+                      {humanise(project.status)}
+                    </span>
+                  </div>
+                  <h3 className="tile-title">
+                    <Link
+                      href={`/projects/${project.slug}`}
+                      className="text-link"
+                    >
+                      {project.name}
+                    </Link>
+                  </h3>
+                  {(project.tagline || project.description) && (
+                    <p className="tile-desc">
+                      {project.tagline || project.description}
+                    </p>
+                  )}
+                  {(project.stack ?? []).length > 0 && (
+                    <div className="tile-foot">
+                      {(project.stack ?? []).slice(0, 5).map((tech) => (
+                        <Chip key={tech}>{tech}</Chip>
+                      ))}
+                    </div>
+                  )}
+                </li>
+              ))}
+            </ul>
+            <ViewAll href="/projects">All projects</ViewAll>
+          </Subsection>
+        </div>
+      )}
+    </IndexSection>
   );
 }
 
@@ -124,22 +131,19 @@ export function EducationSection({ educations }: { educations: Education[] }) {
   if (educations.length === 0) return null;
 
   return (
-    <Section id="education">
-      <Container>
-        <SectionHeading {...SECTIONS.education} />
-        <EntryList>
-          {educations.map((item) => (
-            <Entry
-              key={item.id}
-              date={item.period}
-              title={item.course}
-              org={item.institution}
-              orgUrl={item.url || undefined}
-              description={item.description}
-            />
-          ))}
-        </EntryList>
-      </Container>
-    </Section>
+    <IndexSection id="education" {...SECTIONS.education}>
+      <EntryList className="entry-grid">
+        {educations.map((item) => (
+          <Entry
+            key={item.id}
+            date={item.period}
+            title={item.course}
+            org={item.institution}
+            orgUrl={item.url || undefined}
+            description={item.description}
+          />
+        ))}
+      </EntryList>
+    </IndexSection>
   );
 }

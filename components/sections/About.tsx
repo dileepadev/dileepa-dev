@@ -7,7 +7,7 @@ import {
   IconTechnicalWriting,
   type PillarIconComponent,
 } from "@/components/icons/PillarIcons";
-import { Card, Container, Section, SectionHeading } from "@/components/ui";
+import { IndexSection } from "@/components/ui";
 import type { About as AboutData, Pillar, PillarIcon } from "@/lib/api-types";
 import { PILLARS, SECTIONS } from "@/lib/constants";
 import { paragraphs as splitParagraphs } from "@/lib/format";
@@ -81,38 +81,31 @@ export function About({
         }));
 
   return (
-    <Section id="about">
-      <Container>
-        <SectionHeading
-          label={SECTIONS.about.label}
-          title={copy[0] ?? SECTIONS.about.title}
-        />
-
-        {paragraphs.length > 0 && (
-          <div className="section-copy section-intro">
-            {paragraphs.map((paragraph, index) => (
-              <p key={index}>{paragraph}</p>
-            ))}
-          </div>
-        )}
-
-        <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {cards.map((card) => {
-            const Icon = card.icon;
-            return (
-              <Card key={card.key} className="card flex flex-col">
-                <div>
-                  <div className="mb-4 inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border-strong bg-bg text-brand">
-                    <Icon className="h-4.5 w-4.5" aria-hidden="true" />
-                  </div>
-                  <h3>{card.title}</h3>
-                  <p>{card.description}</p>
-                </div>
-              </Card>
-            );
-          })}
+    <IndexSection
+      id="about"
+      label={SECTIONS.about.label}
+      title={copy[0] ?? SECTIONS.about.title}
+    >
+      {paragraphs.length > 0 && (
+        <div className="section-copy section-intro !mb-0">
+          {paragraphs.map((paragraph, index) => (
+            <p key={index}>{paragraph}</p>
+          ))}
         </div>
-      </Container>
-    </Section>
+      )}
+
+      <ul className="pillars">
+        {cards.map((card) => {
+          const Icon = card.icon;
+          return (
+            <li key={card.key} className="pillar">
+              <Icon className="pillar-icon" aria-hidden="true" />
+              <h3>{card.title}</h3>
+              <p>{card.description}</p>
+            </li>
+          );
+        })}
+      </ul>
+    </IndexSection>
   );
 }

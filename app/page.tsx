@@ -37,7 +37,14 @@ export default async function HomePage() {
 
   return (
     <div id="top">
-      <Hero about={about} />
+      <Hero
+        about={about}
+        now={{
+          post: posts[0],
+          event: events[0],
+          video: videos[0],
+        }}
+      />
       <About about={about} pillars={pillars} />
       <Work experiences={experiences} tools={tools} projects={projects} />
       <EducationSection educations={educations} />

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { Mail, Send } from "lucide-react";
-import { Container, Section, SectionHeading } from "@/components/ui";
+import { IndexSection } from "@/components/ui";
 import { api, ApiError } from "@/lib/api";
 import type { About } from "@/lib/api-types";
 import { SECTIONS, SITE_CONFIG } from "@/lib/constants";
@@ -45,45 +45,45 @@ export function Contact({ about }: { about: About | null }) {
   }
 
   return (
-    <Section id="contact">
-      <Container>
-        <SectionHeading
-          label={SECTIONS.contact.label}
-          title={SECTIONS.contact.title}
-          intro={intro}
-        />
+    <IndexSection
+      id="contact"
+      label={SECTIONS.contact.label}
+      title={SECTIONS.contact.title}
+      intro={intro}
+    >
+      <div className="contact-panel">
+        <div className="contact-info">
+          {additionalCopy.length > 0 && (
+            <div className="section-copy section-intro -mt-2 mb-6">
+              {additionalCopy.map((p, i) => (
+                <p key={i}>{p}</p>
+              ))}
+            </div>
+          )}
 
-        {additionalCopy.length > 0 && (
-          <div className="section-copy section-intro -mt-2 mb-6">
-            {additionalCopy.map((p, i) => (
-              <p key={i}>{p}</p>
-            ))}
-          </div>
-        )}
+          <a className="contact-email" href={`mailto:${email}`}>
+            <Mail
+              className="h-4 w-4 shrink-0"
+              strokeWidth={1.75}
+              aria-hidden="true"
+            />
+            <span>{email}</span>
+          </a>
 
-        <a className="contact-email" href={`mailto:${email}`}>
-          <Mail
-            className="h-4 w-4 shrink-0"
-            strokeWidth={1.75}
-            aria-hidden="true"
-          />
-          <span>{email}</span>
-        </a>
-
-        {/* The link-in-bio page. It used to sit in the footer's Elsewhere
+          {/* The link-in-bio page. It used to sit in the footer's Elsewhere
             column, which Projects now occupies; here it is beside the address,
             which is where a reader is already looking for a way through. */}
-        <p className="contact-links">
-          Social profiles and everything else:{" "}
-          <a
-            href={SITE_CONFIG.linksUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            links.dileepa.dev
-          </a>
-        </p>
-
+          <p className="contact-links">
+            Social profiles and everything else:{" "}
+            <a
+              href={SITE_CONFIG.linksUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              links.dileepa.dev
+            </a>
+          </p>
+        </div>
         <form className="form" onSubmit={onSubmit}>
           <label>
             <span>
@@ -161,7 +161,7 @@ export function Contact({ about }: { about: About | null }) {
             <span>{sending ? "Sending…" : "Send message"}</span>
           </button>
         </form>
-      </Container>
-    </Section>
+      </div>
+    </IndexSection>
   );
 }
