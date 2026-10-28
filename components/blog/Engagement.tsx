@@ -20,10 +20,8 @@ import { ReactionPicker, ReactionSummary, totalReactions } from "./reactions";
  * stopped by a counter being down.
  */
 
-const actionClasses =
-  "inline-flex min-h-[var(--control-h)] items-center gap-2 rounded-sm px-2 " +
-  "font-mono text-small text-fg-muted no-underline transition-colors " +
-  "hover:text-brand";
+// The post's share control: the shared action button (v2.1.0 draft).
+const actionClasses = "btn btn--secondary btn--sm";
 
 function ShareActions({ url, title }: { url: string; title: string }) {
   const [open, setOpen] = useState(false);
@@ -226,7 +224,7 @@ export function Engagement({
         </div>
       )}
 
-      <div className="flex flex-wrap items-center gap-1 border-t border-border-hairline pt-2">
+      <div className="flex flex-wrap items-center gap-2 border-t border-border-hairline pt-3">
         {/* Only rendered once the counts are known: a React button that cannot
             report what it did is worse than no button. Share does not depend on
             the API, so it is never withheld. */}

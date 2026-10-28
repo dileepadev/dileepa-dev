@@ -63,11 +63,7 @@ function CommentCard({
           {initials(comment.author)}
         </span>
         <span className="font-medium">{comment.author}</span>
-        {comment.authorIsOwner && (
-          <span className="rounded-sm border border-brand px-1.5 font-mono text-label text-brand">
-            Author
-          </span>
-        )}
+        {comment.authorIsOwner && <span className="chip">Author</span>}
         {comment.createdAt && (
           <time
             dateTime={comment.createdAt}

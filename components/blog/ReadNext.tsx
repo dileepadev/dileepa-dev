@@ -1,6 +1,5 @@
-import { Item, ItemList } from "@/components/ui";
+import { PostCard, TileGrid } from "@/components/ui";
 import type { BlogPost } from "@/lib/api-types";
-import { formatMonth, readingTime } from "@/lib/format";
 
 /**
  * "Read next" - posts sharing a tag first, then the most recent.
@@ -30,30 +29,17 @@ export function pickReadNext(
 export function ReadNext({ posts }: { posts: BlogPost[] }) {
   if (posts.length === 0) return null;
 
+  // The same post card the homepage and the hero use, so a post looks the
+  // same wherever it is suggested.
   return (
     <section>
       <h2>Read next</h2>
-      <div className="mt-4">
-        <ItemList>
+      <div className="mt-6">
+        <TileGrid count={posts.length === 3 ? 3 : undefined}>
           {posts.map((post) => (
-            <Item
-              key={post.slug}
-              title={post.title}
-              href={`/blog/${post.slug}`}
-              description={post.description}
-              meta={
-                <>
-                  <span className="block">
-                    {formatMonth(post.publishedDate)}
-                  </span>
-                  <span className="block">
-                    {readingTime(post.readingTimeMinutes)}
-                  </span>
-                </>
-              }
-            />
+            <PostCard key={post.slug} post={post} />
           ))}
-        </ItemList>
+        </TileGrid>
       </div>
     </section>
   );

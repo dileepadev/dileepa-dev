@@ -10,8 +10,8 @@ import type { ReactionCounts, ReactionKind } from "@/lib/api-types";
  * One definition, three surfaces - posts, comments and replies all import this,
  * so they cannot drift into teaching two vocabularies.
  *
- * **Why emoji rather than a custom icon set.** §1 of the brand guide is that
- * emerald is the only accent and there is no second hue; the only other hues in
+ * **Why emoji rather than a custom icon set.** The palette is black to white
+ * with no brand hue (v2.1.0 draft); the only hues in
  * the system are `--error` and `--warning`, both annotated "UI state only,
  * never a brand accent". Four hand-drawn colour icons would mean inventing four
  * brand hues and hard-coding them in a component, against that rule and against
@@ -195,12 +195,13 @@ export function ReactionPicker({
         data-selected={active ? "true" : "false"}
         onClick={() => (open ? setOpen(false) : openNow())}
         className={
-          "emoji-btn inline-flex items-center gap-2 rounded-sm font-mono transition-colors " +
-          "disabled:cursor-not-allowed disabled:opacity-60 " +
-          (compact
-            ? "text-small "
-            : "min-h-[var(--control-h)] px-2 text-small ") +
-          (active ? "text-brand" : "text-fg-muted hover:text-brand")
+          // On the post bar it is the same small button as Comment and Share
+          // beside it; on a comment it stays a text action, like Reply.
+          compact
+            ? "emoji-btn inline-flex items-center gap-2 rounded-sm font-mono text-small transition-colors " +
+              "disabled:cursor-not-allowed disabled:opacity-60 " +
+              (active ? "text-brand" : "text-fg-muted hover:text-brand")
+            : "emoji-btn btn btn--secondary btn--sm disabled:cursor-not-allowed disabled:opacity-60"
         }
       >
         {active ? (

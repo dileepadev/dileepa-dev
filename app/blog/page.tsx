@@ -49,7 +49,7 @@ export default async function BlogPage() {
             <h1>{PAGES.blog.title}</h1>
           </div>
           {posts.length > 0 && (
-            <div className="inline-flex items-center gap-1.5 font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1 transition-colors duration-150 hover:border-brand hover:bg-surface-hover hover:text-fg cursor-default">
+            <div className="count-badge inline-flex items-center gap-1.5 font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1">
               <span className="font-medium text-fg">{posts.length}</span>
               <span>{posts.length === 1 ? "Post" : "Posts"}</span>
             </div>
@@ -58,10 +58,7 @@ export default async function BlogPage() {
 
         <p className="section-intro">
           {PAGES.blog.intro}{" "}
-          <a
-            href="/blog/rss.xml"
-            className="text-brand underline hover:text-brand-hover"
-          >
+          <a href="/blog/rss.xml" className="text-link">
             RSS
           </a>
         </p>

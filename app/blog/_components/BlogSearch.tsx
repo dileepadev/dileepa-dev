@@ -15,7 +15,12 @@ import {
   LoadMore,
   type SortOption,
 } from "@/components/ui";
-import { formatDate, readingTime, toDateAttribute } from "@/lib/format";
+import {
+  formatDate,
+  readingTime,
+  seriesTitle,
+  toDateAttribute,
+} from "@/lib/format";
 import {
   buildFacets,
   compareDate,
@@ -96,6 +101,7 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
           p.title,
           p.description,
           p.series?.name,
+          seriesTitle(p.series?.name),
           ...(p.tags ?? []),
           yearOf(p.publishedDate),
         ],
@@ -126,7 +132,11 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
   );
 
   const seriesFilterOptions: FilterOption[] = useMemo(
-    () => toOptions(counts.series, { keep: selectedSeriesFilter }),
+    () =>
+      toOptions(counts.series, {
+        keep: selectedSeriesFilter,
+        label: seriesTitle,
+      }),
     [counts.series, selectedSeriesFilter],
   );
 
@@ -299,7 +309,7 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
                     </span>
                     {post.series && (
                       <Chip className="max-w-[200px] truncate">
-                        {post.series.name}
+                        {seriesTitle(post.series.name)}
                       </Chip>
                     )}
                   </>

@@ -11,6 +11,7 @@ import {
   TableOfContents,
 } from "@/components/blog";
 import { mdxComponents } from "@/components/mdx";
+import { RailContents } from "@/components/providers/RailContents";
 import { Badge, Container, PagePath, Section } from "@/components/ui";
 import { api } from "@/lib/api";
 import type { BlogPost } from "@/lib/api-types";
@@ -205,12 +206,14 @@ export default async function BlogPostPage({ params }: Params) {
           </div>
         </header>
 
-        <div className="mt-8 sm:mt-10 gap-12 lg:grid lg:grid-cols-[1fr_220px]">
-          {/* `min-w-0`: a grid track's automatic minimum is its content's
-              min-content width, so a wide table or code block in the article
-              pushed this column - and the rail beside it - past the container
-              rather than scrolling inside itself. */}
-          <article className="w-full max-w-3xl min-w-0">
+        {/* The contents live in the profile rail on a wide screen. */}
+        <RailContents headings={headings} />
+
+        <div className="mt-8 sm:mt-10">
+          {/* Wider than the 68ch paragraphs inside it, so code blocks,
+              tables and diagrams get the room the contents column used to
+              take. `min-w-0` keeps a wide table scrolling inside itself. */}
+          <article className="w-full max-w-4xl min-w-0">
             <div className="mb-8 lg:hidden">
               <TableOfContents headings={headings} />
             </div>
@@ -259,10 +262,6 @@ export default async function BlogPostPage({ params }: Params) {
               <ReadNext posts={readNext} />
             </div>
           </article>
-
-          <aside className="hidden lg:block">
-            <TableOfContents headings={headings} />
-          </aside>
         </div>
       </Container>
     </Section>
