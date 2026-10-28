@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { version } from "./package.json";
 
 /**
  * The origin the browser talks to the API on.
@@ -149,6 +150,12 @@ function securityHeaders() {
 }
 
 const nextConfig: NextConfig = {
+  // The release the footer and the terminal profile print. Read from
+  // package.json at build time so it cannot drift from the release again - it
+  // sat at a hardcoded 2.0.0 through v2.0.1 and v2.0.2.
+  env: {
+    APP_VERSION: version,
+  },
   // Turbopack infers the project root from the nearest lockfile and walks up
   // to find one. There is a stray `package-lock.json` in the home directory
   // above this repository, so the inference reached outside the repo, warned

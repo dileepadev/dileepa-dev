@@ -78,8 +78,9 @@ export const SITE_CONFIG = {
   // looking for somewhere to follow rather than somewhere to read.
   linksUrl: "https://links.dileepa.dev",
   repository: "https://github.com/dileepadev/dileepa-dev",
-  branch: "feat/v2.0.0",
-  version: "2.0.0",
+  // Inlined from package.json by next.config.ts; the fallback only shows in a
+  // context that bypasses Next, such as a standalone script.
+  version: process.env.APP_VERSION ?? "0.0.0",
 } as const;
 
 /**
