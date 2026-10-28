@@ -35,19 +35,18 @@ export function NotFoundPage({
 }: NotFoundPageProps) {
   return (
     <Section>
-      <Container>
+      {/* The split is decided by the width this panel actually has (a
+          container query), not the window: beside the profile rail a
+          "large screen" left the window card about 300px wide. */}
+      <Container className="@container">
         <div
           className={
             aside
-              ? "grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center"
+              ? "grid grid-cols-1 items-center gap-10 @3xl:grid-cols-[minmax(0,1fr)_23rem] @3xl:gap-12"
               : undefined
           }
         >
-          <div
-            className={
-              aside ? "lg:col-span-6 xl:col-span-7 min-w-0" : undefined
-            }
-          >
+          <div className={aside ? "min-w-0" : undefined}>
             <div className="mb-4">
               <PagePath path={path} />
             </div>
@@ -63,9 +62,7 @@ export function NotFoundPage({
               )}
             </div>
           </div>
-          {aside && (
-            <div className="lg:col-span-6 xl:col-span-5 min-w-0">{aside}</div>
-          )}
+          {aside && <div className="w-full max-w-[26rem] min-w-0">{aside}</div>}
         </div>
       </Container>
     </Section>

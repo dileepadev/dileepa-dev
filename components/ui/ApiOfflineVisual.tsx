@@ -2,81 +2,31 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import {
-  Check,
-  Copy,
-  ExternalLink,
-  Globe,
-  Radio,
-  RefreshCw,
-  ShieldCheck,
-} from "lucide-react";
+import { Check, Copy, Globe, RefreshCw, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { TerminalCard, TerminalPanel, TerminalReadout } from "./TerminalCard";
+import { ToggleGroup } from "./ToggleGroup";
 
 /**
- * Type sizes below `--text-label` in this file are deliberate and must stay.
- *
- * The readout panel is `sm:h-[390px]` inside an `overflow-hidden` card, so its
- * rows are drawn to a fixed box rather than flowing. Normalising 10px and 11px
- * up to the 12px token was tried and clipped the last row off the bottom - the
- * DIGEST line disappeared behind the card edge. These are annotation sizes in
- * an illustration, the way a chart's tick labels are, not UI text a reader is
- * meant to read at the body scale. The ASCII portrait's `text-[4px]` is the
- * same argument taken to its limit: there, the font size *is* the pixel grid.
- *
- * DESIGN.md section 6 covers the type scale for interface text. This is not that.
+ * The 503 page's terminal window: an uplink probe that can check the API and
+ * reload when it is back, and a view of the pages that still work without
+ * it. The frame, panels and readout are `TerminalCard`'s, shared with the
+ * 404 and 500 pages.
  */
 
-// Single-column frames - no trailing annotation on the same line
-const getUplinkFrames = (target: string) => [
-  ` [ UPLINK PROBE ]
- TARGET: ${target}
- ┌────────────────┐
- │ >>----x------- │
- └────────────────┘
- PACKET: SYN_SENT (TIMEOUT)`,
-  ` [ UPLINK PROBE ]
- TARGET: ${target}
- ┌────────────────┐
- │ ---->>--x----- │
- └────────────────┘
- PACKET: NO_ROUTE_HOST`,
-  ` [ UPLINK PROBE ]
- TARGET: ${target}
- ┌────────────────┐
- │ ------>>x----- │
- └────────────────┘
- PACKET: ECONNREFUSED`,
-  ` [ UPLINK PROBE ]
- TARGET: ${target}
- ┌────────────────┐
- │ --------x<<<<- │
- └────────────────┘
- PACKET: RETRY_BACKOFF`,
-  ` [ UPLINK PROBE ]
- TARGET: ${target}
- ┌────────────────┐
- │ >>----x------- │
- └────────────────┘
- PACKET: PROBING_FALLBACK`,
-  ` [ UPLINK PROBE ]
- TARGET: ${target}
- ┌────────────────┐
- │ ---->>----x--- │
- └────────────────┘
- PACKET: CIRCUIT_OPEN`,
-  ` [ UPLINK PROBE ]
- TARGET: ${target}
- ┌────────────────┐
- │ ------>>--x--- │
- └────────────────┘
- PACKET: GATEWAY_STANDBY`,
-  ` [ UPLINK PROBE ]
- TARGET: ${target}
- ┌────────────────┐
- │ -------->>x--- │
- └────────────────┘
- PACKET: NEXT_CYCLE_IN_3s`,
+/** Drops the blank first and last lines the template literals carry. */
+const art = (text: string) => text.replace(/^\n+|\n+$/g, "");
+
+/** The uplink probe's trace and packet state, one entry per animation frame. */
+const UPLINK_FRAMES = [
+  { trace: ">>----x-------", packet: "SYN_SENT (TIMEOUT)" },
+  { trace: "---->>--x-----", packet: "NO_ROUTE_HOST" },
+  { trace: "------>>x-----", packet: "ECONNREFUSED" },
+  { trace: "--------x<<<<-", packet: "RETRY_BACKOFF" },
+  { trace: ">>----x-------", packet: "PROBING_FALLBACK" },
+  { trace: "---->>----x---", packet: "CIRCUIT_OPEN" },
+  { trace: "------>>--x---", packet: "GATEWAY_STANDBY" },
+  { trace: "-------->>x---", packet: "NEXT_CYCLE_IN_3s" },
 ];
 
 const ASCII_503_BANNER = `
@@ -92,7 +42,6 @@ export function ApiOfflineVisual({
 }: {
   targetHost?: string;
 } = {}) {
-  const frames = getUplinkFrames(targetHost);
   const [activeTab, setActiveTab] = useState<"uplink" | "cached">("uplink");
   const [frameIndex, setFrameIndex] = useState(0);
   const [isProbing, setIsProbing] = useState(false);
@@ -102,10 +51,10 @@ export function ApiOfflineVisual({
   // Cycle ASCII uplink animation
   useEffect(() => {
     const timer = setInterval(() => {
-      setFrameIndex((prev) => (prev + 1) % frames.length);
+      setFrameIndex((prev) => (prev + 1) % UPLINK_FRAMES.length);
     }, 240);
     return () => clearInterval(timer);
-  }, [frames.length]);
+  }, []);
 
   const handleProbeApi = async () => {
     setIsProbing(true);
@@ -155,200 +104,116 @@ export function ApiOfflineVisual({
     }
   };
 
+  const frame = UPLINK_FRAMES[frameIndex];
+
   return (
-    <div className="rounded-lg border border-border-strong bg-bg-surface overflow-hidden shadow-xs">
-      {/* Chassis Title Bar */}
-      <div className="flex items-center justify-between px-3.5 py-2.5 bg-bg border-b border-border-strong text-xs font-mono">
-        <div className="flex items-center gap-1.5 min-w-0">
-          <span className="w-2 h-2 rounded-full bg-border-strong inline-block shrink-0" />
-          <span className="w-2 h-2 rounded-full bg-border-strong inline-block shrink-0" />
-          <span className="w-2 h-2 rounded-full bg-border-strong inline-block shrink-0" />
-          <span className="ml-2 text-fg-muted truncate">
-            uplink://{targetHost}/status
-          </span>
-        </div>
-
-        {/* Tab Toggle */}
-        <div className="flex items-center rounded border border-border-strong overflow-hidden text-[0.6875rem] shrink-0">
-          <button
-            type="button"
-            onClick={() => setActiveTab("uplink")}
-            className={cn(
-              "px-2 py-0.5 transition-colors cursor-pointer inline-flex items-center gap-1",
-              activeTab === "uplink"
-                ? "bg-brand text-bg font-medium"
-                : "bg-bg-surface text-fg-muted hover:text-fg hover:bg-surface-hover",
-            )}
-          >
-            <Radio className="h-3 w-3" />
-            <span>Uplink</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("cached")}
-            className={cn(
-              "px-2 py-0.5 transition-colors cursor-pointer border-l border-border-strong inline-flex items-center gap-1",
-              activeTab === "cached"
-                ? "bg-brand text-bg font-medium"
-                : "bg-bg-surface text-fg-muted hover:text-fg hover:bg-surface-hover",
-            )}
-          >
-            <ShieldCheck className="h-3 w-3" />
-            <span>Available pages</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Main Viewport (Equal Box Size to Prevent Layout Shift) */}
+    <TerminalCard
+      address={`uplink://${targetHost}/status`}
+      tabs={
+        <ToggleGroup
+          label="View"
+          value={activeTab}
+          onChange={setActiveTab}
+          options={[
+            { value: "uplink", label: "Uplink" },
+            { value: "cached", label: "Available pages" },
+          ]}
+        />
+      }
+    >
       {activeTab === "uplink" ? (
-        <div className="min-h-[390px] sm:h-[390px] p-4 sm:p-5 font-mono text-xs flex flex-col justify-between gap-3">
-          <div className="space-y-3">
-            {/* Big ASCII 503 Banner - overflow-hidden, no side scroll */}
-            <div className="p-2.5 rounded bg-bg border border-border-strong/70 text-brand select-none overflow-hidden">
-              <pre className="text-[0.625rem] sm:text-xs leading-[1.15] font-bold whitespace-pre">
-                {ASCII_503_BANNER}
-              </pre>
-            </div>
+        <>
+          <TerminalPanel className="terminal-banner">
+            <pre aria-hidden="true">{art(ASCII_503_BANNER)}</pre>
+          </TerminalPanel>
 
-            {/* Animated ASCII Network Uplink */}
-            <div className="p-2.5 rounded bg-bg border border-border-strong/70 overflow-hidden relative">
-              <pre className="text-[0.6875rem] leading-[1.3] text-fg select-none whitespace-pre">
-                {frames[frameIndex]}
-              </pre>
-
-              {isProbing && (
-                <div className="absolute inset-0 bg-brand/15 flex items-center justify-center pointer-events-none transition-opacity">
-                  <span className="text-brand font-bold text-xs animate-pulse">
-                    (( HEALTH CHECK BEAM ))
-                  </span>
-                </div>
-              )}
+          <TerminalPanel>
+            <pre aria-hidden="true">
+              {`[ UPLINK PROBE ]\nTARGET: ${targetHost}`}
+            </pre>
+            <div className="terminal-trace">
+              <pre aria-hidden="true">{frame.trace}</pre>
             </div>
+            <pre aria-hidden="true">{`PACKET: ${frame.packet}`}</pre>
+            {isProbing && (
+              <div className="terminal-flash animate-pulse">
+                (( HEALTH CHECK BEAM ))
+              </div>
+            )}
+          </TerminalPanel>
+
+          <TerminalReadout
+            rows={[
+              { label: "GATEWAY", value: targetHost },
+              { label: "STATE", value: "503_DISCONNECTED", strong: true },
+              { label: "PROBE", value: probeResult || "AWAITING USER PROBE" },
+            ]}
+          />
+
+          <div className="terminal-actions">
+            <button
+              type="button"
+              onClick={handleProbeApi}
+              disabled={isProbing}
+              className="btn btn--secondary btn--sm"
+            >
+              <RefreshCw className={cn(isProbing && "animate-spin")} />
+              <span>{isProbing ? "Probing..." : "Probe gateway"}</span>
+            </button>
+            <button
+              type="button"
+              onClick={handleCopyStatus}
+              className="btn btn--secondary btn--sm"
+            >
+              {copiedStatus ? <Check /> : <Copy />}
+              <span>{copiedStatus ? "Copied" : "Copy report"}</span>
+            </button>
           </div>
-
-          <div>
-            {/* Uplink Telemetry */}
-            <div className="text-[0.6875rem] text-fg-muted space-y-1 pt-2 border-t border-border-strong/40">
-              <div className="flex items-center justify-between">
-                <span>GATEWAY:</span>
-                <span className="text-fg font-medium truncate ml-2">
-                  {targetHost}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>STATE:</span>
-                <span className="text-brand font-medium">503_DISCONNECTED</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>PROBE:</span>
-                <span className="text-fg font-medium truncate ml-2">
-                  {probeResult || "AWAITING USER PROBE"}
-                </span>
-              </div>
-            </div>
-
-            {/* Interactive Actions */}
-            <div className="mt-3 pt-2.5 border-t border-border-strong/60 flex items-center justify-between gap-2">
-              <button
-                type="button"
-                onClick={handleProbeApi}
-                disabled={isProbing}
-                className="btn btn--secondary !h-7 !px-2.5 text-xs inline-flex items-center gap-1.5 text-brand border-brand/30 hover:border-brand"
-              >
-                <RefreshCw
-                  className={cn("h-3 w-3", isProbing && "animate-spin")}
-                />
-                <span>{isProbing ? "Probing..." : "Probe gateway"}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={handleCopyStatus}
-                className="btn btn--secondary !h-7 !px-2.5 text-xs inline-flex items-center gap-1.5"
-              >
-                {copiedStatus ? (
-                  <>
-                    <Check className="h-3 w-3 text-brand" />
-                    <span className="text-brand">Copied</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy className="h-3 w-3 text-fg-muted" />
-                    <span>Copy report</span>
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
+        </>
       ) : (
-        <div className="min-h-[390px] sm:h-[390px] p-4 sm:p-5 font-mono text-xs flex flex-col justify-between gap-3">
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="h-4 w-4 text-brand shrink-0" />
-              <span className="font-bold text-fg text-sm">
-                Static resilience active
-              </span>
-            </div>
-            <p className="text-[0.75rem] text-fg-muted leading-relaxed">
-              While the live API is disconnected, the platform continues to
-              serve static pages and content pre-rendered from Git:
-            </p>
-
-            <div className="space-y-1.5 pt-1">
-              {[
-                {
-                  title: "Brand & Design Reference",
-                  path: "/brand",
-                  badge: "Static",
-                },
-                {
-                  title: "Speaker Media Kit & Bios",
-                  path: "/profile",
-                  badge: "Static",
-                },
-                {
-                  title: "Visual Sitemap & Directory",
-                  path: "/sitemap",
-                  badge: "Static",
-                },
-                {
-                  title: "Legal & Terms of Service",
-                  path: "/privacy",
-                  badge: "Static",
-                },
-              ].map((item) => (
-                <Link
-                  key={item.path}
-                  href={item.path}
-                  className="flex items-center justify-between p-2 rounded bg-bg border border-border-strong/70 hover:border-brand transition-colors text-fg group"
-                >
-                  <span className="truncate group-hover:text-brand transition-colors">
-                    {item.title}
-                  </span>
-                  <span className="text-[0.625rem] px-1.5 py-0.2 rounded bg-brand/10 text-brand border border-brand/20 shrink-0">
-                    {item.badge}
-                  </span>
-                </Link>
-              ))}
-            </div>
+        <>
+          <div className="flex items-center gap-2 text-fg">
+            <ShieldCheck className="h-4 w-4 shrink-0" />
+            <span className="font-bold text-sm">Static resilience active</span>
           </div>
+          <p>
+            While the live API is disconnected, the platform keeps serving the
+            pages and content pre-rendered from Git:
+          </p>
 
-          <div className="pt-2 border-t border-border-strong/40 flex items-center justify-between text-[0.6875rem] text-fg-muted">
-            <div className="flex items-center gap-1.5">
-              <Globe className="h-3 w-3 text-brand" />
+          <ul className="space-y-2">
+            {[
+              { title: "Brand & design reference", path: "/brand" },
+              { title: "Speaker media kit & bios", path: "/profile" },
+              { title: "Visual sitemap & directory", path: "/sitemap" },
+              { title: "Legal & terms of service", path: "/privacy" },
+            ].map((item) => (
+              <li key={item.path}>
+                <Link
+                  href={item.path}
+                  className="terminal-panel flex items-center justify-between gap-3 py-2.5! text-fg transition-colors hover:text-fg-muted"
+                >
+                  <span className="min-w-0">{item.title}</span>
+                  <span className="chip shrink-0">Static</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          <div className="terminal-actions mt-auto pt-3 border-t border-border-hairline">
+            <span className="inline-flex items-center gap-1.5">
+              <Globe className="h-3 w-3" />
               <span>Canonical platform</span>
-            </div>
+            </span>
             <a
               href="mailto:contact@dileepa.dev?subject=API%20Outage%20Report"
-              className="text-brand hover:underline inline-flex items-center gap-1"
+              className="text-link"
             >
-              <span>Report outage</span>
-              <ExternalLink className="h-2.5 w-2.5" />
+              Report outage
             </a>
           </div>
-        </div>
+        </>
       )}
-    </div>
+    </TerminalCard>
   );
 }

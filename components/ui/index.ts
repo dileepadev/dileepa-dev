@@ -3,6 +3,7 @@ export { IndexSection, Section, SectionHeading, Subsection } from "./Section";
 export { Card } from "./Card";
 export { Button, buttonClasses, LinkButton } from "./Button";
 export { ToggleGroup } from "./ToggleGroup";
+export { TerminalCard, TerminalPanel, TerminalReadout } from "./TerminalCard";
 export { Badge, Chip } from "./Badge";
 export { StatusBadge } from "./StatusBadge";
 export { Lockup } from "./Lockup";

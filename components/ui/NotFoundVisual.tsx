@@ -2,21 +2,17 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { cn } from "@/lib/utils";
+import { TerminalCard, TerminalPanel, TerminalReadout } from "./TerminalCard";
+import { ToggleGroup } from "./ToggleGroup";
 
 /**
- * Type sizes below `--text-label` in this file are deliberate and must stay.
- *
- * The readout panel is `sm:h-[390px]` inside an `overflow-hidden` card, so its
- * rows are drawn to a fixed box rather than flowing. Normalising 10px and 11px
- * up to the 12px token was tried and clipped the last row off the bottom - the
- * DIGEST line disappeared behind the card edge. These are annotation sizes in
- * an illustration, the way a chart's tick labels are, not UI text a reader is
- * meant to read at the body scale. The ASCII portrait's `text-[4px]` is the
- * same argument taken to its limit: there, the font size *is* the pixel grid.
- *
- * DESIGN.md section 6 covers the type scale for interface text. This is not that.
+ * The 404 page's terminal window: an ASCII radar sweeping for the lost route,
+ * and an operator view with a photo that converts to ASCII. The frame, panels
+ * and readout are `TerminalCard`'s, shared with the 500 and 503 pages.
  */
+
+/** Drops the blank first and last lines the template literals carry. */
+const art = (text: string) => text.replace(/^\n+|\n+$/g, "");
 
 const RADAR_FRAMES = [
   `
@@ -150,129 +146,77 @@ export function NotFoundVisual() {
   };
 
   return (
-    <div className="rounded-lg border border-border-strong bg-bg-surface overflow-hidden shadow-xs">
-      {/* Terminal Title Bar */}
-      <div className="flex items-center justify-between px-3.5 py-2.5 bg-bg border-b border-border-strong text-xs font-mono">
-        <div className="flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-border-strong inline-block" />
-          <span className="w-2 h-2 rounded-full bg-border-strong inline-block" />
-          <span className="w-2 h-2 rounded-full bg-border-strong inline-block" />
-          <span className="ml-2 text-fg-muted">
-            telemetry://404.dileepa.dev
-          </span>
-        </div>
-
-        {/* Tab Toggle */}
-        <div className="flex items-center rounded border border-border-strong overflow-hidden text-[0.6875rem]">
-          <button
-            type="button"
-            onClick={() => setActiveTab("terminal")}
-            className={cn(
-              "px-2 py-0.5 transition-colors cursor-pointer",
-              activeTab === "terminal"
-                ? "bg-brand text-bg font-medium"
-                : "bg-bg-surface text-fg-muted hover:text-fg hover:bg-surface-hover",
-            )}
-          >
-            ASCII radar
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("operator")}
-            className={cn(
-              "px-2 py-0.5 transition-colors cursor-pointer border-l border-border-strong",
-              activeTab === "operator"
-                ? "bg-brand text-bg font-medium"
-                : "bg-bg-surface text-fg-muted hover:text-fg hover:bg-surface-hover",
-            )}
-          >
-            Operator ID
-          </button>
-        </div>
-      </div>
-
-      {/* Main Terminal Viewport */}
+    <TerminalCard
+      address="telemetry://404.dileepa.dev"
+      tabs={
+        <ToggleGroup
+          label="View"
+          value={activeTab}
+          onChange={setActiveTab}
+          options={[
+            { value: "terminal", label: "ASCII radar" },
+            { value: "operator", label: "Operator ID" },
+          ]}
+        />
+      }
+    >
       {activeTab === "terminal" ? (
-        <div className="min-h-[390px] sm:h-[390px] p-4 sm:p-5 font-mono text-xs flex flex-col justify-between gap-3">
-          <div className="space-y-3">
-            {/* Big ASCII 404 Display */}
-            <div className="p-2.5 rounded bg-bg border border-border-strong/70 text-brand select-none overflow-x-auto">
-              <pre className="text-[0.625rem] sm:text-xs leading-[1.15] font-bold">
-                {ASCII_404_BANNER}
-              </pre>
-            </div>
+        <>
+          <TerminalPanel className="terminal-banner">
+            <pre aria-hidden="true">{art(ASCII_404_BANNER)}</pre>
+          </TerminalPanel>
 
-            {/* Animated ASCII Radar */}
-            <div className="p-2.5 rounded bg-bg border border-border-strong/70 overflow-hidden relative">
-              <pre className="text-[0.6875rem] leading-[1.25] text-fg select-none whitespace-pre">
-                {RADAR_FRAMES[frameIndex]}
-              </pre>
+          <TerminalPanel>
+            <pre aria-hidden="true">{art(RADAR_FRAMES[frameIndex])}</pre>
+            {isPinging && (
+              <div className="terminal-flash animate-pulse">
+                (( PING SIGNAL BROADCASTED ))
+              </div>
+            )}
+          </TerminalPanel>
 
-              {isPinging && (
-                <div className="absolute inset-0 bg-brand/10 flex items-center justify-center pointer-events-none transition-opacity">
-                  <span className="text-brand font-bold text-xs animate-pulse">
-                    (( PING SIGNAL BROADCASTED ))
-                  </span>
-                </div>
-              )}
-            </div>
+          <TerminalReadout
+            rows={[
+              { label: "SCAN TARGET", value: "UNRESOLVED_PATH" },
+              { label: "PROBE STATUS", value: "LISTENING (404)", strong: true },
+              { label: "PINGS SENT", value: pingCount },
+            ]}
+          />
+
+          <div className="terminal-actions">
+            <button
+              type="button"
+              onClick={handlePing}
+              className="btn btn--secondary btn--sm"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-brand animate-ping" />
+              <span>Ping sector</span>
+            </button>
+            <span>Press to ping the lost route</span>
           </div>
-
-          <div>
-            {/* Status Telemetry */}
-            <div className="text-[0.6875rem] text-fg-muted space-y-1 pt-2 border-t border-border-strong/40">
-              <div className="flex items-center justify-between">
-                <span>SCAN TARGET:</span>
-                <span className="text-fg font-medium">UNRESOLVED_PATH</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>PROBE STATUS:</span>
-                <span className="text-brand font-medium">LISTENING (404)</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>PINGS SENT:</span>
-                <span className="text-fg">{pingCount}</span>
-              </div>
-            </div>
-
-            {/* Interactive Ping Control */}
-            <div className="pt-2.5 flex items-center justify-between gap-3">
-              <button
-                type="button"
-                onClick={handlePing}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm font-mono text-xs font-medium bg-bg border border-border-strong hover:border-brand hover:text-brand transition-colors cursor-pointer"
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-brand animate-ping" />
-                <span>Ping sector</span>
-              </button>
-              <span className="text-[0.6875rem] text-fg-muted">
-                Press to ping lost route
-              </span>
-            </div>
-          </div>
-        </div>
+        </>
       ) : (
-        /* Operator Photo & ASCII Converter View */
-        <div className="min-h-[390px] sm:h-[390px] p-4 sm:p-5 font-mono text-xs flex flex-col justify-between gap-3">
-          <div className="flex flex-col sm:flex-row gap-3.5 items-center sm:items-start">
-            {/* Portrait Frame */}
-            <div className="relative w-36 h-36 shrink-0 rounded-sm border border-border-strong overflow-hidden bg-bg flex items-center justify-center">
+        <>
+          <div className="flex flex-wrap items-start gap-4">
+            {/* Portrait frame */}
+            <div className="relative w-32 h-32 shrink-0 rounded-sm border border-border-strong overflow-hidden bg-bg-surface flex items-center justify-center">
               {isAsciiPhotoActive && asciiPortrait.length > 0 ? (
-                <div className="w-full h-full p-1 flex items-center justify-center bg-bg select-none overflow-hidden">
-                  <pre className="text-[0.34rem] leading-[0.38rem] text-brand tracking-tighter">
-                    {asciiPortrait.join("\n")}
-                  </pre>
-                </div>
+                <pre
+                  aria-hidden="true"
+                  className="text-[0.3rem]! leading-[0.34rem]! tracking-tighter text-fg"
+                >
+                  {asciiPortrait.join("\n")}
+                </pre>
               ) : (
                 <>
                   <Image
                     src="/profile/v2.webp"
                     alt="Dileepa Bandara"
-                    width={144}
-                    height={144}
+                    width={128}
+                    height={128}
                     className="object-cover w-full h-full"
                   />
-                  {/* Subtle Scanlines */}
+                  {/* Subtle scanlines */}
                   <div
                     className="absolute inset-0 pointer-events-none opacity-20"
                     style={{
@@ -282,66 +226,45 @@ export function NotFoundVisual() {
                   />
                 </>
               )}
-
-              {/* Reticle HUD Corners */}
-              <span className="absolute top-1 left-1 text-[0.625rem] text-brand font-mono select-none pointer-events-none">
-                ┌
-              </span>
-              <span className="absolute top-1 right-1 text-[0.625rem] text-brand font-mono select-none pointer-events-none">
-                ┐
-              </span>
-              <span className="absolute bottom-1 left-1 text-[0.625rem] text-brand font-mono select-none pointer-events-none">
-                └
-              </span>
-              <span className="absolute bottom-1 right-1 text-[0.625rem] text-brand font-mono select-none pointer-events-none">
-                ┘
-              </span>
             </div>
 
-            {/* Operator Telemetry Dossier */}
-            <div className="space-y-2 flex-1 min-w-0 text-[0.6875rem] w-full">
-              <div className="p-2.5 rounded bg-bg border border-border-strong/70 space-y-1">
-                <div className="flex items-center justify-between">
-                  <span className="text-fg font-medium text-xs">
-                    Dileepa Bandara
-                  </span>
-                  <span className="text-[0.625rem] px-1.5 py-0.5 rounded bg-brand/10 text-brand border border-brand/30">
-                    Active
-                  </span>
+            {/* Operator dossier */}
+            <div className="flex-1 min-w-[10rem] space-y-3">
+              <TerminalPanel className="space-y-1">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-medium text-fg">Dileepa Bandara</span>
+                  <span className="chip">Active</span>
                 </div>
-                <div className="text-brand">OPERATOR // AI ENGINEER</div>
-                <div className="text-fg-muted pt-1 border-t border-border-strong/40">
-                  CALLSIGN: dileepadev
-                </div>
+                <div>OPERATOR // AI ENGINEER</div>
+                <div className="pt-1 text-fg-muted">CALLSIGN: dileepadev</div>
                 <div className="text-fg-muted">MISSION: Route recovery</div>
-              </div>
-
-              {/* Mode Toggle Button */}
+              </TerminalPanel>
               <button
                 type="button"
                 onClick={() => setIsAsciiPhotoActive((v) => !v)}
-                className="w-full text-center px-2.5 py-1.5 rounded-sm font-mono text-xs font-medium border border-border-strong bg-bg hover:border-brand hover:text-brand transition-colors cursor-pointer"
+                className="btn btn--secondary btn--sm w-full"
               >
                 {isAsciiPhotoActive ? "View photo" : "Convert to ASCII"}
               </button>
             </div>
           </div>
 
-          {/* Diagnostics Log box */}
-          <div className="p-2.5 rounded bg-bg border border-border-strong/70 text-[0.6875rem] space-y-1">
-            <div className="text-fg-muted font-medium">DIAGNOSTICS LOG:</div>
-            <div className="text-brand">&gt; SYSTEM: Route index mismatch</div>
+          <TerminalPanel className="space-y-1">
+            <div className="text-fg-muted">DIAGNOSTICS LOG</div>
+            <div>&gt; SYSTEM: Route index mismatch</div>
             <div className="text-fg-muted">
-              &gt; RECOMMENDATION: Explore sitemap tree
+              &gt; RECOMMENDATION: Explore the sitemap
             </div>
-          </div>
+          </TerminalPanel>
 
-          <div className="text-[0.6875rem] text-fg-muted pt-2 border-t border-border-strong/40 flex items-center justify-between">
-            <span>OPERATOR ID // V2.0</span>
-            <span>STATUS: READY</span>
-          </div>
-        </div>
+          <TerminalReadout
+            rows={[
+              { label: "OPERATOR ID", value: "V2.0" },
+              { label: "STATUS", value: "READY", strong: true },
+            ]}
+          />
+        </>
       )}
-    </div>
+    </TerminalCard>
   );
 }

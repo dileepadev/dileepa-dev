@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Container, LinkButton, PagePath, Section } from "@/components/ui";
 import { ApiOfflineVisual } from "@/components/ui/ApiOfflineVisual";
+import { TerminalReadout } from "@/components/ui/TerminalCard";
 import { getApiHost } from "@/lib/api";
 
 interface ApiOfflinePageProps {
@@ -23,9 +24,12 @@ export function ApiOfflinePage({
 
   return (
     <Section>
-      <Container>
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-          <div className="lg:col-span-6 xl:col-span-7 min-w-0">
+      {/* The split is decided by the width this panel actually has (a
+          container query), not the window: beside the profile rail a
+          "large screen" left the window card about 300px wide. */}
+      <Container className="@container">
+        <div className="grid grid-cols-1 items-center gap-10 @3xl:grid-cols-[minmax(0,1fr)_23rem] @3xl:gap-12">
+          <div className="min-w-0">
             <div className="mb-4">
               <PagePath path={path} />
             </div>
@@ -40,23 +44,20 @@ export function ApiOfflinePage({
               fully functional.
             </p>
 
-            <div className="mt-5 p-4 rounded-md border border-border-strong bg-bg-surface space-y-2 text-xs font-mono">
-              <div className="flex items-center justify-between text-fg-muted">
-                <span>GATEWAY HOST:</span>
-                <span className="text-fg font-medium">{host}</span>
-              </div>
-              <div className="flex items-center justify-between text-fg-muted">
-                <span>UPLINK STATE:</span>
-                <span className="text-brand font-medium">
-                  CONNECTION_TIMEOUT
-                </span>
-              </div>
-              <div className="flex items-center justify-between text-fg-muted">
-                <span>RESILIENCE MODE:</span>
-                <span className="text-fg font-medium">
-                  DEGRADED_STATIC_CACHE
-                </span>
-              </div>
+            {/* The same readout as the window beside it, so the two read
+                as one console rather than two styles. */}
+            <div className="terminal-readout-box mt-5">
+              <TerminalReadout
+                rows={[
+                  { label: "GATEWAY HOST", value: host },
+                  {
+                    label: "UPLINK STATE",
+                    value: "CONNECTION_TIMEOUT",
+                    strong: true,
+                  },
+                  { label: "RESILIENCE MODE", value: "DEGRADED_STATIC_CACHE" },
+                ]}
+              />
             </div>
 
             <div className="mt-8 flex flex-wrap gap-3">
@@ -70,7 +71,7 @@ export function ApiOfflinePage({
             </div>
           </div>
 
-          <div className="lg:col-span-6 xl:col-span-5 min-w-0">
+          <div className="w-full max-w-[26rem] min-w-0">
             <ApiOfflineVisual targetHost={host} />
           </div>
         </div>

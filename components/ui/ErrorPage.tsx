@@ -29,9 +29,12 @@ export function ErrorPage({ error, reset }: ErrorPageProps) {
 
   return (
     <Section>
-      <Container>
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-          <div className="lg:col-span-6 xl:col-span-7 min-w-0">
+      {/* The split is decided by the width this panel actually has (a
+          container query), not the window: beside the profile rail a
+          "large screen" left the window card about 300px wide. */}
+      <Container className="@container">
+        <div className="grid grid-cols-1 items-center gap-10 @3xl:grid-cols-[minmax(0,1fr)_23rem] @3xl:gap-12">
+          <div className="min-w-0">
             <div className="mb-4">
               <PagePath path="/500" />
             </div>
@@ -42,7 +45,7 @@ export function ErrorPage({ error, reset }: ErrorPageProps) {
               often works; if it keeps happening, email{" "}
               <a
                 href={`mailto:contact@dileepa.dev?subject=Page%20Error%20Report&body=Error%20Digest:%20${digest || "none"}`}
-                className="text-brand hover:underline font-mono text-small"
+                className="text-link font-mono text-small"
               >
                 contact@dileepa.dev
               </a>{" "}
@@ -65,7 +68,7 @@ export function ErrorPage({ error, reset }: ErrorPageProps) {
             </div>
           </div>
 
-          <div className="lg:col-span-6 xl:col-span-5 min-w-0">
+          <div className="w-full max-w-[26rem] min-w-0">
             <ErrorVisual error={error} reset={retry} />
           </div>
         </div>

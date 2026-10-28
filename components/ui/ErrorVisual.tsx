@@ -2,72 +2,31 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { Check, Copy, Mail, RotateCcw, Terminal, User } from "lucide-react";
+import { Check, Copy, Mail, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { TerminalCard, TerminalPanel, TerminalReadout } from "./TerminalCard";
+import { ToggleGroup } from "./ToggleGroup";
 
 /**
- * Type sizes below `--text-label` in this file are deliberate and must stay.
- *
- * The readout panel is `sm:h-[390px]` inside an `overflow-hidden` card, so its
- * rows are drawn to a fixed box rather than flowing. Normalising 10px and 11px
- * up to the 12px token was tried and clipped the last row off the bottom - the
- * DIGEST line disappeared behind the card edge. These are annotation sizes in
- * an illustration, the way a chart's tick labels are, not UI text a reader is
- * meant to read at the body scale. The ASCII portrait's `text-[4px]` is the
- * same argument taken to its limit: there, the font size *is* the pixel grid.
- *
- * DESIGN.md section 6 covers the type scale for interface text. This is not that.
+ * The 500 page's terminal window: a fault oscilloscope with recovery
+ * controls, and an engineer view with a photo that converts to ASCII. The
+ * frame, panels and readout are `TerminalCard`'s, shared with the 404 and 503
+ * pages.
  */
 
+/** Drops the blank first and last lines the template literals carry. */
+const art = (text: string) => text.replace(/^\n+|\n+$/g, "");
+
+/** The oscilloscope's trace and heartbeat, one entry per animation frame. */
 const OSCILLOSCOPE_FRAMES = [
-  ` [ CIRCUIT: FAULT ]
- SYSTEM: SSR_RENDER_PIPELINE
- ┌────────────────┐
- │ ~~~/\\_/\\~~~~~~ │
- └────────────────┘
- HEARTBEAT: INTERRUPT`,
-  ` [ CIRCUIT: FAULT ]
- SYSTEM: SSR_RENDER_PIPELINE
- ┌────────────────┐
- │ ~~~~\\_/\\_/~~~~ │
- └────────────────┘
- HEARTBEAT: RESAMPLING`,
-  ` [ CIRCUIT: FAULT ]
- SYSTEM: SSR_RENDER_PIPELINE
- ┌────────────────┐
- │ ~~~~~~~\\_/\\_~~ │
- └────────────────┘
- HEARTBEAT: DAMPED_WAVE`,
-  ` [ CIRCUIT: FAULT ]
- SYSTEM: SSR_RENDER_PIPELINE
- ┌────────────────┐
- │ ~~/\\_/\\_~~~~~~ │
- └────────────────┘
- HEARTBEAT: PROBE_SENT`,
-  ` [ CIRCUIT: FAULT ]
- SYSTEM: SSR_RENDER_PIPELINE
- ┌────────────────┐
- │ ~~~~~/\\_/\\~~~~ │
- └────────────────┘
- HEARTBEAT: VOLTAGE_OFF`,
-  ` [ CIRCUIT: FAULT ]
- SYSTEM: SSR_RENDER_PIPELINE
- ┌────────────────┐
- │ ~~~~~~~/\\_/\\~~ │
- └────────────────┘
- HEARTBEAT: HOLDING_RUN`,
-  ` [ CIRCUIT: FAULT ]
- SYSTEM: SSR_RENDER_PIPELINE
- ┌────────────────┐
- │ \\_/\\_~~~~~~~~~ │
- └────────────────┘
- HEARTBEAT: DRAIN_CYCLE`,
-  ` [ CIRCUIT: FAULT ]
- SYSTEM: SSR_RENDER_PIPELINE
- ┌────────────────┐
- │ ~~~\\_/\\_/\\~~~~ │
- └────────────────┘
- HEARTBEAT: RE-ARMED`,
+  { wave: "~~~/\\_/\\~~~~~~", heartbeat: "INTERRUPT" },
+  { wave: "~~~~\\_/\\_/~~~~", heartbeat: "RESAMPLING" },
+  { wave: "~~~~~~~\\_/\\_~~", heartbeat: "DAMPED_WAVE" },
+  { wave: "~~/\\_/\\_~~~~~~", heartbeat: "PROBE_SENT" },
+  { wave: "~~~~~/\\_/\\~~~~", heartbeat: "VOLTAGE_OFF" },
+  { wave: "~~~~~~~/\\_/\\~~", heartbeat: "HOLDING_RUN" },
+  { wave: "\\_/\\_~~~~~~~~~", heartbeat: "DRAIN_CYCLE" },
+  { wave: "~~~\\_/\\_/\\~~~~", heartbeat: "RE-ARMED" },
 ];
 
 const ASCII_500_BANNER = `
@@ -167,225 +126,153 @@ export function ErrorVisual({ error, reset }: ErrorVisualProps) {
     }
   };
 
+  const frame = OSCILLOSCOPE_FRAMES[frameIndex];
+
   return (
-    <div className="rounded-lg border border-border-strong bg-bg-surface overflow-hidden shadow-xs">
-      {/* Terminal Title Bar */}
-      <div className="flex items-center justify-between px-3.5 py-2.5 bg-bg border-b border-border-strong text-xs font-mono">
-        <div className="flex items-center gap-1.5 min-w-0">
-          <span className="w-2 h-2 rounded-full bg-border-strong inline-block shrink-0" />
-          <span className="w-2 h-2 rounded-full bg-border-strong inline-block shrink-0" />
-          <span className="w-2 h-2 rounded-full bg-border-strong inline-block shrink-0" />
-          <span className="ml-2 text-fg-muted truncate">
-            circuit://500.fault.dileepa.dev
-          </span>
-        </div>
-
-        {/* Tab Toggle */}
-        <div className="flex items-center rounded border border-border-strong overflow-hidden text-[0.6875rem] shrink-0">
-          <button
-            type="button"
-            onClick={() => setActiveTab("terminal")}
-            className={cn(
-              "px-2 py-0.5 transition-colors cursor-pointer inline-flex items-center gap-1",
-              activeTab === "terminal"
-                ? "bg-brand text-bg font-medium"
-                : "bg-bg-surface text-fg-muted hover:text-fg hover:bg-surface-hover",
-            )}
-          >
-            <Terminal className="h-3 w-3" />
-            <span>Telemetry</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("operator")}
-            className={cn(
-              "px-2 py-0.5 transition-colors cursor-pointer border-l border-border-strong inline-flex items-center gap-1",
-              activeTab === "operator"
-                ? "bg-brand text-bg font-medium"
-                : "bg-bg-surface text-fg-muted hover:text-fg hover:bg-surface-hover",
-            )}
-          >
-            <User className="h-3 w-3" />
-            <span>Engineer</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Main Viewport (Fixed Equal Box Sizes to Prevent Shift) */}
+    <TerminalCard
+      address="circuit://500.fault.dileepa.dev"
+      tabs={
+        <ToggleGroup
+          label="View"
+          value={activeTab}
+          onChange={setActiveTab}
+          options={[
+            { value: "terminal", label: "Telemetry" },
+            { value: "operator", label: "Engineer" },
+          ]}
+        />
+      }
+    >
       {activeTab === "terminal" ? (
-        <div className="min-h-[390px] sm:h-[390px] p-4 sm:p-5 font-mono text-xs flex flex-col justify-between gap-3">
-          <div className="space-y-3">
-            {/* ASCII 500 Banner */}
-            <div className="p-2.5 rounded bg-bg border border-border-strong/70 text-brand select-none overflow-hidden">
-              <pre className="text-[0.625rem] sm:text-xs leading-[1.15] font-bold whitespace-pre">
-                {ASCII_500_BANNER}
-              </pre>
-            </div>
+        <>
+          <TerminalPanel className="terminal-banner">
+            <pre aria-hidden="true">{art(ASCII_500_BANNER)}</pre>
+          </TerminalPanel>
 
-            {/* Animated Circuit Oscilloscope */}
-            <div className="p-2.5 rounded bg-bg border border-border-strong/70 overflow-hidden relative">
-              <pre className="text-[0.6875rem] leading-[1.3] text-fg select-none whitespace-pre">
-                {OSCILLOSCOPE_FRAMES[frameIndex]}
-              </pre>
-
-              {isResetting && (
-                <div className="absolute inset-0 bg-brand/15 flex items-center justify-center pointer-events-none transition-opacity">
-                  <span className="text-brand font-bold text-xs animate-pulse">
-                    (( RE-INITIALIZING PIPELINE ))
-                  </span>
-                </div>
-              )}
+          <TerminalPanel>
+            <pre aria-hidden="true">
+              {"[ CIRCUIT: FAULT ]\nSYSTEM: SSR_RENDER_PIPELINE"}
+            </pre>
+            <div className="terminal-trace">
+              <pre aria-hidden="true">{frame.wave}</pre>
             </div>
+            <pre aria-hidden="true">{`HEARTBEAT: ${frame.heartbeat}`}</pre>
+            {isResetting && (
+              <div className="terminal-flash animate-pulse">
+                (( RE-INITIALIZING PIPELINE ))
+              </div>
+            )}
+          </TerminalPanel>
+
+          <TerminalReadout
+            rows={[
+              { label: "FAULT DOMAIN", value: "SSR_RENDER_PIPELINE" },
+              {
+                label: "CIRCUIT STATE",
+                value: "BREAKER_TRIPPED",
+                strong: true,
+              },
+              { label: "DIGEST", value: error.digest || "0x500_ERR_GENERIC" },
+            ]}
+          />
+
+          <div className="terminal-actions">
+            <button
+              type="button"
+              onClick={handleReset}
+              disabled={isResetting}
+              className="btn btn--secondary btn--sm"
+            >
+              <RotateCcw className={cn(isResetting && "animate-spin")} />
+              <span>{isResetting ? "Rebooting..." : "Reboot node"}</span>
+            </button>
+            <button
+              type="button"
+              onClick={handleCopyTrace}
+              className="btn btn--secondary btn--sm"
+            >
+              {copiedTrace ? <Check /> : <Copy />}
+              <span>{copiedTrace ? "Copied trace" : "Copy report"}</span>
+            </button>
           </div>
-
-          <div>
-            {/* Status Telemetry */}
-            <div className="text-[0.6875rem] text-fg-muted space-y-1 pt-2 border-t border-border-strong/40">
-              <div className="flex items-center justify-between">
-                <span>FAULT DOMAIN:</span>
-                <span className="text-fg font-medium">SSR_RENDER_PIPELINE</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>CIRCUIT STATE:</span>
-                <span className="text-brand font-medium">BREAKER_TRIPPED</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>DIGEST:</span>
-                <span className="text-fg font-mono truncate max-w-[170px]">
-                  {error.digest || "0x500_ERR_GENERIC"}
-                </span>
-              </div>
-            </div>
-
-            {/* Interactive Recovery Controls */}
-            <div className="mt-3 pt-2.5 border-t border-border-strong/60 flex items-center justify-between gap-2">
-              <button
-                type="button"
-                onClick={handleReset}
-                disabled={isResetting}
-                className="btn btn--secondary !h-7 !px-2.5 text-xs inline-flex items-center gap-1.5 text-brand border-brand/30 hover:border-brand"
-              >
-                <RotateCcw
-                  className={cn("h-3 w-3", isResetting && "animate-spin")}
-                />
-                <span>{isResetting ? "Rebooting..." : "Reboot node"}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={handleCopyTrace}
-                className="btn btn--secondary !h-7 !px-2.5 text-xs inline-flex items-center gap-1.5"
-              >
-                {copiedTrace ? (
-                  <>
-                    <Check className="h-3 w-3 text-brand" />
-                    <span className="text-brand">Copied trace</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy className="h-3 w-3 text-fg-muted" />
-                    <span>Copy report</span>
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
+        </>
       ) : (
-        <div className="min-h-[390px] sm:h-[390px] p-4 sm:p-5 font-mono text-xs flex flex-col justify-between gap-3">
-          <div className="flex items-center gap-4">
-            {/* Operator Photo / ASCII Viewport */}
-            <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded border border-border-strong overflow-hidden bg-bg shrink-0">
+        <>
+          <div className="flex flex-wrap items-center gap-4">
+            {/* Engineer photo / ASCII viewport */}
+            <div className="relative w-32 h-32 rounded-sm border border-border-strong overflow-hidden bg-bg-surface shrink-0 flex items-center justify-center">
               {isAsciiPhotoActive && asciiPortrait.length > 0 ? (
-                <div className="w-full h-full p-1 bg-black text-brand text-[4px] leading-[3.6px] font-mono select-none overflow-hidden flex items-center justify-center">
-                  <pre className="font-mono">{asciiPortrait.join("\n")}</pre>
-                </div>
+                <pre
+                  aria-hidden="true"
+                  className="text-[4px]! leading-[3.6px]! text-fg"
+                >
+                  {asciiPortrait.join("\n")}
+                </pre>
               ) : (
                 <>
                   <Image
                     src="/profile/v2.webp"
                     alt="System Engineer Dileepa Bandara"
                     fill
-                    sizes="(max-width: 640px) 112px, 128px"
+                    sizes="128px"
                     className="object-cover"
                   />
-                  {/* Subtle Scanlines & HUD overlay */}
+                  {/* Subtle scanlines */}
                   <div
                     className="absolute inset-0 pointer-events-none opacity-20"
                     style={{
                       backgroundImage:
-                        "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(35, 184, 136, 0.4) 2px, rgba(35, 184, 136, 0.4) 4px)",
+                        "repeating-linear-gradient(0deg, transparent, transparent 2px, var(--carbon) 2px, var(--carbon) 4px)",
                     }}
                   />
-                  <div className="absolute top-1 left-1 text-[8px] font-mono text-brand bg-bg/80 px-1 rounded-xs">
-                    ENG-01
-                  </div>
                 </>
               )}
             </div>
 
-            {/* Operator Telemetry Details */}
-            <div className="space-y-1.5 text-fg min-w-0">
-              <div className="flex items-center gap-1.5">
+            {/* Engineer details */}
+            <div className="space-y-1.5 min-w-[10rem] flex-1">
+              <div className="flex items-center gap-1.5 text-fg">
                 <span className="w-2 h-2 rounded-full bg-brand animate-pulse" />
-                <span className="text-[0.625rem] text-brand uppercase font-bold tracking-wider">
-                  Engineer On Standby
+                <span className="font-bold tracking-wider">
+                  ENGINEER ON STANDBY
                 </span>
               </div>
-              <div className="font-bold text-sm text-fg truncate">
-                Dileepa Bandara
-              </div>
-              <div className="text-[0.6875rem] text-fg-muted font-mono truncate">
-                contact@dileepa.dev
-              </div>
-              <div className="text-[0.6875rem] text-fg-muted font-mono">
-                CALLSIGN: //DILEEPADEV
-              </div>
+              <div className="font-bold text-sm text-fg">Dileepa Bandara</div>
+              <div>contact@dileepa.dev</div>
+              <div>CALLSIGN: //DILEEPADEV</div>
             </div>
           </div>
 
-          <div>
-            {/* System Status Metrics */}
-            <div className="text-[0.6875rem] text-fg-muted space-y-1 pt-2 border-t border-border-strong/40">
-              <div className="flex items-center justify-between">
-                <span>INCIDENT POSTING:</span>
-                <span className="text-fg font-medium">
-                  OPEN (AWAITING INPUT)
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>RESPONSE PROTOCOL:</span>
-                <span className="text-brand font-medium">DIRECT EMAIL</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>RECOVERY RATE:</span>
-                <span className="text-fg">99.8% (AUTO-RETRY)</span>
-              </div>
-            </div>
+          <TerminalReadout
+            rows={[
+              { label: "INCIDENT POSTING", value: "OPEN (AWAITING INPUT)" },
+              {
+                label: "RESPONSE PROTOCOL",
+                value: "DIRECT EMAIL",
+                strong: true,
+              },
+              { label: "RECOVERY RATE", value: "99.8% (AUTO-RETRY)" },
+            ]}
+          />
 
-            {/* Actions: Mailto & ASCII Toggle */}
-            <div className="mt-3 pt-2.5 border-t border-border-strong/60 flex items-center justify-between gap-2">
-              <a
-                href={`mailto:contact@dileepa.dev?subject=500%20Page%20Error%20Report&body=Hi%20Dileepa,%0A%0AI%20encountered%20an%20error%20on%20the%20site:%0ADigest:%20${error.digest || "none"}`}
-                className="btn btn--secondary !h-7 !px-2.5 text-xs inline-flex items-center gap-1.5 text-brand border-brand/30 hover:border-brand"
-              >
-                <Mail className="h-3 w-3" />
-                <span>Email report</span>
-              </a>
-
-              <button
-                type="button"
-                onClick={() => setIsAsciiPhotoActive((prev) => !prev)}
-                className="btn btn--secondary !h-7 !px-2.5 text-xs inline-flex items-center gap-1.5"
-              >
-                <span>
-                  {isAsciiPhotoActive ? "Standard photo" : "ASCII mode"}
-                </span>
-              </button>
-            </div>
+          <div className="terminal-actions">
+            <a
+              href={`mailto:contact@dileepa.dev?subject=500%20Page%20Error%20Report&body=Hi%20Dileepa,%0A%0AI%20encountered%20an%20error%20on%20the%20site:%0ADigest:%20${error.digest || "none"}`}
+              className="btn btn--secondary btn--sm"
+            >
+              <Mail />
+              <span>Email report</span>
+            </a>
+            <button
+              type="button"
+              onClick={() => setIsAsciiPhotoActive((prev) => !prev)}
+              className="btn btn--secondary btn--sm"
+            >
+              {isAsciiPhotoActive ? "Standard photo" : "ASCII mode"}
+            </button>
           </div>
-        </div>
+        </>
       )}
-    </div>
+    </TerminalCard>
   );
 }
