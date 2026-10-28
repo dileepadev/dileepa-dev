@@ -31,6 +31,7 @@ import {
   ImageLightbox,
   LinkButton,
   StatusBadge,
+  buttonClasses,
 } from "@/components/ui";
 import type { About, Experience, SpeakingTopic } from "@/lib/api-types";
 import { SITE_CONFIG } from "@/lib/constants";
@@ -460,7 +461,7 @@ export function ProfileClient({
           {PROFILE_PHOTOS.map((photo) => (
             <div
               key={photo.id}
-              className="rounded-lg border border-border-strong bg-bg-surface overflow-hidden flex flex-col justify-between shadow-xs transition-colors hover:border-brand/50"
+              className="rounded-lg border border-border-strong bg-bg-surface overflow-hidden flex flex-col justify-between shadow-xs transition-colors"
             >
               {/* Photo Viewport with Hover Zoom */}
               <div
@@ -516,24 +517,28 @@ export function ProfileClient({
                   <a
                     href={photo.src}
                     download={photo.filename}
-                    className="btn btn--primary flex-1 !h-8 text-xs inline-flex items-center justify-center gap-1.5"
+                    className={buttonClasses({
+                      variant: "primary",
+                      size: "sm",
+                      className: "flex-1",
+                    })}
                     title={`Download ${photo.title}`}
                   >
-                    <Download className="h-3.5 w-3.5 shrink-0" />
+                    <Download aria-hidden="true" />
                     <span>Download</span>
                   </a>
 
                   <button
                     type="button"
                     onClick={() => handleShare(photo)}
-                    className="btn btn--secondary !h-8 !px-2.5 text-xs inline-flex items-center justify-center gap-1"
+                    className={buttonClasses({ size: "sm" })}
                     title="Share or copy direct link"
                     aria-label={`Share ${photo.title}`}
                   >
                     {copiedKey === photo.id ? (
-                      <Check className="h-3.5 w-3.5 text-brand" />
+                      <Check aria-hidden="true" />
                     ) : (
-                      <Share2 className="h-3.5 w-3.5" />
+                      <Share2 aria-hidden="true" />
                     )}
                   </button>
                 </div>
@@ -605,11 +610,7 @@ export function ProfileClient({
                       <span className="text-sm font-bold text-fg">
                         {item.name}
                       </span>
-                      {item.badge && (
-                        <span className="text-label font-mono px-1.5 py-0.5 rounded bg-brand/10 text-brand border border-brand/20">
-                          {item.badge}
-                        </span>
-                      )}
+                      {item.badge && <span className="chip">{item.badge}</span>}
                     </div>
                     <div className="font-mono text-xs text-fg-muted truncate">
                       {item.handler}
@@ -623,36 +624,27 @@ export function ProfileClient({
                     href={item.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="btn btn--secondary !h-8 !px-3 text-xs inline-flex items-center gap-1.5"
+                    className={buttonClasses({ size: "sm" })}
                     title={`Open ${item.name} in new tab`}
                   >
                     <span>Open</span>
-                    <ExternalLink
-                      className="h-3 w-3 text-fg-muted"
-                      aria-hidden="true"
-                    />
+                    <ExternalLink aria-hidden="true" />
                   </a>
 
                   <button
                     type="button"
                     onClick={() => handleCopy(item.key, item.copyValue)}
-                    className="btn btn--secondary !h-8 !px-3 text-xs inline-flex items-center gap-1.5"
+                    className={buttonClasses({ size: "sm" })}
                     title={`Copy ${item.name} link`}
                   >
                     {isCopied ? (
                       <>
-                        <Check
-                          className="h-3 w-3 text-brand"
-                          aria-hidden="true"
-                        />
-                        <span className="text-brand">Copied</span>
+                        <Check aria-hidden="true" />
+                        <span>Copied</span>
                       </>
                     ) : (
                       <>
-                        <Copy
-                          className="h-3 w-3 text-fg-muted"
-                          aria-hidden="true"
-                        />
+                        <Copy aria-hidden="true" />
                         <span>Copy</span>
                       </>
                     )}

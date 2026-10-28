@@ -1,19 +1,16 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Calendar } from "lucide-react";
 import {
   Button,
-  Chip,
+  CommunityCard,
   EmptyState,
   FilterSelect,
   type FilterOption,
-  Item,
-  ItemList,
   ListingControls,
   type ActiveFilterItem,
   LoadMore,
-  StatusBadge,
+  TileGrid,
   type SortOption,
 } from "@/components/ui";
 import type { Community } from "@/lib/api-types";
@@ -209,40 +206,15 @@ export function CommunitySearch({ communities }: { communities: Community[] }) {
         </div>
       ) : (
         <div className="mt-6">
-          <ItemList>
+          <TileGrid>
             {paginatedCommunities.map((community) => (
-              <Item
+              <CommunityCard
                 key={community.id}
+                community={community}
                 headingLevel={2}
-                title={community.name}
-                href={community.communityUrl || undefined}
-                description={community.description}
-                meta={
-                  <>
-                    {community.current ? (
-                      <StatusBadge>Current</StatusBadge>
-                    ) : (
-                      <Chip>Past role</Chip>
-                    )}
-                    {community.role && (
-                      <span className="font-medium text-fg">
-                        {community.role}
-                      </span>
-                    )}
-                    {community.period && (
-                      <span className="inline-flex items-center gap-1.5 text-fg-muted">
-                        <Calendar
-                          className="h-3 w-3 shrink-0 text-fg-muted"
-                          aria-hidden="true"
-                        />
-                        <span>{community.period}</span>
-                      </span>
-                    )}
-                  </>
-                }
               />
             ))}
-          </ItemList>
+          </TileGrid>
 
           {hasMore && (
             <LoadMore

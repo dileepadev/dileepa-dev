@@ -318,7 +318,7 @@ export default async function SitemapPage() {
             <h1>{PAGES.sitemap.title}</h1>
           </div>
           {totalRoutes > 0 && (
-            <div className="inline-flex items-center gap-1.5 font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1 transition-colors duration-150 hover:border-brand hover:bg-surface-hover hover:text-fg cursor-default">
+            <div className="count-badge inline-flex items-center gap-1.5 font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1">
               <span className="font-medium text-fg">{totalRoutes}</span>
               <span>Routes</span>
             </div>
@@ -327,11 +327,7 @@ export default async function SitemapPage() {
         <p className="section-intro">{PAGES.sitemap.intro}</p>
 
         <div className="mt-8">
-          <SiteTree
-            tree={tree}
-            totalRoutes={totalRoutes}
-            pagesList={PAGES_LIST}
-          />
+          <SiteTree tree={tree} pagesList={PAGES_LIST} />
         </div>
       </Container>
     </Section>

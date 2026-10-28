@@ -136,6 +136,19 @@ export default async function ProjectPage({ params }: Params) {
           </div>
         )}
 
+        {(project.stack ?? []).length > 0 && (
+          <section className="mt-12">
+            <h2>Built with</h2>
+            <ul className="mt-4 flex flex-wrap gap-2">
+              {(project.stack ?? []).map((tech) => (
+                <li key={tech}>
+                  <Chip>{tech}</Chip>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
         {(project.highlights ?? []).length > 0 && (
           <section className="mt-12">
             <h2>Highlights</h2>
@@ -167,19 +180,6 @@ export default async function ProjectPage({ params }: Params) {
                 </div>
               ))}
             </dl>
-          </section>
-        )}
-
-        {(project.stack ?? []).length > 0 && (
-          <section className="mt-12">
-            <h2>Built with</h2>
-            <ul className="mt-4 flex flex-wrap gap-2">
-              {(project.stack ?? []).map((tech) => (
-                <li key={tech}>
-                  <Chip>{tech}</Chip>
-                </li>
-              ))}
-            </ul>
           </section>
         )}
 

@@ -258,7 +258,7 @@ export default async function EventPage({ params }: Params) {
                         href={event.location.mapUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="font-medium text-fg transition-colors hover:text-brand"
+                        className="font-medium text-fg transition-colors hover:text-fg-muted"
                       >
                         {event.location.venue}
                       </a>
@@ -319,7 +319,7 @@ export default async function EventPage({ params }: Params) {
                         href={event.host.organizerUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="font-medium text-fg transition-colors hover:text-brand"
+                        className="font-medium text-fg transition-colors hover:text-fg-muted"
                       >
                         {event.host.organizer ?? event.host.name}
                       </a>
@@ -448,7 +448,7 @@ export default async function EventPage({ params }: Params) {
                 return (
                   <div
                     key={speaker.name}
-                    className="flex items-center gap-3.5 rounded-lg border border-border-strong bg-bg-surface p-4 transition-colors hover:border-brand"
+                    className="flex items-center gap-3.5 rounded-lg border border-border-strong bg-bg-surface p-4 transition-colors"
                   >
                     {avatarSrc ? (
                       <Image
@@ -474,7 +474,7 @@ export default async function EventPage({ params }: Params) {
                             href={speaker.profileUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="transition-colors hover:text-brand"
+                            className="transition-colors hover:text-fg-muted"
                           >
                             {speaker.name}
                           </a>
@@ -482,9 +482,7 @@ export default async function EventPage({ params }: Params) {
                           speaker.name
                         )}
                         {speaker.isHost && (
-                          <span className="ml-2 inline-flex items-center rounded-xs border border-brand/40 bg-brand/10 px-1.5 py-0.5 font-mono text-label font-medium text-brand">
-                            Host
-                          </span>
+                          <span className="chip ml-2">Host</span>
                         )}
                       </p>
                       {speaker.role && (
