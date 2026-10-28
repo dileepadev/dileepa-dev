@@ -62,8 +62,8 @@ function rule(p: Palette): string {
  * A section heading, ruled out to the right edge.
  *
  * `▍` is the escape-code translation of `.subsection-title::before` - the
- * emerald bar the design system puts ahead of a subsection title. It is the one
- * place emerald appears in a section, which is the rule the site follows too:
+ * accent bar the design system puts ahead of a subsection title. It is the one
+ * accented mark in a section, which is the rule the site follows too:
  * the accent is a marker, not a highlight.
  *
  * The rule that follows the title is what makes a long document scannable: it
@@ -171,7 +171,7 @@ function short(url: string): string {
  *
  * The wordmark is drawn large in block characters by `lib/wordmark.ts`, and the
  * brand rule survives the change of scale intact: the wordmark takes the
- * neutral foreground, the `/.` takes emerald, and the two never swap. That is
+ * neutral foreground, the `/.` takes the accent, and the two never swap. That is
  * the whole reason `renderWordmark` hands back the two halves separately
  * instead of one pre-joined string - a banner with the colours reversed is a
  * brand failure visible from across a room.
@@ -222,7 +222,7 @@ function banner(p: Palette, about: About | null): string[] {
   if (meta) lines.push(centred(meta, p.muted(meta)));
 
   // The availability line, carried by a filled dot rather than a word like
-  // "status:". The dot is the second and last emerald in the panel - a third
+  // "status:". The dot is the second and last accent in the panel - a third
   // would be scattering the accent rather than spending it.
   if (about?.status) {
     lines.push(

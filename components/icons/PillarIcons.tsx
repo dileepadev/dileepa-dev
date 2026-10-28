@@ -12,8 +12,8 @@ import type { SVGProps } from "react";
  *
  * These components are ported from the `-symbol.svg` variant, which is the one
  * that strokes `currentColor` rather than a literal `#23B888`. That matters:
- * the card colours the mark through `text-brand`, so it resolves to Emerald
- * Bright on Carbon and Emerald Deep on Paper. A hard-coded hex would be right
+ * the card colours the mark through `text-brand`, so it resolves to Ink 100
+ * on Carbon and Paper 900 on Paper. A hard-coded hex would be right
  * in one theme and a contrast failure in the other.
  *
  * Geometry stays identical to the files. If a mark changes, change it there and

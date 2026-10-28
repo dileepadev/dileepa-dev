@@ -2,8 +2,8 @@
  * The wordmark, drawn large in block characters.
  *
  * **This is a display treatment of the lockup, not a second lockup.** The guide
- * is strict about the mark - the wordmark is never emerald, the `/.` is never
- * the neutral foreground, and the two never swap. Drawing it bigger does not
+ * is strict about the mark - the wordmark takes the neutral foreground, the
+ * `/.` takes the accent, and the two never swap. Drawing it bigger does not
  * suspend that: `render()` returns the wordmark and the mark as separate
  * strings per row so the caller colours them the way it colours the small
  * lockup everywhere else. A banner that got the colours backwards would be the
@@ -134,7 +134,7 @@ function draw(text: string): string[] {
 /**
  * One row of the large lockup, split at the colour boundary.
  *
- * `wordmark` takes the neutral foreground and `mark` takes emerald, which is
+ * `wordmark` takes the neutral foreground and `mark` takes the accent, which is
  * the same division the small lockup makes in `components/ui/Lockup.tsx`. The
  * gap between them belongs to neither, so it travels with the mark where it is
  * invisible either way.

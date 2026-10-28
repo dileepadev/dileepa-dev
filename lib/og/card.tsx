@@ -22,7 +22,9 @@ const SURFACE = "#0D0D0D"; // --ink-800 / --bg-surface
 const EDGE = "#2E2E2E"; // --ink-500 / --border-strong
 const TEXT = "#F1F1F1"; // --ink-100 / --fg
 const MUTED = "#8D8D8D"; // --ink-400 / --fg-muted
-const EMERALD = "#23B888"; // --emerald-bright / --brand on Carbon
+// v2.1.0 draft: the palette is black and white; the accent is the text
+// colour, so the card marks emphasis with weight and contrast, not a hue.
+const ACCENT = "#F1F1F1"; // --brand on Carbon (= --ink-100)
 
 /**
  * JetBrains Mono, vendored beside this file with its OFL licence.
@@ -92,7 +94,7 @@ function commandPath(path: string): string {
 }
 
 export interface OgCard {
-  /** The emerald kicker: "Blog", "Project", "Event". */
+  /** The accent kicker: "Blog", "Project", "Event". */
   label: string;
   title: string;
   /** The site-relative path, echoed in the command line. */
@@ -190,14 +192,14 @@ export function ogCard({ label, title, path, meta }: OgCard) {
                     whiteSpace: "nowrap",
                   }}
                 >
-                  <div style={{ display: "flex", color: EMERALD }}>$</div>
+                  <div style={{ display: "flex", color: ACCENT }}>$</div>
                   <div
                     style={{ display: "flex", marginLeft: 12, color: MUTED }}
                   >
                     curl -L
                   </div>
                   <div
-                    style={{ display: "flex", marginLeft: 12, color: EMERALD }}
+                    style={{ display: "flex", marginLeft: 12, color: ACCENT }}
                   >
                     dileepa.dev{commandPath(path)}
                   </div>
@@ -209,7 +211,7 @@ export function ogCard({ label, title, path, meta }: OgCard) {
                     marginTop: 30,
                     fontSize: 19,
                     fontWeight: 700,
-                    color: EMERALD,
+                    color: ACCENT,
                   }}
                 >
                   {label}
@@ -237,32 +239,15 @@ export function ogCard({ label, title, path, meta }: OgCard) {
                   justifyContent: "space-between",
                 }}
               >
-                {/* The lockup: neutral wordmark, emerald "/." flush at its base. */}
+                {/* The lockup: "@dileepadev", the "@" muted, the word at full
+                    contrast - the same split the site's logo makes. */}
                 <div style={{ display: "flex", alignItems: "center" }}>
+                  <div style={{ display: "flex", fontSize: 26, color: MUTED }}>
+                    @
+                  </div>
                   <div style={{ display: "flex", fontSize: 26, color: TEXT }}>
                     dileepadev
                   </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      marginLeft: 9,
-                      fontSize: 26,
-                      fontWeight: 700,
-                      color: EMERALD,
-                    }}
-                  >
-                    /
-                  </div>
-                  <div
-                    style={{
-                      width: 6,
-                      height: 6,
-                      marginLeft: 2,
-                      marginTop: 11,
-                      borderRadius: 999,
-                      background: EMERALD,
-                    }}
-                  />
                 </div>
 
                 {meta ? (

@@ -2,26 +2,18 @@
  * ANSI colour and fixed-width layout.
  *
  * The terminal rendering is the one surface on this site that has no CSS, so
- * the brand has to survive as escape codes and spaces. Two rules carry over
+ * the brand has to survive as escape codes and spaces. One rule carries over
  * unchanged from `app/brand-tokens.css`:
  *
- * - **Emerald is the only accent.** Nothing here emits a second hue. Everything
- *   that is not emerald is the terminal's own foreground, either at full
- *   strength or dimmed - which is the escape-code equivalent of `--fg` and
- *   `--fg-muted`, and means the output inherits whatever palette the reader has
- *   already chosen rather than fighting it.
- * - **Emerald Bright, not Emerald Deep.** The guide forbids Emerald Deep on
- *   Carbon and Emerald Bright on Paper. A terminal is a dark surface by
- *   overwhelming default and its background cannot be detected over HTTP, so
- *   Bright is the correct stop. Readers on a light terminal have `?nocolor`.
+ * - **Black and white, no hue (v2.1.0 draft).** The accent is weight, not
+ *   colour: bold in the terminal's own foreground. Everything else is that
+ *   foreground at full strength or dimmed - the escape-code equivalent of
+ *   `--fg` and `--fg-muted` - so the output inherits whatever palette the
+ *   reader has already chosen rather than fighting it, on dark and light
+ *   terminals alike.
  *
- * Colour is emitted as 24-bit truecolor rather than a 256-colour approximation
- * because the token has an exact value and every terminal in current use
- * renders it. `plain` mode drops every code instead of approximating.
+ * `plain` mode drops every code.
  */
-
-/** `--emerald-bright`, `#23b888`, as the RGB triplet an SGR sequence wants. */
-const EMERALD_BRIGHT = [35, 184, 136] as const;
 
 /** U+001B. Written as an escape so the source file stays plain ASCII. */
 const ESC = "\u001b";
@@ -40,13 +32,13 @@ export type ColorMode = "ansi" | "plain";
 
 /** The styles the document composes from. Each is `(text) => text` in plain mode. */
 export interface Palette {
-  /** The accent. One per block, the way the site spends emerald. */
+  /** The accent. One per block, the way the site spends it. */
   brand: (text: string) => string;
   /** `--fg`: a heading or a value that carries the line. */
   strong: (text: string) => string;
   /** `--fg-muted`: labels, metadata, rules, anything supporting. */
   muted: (text: string) => string;
-  /** A link. Underlined rather than coloured - emerald is spoken for. */
+  /** A link. Underlined: the palette has no colour to mark it with. */
   link: (text: string) => string;
 }
 
@@ -66,7 +58,9 @@ export function palette(mode: ColorMode): Palette {
     text ? `${open}${text}${RESET}` : text;
 
   return {
-    brand: wrapIn(code(38, 2, ...EMERALD_BRIGHT)),
+    // v2.1.0 draft: the brand is black and white, so the accent is weight -
+    // bold in the reader's own foreground, legible on a dark or light terminal.
+    brand: wrapIn(code(1)),
     strong: wrapIn(code(1)),
     muted: wrapIn(code(2)),
     link: wrapIn(code(4)),
