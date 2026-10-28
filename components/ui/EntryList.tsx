@@ -1,5 +1,4 @@
 import { ReactNode } from "react";
-import { ArrowUpRight } from "lucide-react";
 
 /**
  * The entry list - experience and education.
@@ -11,8 +10,15 @@ import { ArrowUpRight } from "lucide-react";
  * The wrapper exists so `.entry:last-child` resolves against the list rather
  * than against whatever happens to follow it in the section.
  */
-export function EntryList({ children }: { children: ReactNode }) {
-  return <div>{children}</div>;
+export function EntryList({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  /** `timeline` for roles, `entry-grid` for education (v2.1.0 draft). */
+  className?: string;
+}) {
+  return <div className={className}>{children}</div>;
 }
 
 export function Entry({
@@ -21,8 +27,11 @@ export function Entry({
   org,
   orgUrl,
   description,
+  current,
   children,
 }: {
+  /** Marks the row as ongoing - the timeline fills its node. */
+  current?: boolean;
   /** Mono, and deliberately not a heading - it is metadata. */
   date: string;
   title: string;
@@ -33,8 +42,16 @@ export function Entry({
   children?: ReactNode;
 }) {
   return (
-    <div className="entry">
-      <div className="entry-date">{date}</div>
+    <div className={current ? "entry is-current" : "entry"}>
+      <div className="entry-dates">
+        <span className="entry-date">{date}</span>
+        {current && (
+          <span className="entry-current">
+            <span className="hero-status-dot" aria-hidden="true" />
+            Current
+          </span>
+        )}
+      </div>
       <div className="min-w-0">
         <div className="entry-org">
           {orgUrl ? (
@@ -42,13 +59,9 @@ export function Entry({
               href={orgUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="group inline-flex items-center gap-1.5 hover:text-brand"
+              className="text-link"
             >
-              <span>{org}</span>
-              <ArrowUpRight
-                className="h-3.5 w-3.5 shrink-0 text-brand/70 transition-transform duration-150 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-brand"
-                aria-hidden="true"
-              />
+              {org}
             </a>
           ) : (
             org

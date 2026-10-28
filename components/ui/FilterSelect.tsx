@@ -157,7 +157,7 @@ export function FilterSelect({
         aria-haspopup="listbox"
         onClick={() => (isOpen ? closeMenu() : openMenu())}
         className={cn(
-          "inline-flex items-center gap-1.5 h-[36px] px-3 rounded-sm border text-small font-medium transition-colors cursor-pointer",
+          "filter-trigger inline-flex items-center gap-1.5 h-[36px] px-3 rounded-sm border text-small font-medium transition-colors cursor-pointer",
           isActive
             ? "border-brand/60 bg-surface-hover text-fg"
             : "border-border-strong bg-bg-surface text-fg-muted hover:text-fg hover:border-brand/40",

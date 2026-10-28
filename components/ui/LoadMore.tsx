@@ -75,13 +75,9 @@ export function LoadMore({
         </Button>
 
         {onShowAll && remaining > nextBatch && (
-          <button
-            type="button"
-            onClick={onShowAll}
-            className="cursor-pointer border-none bg-transparent px-2 py-1 font-mono text-small text-fg-muted transition-colors hover:text-brand"
-          >
+          <Button variant="secondary" onClick={onShowAll}>
             Show all
-          </button>
+          </Button>
         )}
       </div>
     </div>

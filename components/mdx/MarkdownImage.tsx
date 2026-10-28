@@ -95,7 +95,7 @@ export function MarkdownImage({
       <span
         role="figure"
         aria-label={alt || "Blog content image"}
-        className="group my-6 block overflow-hidden rounded-lg border border-border-strong bg-bg-surface transition-colors duration-200 hover:border-brand/40"
+        className="group my-6 block overflow-hidden rounded-lg border border-border-strong bg-bg-surface transition-colors duration-200"
       >
         <button
           type="button"

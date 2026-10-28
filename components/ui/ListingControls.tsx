@@ -96,7 +96,7 @@ export function ListingControls<TSort extends string>({
       </div>
 
       {/* 2. Controls Toolbar: Filters on left, Sort on right */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 pt-1">
         {/* Filters group */}
         <div className="flex flex-wrap items-center gap-2">{filters}</div>
 
@@ -122,7 +122,7 @@ export function ListingControls<TSort extends string>({
               <button
                 type="button"
                 onClick={() => onQueryChange("")}
-                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-sm border border-border-strong bg-bg-surface text-fg text-label hover:border-brand hover:bg-surface-hover transition-colors cursor-pointer"
+                className="active-filter-chip inline-flex items-center gap-1 px-2 py-0.5 rounded-sm border border-border-strong bg-bg-surface text-fg text-label hover:bg-surface-hover transition-colors cursor-pointer"
                 title="Clear search query"
               >
                 <span>&ldquo;{query.trim()}&rdquo;</span>
@@ -135,7 +135,7 @@ export function ListingControls<TSort extends string>({
                 key={filter.key}
                 type="button"
                 onClick={filter.onRemove}
-                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-sm border border-border-strong bg-bg-surface text-fg text-label hover:border-brand hover:bg-surface-hover transition-colors cursor-pointer"
+                className="active-filter-chip inline-flex items-center gap-1 px-2 py-0.5 rounded-sm border border-border-strong bg-bg-surface text-fg text-label hover:bg-surface-hover transition-colors cursor-pointer"
                 title={`Remove ${filter.label}`}
               >
                 <span>{filter.label}</span>
@@ -146,7 +146,7 @@ export function ListingControls<TSort extends string>({
             <button
               type="button"
               onClick={onClearAll}
-              className="text-brand text-label underline underline-offset-4 hover:text-fg transition-colors cursor-pointer ml-1"
+              className="btn btn--secondary btn--sm ml-1"
             >
               Clear all
             </button>

@@ -8,8 +8,15 @@ import { ArrowRight, ArrowUpRight } from "lucide-react";
  * Content on the left, a 180px right-aligned mono metadata column on the right.
  * Collapses to one column below 720px with the metadata left-aligned.
  */
-export function ItemList({ children }: { children: ReactNode }) {
-  return <div>{children}</div>;
+export function ItemList({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  /** `item-cards` lays the items out as a two-up card grid (v2.1.0 draft). */
+  className?: string;
+}) {
+  return <div className={className}>{children}</div>;
 }
 
 /**
@@ -61,24 +68,13 @@ export function Item({
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group inline-flex items-center gap-1.5"
+                className="text-link"
               >
-                <span>{title}</span>
-                <ArrowUpRight
-                  className="h-3.5 w-3.5 shrink-0 text-fg-muted transition-all duration-150 group-hover:text-brand group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                  aria-hidden="true"
-                />
+                {title}
               </a>
             ) : (
-              <Link
-                href={href}
-                className="group inline-flex items-center gap-1.5"
-              >
-                <span>{title}</span>
-                <ArrowRight
-                  className="h-3.5 w-3.5 shrink-0 text-fg-muted transition-all duration-150 group-hover:text-brand group-hover:translate-x-1"
-                  aria-hidden="true"
-                />
+              <Link href={href} className="text-link">
+                {title}
               </Link>
             )
           ) : (

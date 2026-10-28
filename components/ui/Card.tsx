@@ -17,7 +17,7 @@ const base = "block rounded-lg border border-border-strong bg-bg-surface p-6";
 // a page where a chip and a button used the same idea more quietly.
 const interactive =
   "transition-[background-color,border-color] duration-[160ms] ease-brand " +
-  "hover:border-brand hover:bg-surface-hover " +
+  "hover:bg-surface-hover " +
   "focus-visible:border-brand focus-visible:bg-surface-hover";
 
 export function Card({ children, className, href }: CardProps) {

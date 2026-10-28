@@ -9,7 +9,7 @@ interface StatusBadgeProps {
 
 /**
  * A clean status badge conforming to the chip design specification,
- * featuring a solid emerald dot indicator.
+ * featuring a solid dot indicator in the accent.
  */
 export function StatusBadge({ children, className }: StatusBadgeProps) {
   return (
