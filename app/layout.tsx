@@ -1,7 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { JetBrains_Mono, Manrope } from "next/font/google";
+import { RailContentsProvider } from "@/components/providers/RailContents";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
-import { Footer, Navbar } from "@/components/sections";
+import { Footer, Navbar, ProfileRail } from "@/components/sections";
 import { BackToTop } from "@/components/ui";
 import { api } from "@/lib/api";
 import { Toaster } from "react-hot-toast";
@@ -270,8 +271,18 @@ export default async function RootLayout({
             Skip to content
           </a>
           <Navbar />
-          <main id="main">{children}</main>
-          <Footer about={about} />
+          {/* v2.1.0 draft: the profile rail beside every page on a wide
+              screen. Below that width the rail hides and the nav above
+              takes over, as before. */}
+          <RailContentsProvider>
+            <div className="shell">
+              <ProfileRail about={about} />
+              <div className="shell-main">
+                <main id="main">{children}</main>
+                <Footer about={about} />
+              </div>
+            </div>
+          </RailContentsProvider>
           <Toaster
             position="bottom-center"
             reverseOrder={false}

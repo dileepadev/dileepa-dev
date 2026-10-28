@@ -8,7 +8,7 @@ import { Container, Lockup, ThemeToggle } from "@/components/ui";
 import { NAV_LINKS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
-const MORE_LINKS = [
+export const MORE_LINKS = [
   { label: "Projects", href: "/projects" },
   { label: "Blog", href: "/blog" },
   { label: "Events", href: "/events" },
@@ -282,7 +282,7 @@ export function Navbar() {
 }
 
 /** `/#work` → `work`. */
-function hashOf(href: string): string {
+export function hashOf(href: string): string {
   return href.slice(href.indexOf("#") + 1);
 }
 
@@ -292,7 +292,7 @@ function hashOf(href: string): string {
  * Tracks scroll position against each section boundary with a top offset to clear the sticky navbar.
  * When the user is at the top of the page (Hero / #top), clears all active section highlights.
  */
-function useScrollSpy(enabled: boolean): string | null {
+export function useScrollSpy(enabled: boolean): string | null {
   const [active, setActive] = useState<string | null>(null);
 
   useEffect(() => {
