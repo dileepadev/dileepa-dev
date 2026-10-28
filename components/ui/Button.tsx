@@ -4,9 +4,18 @@ import { cn } from "@/lib/utils";
 
 type Variant = "primary" | "secondary";
 
+/**
+ * `sm` is the action size (v2.1.0 draft): copy, download, share, open,
+ * expand - the small controls that sit beside content rather than lead a
+ * page. One size for all of them, so a "Copy" on the brand page and a "Copy"
+ * on a code block are the same object.
+ */
+type Size = "md" | "sm";
+
 interface CommonProps {
   children: ReactNode;
   variant?: Variant;
+  size?: Size;
   className?: string;
 }
 
@@ -23,14 +32,32 @@ const variants: Record<Variant, string> = {
   secondary: "btn--secondary",
 };
 
+/**
+ * The class list a button carries, for the few controls that cannot be a
+ * `Button` or `LinkButton` - a download `<a>`, a copy button with its own
+ * state. Use it rather than restating `btn` classes by hand.
+ */
+export function buttonClasses({
+  variant = "secondary",
+  size = "md",
+  className,
+}: {
+  variant?: Variant;
+  size?: Size;
+  className?: string;
+} = {}): string {
+  return cn(base, variants[variant], size === "sm" && "btn--sm", className);
+}
+
 export function Button({
   children,
   variant = "primary",
+  size = "md",
   className,
   ...props
 }: CommonProps & React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
-    <button className={cn(base, variants[variant], className)} {...props}>
+    <button className={buttonClasses({ variant, size, className })} {...props}>
       {children}
     </button>
   );
@@ -46,11 +73,12 @@ export function LinkButton({
   children,
   href,
   variant = "primary",
+  size = "md",
   external,
   ariaLabel,
   className,
 }: LinkButtonProps) {
-  const classes = cn(base, variants[variant], className);
+  const classes = buttonClasses({ variant, size, className });
   const isExternal = external ?? href.startsWith("http");
 
   if (isExternal) {
