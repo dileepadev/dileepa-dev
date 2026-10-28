@@ -4,6 +4,13 @@
    Source: dileepadev/docs/brand/brand-tokens.css
    Vendored: brand tokens v2.1
 
+   DESIGN-FIRST DRAFT (feat/v2.1.0, dileepa-dev#27). The v2.1.0 redesign
+   is being worked out on this site before it is written down, so this
+   copy is temporarily AHEAD of the canonical sheet: the type scale below
+   is new. Once the design settles, the canonical file takes these values
+   (dileepadev#4) and this note goes. Until then, this is the one place
+   the new values live - do not copy them anywhere else.
+
    This is a copy, and a copy can drift. When the canonical file
    changes, re-copy it; never patch this one in place. The only
    permitted local change is the one below, which the design system
@@ -31,8 +38,11 @@
 
 /* ============================================================
    Dileepa - brand tokens v2.1
-   Logo lockup: "dileepadev /." - wordmark neutral, "/." in emerald.
-   Rule: emerald is the only accent. No second hue, anywhere.
+   v2.1.0 DRAFT: the palette is black to white. The accent is the
+   text colour itself - near-white on Carbon, near-black on Paper - so
+   emphasis comes from contrast, weight and fill, never from a hue.
+   Logo lockup: "@dileepadev" - wordmark at full contrast, "@" muted.
+   Emerald survives only as --success, a state colour like --error.
    Every pairing below is verified against WCAG AA minimum.
 
    v2.1 supersedes v2.0: this revision reconciles the sheet against
@@ -90,19 +100,27 @@
      for badges, chips, captions and metadata that were each inventing
      their own small size (0.72rem here, 0.75rem there, Tailwind's
      `text-xs` somewhere else) with no shared token behind any of them. */
-  --text-display: 2.75rem;
-  --lh-display: 1.1;
-  --text-h1: 2.25rem;
-  --lh-h1: 1.15;
-  --text-h2: 1.375rem;
-  --lh-h2: 1.3;
-  --text-h3: 1.125rem;
+  /* v2.1.0 draft: a scale that grows with the viewport at the top and
+     reads larger at the bottom. The two big steps are fluid, so the mobile
+     override that used to shrink the display in globals.css is gone. The
+     body moves to 17px: the site is mostly reading, and 16px muted grey on
+     Carbon was the main reason it felt small. `--text-lead` is new - the
+     one sentence that opens a section, between H2 and body. */
+  --text-display: clamp(2.75rem, 1.4rem + 4.4vw, 5rem);
+  --lh-display: 1.02;
+  --text-h1: clamp(2.25rem, 1.65rem + 2vw, 3.5rem);
+  --lh-h1: 1.06;
+  --text-h2: 1.75rem;
+  --lh-h2: 1.2;
+  --text-lead: clamp(1.25rem, 1.05rem + 0.75vw, 1.625rem);
+  --lh-lead: 1.35;
+  --text-h3: 1.1875rem;
   --lh-h3: 1.35;
-  --text-body: 1rem;
+  --text-body: 1.0625rem;
   --lh-body: 1.65;
-  --text-small: 0.875rem;
+  --text-small: 0.9375rem;
   --lh-small: 1.55;
-  --text-label: 0.75rem;
+  --text-label: 0.8125rem;
   --lh-label: 1.45;
 
   /* Tracking opens as type gets smaller: a 12px label needs the air a
@@ -110,6 +128,8 @@
      H1, H2, and title-role text set at the H3 step (entry, item and
      card titles, the hero name) - never to body, small, or mono text. */
   --track-tight: -0.02em;
+  /* Display and H1 only. At 80px, -0.02em still reads loose. */
+  --track-display: -0.04em;
   --track-label: 0.01em;
 
   /* --- space, radius, motion --- */
@@ -175,11 +195,12 @@
   --fg: var(--ink-100); /* 18.0:1 */
   --fg-muted: var(--ink-400); /*  6.1:1 */
 
-  --brand: var(--emerald-bright); /* 8.0:1 on bg - AAA */
-  --brand-fill: var(--emerald-bright);
-  --on-brand: var(--on-emerald-dark); /* 6.0:1 on fill */
+  /* v2.1.0 draft: the accent is the text colour. */
+  --brand: var(--ink-100); /* 18.0:1 on bg */
+  --brand-fill: var(--ink-100);
+  --on-brand: var(--ink-900); /* 18.0:1 on fill */
 
-  --success: var(--emerald-bright);
+  --success: var(--emerald-bright); /* state only, never decoration */
   --error: #e5484d; /* 5.2:1 */
   --warning: #d97706; /* UI state only, never a brand accent */
 
@@ -201,11 +222,11 @@
   --fg: var(--paper-900);
   --fg-muted: var(--paper-400); /* 5.1:1 */
 
-  --brand: var(--emerald-deep); /* 4.7:1 on bg - AA */
-  --brand-fill: var(--emerald-deep);
-  --on-brand: var(--on-emerald-light); /* 4.7:1 on fill */
+  --brand: var(--paper-900); /* 17.3:1 on bg */
+  --brand-fill: var(--paper-900);
+  --on-brand: var(--paper-50); /* 17.3:1 on fill */
 
-  --success: var(--emerald-deep);
+  --success: var(--emerald-deep); /* state only, never decoration */
   --error: #c4292e; /* 5.3:1 */
   --warning: #b45309; /* 4.7:1 */
 
@@ -224,9 +245,9 @@
     --border-input: #8f8f8f;
     --fg: var(--paper-900);
     --fg-muted: var(--paper-400);
-    --brand: var(--emerald-deep);
-    --brand-fill: var(--emerald-deep);
-    --on-brand: var(--on-emerald-light);
+    --brand: var(--paper-900);
+    --brand-fill: var(--paper-900);
+    --on-brand: var(--paper-50);
     --success: var(--emerald-deep);
     --error: #c4292e;
     --warning: #b45309;
@@ -251,11 +272,11 @@
   --surface-hover: color-mix(in srgb, var(--fg) 7%, var(--bg-surface));
   --raised-hover: color-mix(in srgb, var(--fg) 9%, var(--bg-surface));
 
-  /* The button fill's hover and active steps. Mixing toward `--fg`
-     raises contrast against `--on-brand` in both directions at once,
-     so neither state can fall below the resting AA figure. */
-  --brand-fill-hover: color-mix(in srgb, var(--brand-fill) 88%, var(--fg));
-  --brand-fill-active: color-mix(in srgb, var(--brand-fill) 78%, var(--fg));
+  /* The button fill's hover and active steps. v2.1.0 draft: the fill is
+     the text colour now, so mixing toward `--fg` would change nothing;
+     the steps ease the fill toward the background instead. */
+  --brand-fill-hover: color-mix(in srgb, var(--brand-fill) 86%, var(--bg));
+  --brand-fill-active: color-mix(in srgb, var(--brand-fill) 76%, var(--bg));
 
   /* The one focus/emphasis ring: soft, 3px, accent-tinted. Used by every
      bordered interactive element in place of a second, harder outline. */
@@ -286,16 +307,16 @@ h3 {
 h1 {
   font-size: var(--text-h1);
   line-height: var(--lh-h1);
-  font-weight: 700;
-  letter-spacing: var(--track-tight);
+  font-weight: 500;
+  letter-spacing: var(--track-display);
 }
-/* Weight carries H2's rank now, not size. At the old 500 it sat one
-   step above body text; at 700 it reads as a heading on its own,
-   without the display needing to stay oversized to compensate. */
+/* v2.1.0 draft: size carries H2's rank again, not weight. At 22px it
+   needed 700 to stand above body text; at 28px it stands on size alone,
+   and 500 matches the display and H1 above it. */
 h2 {
   font-size: var(--text-h2);
   line-height: var(--lh-h2);
-  font-weight: 700;
+  font-weight: 500;
   letter-spacing: var(--track-tight);
 }
 h3 {
@@ -307,8 +328,8 @@ h3 {
 .display {
   font-size: var(--text-display);
   line-height: var(--lh-display);
-  font-weight: 700;
-  letter-spacing: var(--track-tight);
+  font-weight: 500;
+  letter-spacing: var(--track-display);
 }
 
 p {
@@ -529,7 +550,7 @@ textarea.input {
   line-height: var(--lh-body);
 }
 
-/* Logo lockup: wordmark stays neutral, only the "/." is emerald.
+/* Logo lockup (v2.0 shape, kept for the brand page): wordmark neutral,
    Upright, weight 700 - not italic, not 600. The wordmark and mark are
    flex siblings spaced by the wrapper's gap, and the dot sits flush
    against the slash (no gap of its own) so the pair reads as one
@@ -616,7 +637,7 @@ textarea.input {
     --bg-surface: #ffffff;
     --fg: var(--paper-900);
     --fg-muted: var(--paper-400);
-    --brand: var(--emerald-deep);
+    --brand: var(--paper-900);
     --border: var(--paper-200);
   }
   body {
