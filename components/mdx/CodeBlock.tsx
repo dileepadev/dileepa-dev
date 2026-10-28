@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, ReactNode } from "react";
+import { isValidElement, useState, useRef, ReactNode } from "react";
 import { Check, Copy, Terminal } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -44,6 +44,16 @@ const LANGUAGE_MAP: Record<string, string> = {
   java: "Java",
   kotlin: "Kotlin",
   swift: "Swift",
+  powershell: "PowerShell",
+  ps1: "PowerShell",
+  pwsh: "PowerShell",
+  cmd: "Command Prompt",
+  bat: "Batch",
+  git: "Git",
+  text: "Text",
+  txt: "Text",
+  plaintext: "Text",
+  console: "Console",
 };
 
 interface PreProps extends React.HTMLAttributes<HTMLPreElement> {
@@ -74,9 +84,18 @@ export function CodeBlock({ children, className, ...props }: PreProps) {
   const [copied, setCopied] = useState(false);
   const preRef = useRef<HTMLPreElement>(null);
 
+  // Shiki stamps `data-language` on the blocks it highlights. A fence in a
+  // language it has no grammar for (```git) is left unhighlighted, and the
+  // language survives only as `language-…` on the inner <code>.
+  const codeClassName = isValidElement<{ className?: string }>(children)
+    ? children.props.className
+    : undefined;
   const rawLanguage =
     props["data-language"] ||
-    (className?.match(/language-([a-zA-Z0-9_-]+)/)?.[1] ?? "");
+    (`${className ?? ""} ${codeClassName ?? ""}`.match(
+      /language-([a-zA-Z0-9_+#-]+)/,
+    )?.[1] ??
+      "");
 
   const displayLanguage = rawLanguage
     ? LANGUAGE_MAP[rawLanguage.toLowerCase()] ||
@@ -118,7 +137,7 @@ export function CodeBlock({ children, className, ...props }: PreProps) {
   };
 
   return (
-    <div className="code-block-wrapper my-6 overflow-hidden rounded-lg border border-border-strong bg-bg-surface transition-colors duration-200 hover:border-brand/40">
+    <div className="code-block-wrapper my-6 overflow-hidden rounded-lg border border-border-strong bg-bg-surface transition-colors duration-200">
       {/* Code Header Bar */}
       <div className="flex items-center justify-between border-b border-border-strong bg-bg-surface px-4 py-2 text-small">
         <div className="flex items-center gap-2">
@@ -132,25 +151,16 @@ export function CodeBlock({ children, className, ...props }: PreProps) {
           type="button"
           onClick={handleCopy}
           aria-label={copied ? "Copied code" : "Copy code to clipboard"}
-          className={cn(
-            "code-copy-btn inline-flex items-center gap-1.5 rounded-sm border px-2.5 py-1 font-mono text-label transition-all duration-150",
-            copied
-              ? "border-brand/60 bg-surface-hover text-brand font-medium"
-              : "border-border-strong bg-transparent text-fg-muted hover:border-brand hover:bg-surface-hover hover:text-fg active:scale-95",
-          )}
+          className="code-copy-btn btn btn--secondary btn--sm"
         >
           {copied ? (
             <>
-              <Check
-                className="h-3 w-3 text-brand"
-                strokeWidth={2.5}
-                aria-hidden="true"
-              />
-              <span>Copied!</span>
+              <Check aria-hidden="true" />
+              <span>Copied</span>
             </>
           ) : (
             <>
-              <Copy className="h-3 w-3" strokeWidth={2} aria-hidden="true" />
+              <Copy aria-hidden="true" />
               <span>Copy</span>
             </>
           )}
