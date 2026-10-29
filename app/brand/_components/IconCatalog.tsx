@@ -69,6 +69,7 @@ import {
   ZoomIn,
 } from "lucide-react";
 import { Subsection } from "@/components/ui";
+import { SectionTile } from "@/components/ui/SectionArt";
 import {
   IconAiEngineering,
   IconCommunityBuilding,
@@ -181,8 +182,8 @@ const INTERFACE_ICONS: { title: string; icons: Entry[] }[] = [
 ];
 
 /**
- * The homepage's section marks, in page order: each section's icon drawn as a
- * dotted line on the hero's dot grid in the panel's top-right corner. Angular
+ * The homepage's section marks, in page order: each section's icon on a tile,
+ * like an app icon, on the hero's dot grid in the panel's top-right corner. Angular
  * shapes only, and never an icon the section already uses.
  */
 const SECTION_MARKS: [LucideIcon, string, string][] = [
@@ -286,7 +287,7 @@ export function IconCatalog() {
           {SECTION_MARKS.map(([Icon, section, note]) => (
             <li key={section} className="tile p-4 space-y-3">
               <div className="section-mark" aria-hidden="true">
-                <Icon />
+                <SectionTile icon={Icon} />
               </div>
               <Caption name={section} use={note} />
             </li>
@@ -320,9 +321,8 @@ export function IconCatalog() {
         Lucide · 16px in controls and beside body text, 14px in small buttons
         and beside small text, 32px as an empty-state illustration · one stroke
         weight, 1.75, everywhere · always currentColor, never a colour of its
-        own · a homepage section mark is the section&apos;s icon at 160px, drawn
-        as a dotted line on the hero&apos;s dot grid in the panel&apos;s
-        top-right corner
+        own · a homepage section mark is the section&apos;s icon at 64px on a
+        120px tile, in the panel&apos;s top-right corner
       </div>
     </div>
   );

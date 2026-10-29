@@ -3989,8 +3989,8 @@ main .container {
 
    Each homepage section keeps a corner of the hero's engineering paper -
    the same 22px dot grid, fading out from the panel's top-right corner -
-   with the section's icon plotted on it as a dotted line, so the scroll
-   reads as one sheet rather than the hero and then a run of plain panels.
+   with the section's icon set on it as a tile, so the scroll reads as one
+   sheet rather than the hero and then a run of plain panels.
 
    The panel is the positioning box and isolates its stacking, so the mark
    sits in the panel's own corner and paints behind the content - as the
@@ -4045,35 +4045,51 @@ main .container {
   }
 }
 
-/* Lucide draws on a 24-unit box; at 10rem a unit is about 6.7px. A 0.5
-   stroke with round caps, dashed at nothing every 1.3 units, draws each
-   line as a row of 3px dots about 9px apart - plotted rather than drawn.
-   10rem keeps the mark above the first row of cards under a short
-   heading. */
-.section-art svg.lucide.section-art-icon {
+/* The mark: the section's icon on a tile, like an app icon. A 7.5rem
+   rounded square at the app-icon ratio (a corner of about 22%), lit from
+   above - a faint highlight at the top edge, a soft shadow beneath - with
+   the Lucide icon in the middle at a fine, crisp stroke. No fades and no
+   overlapping layers: the dotted and the extruded drafts read as soft
+   against the dot grid. */
+.section-tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 7.5rem;
+  height: 7.5rem;
+  border-radius: 1.75rem;
+  border: var(--hairline) solid
+    color-mix(in srgb, var(--fg) 12%, var(--bg-surface));
+  background: linear-gradient(
+    160deg,
+    color-mix(in srgb, var(--fg) 9%, var(--bg-surface)),
+    color-mix(in srgb, var(--fg) 3%, var(--bg-surface))
+  );
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--fg) 10%, transparent),
+    0 14px 32px -12px color-mix(in srgb, var(--ink-900) 45%, transparent);
+  color: color-mix(in srgb, var(--fg) 72%, var(--bg-surface));
+}
+
+.section-tile svg.lucide {
+  width: 4rem;
+  height: 4rem;
+  stroke-width: 1.5;
+}
+
+.section-art .section-tile {
   position: absolute;
   top: var(--section-pad);
   right: calc(var(--section-pad) + var(--space-2));
-  width: 10rem;
-  height: 10rem;
-  color: color-mix(in srgb, var(--fg) 34%, transparent);
 }
 
-.section-art svg.lucide.section-art-icon,
-.section-mark svg.lucide {
-  stroke-width: 0.5;
-  stroke-dasharray: 0 1.3;
-}
-
-/* The brand page's specimen of a mark: the same dotted icon on the same
-   paper, at its real 160px. */
+/* The brand page's specimen of a mark: the same tile on the same paper. */
 .section-mark {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 12rem;
   border-radius: var(--radius-block);
-  color: color-mix(in srgb, var(--fg) 34%, transparent);
   background-color: var(--bg-surface);
   background-image: radial-gradient(
     circle at 1px 1px,
@@ -4081,11 +4097,6 @@ main .container {
     transparent 0
   );
   background-size: 22px 22px;
-}
-
-.section-mark svg.lucide {
-  width: 10rem;
-  height: 10rem;
 }
 
 /* ============================================================
