@@ -106,11 +106,7 @@ export function ProfileRail({ about }: { about: About | null }) {
 
         <div className="rail-actions">
           <LinkButton href="/#contact">
-            <Mail
-              className="h-4 w-4 shrink-0"
-              strokeWidth={1.75}
-              aria-hidden="true"
-            />
+            <Mail className="h-4 w-4 shrink-0" aria-hidden="true" />
             <span>Get in touch</span>
           </LinkButton>
         </div>
@@ -128,11 +124,7 @@ export function ProfileRail({ about }: { about: About | null }) {
                 title="Home"
                 aria-current={isHome ? "page" : undefined}
               >
-                <House
-                  className="h-4 w-4"
-                  strokeWidth={1.75}
-                  aria-hidden="true"
-                />
+                <House className="h-4 w-4" aria-hidden="true" />
               </Link>
             </li>
             {NAV_LINKS.map((link) => {
@@ -249,21 +241,13 @@ function ContentsRail({
               aria-label="Home"
               title="Home"
             >
-              <House
-                className="h-4 w-4"
-                strokeWidth={1.75}
-                aria-hidden="true"
-              />
+              <House className="h-4 w-4" aria-hidden="true" />
             </Link>
           </li>
           {back && (
             <li>
               <Link href={back.href} className="rail-link rail-link--with-icon">
-                <ArrowLeft
-                  className="h-4 w-4"
-                  strokeWidth={1.75}
-                  aria-hidden="true"
-                />
+                <ArrowLeft className="h-4 w-4" aria-hidden="true" />
                 {back.label}
               </Link>
             </li>

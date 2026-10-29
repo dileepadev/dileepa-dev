@@ -110,19 +110,11 @@ export function Hero({
 
             <div className="hero-actions">
               <LinkButton href="/#contact">
-                <Mail
-                  className="h-4 w-4 shrink-0"
-                  strokeWidth={1.75}
-                  aria-hidden="true"
-                />
+                <Mail className="h-4 w-4 shrink-0" aria-hidden="true" />
                 <span>Get in touch</span>
               </LinkButton>
               <LinkButton href="/#work" variant="secondary">
-                <Briefcase
-                  className="h-4 w-4 shrink-0"
-                  strokeWidth={1.75}
-                  aria-hidden="true"
-                />
+                <Briefcase className="h-4 w-4 shrink-0" aria-hidden="true" />
                 <span>See the work</span>
               </LinkButton>
             </div>
@@ -139,7 +131,7 @@ export function Hero({
                         rel="noopener noreferrer"
                         aria-label={item.label}
                       >
-                        <Icon className="h-4.5 w-4.5" aria-hidden="true" />
+                        <Icon className="h-4 w-4" aria-hidden="true" />
                       </a>
                     </li>
                   );

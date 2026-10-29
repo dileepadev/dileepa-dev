@@ -58,7 +58,7 @@ export function Footer({ about }: { about?: About | null }) {
                       rel="noopener noreferrer"
                       aria-label={item.label}
                     >
-                      <Icon className="h-4.5 w-4.5" aria-hidden="true" />
+                      <Icon className="h-4 w-4" aria-hidden="true" />
                     </a>
                   );
                 })}
@@ -141,11 +141,7 @@ export function Footer({ about }: { about?: About | null }) {
               aria-label={`Version ${SITE_CONFIG.version}: view the latest release on GitHub`}
               className="inline-flex items-center gap-1.5"
             >
-              <Tag
-                className="h-3.5 w-3.5 shrink-0"
-                strokeWidth={1.75}
-                aria-hidden="true"
-              />
+              <Tag className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
               <span>v{SITE_CONFIG.version}</span>
             </a>
           </div>

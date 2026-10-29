@@ -62,11 +62,7 @@ export function Contact({ about }: { about: About | null }) {
           )}
 
           <a className="contact-email" href={`mailto:${email}`}>
-            <Mail
-              className="h-4 w-4 shrink-0"
-              strokeWidth={1.75}
-              aria-hidden="true"
-            />
+            <Mail className="h-4 w-4 shrink-0" aria-hidden="true" />
             <span>{email}</span>
           </a>
 
@@ -153,11 +149,7 @@ export function Contact({ about }: { about: About | null }) {
             type="submit"
             disabled={sending}
           >
-            <Send
-              className="h-4 w-4 shrink-0"
-              strokeWidth={1.75}
-              aria-hidden="true"
-            />
+            <Send className="h-4 w-4 shrink-0" aria-hidden="true" />
             <span>{sending ? "Sending…" : "Send message"}</span>
           </button>
         </form>

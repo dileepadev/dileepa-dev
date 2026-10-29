@@ -146,7 +146,6 @@ export function Navbar() {
                         "h-3.5 w-3.5 transition-transform duration-150",
                         exploreOpen && "rotate-180",
                       )}
-                      strokeWidth={2}
                       aria-hidden="true"
                     />
                   </button>
@@ -155,7 +154,7 @@ export function Navbar() {
                     <div
                       role="menu"
                       aria-label="Explore pages"
-                      className="absolute right-0 top-full mt-2 w-48 rounded-lg border border-border-strong bg-bg-surface p-1.5 shadow-lg z-50 animate-in fade-in zoom-in-95 duration-150"
+                      className="absolute right-0 top-full mt-2 popover w-48 p-1.5 z-50 animate-in fade-in zoom-in-95 duration-150"
                     >
                       {MORE_LINKS.map((item) => {
                         const isCurrent = pathname.startsWith(item.href);
@@ -166,7 +165,7 @@ export function Navbar() {
                             role="menuitem"
                             onClick={() => setExploreOpen(false)}
                             className={cn(
-                              "flex items-center justify-between rounded-sm px-3 py-2 text-small font-medium text-fg-muted transition-colors hover:bg-surface-hover hover:text-fg",
+                              "flex items-center justify-between rounded-row px-3 py-2 text-small font-medium text-fg-muted transition-colors hover:bg-surface-hover hover:text-fg",
                               isCurrent &&
                                 "text-brand bg-surface-hover font-medium",
                             )}
@@ -203,13 +202,9 @@ export function Navbar() {
                   }
                 >
                   {mobileOpen ? (
-                    <X className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
+                    <X className="h-4 w-4" aria-hidden="true" />
                   ) : (
-                    <Menu
-                      className="h-4 w-4"
-                      strokeWidth={2}
-                      aria-hidden="true"
-                    />
+                    <Menu className="h-4 w-4" aria-hidden="true" />
                   )}
                 </button>
               </div>
