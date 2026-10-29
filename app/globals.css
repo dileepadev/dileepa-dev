@@ -3648,29 +3648,64 @@ a.chip:hover {
    sits beside - it is an invitation, not a call to action, and it earns its
    place by being findable rather than by being loud. Full contrast arrives on hover
    only, which is the same bargain `.footer-meta a` makes. */
+/* The curl command, drawn as a command to copy: a capsule at the small
+   control height with the button's edge - it can be pressed - the shell
+   prompt muted, the command in the code face (it is code), and a copy icon
+   at the end. Hover is
+   the one every button takes: the fill, never the edge. */
 .curl-hint {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  padding: 0;
-  font-family: var(--font-mono);
-  font-size: inherit;
-  line-height: inherit;
+  gap: 0.5rem;
+  height: 32px;
+  padding: 0 4px 0 0.85rem;
+  font-family: var(--font-code);
+  font-size: var(--text-label);
+  line-height: 1;
   letter-spacing: var(--track-label);
-  color: var(--fg-muted);
-  background: none;
-  border: 0;
+  white-space: nowrap;
+  color: var(--fg);
+  background: transparent;
+  border: var(--hairline) solid var(--border-strong);
+  border-radius: var(--radius-pill);
   cursor: pointer;
+  transition:
+    background-color var(--dur) var(--ease),
+    color var(--dur) var(--ease);
+}
+
+.curl-hint:hover {
+  background: var(--surface-hover);
+}
+
+.curl-hint:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 var(--ring-width) var(--ring);
+}
+
+.curl-hint-prompt {
+  color: var(--fg-muted);
+}
+
+/* The copy icon in a circle of its own: 24px, 4px inside the 32px capsule
+   on every side, so the two curves are concentric. On the page ground, so
+   it shows on the footer's surface. */
+.curl-hint-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-pill);
+  background: var(--bg);
+  color: var(--fg-muted);
   transition: color var(--dur) var(--ease);
 }
-.curl-hint:hover {
-  color: var(--brand);
+
+.curl-hint:hover .curl-hint-icon {
+  color: var(--fg);
 }
-.curl-hint:focus-visible {
-  outline: 2px solid var(--brand);
-  outline-offset: 3px;
-  border-radius: var(--radius-inline);
-}
+
 .footer-meta {
   display: flex;
   align-items: center;

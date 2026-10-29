@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Check, Terminal } from "lucide-react";
+import { Check, Copy } from "lucide-react";
 import toast from "react-hot-toast";
 import { TERMINAL } from "@/lib/constants";
 
@@ -10,8 +10,10 @@ import { TERMINAL } from "@/lib/constants";
  *
  * It sits beside the copyright rather than in the footer's link row: the row is
  * navigation, and this is not a seventh place to go. An easter egg nobody finds
- * is a feature nobody has, but the discovery should cost the page one dim line
- * - which is why this is mono, muted, and the same size as the line it shares.
+ * is a feature nobody has, so it is drawn as what it is - a command you copy
+ * (v2.1.0 draft): a small capsule with the shell prompt, the command in mono
+ * and a copy icon that turns to a tick once it is on the clipboard. It read
+ * as plain text before, and nothing said it could be clicked.
  *
  * The command is `TERMINAL.command`, not a string typed here. That constant
  * carries the `-L` and the reason it is not optional, and the site advertising
@@ -57,12 +59,17 @@ export function CurlHint() {
       title="This site renders in a terminal too. Click to copy the command."
       aria-label={`Copy the command ${TERMINAL.command}`}
     >
-      {copied ? (
-        <Check className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-      ) : (
-        <Terminal className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-      )}
+      <span className="curl-hint-prompt" aria-hidden="true">
+        $
+      </span>
       <span>{TERMINAL.command}</span>
+      <span className="curl-hint-icon" aria-hidden="true">
+        {copied ? (
+          <Check className="h-3.5 w-3.5" />
+        ) : (
+          <Copy className="h-3.5 w-3.5" />
+        )}
+      </span>
     </button>
   );
 }
