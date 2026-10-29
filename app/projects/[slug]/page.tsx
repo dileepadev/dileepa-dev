@@ -116,7 +116,7 @@ export default async function ProjectPage({ params }: Params) {
         )}
 
         {project.cover && (
-          <div className="relative mt-10 aspect-video overflow-hidden rounded-lg border border-border-strong bg-bg-surface">
+          <div className="relative mt-10 aspect-video overflow-hidden rounded-block bg-bg">
             <Image
               src={project.cover.url}
               alt={project.cover.alt}
@@ -165,12 +165,9 @@ export default async function ProjectPage({ params }: Params) {
         {(project.metrics ?? []).length > 0 && (
           <section className="mt-12">
             <h2>Numbers</h2>
-            <dl className="mt-4 grid gap-4 sm:grid-cols-3">
+            <dl className="mt-4 grid gap-4 @xl/section:grid-cols-3">
               {(project.metrics ?? []).map((metric) => (
-                <div
-                  key={metric.label}
-                  className="rounded-lg border border-border-strong bg-bg-surface p-6"
-                >
+                <div key={metric.label} className="tile p-6">
                   <dt className="font-mono text-small text-fg-muted">
                     {metric.label}
                   </dt>
@@ -186,12 +183,12 @@ export default async function ProjectPage({ params }: Params) {
         {(project.gallery ?? []).length > 0 && (
           <section className="mt-12">
             <h2>Gallery</h2>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <div className="mt-4 grid gap-4 @xl/section:grid-cols-2">
               {[...(project.gallery ?? [])]
                 .sort((a, b) => a.order - b.order)
                 .map((item) => (
                   <figure key={item.url}>
-                    <div className="relative aspect-4/3 overflow-hidden rounded-lg border border-border-strong bg-bg-surface">
+                    <div className="relative aspect-4/3 overflow-hidden rounded-block bg-bg">
                       <Image
                         src={item.url}
                         alt={item.alt}

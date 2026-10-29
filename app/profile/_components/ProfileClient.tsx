@@ -10,7 +10,6 @@ import {
   Mail,
   MapPin,
   Share2,
-  ZoomIn,
   Briefcase,
   Building2,
   Globe,
@@ -35,6 +34,7 @@ import {
 } from "@/components/ui";
 import type { About, Experience, SpeakingTopic } from "@/lib/api-types";
 import { SITE_CONFIG } from "@/lib/constants";
+import { ZoomHint } from "@/components/ui/ZoomHint";
 
 interface ProfilePhoto {
   id: string;
@@ -280,10 +280,10 @@ export function ProfileClient({
   return (
     <div className="space-y-16">
       {/* Speaker Identity Summary Card */}
-      <div className="p-6 sm:p-8 rounded-lg border border-border-strong bg-bg-surface">
+      <div className="tile p-6 sm:p-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-center">
-            <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-lg border border-border-strong overflow-hidden bg-bg shrink-0">
+            <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-block overflow-hidden bg-bg-surface shrink-0">
               <Image
                 src="/profile/v2.webp"
                 alt="Dileepa Bandara"
@@ -368,7 +368,7 @@ export function ProfileClient({
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 @4xl/section:grid-cols-2 gap-6">
           {/* Short Bio */}
           <Card className="flex flex-col justify-between p-6">
             <div className="space-y-3">
@@ -457,18 +457,23 @@ export function ProfileClient({
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Four across only where a card still fits its chip and both
+            actions - beside the rail, "large" is not wide enough. */}
+        <div className="grid grid-cols-1 @xl/section:grid-cols-2 @5xl/section:grid-cols-4 gap-6">
           {PROFILE_PHOTOS.map((photo) => (
             <div
               key={photo.id}
-              className="rounded-lg border border-border-strong bg-bg-surface overflow-hidden flex flex-col justify-between shadow-xs transition-colors"
+              className="tile overflow-hidden flex flex-col justify-between"
             >
-              {/* Photo Viewport with Hover Zoom */}
-              <div
-                className="group relative aspect-square w-full cursor-zoom-in overflow-hidden bg-bg"
+              {/* Photo viewport - a button, so the viewer opens from the
+                  keyboard too */}
+              <button
+                type="button"
+                className="group relative block aspect-square w-full cursor-zoom-in overflow-hidden bg-bg text-left"
                 onClick={() => setLightboxPhoto(photo)}
+                aria-label={`View ${photo.title} full size`}
               >
-                <div
+                <span
                   className={
                     photo.isTransparent
                       ? "absolute inset-0 bg-[repeating-conic-gradient(var(--border-strong)_0%_25%,transparent_0%_50%)] bg-[length:16px_16px] opacity-15"
@@ -480,24 +485,15 @@ export function ProfileClient({
                   alt={`Dileepa Bandara - ${photo.title}`}
                   width={300}
                   height={300}
-                  className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-108"
+                  className="w-full h-full object-cover"
                 />
+                <ZoomHint />
 
-                {/* Hover Zoom Overlay */}
-                <div className="absolute inset-0 bg-black/45 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-bg text-fg font-mono text-xs font-medium shadow-md">
-                    <ZoomIn className="h-3.5 w-3.5 text-brand" />
-                    <span>Click to zoom</span>
-                  </div>
-                </div>
-
-                {/* Format Pill */}
-                <div className="absolute top-2.5 left-2.5 pointer-events-none">
-                  <span className="inline-flex items-center px-2 py-0.5 rounded text-label font-mono font-medium bg-bg/90 backdrop-blur-sm text-fg border border-border-strong">
-                    {photo.format}
-                  </span>
-                </div>
-              </div>
+                {/* Format pill */}
+                <span className="absolute top-2.5 left-2.5 pointer-events-none">
+                  <span className="chip backdrop-blur-sm">{photo.format}</span>
+                </span>
+              </button>
 
               {/* Photo Information & Actions */}
               <div className="p-4 flex flex-col justify-between flex-1 space-y-4">
@@ -513,7 +509,7 @@ export function ProfileClient({
                   </p>
                 </div>
 
-                <div className="pt-3 border-t border-border-strong/60 flex items-center gap-2">
+                <div className="pt-3 border-t border-border-hairline flex flex-wrap items-center gap-2">
                   <a
                     href={photo.src}
                     download={photo.filename}
@@ -559,12 +555,12 @@ export function ProfileClient({
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 @xl/section:grid-cols-2 gap-4">
           {topics.map((topic, index) => (
             <Card key={topic.key} className="p-5 flex flex-col justify-between">
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-full bg-brand/10 text-brand border border-brand/30 inline-flex items-center justify-center font-mono text-xs font-bold">
+                  <span className="w-6 h-6 rounded-full bg-bg-surface text-fg border border-border-strong inline-flex items-center justify-center font-mono text-xs font-bold">
                     0{index + 1}
                   </span>
                   <h3 className="text-sm sm:text-base font-bold text-fg">
@@ -589,7 +585,7 @@ export function ProfileClient({
           </p>
         </div>
 
-        <div className="rounded-lg border border-border-strong bg-bg-surface overflow-hidden divide-y divide-border-strong/60 shadow-xs">
+        <div className="tile overflow-hidden divide-y divide-border-hairline">
           {verificationChannels.map((item) => {
             const Icon = item.icon;
             const isCopied = copiedKey === item.key;
@@ -597,12 +593,12 @@ export function ProfileClient({
             return (
               <div
                 key={item.key}
-                className="p-4 sm:px-6 sm:py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-surface-hover/40 transition-colors"
+                className="p-4 sm:px-6 sm:py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
               >
                 {/* Left: Icon, Platform Name, Handler / Link */}
                 <div className="flex items-center gap-3.5 min-w-0">
-                  <div className="w-9 h-9 rounded-md border border-border-strong bg-bg flex items-center justify-center text-fg shrink-0">
-                    <Icon className="h-4.5 w-4.5 text-fg" aria-hidden="true" />
+                  <div className="w-9 h-9 rounded-block bg-bg-surface flex items-center justify-center text-fg shrink-0">
+                    <Icon className="h-4 w-4 text-fg" aria-hidden="true" />
                   </div>
 
                   <div className="min-w-0 space-y-0.5">

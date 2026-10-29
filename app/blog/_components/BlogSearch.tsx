@@ -292,7 +292,7 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
                     {post.publishedDate && (
                       <span className="inline-flex items-center gap-1.5 text-fg font-medium">
                         <Calendar
-                          className="h-3 w-3 shrink-0 text-fg-muted"
+                          className="h-3.5 w-3.5 shrink-0 text-fg-muted"
                           aria-hidden="true"
                         />
                         <time dateTime={toDateAttribute(post.publishedDate)}>
@@ -302,7 +302,7 @@ export function BlogSearch({ posts }: { posts: BlogPostSummary[] }) {
                     )}
                     <span className="inline-flex items-center gap-1.5 text-fg-muted">
                       <Clock
-                        className="h-3 w-3 shrink-0 text-fg-muted"
+                        className="h-3.5 w-3.5 shrink-0 text-fg-muted"
                         aria-hidden="true"
                       />
                       <span>{readingTime(post.readingTimeMinutes)}</span>

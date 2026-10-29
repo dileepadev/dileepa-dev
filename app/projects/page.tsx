@@ -40,7 +40,7 @@ export default async function ProjectsPage() {
             <h1>{PAGES.projects.title}</h1>
           </div>
           {total > 0 && (
-            <div className="count-badge inline-flex items-center gap-1.5 font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1">
+            <div className="count-badge inline-flex items-center gap-1.5 font-mono text-small text-fg-muted px-2.5 py-1 shrink-0 mt-1">
               <span className="font-medium text-fg">{total}</span>
               <span>{total === 1 ? "Project" : "Projects"}</span>
             </div>

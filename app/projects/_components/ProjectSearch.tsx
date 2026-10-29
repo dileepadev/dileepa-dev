@@ -311,7 +311,7 @@ export function ProjectSearch({ projects }: { projects: Project[] }) {
                     {project.role && (
                       <span className="inline-flex items-center gap-1.5 text-fg font-medium">
                         <Briefcase
-                          className="h-3 w-3 shrink-0 text-fg-muted"
+                          className="h-3.5 w-3.5 shrink-0 text-fg-muted"
                           aria-hidden="true"
                         />
                         <span>{project.role}</span>
@@ -320,7 +320,7 @@ export function ProjectSearch({ projects }: { projects: Project[] }) {
                     {project.period?.start && (
                       <span className="inline-flex items-center gap-1.5 text-fg-muted font-mono text-xs">
                         <Calendar
-                          className="h-3 w-3 shrink-0 text-fg-muted"
+                          className="h-3.5 w-3.5 shrink-0 text-fg-muted"
                           aria-hidden="true"
                         />
                         <span>

@@ -194,11 +194,11 @@ export default async function EventPage({ params }: Params) {
         <h1>{event.title}</h1>
         {event.summary && <p className="section-intro">{event.summary}</p>}
 
-        <div
-          className={`overflow-hidden rounded-lg border border-border-strong bg-bg-surface ${event.summary ? "" : "mt-6 sm:mt-8"}`}
-        >
+        {/* The facts are four separate things, so four tiles with a gap, as
+            the project page's numbers are - not one tile cut by rules. */}
+        <div className={event.summary ? undefined : "mt-6 sm:mt-8"}>
           {hasBadges && (
-            <div className="flex flex-wrap items-center gap-2 border-b border-border-hairline p-4 sm:p-5">
+            <div className="mb-4 flex flex-wrap items-center gap-2">
               {event.series && <Badge>Part of {event.series.name}</Badge>}
               {event.status === "upcoming" && (
                 <Badge variant="filled">Upcoming</Badge>
@@ -206,14 +206,14 @@ export default async function EventPage({ params }: Params) {
               {event.status === "cancelled" && <Badge>Cancelled</Badge>}
             </div>
           )}
-          <dl className="grid grid-cols-1 sm:grid-cols-2">
+          <dl className="grid grid-cols-1 gap-4 @xl/section:grid-cols-2">
             {/* 1. Date & Time */}
-            <div className="flex items-start gap-3.5 border-b sm:border-r border-border-hairline p-4 sm:p-5">
+            <div className="tile flex items-start gap-3.5 p-6">
               <div
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded border border-border-strong bg-bg text-fg-muted"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-block bg-bg-surface text-fg-muted"
                 aria-hidden="true"
               >
-                <Calendar className="h-4 w-4" strokeWidth={1.75} />
+                <Calendar className="h-4 w-4" />
               </div>
               <div className="min-w-0 flex-1">
                 <dt className="text-label tracking-[0.01em] text-fg-muted">
@@ -236,15 +236,15 @@ export default async function EventPage({ params }: Params) {
             </div>
 
             {/* 2. Venue & Location */}
-            <div className="flex items-start gap-3.5 border-b border-border-hairline p-4 sm:p-5">
+            <div className="tile flex items-start gap-3.5 p-6">
               <div
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded border border-border-strong bg-bg text-fg-muted"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-block bg-bg-surface text-fg-muted"
                 aria-hidden="true"
               >
                 {event.format === "online" && !event.location?.venue ? (
-                  <Video className="h-4 w-4" strokeWidth={1.75} />
+                  <Video className="h-4 w-4" />
                 ) : (
-                  <MapPin className="h-4 w-4" strokeWidth={1.75} />
+                  <MapPin className="h-4 w-4" />
                 )}
               </div>
               <div className="min-w-0 flex-1">
@@ -293,15 +293,15 @@ export default async function EventPage({ params }: Params) {
             </div>
 
             {/* 3. Organiser */}
-            <div className="flex items-start gap-3.5 border-b sm:border-b-0 sm:border-r border-border-hairline p-4 sm:p-5">
+            <div className="tile flex items-start gap-3.5 p-6">
               <div
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded border border-border-strong bg-bg text-fg-muted"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-block bg-bg-surface text-fg-muted"
                 aria-hidden="true"
               >
                 {event.host ? (
-                  <Building2 className="h-4 w-4" strokeWidth={1.75} />
+                  <Building2 className="h-4 w-4" />
                 ) : (
-                  <Sparkles className="h-4 w-4" strokeWidth={1.75} />
+                  <Sparkles className="h-4 w-4" />
                 )}
               </div>
               <div className="min-w-0 flex-1">
@@ -355,15 +355,15 @@ export default async function EventPage({ params }: Params) {
             </div>
 
             {/* 4. Audience & Format */}
-            <div className="flex items-start gap-3.5 p-4 sm:p-5">
+            <div className="tile flex items-start gap-3.5 p-6">
               <div
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded border border-border-strong bg-bg text-fg-muted"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-block bg-bg-surface text-fg-muted"
                 aria-hidden="true"
               >
                 {event.audienceSize ? (
-                  <Users className="h-4 w-4" strokeWidth={1.75} />
+                  <Users className="h-4 w-4" />
                 ) : (
-                  <Presentation className="h-4 w-4" strokeWidth={1.75} />
+                  <Presentation className="h-4 w-4" />
                 )}
               </div>
               <div className="min-w-0 flex-1">
@@ -397,7 +397,6 @@ export default async function EventPage({ params }: Params) {
               <div className="flex items-center gap-2 text-small font-mono text-fg-muted">
                 <Ticket
                   className="h-4 w-4 text-fg-muted shrink-0"
-                  strokeWidth={1.75}
                   aria-hidden="true"
                 />
                 <span className="break-words">
@@ -439,7 +438,7 @@ export default async function EventPage({ params }: Params) {
         {(event.speakers ?? []).length > 0 && (
           <section className="mt-12">
             <h2>Speakers</h2>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div className="mt-4 grid gap-3 @xl/section:grid-cols-2">
               {(event.speakers ?? []).map((speaker) => {
                 const avatarSrc = normalizeAvatarUrl(speaker.avatarUrl);
                 const isCloudinary = avatarSrc?.includes("res.cloudinary.com");
@@ -448,7 +447,7 @@ export default async function EventPage({ params }: Params) {
                 return (
                   <div
                     key={speaker.name}
-                    className="flex items-center gap-3.5 rounded-lg border border-border-strong bg-bg-surface p-4 transition-colors"
+                    className="tile flex items-center gap-3.5 p-4"
                   >
                     {avatarSrc ? (
                       <Image
@@ -514,7 +513,6 @@ export default async function EventPage({ params }: Params) {
                 >
                   <Video
                     className="h-4 w-4 shrink-0 text-brand"
-                    strokeWidth={1.75}
                     aria-hidden="true"
                   />
                   <span>Watch on {humanise(recording.platform)}</span>
@@ -540,7 +538,6 @@ export default async function EventPage({ params }: Params) {
               >
                 <Presentation
                   className="h-4 w-4 shrink-0 text-brand"
-                  strokeWidth={1.75}
                   aria-hidden="true"
                 />
                 <span>
@@ -579,7 +576,7 @@ export default async function EventPage({ params }: Params) {
         {photos.length > 0 && (
           <section className="mt-12">
             <h2>Photos</h2>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <div className="mt-4 grid gap-4 @xl/section:grid-cols-2">
               {photos.map((photo) => (
                 <figure key={photo.url}>
                   <ZoomableImage

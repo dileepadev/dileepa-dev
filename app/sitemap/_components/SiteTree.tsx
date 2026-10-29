@@ -53,7 +53,7 @@ function getNodeIcon(node: TreeNode, isOpen: boolean) {
     return isOpen ? (
       <FolderOpen className="h-4 w-4 text-brand shrink-0" aria-hidden="true" />
     ) : (
-      <Folder className="h-4 w-4 text-brand/80 shrink-0" aria-hidden="true" />
+      <Folder className="h-4 w-4 text-brand shrink-0" aria-hidden="true" />
     );
   }
 
@@ -181,7 +181,7 @@ function TreeBranch({
       {/* Branch line item */}
       <div
         className={cn(
-          "group flex items-center gap-2 py-1.5 px-2 rounded-sm transition-colors duration-150",
+          "group flex items-center gap-2 py-1.5 px-2 rounded-row transition-colors duration-150",
           "hover:bg-surface-hover",
         )}
       >
@@ -190,7 +190,7 @@ function TreeBranch({
           <button
             type="button"
             onClick={() => toggleOpen(node.id)}
-            className="p-0.5 -ml-1 text-fg-muted hover:text-brand cursor-pointer rounded transition-colors"
+            className="p-0.5 -ml-1 text-fg-muted hover:text-brand cursor-pointer rounded-full transition-colors"
             aria-label={isOpen ? "Collapse branch" : "Expand branch"}
           >
             {isOpen ? (
@@ -217,7 +217,7 @@ function TreeBranch({
           href={node.path}
           className="inline-flex items-baseline gap-2 flex-wrap min-w-0 text-fg hover:text-fg-muted transition-colors"
         >
-          <span className="font-medium text-fg group-hover:text-fg-muted transition-colors">
+          <span className="font-medium text-fg group-hover:text-fg-muted transition-colors [overflow-wrap:anywhere]">
             {node.name}
           </span>
           {node.title && (
@@ -229,7 +229,9 @@ function TreeBranch({
 
         {/* Badge / Type tag */}
         {node.badge && (
-          <span className="chip ml-auto shrink-0">{node.badge}</span>
+          <span className="chip ml-auto shrink-0 hidden sm:inline-block">
+            {node.badge}
+          </span>
         )}
       </div>
 
@@ -343,7 +345,7 @@ export function SiteTree({ tree, pagesList }: SiteTreeProps) {
             />
           )}
           {searchActive && (
-            <span className="count-badge inline-flex items-center gap-1.5 font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0">
+            <span className="count-badge inline-flex items-center gap-1.5 font-mono text-small text-fg-muted px-2.5 py-1 shrink-0">
               <span className="font-medium text-fg">
                 {viewMode === "pages" ? filteredPages.length : visibleCount}
               </span>
@@ -364,7 +366,7 @@ export function SiteTree({ tree, pagesList }: SiteTreeProps) {
       </div>
 
       {/* Content container styled like a developer console */}
-      <div className="rounded-lg border border-border-strong bg-bg-surface p-4 sm:p-6 overflow-x-auto shadow-sm">
+      <div className="tile p-4 sm:p-6 overflow-x-auto">
         <div className="mb-4 pb-3 border-b border-border-strong/60 flex items-center justify-between font-mono text-xs text-fg-muted">
           <span className="flex items-center gap-2">
             <span
@@ -408,7 +410,7 @@ export function SiteTree({ tree, pagesList }: SiteTreeProps) {
           </ul>
         ) : (
           /* The interactive tree */
-          <div className="min-w-[480px]">
+          <div>
             <TreeBranch
               node={filteredTree}
               openMap={openMap}
