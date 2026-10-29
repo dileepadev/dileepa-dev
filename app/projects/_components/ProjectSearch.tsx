@@ -318,7 +318,7 @@ export function ProjectSearch({ projects }: { projects: Project[] }) {
                       </span>
                     )}
                     {project.period?.start && (
-                      <span className="inline-flex items-center gap-1.5 text-fg-muted font-mono text-xs">
+                      <span className="inline-flex items-center gap-1.5 text-fg-muted font-mono text-label">
                         <Calendar
                           className="h-3.5 w-3.5 shrink-0 text-fg-muted"
                           aria-hidden="true"

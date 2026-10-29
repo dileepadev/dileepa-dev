@@ -233,11 +233,13 @@ export function ErrorVisual({ error, reset }: ErrorVisualProps) {
             <div className="space-y-1.5 min-w-[10rem] flex-1">
               <div className="flex items-center gap-1.5 text-fg">
                 <span className="w-2 h-2 rounded-full bg-brand animate-pulse" />
-                <span className="font-bold tracking-wider">
+                <span className="font-medium tracking-wider">
                   ENGINEER ON STANDBY
                 </span>
               </div>
-              <div className="font-bold text-sm text-fg">Dileepa Bandara</div>
+              <div className="font-medium text-small text-fg">
+                Dileepa Bandara
+              </div>
               <div>contact@dileepa.dev</div>
               <div>CALLSIGN: //DILEEPADEV</div>
             </div>

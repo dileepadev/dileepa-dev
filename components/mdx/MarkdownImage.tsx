@@ -127,7 +127,7 @@ export function MarkdownImage({
         </button>
 
         {alt && (
-          <span className="block border-t border-border-strong bg-bg-surface px-4 py-2 text-center font-mono text-label text-fg-muted">
+          <span className="block border-t border-border-strong bg-bg-surface px-4 py-2 text-center text-small text-fg-muted">
             {alt}
           </span>
         )}

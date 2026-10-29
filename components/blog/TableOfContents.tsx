@@ -233,7 +233,7 @@ export function TableOfContents({ headings }: { headings: Heading[] }) {
         <span className="inline-flex items-center gap-2">
           <List className="h-4 w-4 shrink-0 text-brand" aria-hidden="true" />
           <span className="font-medium">On this page</span>
-          <span className="text-xs text-fg-muted font-normal">
+          <span className="text-label text-fg-muted font-normal">
             ({headings.length})
           </span>
         </span>

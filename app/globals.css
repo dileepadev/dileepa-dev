@@ -47,6 +47,7 @@
   --color-border-strong: var(--border-strong);
 
   --color-fg: var(--fg);
+  --color-fg-body: var(--fg-body);
   --color-fg-muted: var(--fg-muted);
 
   --color-brand: var(--brand);
@@ -833,6 +834,7 @@ pre {
 }
 
 .section-head .section-intro {
+  color: var(--fg-muted);
   font-size: var(--text-lead);
   line-height: var(--lh-lead);
   letter-spacing: -0.01em;
@@ -1016,9 +1018,9 @@ pre {
 
 .pillar p {
   margin-top: var(--space-2);
-  color: var(--fg-muted);
-  font-size: var(--text-small);
-  line-height: var(--lh-small);
+  color: var(--fg-body);
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
 }
 
 /* --- Work: timeline beside the tools panel ------------------------------- */
@@ -1284,9 +1286,9 @@ pre {
   display: block;
   margin-top: var(--space-2);
   max-width: 62ch;
-  color: var(--fg-muted);
-  font-size: var(--text-small);
-  line-height: var(--lh-small);
+  color: var(--fg-body);
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
 }
 
 .event-where {
@@ -1348,7 +1350,7 @@ pre {
 }
 
 .post-featured p {
-  color: var(--fg-muted);
+  color: var(--fg-body);
 }
 
 .post-meta {
@@ -1787,7 +1789,7 @@ pre {
 }
 
 .rail-id-name {
-  font-size: 1.125rem;
+  font-size: var(--text-h3);
   line-height: 1.2;
   font-weight: 500;
   letter-spacing: -0.02em;
@@ -2123,9 +2125,9 @@ pre {
   -webkit-line-clamp: 3;
   line-clamp: 3;
   overflow: hidden;
-  font-size: var(--text-small);
-  line-height: var(--lh-small);
-  color: var(--fg-muted);
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
+  color: var(--fg-body);
 }
 
 .tile-foot {
@@ -2595,18 +2597,27 @@ a.chip:hover {
 }
 
 .section-intro {
-  color: var(--fg-muted);
+  /* A paragraph at the body size, so the body colour. The lead-size intro
+     under a section heading and the hero's lead stay muted below: at
+     20-26px they are large text, and the step keeps them under the title. */
+  color: var(--fg-body);
   margin-top: var(--space-4);
   margin-bottom: var(--space-12);
 }
 
 /* --- Section copy ------------------------------------------------------- */
 
-/* The About block: muted paragraphs a space-4 apart, with emphasis stepping up
-   to --fg. Deliberately not `.prose`, which is the blog reader's article style
-   and sets both a larger rhythm and full-contrast text. */
+/* The About block: paragraphs a space-4 apart in the body colour, with
+   emphasis stepping up to --fg. Deliberately not `.prose`, which is the blog
+   reader's article style and sets a larger rhythm.
+
+   Every paragraph read sentence by sentence - this one, an entry's
+   description, a card's, a pillar's - is set at the body size in --fg-body
+   (v2.1.0 draft). The muted colour and the small size are for what you
+   glance at: dates, names, roles, labels. Running text in the muted grey at
+   15px read as fine print under a 26px title. */
 .section-copy p {
-  color: var(--fg-muted);
+  color: var(--fg-body);
 }
 
 .section-copy p + p {
@@ -2682,9 +2693,9 @@ a.chip:hover {
 
 .entry-body {
   margin-top: var(--space-3);
-  color: var(--fg-muted);
-  font-size: var(--text-small);
-  line-height: var(--lh-small);
+  color: var(--fg-body);
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
 }
 
 /* --- Card grid ---------------------------------------------------------- */
@@ -2787,9 +2798,9 @@ a.chip:hover {
 
 .item p {
   margin-top: var(--space-2);
-  color: var(--fg-muted);
-  font-size: var(--text-small);
-  line-height: var(--lh-small);
+  color: var(--fg-body);
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
   max-width: 62ch;
 }
 
@@ -3749,7 +3760,9 @@ a.chip:hover {
 .prose h2 {
   font-size: var(--text-h2);
   line-height: var(--lh-h2);
-  font-weight: 700;
+  /* 500, like every heading in v2.1 - the article's H3 already was. Bold
+     stays for <strong>, the one place 700 means something in running text. */
+  font-weight: 500;
   letter-spacing: var(--track-tight);
   margin-top: var(--space-12);
 }

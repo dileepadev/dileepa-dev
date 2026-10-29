@@ -221,7 +221,7 @@ function TreeBranch({
             {node.name}
           </span>
           {node.title && (
-            <span className="text-fg-muted text-xs font-normal min-w-0">
+            <span className="text-fg-muted text-label font-normal min-w-0">
               {node.title}
             </span>
           )}
@@ -367,7 +367,7 @@ export function SiteTree({ tree, pagesList }: SiteTreeProps) {
 
       {/* Content container styled like a developer console */}
       <div className="tile p-4 sm:p-6 overflow-x-auto">
-        <div className="mb-4 pb-3 border-b border-border-strong/60 flex items-center justify-between font-mono text-xs text-fg-muted">
+        <div className="mb-4 pb-3 border-b border-border-strong/60 flex items-center justify-between font-mono text-label text-fg-muted">
           <span className="flex items-center gap-2">
             <span
               className="h-2 w-2 rounded-full bg-brand animate-pulse"
@@ -403,7 +403,7 @@ export function SiteTree({ tree, pagesList }: SiteTreeProps) {
               </li>
             ))}
             {filteredPages.length === 0 && (
-              <li className="col-span-full py-8 text-center font-mono text-xs text-fg-muted">
+              <li className="col-span-full py-8 text-center font-mono text-small text-fg-muted">
                 No pages matched &ldquo;{query}&rdquo;
               </li>
             )}

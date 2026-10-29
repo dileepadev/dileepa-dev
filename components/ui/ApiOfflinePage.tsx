@@ -35,10 +35,10 @@ export function ApiOfflinePage({
             </div>
             <div className="section-label">503 / Service unavailable</div>
             <h1>API connection offline</h1>
-            <p className="mt-4 text-fg-muted leading-relaxed">
+            <p className="mt-4 text-fg-body">
               The website is currently unable to establish a secure uplink with
               the upstream portfolio API (
-              <span className="font-mono text-fg text-xs">{host}</span>).
+              <span className="font-mono text-fg text-label">{host}</span>).
               Dynamic collections and interactive comments are temporarily
               degraded, but all static pages, articles, and documentation remain
               fully functional.

@@ -52,7 +52,7 @@ export function NotFoundPage({
             </div>
             <div className="section-label">404</div>
             <h1>{heading}</h1>
-            <p className="mt-4 text-fg-muted">{children}</p>
+            <p className="mt-4 text-fg-body">{children}</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <LinkButton href="/">Go to the homepage</LinkButton>
               {back && (

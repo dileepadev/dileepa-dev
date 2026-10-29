@@ -214,6 +214,12 @@
   --border-input: #5b5b5b; /* 3.0:1 on --bg */
 
   --fg: var(--ink-100); /* 18.0:1 */
+  /* v2.1.0 draft: running text - any paragraph read sentence by sentence.
+     Clearly a step under --fg (about 8:1 against 18:1), so a title still
+     leads the paragraph under it - at 12:1 the two read as one block - and
+     clearly above --fg-muted, which is for what you glance at: dates,
+     names, labels. */
+  --fg-body: #a8a8a8; /* 8.6:1 */
   --fg-muted: var(--ink-400); /*  6.1:1 */
 
   /* v2.1.0 draft: the accent is the text colour. */
@@ -241,6 +247,7 @@
   --border-input: #8f8f8f; /* 3.0:1 on --bg */
 
   --fg: var(--paper-900);
+  --fg-body: #4f4f4f; /* 7.6:1 */
   --fg-muted: var(--paper-400); /* 5.1:1 */
 
   --brand: var(--paper-900); /* 17.3:1 on bg */
@@ -265,6 +272,7 @@
     --border-strong: var(--paper-300);
     --border-input: #8f8f8f;
     --fg: var(--paper-900);
+    --fg-body: #4f4f4f;
     --fg-muted: var(--paper-400);
     --brand: var(--paper-900);
     --brand-fill: var(--paper-900);
@@ -665,6 +673,7 @@ textarea.input {
     --bg: #ffffff;
     --bg-surface: #ffffff;
     --fg: var(--paper-900);
+    --fg-body: #4f4f4f;
     --fg-muted: var(--paper-400);
     --brand: var(--paper-900);
     --border: var(--paper-200);

@@ -40,7 +40,7 @@ export function ErrorPage({ error, reset }: ErrorPageProps) {
             </div>
             <div className="section-label">500 / Error</div>
             <h1>This page did not load</h1>
-            <p className="mt-4 text-fg-muted leading-relaxed">
+            <p className="mt-4 text-fg-body">
               Something on the way to rendering this page failed. Trying again
               often works; if it keeps happening, email{" "}
               <a
@@ -53,7 +53,7 @@ export function ErrorPage({ error, reset }: ErrorPageProps) {
             </p>
             {digest && (
               <div className="chip mt-4 inline-flex items-center gap-2">
-                <span className="text-brand font-bold">Reference:</span>
+                <span className="text-brand font-medium">Reference:</span>
                 <span>{digest}</span>
               </div>
             )}

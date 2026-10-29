@@ -174,7 +174,9 @@ export function ApiOfflineVisual({
         <>
           <div className="flex items-center gap-2 text-fg">
             <ShieldCheck className="h-4 w-4 shrink-0" />
-            <span className="font-bold text-sm">Static resilience active</span>
+            <span className="font-medium text-small">
+              Static resilience active
+            </span>
           </div>
           <p>
             While the live API is disconnected, the platform keeps serving the

@@ -296,7 +296,7 @@ export function ProfileClient({
 
             <div className="space-y-1.5 min-w-0">
               <div className="flex items-center gap-2.5 flex-wrap">
-                <h2 className="text-xl sm:text-2xl font-bold text-fg">
+                <h2 className="text-h3 sm:text-h2 font-medium text-fg">
                   Dileepa Bandara
                 </h2>
                 {about?.status ? (
@@ -311,12 +311,16 @@ export function ProfileClient({
                   <Briefcase className="h-3.5 w-3.5 text-brand shrink-0" />
                   <span>{currentRole}</span>
                 </span>
-                <span className="text-border-strong">·</span>
+                <span className="text-fg-muted" aria-hidden="true">
+                  ·
+                </span>
                 <span className="inline-flex items-center gap-1.5">
                   <Building2 className="h-3.5 w-3.5 text-fg-muted shrink-0" />
                   <span>{currentCompany}</span>
                 </span>
-                <span className="text-border-strong">·</span>
+                <span className="text-fg-muted" aria-hidden="true">
+                  ·
+                </span>
                 <span className="inline-flex items-center gap-1 text-fg-muted font-normal">
                   <MapPin className="h-3.5 w-3.5 text-fg-muted shrink-0" />
                   <span>{location}</span>
@@ -362,7 +366,7 @@ export function ProfileClient({
         <div>
           <div className="section-label">Copyable copy</div>
           <h2>Speaker biographies</h2>
-          <p className="mt-2 text-fg-muted">
+          <p className="mt-2 text-fg-body">
             Pre-approved biographies in two lengths for event schedules,
             introduction notes, and speaker listings.
           </p>
@@ -373,18 +377,18 @@ export function ProfileClient({
           <Card className="flex flex-col justify-between p-6">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="font-mono text-xs font-medium text-brand uppercase tracking-wider">
+                <span className="font-mono text-label font-medium text-brand uppercase tracking-wider">
                   Short bio (~50 words)
                 </span>
-                <span className="font-mono text-xs text-fg-muted">
+                <span className="font-mono text-label text-fg-muted">
                   For announcements &amp; social flyers
                 </span>
               </div>
-              <p className="text-fg text-small leading-relaxed">{shortBio}</p>
+              <p className="text-fg-body text-body">{shortBio}</p>
             </div>
 
             <div className="pt-5 mt-4 border-t border-border-strong/60 flex items-center justify-between">
-              <span className="font-mono text-xs text-fg-muted">
+              <span className="font-mono text-label text-fg-muted">
                 Word count: ~40 words
               </span>
               <Button
@@ -410,18 +414,18 @@ export function ProfileClient({
           <Card className="flex flex-col justify-between p-6">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="font-mono text-xs font-medium text-brand uppercase tracking-wider">
+                <span className="font-mono text-label font-medium text-brand uppercase tracking-wider">
                   Standard bio (~100 words)
                 </span>
-                <span className="font-mono text-xs text-fg-muted">
+                <span className="font-mono text-label text-fg-muted">
                   For conference agendas &amp; programs
                 </span>
               </div>
-              <p className="text-fg text-small leading-relaxed">{fullBio}</p>
+              <p className="text-fg-body text-body">{fullBio}</p>
             </div>
 
             <div className="pt-5 mt-4 border-t border-border-strong/60 flex items-center justify-between">
-              <span className="font-mono text-xs text-fg-muted">
+              <span className="font-mono text-label text-fg-muted">
                 Word count: ~90 words
               </span>
               <Button
@@ -450,7 +454,7 @@ export function ProfileClient({
         <div>
           <div className="section-label">Media kit</div>
           <h2>Official headshots &amp; portraits</h2>
-          <p className="mt-2 text-fg-muted">
+          <p className="mt-2 text-fg-body">
             High-resolution assets for print and digital media. Hover over any
             photo to inspect details, click to view in full screen, download in
             your preferred format, or copy the direct asset URL.
@@ -499,12 +503,14 @@ export function ProfileClient({
               <div className="p-4 flex flex-col justify-between flex-1 space-y-4">
                 <div className="space-y-1.5">
                   <div className="flex items-baseline justify-between gap-2">
-                    <h3 className="text-sm font-bold text-fg">{photo.title}</h3>
+                    <h3 className="text-body font-medium text-fg">
+                      {photo.title}
+                    </h3>
                     <span className="font-mono text-label text-fg-muted shrink-0">
                       {photo.size}
                     </span>
                   </div>
-                  <p className="text-xs text-fg-muted line-clamp-2">
+                  <p className="text-small text-fg-body line-clamp-2">
                     {photo.description}
                   </p>
                 </div>
@@ -549,7 +555,7 @@ export function ProfileClient({
         <div>
           <div className="section-label">Sessions &amp; talks</div>
           <h2>Keynote topics &amp; workshops</h2>
-          <p className="mt-2 text-fg-muted">
+          <p className="mt-2 text-fg-body">
             Popular technical talk themes and hands-on workshops Dileepa
             regularly delivers for engineering conferences and meetups.
           </p>
@@ -560,14 +566,12 @@ export function ProfileClient({
             <Card key={topic.key} className="p-5 flex flex-col justify-between">
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-full bg-bg-surface text-fg border border-border-strong inline-flex items-center justify-center font-mono text-xs font-bold">
+                  <span className="w-6 h-6 rounded-full bg-bg-surface text-fg border border-border-strong inline-flex items-center justify-center font-mono text-label font-medium">
                     0{index + 1}
                   </span>
-                  <h3 className="text-sm sm:text-base font-bold text-fg">
-                    {topic.title}
-                  </h3>
+                  <h3 className="text-h3 font-medium text-fg">{topic.title}</h3>
                 </div>
-                <p className="text-small text-fg-muted pl-8">{topic.summary}</p>
+                <p className="text-body text-fg-body pl-8">{topic.summary}</p>
               </div>
             </Card>
           ))}
@@ -579,7 +583,7 @@ export function ProfileClient({
         <div>
           <div className="section-label">Verification</div>
           <h2>Connect &amp; verify credentials</h2>
-          <p className="mt-2 text-fg-muted">
+          <p className="mt-2 text-fg-body">
             Official profiles, code repositories, recorded walkthroughs, and bio
             links to cite in your event material.
           </p>
@@ -603,12 +607,12 @@ export function ProfileClient({
 
                   <div className="min-w-0 space-y-0.5">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-sm font-bold text-fg">
+                      <span className="text-body font-medium text-fg">
                         {item.name}
                       </span>
                       {item.badge && <span className="chip">{item.badge}</span>}
                     </div>
-                    <div className="font-mono text-xs text-fg-muted truncate">
+                    <div className="font-mono text-label text-fg-muted truncate">
                       {item.handler}
                     </div>
                   </div>

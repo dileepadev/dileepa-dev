@@ -64,12 +64,12 @@ export function ColorSwatch({
           color: textHex || "var(--fg)",
         }}
       >
-        <span className="font-mono text-xs font-medium drop-shadow-xs">
+        <span className="font-mono text-label font-medium drop-shadow-xs">
           {name}
         </span>
         <span
           className={cn(
-            "p-1 rounded-full bg-bg/80 text-fg text-xs backdrop-blur-xs transition-opacity duration-150",
+            "p-1 rounded-full bg-bg/80 text-fg text-label backdrop-blur-xs transition-opacity duration-150",
             copied ? "opacity-100" : "opacity-0 group-hover:opacity-100",
           )}
         >
@@ -83,7 +83,9 @@ export function ColorSwatch({
 
       <div className="space-y-1">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <span className="font-mono text-xs font-medium text-fg">{hex}</span>
+          <span className="font-mono text-label font-medium text-fg">
+            {hex}
+          </span>
           {contrastBadge && (
             <span
               className={cn(
@@ -191,10 +193,12 @@ export function SocialCardPreview() {
   return (
     <div className="tile overflow-hidden">
       {/* Control bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-border-hairline text-xs font-mono">
+      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-border-hairline text-label font-mono">
         <div className="flex items-center gap-2">
           <span className="text-fg font-medium">Social card simulator</span>
-          <span className="text-border-strong select-none">/</span>
+          <span className="text-fg-muted select-none" aria-hidden="true">
+            /
+          </span>
           <ToggleGroup
             label="Card size"
             value={variant}
@@ -265,7 +269,7 @@ export function SocialCardPreview() {
       </div>
 
       {/* Action Footer */}
-      <div className="px-4 py-3 border-t border-border-hairline flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+      <div className="px-4 py-3 border-t border-border-hairline flex flex-wrap items-center justify-between gap-3 text-label font-mono">
         <div className="flex items-center gap-2 text-fg-muted">
           <span>Dimensions: {dimensions}</span>
           <span>·</span>
