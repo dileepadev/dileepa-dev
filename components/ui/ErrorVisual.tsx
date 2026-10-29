@@ -200,7 +200,7 @@ export function ErrorVisual({ error, reset }: ErrorVisualProps) {
         <>
           <div className="flex flex-wrap items-center gap-4">
             {/* Engineer photo / ASCII viewport */}
-            <div className="relative w-32 h-32 rounded-sm border border-border-strong overflow-hidden bg-bg-surface shrink-0 flex items-center justify-center">
+            <div className="relative w-32 h-32 rounded-block overflow-hidden bg-bg-surface shrink-0 flex items-center justify-center">
               {isAsciiPhotoActive && asciiPortrait.length > 0 ? (
                 <pre
                   aria-hidden="true"

@@ -37,7 +37,7 @@ export function PagePath({ path, className }: PagePathProps) {
       {/* Root link to home */}
       <Link
         href="/"
-        className="shrink-0 transition-colors duration-150 hover:text-brand focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand"
+        className="shrink-0 transition-colors duration-150 hover:text-brand"
       >
         home
       </Link>
@@ -65,7 +65,7 @@ export function PagePath({ path, className }: PagePathProps) {
               href={href}
               {...(isLast ? { "aria-current": "page" as const } : {})}
               title={isLast ? segment : undefined}
-              className="min-w-0 truncate transition-colors duration-150 hover:text-brand focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand"
+              className="min-w-0 truncate transition-colors duration-150 hover:text-brand"
             >
               {segment}
             </Link>

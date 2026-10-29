@@ -48,11 +48,7 @@ export function BackToTop({ threshold = 400, className }: BackToTopProps) {
       aria-label="Back to top"
       title="Back to top"
     >
-      <ArrowUp
-        className="h-4 w-4 shrink-0"
-        strokeWidth={2}
-        aria-hidden="true"
-      />
+      <ArrowUp className="h-4 w-4 shrink-0" aria-hidden="true" />
     </button>
   );
 }

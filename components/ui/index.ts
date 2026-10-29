@@ -31,5 +31,6 @@ export { CurlHint } from "./CurlHint";
 export { LoadMore } from "./LoadMore";
 export { ImageLightbox } from "./ImageLightbox";
 export { ZoomableImage } from "./ZoomableImage";
+export { ZoomHint } from "./ZoomHint";
 export { PagePath } from "./PagePath";
 export { CommunityCard, EventCard, PostCard, TileGrid } from "./TileCards";

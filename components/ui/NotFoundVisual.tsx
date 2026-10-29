@@ -199,7 +199,7 @@ export function NotFoundVisual() {
         <>
           <div className="flex flex-wrap items-start gap-4">
             {/* Portrait frame */}
-            <div className="relative w-32 h-32 shrink-0 rounded-sm border border-border-strong overflow-hidden bg-bg-surface flex items-center justify-center">
+            <div className="relative w-32 h-32 shrink-0 rounded-block overflow-hidden bg-bg-surface flex items-center justify-center">
               {isAsciiPhotoActive && asciiPortrait.length > 0 ? (
                 <pre
                   aria-hidden="true"

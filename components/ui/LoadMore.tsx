@@ -67,11 +67,7 @@ export function LoadMore({
           className="inline-flex items-center gap-2"
         >
           <span>Load more ({nextBatch})</span>
-          <ArrowDown
-            className="h-3.5 w-3.5 shrink-0"
-            strokeWidth={2}
-            aria-hidden="true"
-          />
+          <ArrowDown className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
         </Button>
 
         {onShowAll && remaining > nextBatch && (

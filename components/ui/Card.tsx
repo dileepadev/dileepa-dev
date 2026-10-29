@@ -9,16 +9,10 @@ interface CardProps {
   href?: string;
 }
 
-const base = "block rounded-lg border border-border-strong bg-bg-surface p-6";
-
-// The one hover in the system: the surface lifts a step and the border warms
-// to the accent. No shadow, no scale, no ring - a 1px brand ring sitting on a
-// 1px brand border drew a 2px outline, which made a card the loudest hover on
-// a page where a chip and a button used the same idea more quietly.
-const interactive =
-  "transition-[background-color,border-color] duration-[160ms] ease-brand " +
-  "hover:bg-surface-hover " +
-  "focus-visible:border-brand focus-visible:bg-surface-hover";
+// A tile (v2.1.0 draft): a card on a panel is borderless, on the page
+// ground, at the tile radius. It does not change on hover - in v2.1 a card
+// is not a button, and the one thing that reacts is its link.
+const base = "tile block p-6";
 
 export function Card({ children, className, href }: CardProps) {
   if (href) {
@@ -29,14 +23,14 @@ export function Card({ children, className, href }: CardProps) {
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          className={cn(base, interactive, className)}
+          className={cn(base, className)}
         >
           {children}
         </a>
       );
     }
     return (
-      <Link href={href} className={cn(base, interactive, className)}>
+      <Link href={href} className={cn(base, className)}>
         {children}
       </Link>
     );

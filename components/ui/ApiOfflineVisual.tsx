@@ -202,7 +202,7 @@ export function ApiOfflineVisual({
 
           <div className="terminal-actions mt-auto pt-3 border-t border-border-hairline">
             <span className="inline-flex items-center gap-1.5">
-              <Globe className="h-3 w-3" />
+              <Globe className="h-3.5 w-3.5" />
               <span>Canonical platform</span>
             </span>
             <a

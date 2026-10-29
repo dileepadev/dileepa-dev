@@ -11,7 +11,7 @@ interface BadgeProps {
   variant?: "default" | "filled";
   /**
    * Only interactive badges (e.g. navigation links, filter triggers)
-   * get cursor-pointer and hover styling. Static badges remain calm.
+   * get an edge, cursor-pointer and hover styling. Static badges remain calm.
    */
   interactive?: boolean;
   className?: string;
@@ -26,9 +26,9 @@ export function Badge({
   return (
     <span
       className={cn(
-        "badge inline-block rounded-sm border px-3 py-1 text-label font-medium tracking-[0.01em]",
+        "badge inline-block border px-3 py-1 text-label font-medium tracking-[0.01em]",
         interactive
-          ? "cursor-pointer transition-[background-color,border-color,color] duration-[160ms] ease-brand hover:border-brand hover:bg-surface-hover hover:text-fg"
+          ? "badge--interactive cursor-pointer transition-colors duration-[160ms] ease-brand hover:text-fg"
           : "cursor-default",
         variant === "filled"
           ? "badge-filled border-transparent bg-brand-fill text-on-brand"
@@ -45,7 +45,7 @@ interface ChipProps {
   children: ReactNode;
   /**
    * Only interactive chips (e.g. clickable tags, filter buttons)
-   * get cursor-pointer and hover styling. Static chips (tech stack, status) remain calm.
+   * get an edge, cursor-pointer and hover styling. Static chips (tech stack, status) remain calm.
    */
   interactive?: boolean;
   className?: string;
@@ -56,10 +56,10 @@ export function Chip({ children, interactive = false, className }: ChipProps) {
   return (
     <span
       className={cn(
-        "chip inline-block rounded-sm border border-border-strong bg-bg-surface",
+        "chip inline-block",
         "px-3 py-1 font-mono text-label/[1] tracking-[0.01em] text-fg-muted",
         interactive
-          ? "cursor-pointer transition-[background-color,border-color,color] duration-[160ms] ease-brand hover:border-brand hover:bg-surface-hover hover:text-fg"
+          ? "chip--interactive cursor-pointer transition-colors duration-[160ms] ease-brand hover:text-fg"
           : "cursor-default",
         className,
       )}

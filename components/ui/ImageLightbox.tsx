@@ -50,16 +50,20 @@ export function ImageLightbox({
       role="dialog"
       aria-modal="true"
       aria-label={alt || "Full screen image view"}
-      className="fixed inset-0 z-50 flex flex-col items-center justify-between bg-black/90 p-4 backdrop-blur-md transition-opacity duration-200 sm:p-6"
+      // The viewer is always dark, whatever the site theme, so it takes the
+      // dark tokens - and with them the site's own buttons, which would
+      // otherwise draw light-theme ink on a black backdrop.
+      data-theme="dark"
+      className="fixed inset-0 z-50 flex flex-col items-center justify-between bg-black/90 p-4 text-fg backdrop-blur-md transition-opacity duration-200 sm:p-6"
       onClick={onClose}
     >
       {/* Top Header Bar */}
       <div
-        className="flex w-full max-w-6xl items-center justify-between gap-4 text-white"
+        className="flex w-full max-w-6xl items-center justify-between gap-4"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center gap-2 truncate font-mono text-small text-white/80">
-          <ZoomIn className="h-4 w-4 shrink-0 text-brand" aria-hidden="true" />
+        <div className="flex items-center gap-2 truncate font-mono text-small text-fg-muted">
+          <ZoomIn className="h-4 w-4 shrink-0" aria-hidden="true" />
           <span className="truncate">{alt || "Image preview"}</span>
         </div>
 
@@ -70,9 +74,9 @@ export function ImageLightbox({
             rel="noopener noreferrer"
             title="Open original image"
             aria-label="Open original image in new tab"
-            className="inline-flex h-9 items-center gap-1.5 rounded-md border border-white/20 bg-white/10 px-3 font-mono text-label text-white transition-all hover:border-brand hover:bg-white/20 active:scale-95"
+            className="btn btn--secondary btn--sm"
           >
-            <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+            <ExternalLink aria-hidden="true" />
             <span className="hidden sm:inline">Original</span>
           </a>
 
@@ -81,9 +85,9 @@ export function ImageLightbox({
             onClick={onClose}
             title="Close (Esc)"
             aria-label="Close full screen image"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-white/20 bg-white/10 text-white transition-all hover:border-brand hover:bg-white/20 hover:text-brand active:scale-95"
+            className="btn btn--secondary btn--sm btn--icon"
           >
-            <X className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
+            <X aria-hidden="true" />
           </button>
         </div>
       </div>
@@ -97,7 +101,7 @@ export function ImageLightbox({
         <img
           src={src}
           alt={alt ?? ""}
-          className="max-h-[82vh] max-w-[94vw] select-none rounded-md object-contain shadow-2xl transition-transform duration-200"
+          className="max-h-[82vh] max-w-[94vw] select-none rounded-block object-contain shadow-2xl transition-transform duration-200"
         />
       </div>
 
@@ -107,10 +111,11 @@ export function ImageLightbox({
         onClick={(e) => e.stopPropagation()}
       >
         {alt ? (
-          <p className="font-mono text-small text-white/80">{alt}</p>
+          <p className="font-mono text-small text-fg-muted">{alt}</p>
         ) : (
-          <p className="font-mono text-label text-white/50">
-            Press <kbd className="rounded bg-white/10 px-1.5 py-0.5">Esc</kbd>{" "}
+          <p className="font-mono text-label text-fg-muted">
+            Press{" "}
+            <kbd className="rounded-inline bg-bg-raised px-1.5 py-0.5">Esc</kbd>{" "}
             or click anywhere to close
           </p>
         )}

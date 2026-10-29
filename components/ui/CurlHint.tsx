@@ -58,17 +58,9 @@ export function CurlHint() {
       aria-label={`Copy the command ${TERMINAL.command}`}
     >
       {copied ? (
-        <Check
-          className="h-3.5 w-3.5 shrink-0"
-          strokeWidth={1.75}
-          aria-hidden="true"
-        />
+        <Check className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
       ) : (
-        <Terminal
-          className="h-3.5 w-3.5 shrink-0"
-          strokeWidth={1.75}
-          aria-hidden="true"
-        />
+        <Terminal className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
       )}
       <span>{TERMINAL.command}</span>
     </button>

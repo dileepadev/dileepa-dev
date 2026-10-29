@@ -52,7 +52,7 @@ export function ErrorPage({ error, reset }: ErrorPageProps) {
               and say which page.
             </p>
             {digest && (
-              <div className="mt-4 p-3 rounded-md border border-border-strong bg-bg-surface font-mono text-xs text-fg-muted inline-flex items-center gap-2">
+              <div className="chip mt-4 inline-flex items-center gap-2">
                 <span className="text-brand font-bold">Reference:</span>
                 <span>{digest}</span>
               </div>

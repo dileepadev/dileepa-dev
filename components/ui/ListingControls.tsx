@@ -122,11 +122,11 @@ export function ListingControls<TSort extends string>({
               <button
                 type="button"
                 onClick={() => onQueryChange("")}
-                className="active-filter-chip inline-flex items-center gap-1 px-2 py-0.5 rounded-sm border border-border-strong bg-bg-surface text-fg text-label hover:bg-surface-hover transition-colors cursor-pointer"
+                className="active-filter-chip inline-flex items-center gap-1 px-2 py-0.5 text-fg text-label hover:bg-surface-hover transition-colors cursor-pointer"
                 title="Clear search query"
               >
                 <span>&ldquo;{query.trim()}&rdquo;</span>
-                <X className="h-3 w-3 text-fg-muted hover:text-fg" />
+                <X className="h-3.5 w-3.5 text-fg-muted hover:text-fg" />
               </button>
             )}
 
@@ -135,11 +135,11 @@ export function ListingControls<TSort extends string>({
                 key={filter.key}
                 type="button"
                 onClick={filter.onRemove}
-                className="active-filter-chip inline-flex items-center gap-1 px-2 py-0.5 rounded-sm border border-border-strong bg-bg-surface text-fg text-label hover:bg-surface-hover transition-colors cursor-pointer"
+                className="active-filter-chip inline-flex items-center gap-1 px-2 py-0.5 text-fg text-label hover:bg-surface-hover transition-colors cursor-pointer"
                 title={`Remove ${filter.label}`}
               >
                 <span>{filter.label}</span>
-                <X className="h-3 w-3 text-fg-muted hover:text-fg" />
+                <X className="h-3.5 w-3.5 text-fg-muted hover:text-fg" />
               </button>
             ))}
 

@@ -157,11 +157,9 @@ export function FilterSelect({
         aria-haspopup="listbox"
         onClick={() => (isOpen ? closeMenu() : openMenu())}
         className={cn(
-          "filter-trigger inline-flex items-center gap-1.5 h-[36px] px-3 rounded-sm border text-small font-medium transition-colors cursor-pointer",
-          isActive
-            ? "border-brand/60 bg-surface-hover text-fg"
-            : "border-border-strong bg-bg-surface text-fg-muted hover:text-fg hover:border-brand/40",
-          isOpen && "border-brand ring-1 ring-brand",
+          "filter-trigger inline-flex items-center gap-1.5 px-3 border text-small font-medium transition-colors cursor-pointer",
+          isActive ? "is-active text-fg" : "text-fg-muted hover:text-fg",
+          isOpen && "is-open",
         )}
       >
         <SlidersHorizontal
@@ -169,7 +167,6 @@ export function FilterSelect({
             "h-3.5 w-3.5 shrink-0 transition-colors",
             isActive ? "text-brand" : "text-fg-muted",
           )}
-          strokeWidth={1.75}
           aria-hidden="true"
         />
 
@@ -188,7 +185,6 @@ export function FilterSelect({
             "h-3.5 w-3.5 shrink-0 text-fg-muted transition-transform duration-150 ml-0.5",
             isOpen && "rotate-180",
           )}
-          strokeWidth={1.75}
           aria-hidden="true"
         />
       </button>
@@ -198,7 +194,7 @@ export function FilterSelect({
           id={listboxId}
           role="listbox"
           aria-label={`Filter options for ${label}`}
-          className="absolute top-[calc(100%+6px)] left-0 z-50 min-w-[180px] max-h-[260px] overflow-y-auto p-1 bg-bg-surface border border-border-strong rounded-sm shadow-xl list-none m-0 animate-in fade-in zoom-in-95 duration-150"
+          className="absolute top-[calc(100%+6px)] left-0 z-50 min-w-[180px] max-h-[260px] overflow-y-auto popover p-1.5 list-none m-0 animate-in fade-in zoom-in-95 duration-150"
         >
           {allItems.map((item, idx) => {
             const isSelected =
@@ -216,7 +212,7 @@ export function FilterSelect({
                 }}
                 onMouseEnter={() => setHighlightedIndex(idx)}
                 className={cn(
-                  "flex items-center justify-between gap-3 px-2.5 py-1.5 rounded-sm text-small font-medium cursor-pointer transition-colors",
+                  "flex items-center justify-between gap-3 px-2.5 py-1.5 rounded-row text-small font-medium cursor-pointer transition-colors",
                   isHighlighted ? "bg-surface-hover text-fg" : "text-fg-muted",
                   isSelected && "text-brand font-medium",
                 )}
@@ -232,7 +228,6 @@ export function FilterSelect({
                   {isSelected && (
                     <Check
                       className="h-3.5 w-3.5 text-brand"
-                      strokeWidth={2}
                       aria-hidden="true"
                     />
                   )}
