@@ -204,7 +204,7 @@ export const FOOTER_LINKS: { title: string; links: NavLink[] }[] = [
 export const SECTIONS = {
   about: {
     label: "About",
-    title: "An engineer who builds systems and explains them to a room.",
+    title: "An engineer who designs systems and explains them to a room.",
   },
   work: {
     label: "Work",

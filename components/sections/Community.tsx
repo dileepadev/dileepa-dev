@@ -1,4 +1,4 @@
-import { Mic, PenLine, Users, Video as VideoIcon } from "lucide-react";
+import { Mic, Network, PenLine, Users, Video as VideoIcon } from "lucide-react";
 import {
   CommunityCard,
   EventCard,
@@ -45,7 +45,7 @@ export function CommunitySection({
   if (!hasContent) return null;
 
   return (
-    <IndexSection id="community" {...SECTIONS.community}>
+    <IndexSection id="community" art={Network} {...SECTIONS.community}>
       {communities.length > 0 && (
         <Subsection
           {...SUBSECTIONS.communities}

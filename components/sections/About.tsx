@@ -7,6 +7,7 @@ import {
   IconTechnicalWriting,
   type PillarIconComponent,
 } from "@/components/icons/PillarIcons";
+import { Layers } from "lucide-react";
 import { IndexSection } from "@/components/ui";
 import type { About as AboutData, Pillar, PillarIcon } from "@/lib/api-types";
 import { PILLARS, SECTIONS } from "@/lib/constants";
@@ -83,6 +84,7 @@ export function About({
   return (
     <IndexSection
       id="about"
+      art={Layers}
       label={SECTIONS.about.label}
       title={copy[0] ?? SECTIONS.about.title}
     >

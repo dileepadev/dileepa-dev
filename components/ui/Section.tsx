@@ -1,5 +1,7 @@
 import { ReactNode } from "react";
+import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { SectionArt } from "./SectionArt";
 
 /**
  * A page section.
@@ -39,6 +41,7 @@ export function IndexSection({
   title,
   intro,
   meta,
+  art,
   children,
 }: {
   id: string;
@@ -47,11 +50,14 @@ export function IndexSection({
   intro?: string;
   /** A count or note at the end of the marker rule, e.g. "4 roles". */
   meta?: string;
+  /** The section's icon, drawn as its corner mark. */
+  art?: LucideIcon;
   children?: ReactNode;
 }) {
   return (
     <Section id={id}>
       <div className="container">
+        {art && <SectionArt icon={art} />}
         <header className="section-head">
           <p className="section-marker">
             <span className="section-marker-name">{label}</span>

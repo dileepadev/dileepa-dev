@@ -1571,7 +1571,12 @@ pre {
 }
 
 .shell-main .section {
-  padding: clamp(var(--space-6), 0.5rem + 3vw, var(--space-12));
+  /* Named, so a section's corner mark can line its icon up with the
+     content inside the padding. */
+  --section-pad: var(--panel-pad);
+  position: relative;
+  isolation: isolate;
+  padding: var(--section-pad);
   scroll-margin-top: var(--space-6);
 }
 
@@ -3977,6 +3982,110 @@ svg.lucide {
    pillar description at four words a line. */
 main .container {
   container: section / inline-size;
+}
+
+/* ============================================================
+   v2.1.0 draft - section marks
+
+   Each homepage section keeps a corner of the hero's engineering paper -
+   the same 22px dot grid, fading out from the panel's top-right corner -
+   with the section's icon plotted on it as a dotted line, so the scroll
+   reads as one sheet rather than the hero and then a run of plain panels.
+
+   The panel is the positioning box and isolates its stacking, so the mark
+   sits in the panel's own corner and paints behind the content - as the
+   hero's paper does. It shows only where the section is wide enough to
+   keep it clear of the heading.
+   ============================================================ */
+.section-art {
+  display: none;
+}
+
+@container section (min-width: 46rem) {
+  .section-art {
+    display: block;
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    right: 0;
+    width: 26rem;
+    height: 20rem;
+    border-top-right-radius: var(--radius-panel);
+    pointer-events: none;
+  }
+
+  /* The paper fades out from the corner; the icon on it does not. */
+  .section-art::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background-image: radial-gradient(
+      circle at 1px 1px,
+      color-mix(in srgb, var(--fg) 15%, transparent) 1px,
+      transparent 0
+    );
+    background-size: 22px 22px;
+    -webkit-mask-image: radial-gradient(
+      ellipse 100% 100% at 100% 0%,
+      black 30%,
+      transparent 78%
+    );
+    mask-image: radial-gradient(
+      ellipse 100% 100% at 100% 0%,
+      black 30%,
+      transparent 78%
+    );
+  }
+
+  /* The heading stops short of the mark, so a long intro never runs into
+     it. */
+  .section-art + .section-head {
+    padding-inline-end: 12rem;
+  }
+}
+
+/* Lucide draws on a 24-unit box; at 10rem a unit is about 6.7px. A 0.5
+   stroke with round caps, dashed at nothing every 1.3 units, draws each
+   line as a row of 3px dots about 9px apart - plotted rather than drawn.
+   10rem keeps the mark above the first row of cards under a short
+   heading. */
+.section-art svg.lucide.section-art-icon {
+  position: absolute;
+  top: var(--section-pad);
+  right: calc(var(--section-pad) + var(--space-2));
+  width: 10rem;
+  height: 10rem;
+  color: color-mix(in srgb, var(--fg) 34%, transparent);
+}
+
+.section-art svg.lucide.section-art-icon,
+.section-mark svg.lucide {
+  stroke-width: 0.5;
+  stroke-dasharray: 0 1.3;
+}
+
+/* The brand page's specimen of a mark: the same dotted icon on the same
+   paper, at its real 160px. */
+.section-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 12rem;
+  border-radius: var(--radius-block);
+  color: color-mix(in srgb, var(--fg) 34%, transparent);
+  background-color: var(--bg-surface);
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    color-mix(in srgb, var(--fg) 15%, transparent) 1px,
+    transparent 0
+  );
+  background-size: 22px 22px;
+}
+
+.section-mark svg.lucide {
+  width: 10rem;
+  height: 10rem;
 }
 
 /* ============================================================

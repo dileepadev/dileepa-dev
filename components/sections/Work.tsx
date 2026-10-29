@@ -1,5 +1,10 @@
 import Link from "next/link";
-import { FolderGit2, Terminal } from "lucide-react";
+import {
+  BriefcaseBusiness,
+  FolderGit2,
+  GraduationCap,
+  Terminal,
+} from "lucide-react";
 import {
   Chip,
   Entry,
@@ -35,6 +40,7 @@ export function Work({
   return (
     <IndexSection
       id="work"
+      art={BriefcaseBusiness}
       {...SECTIONS.work}
       meta={
         experiences.length > 0
@@ -131,7 +137,7 @@ export function EducationSection({ educations }: { educations: Education[] }) {
   if (educations.length === 0) return null;
 
   return (
-    <IndexSection id="education" {...SECTIONS.education}>
+    <IndexSection id="education" art={GraduationCap} {...SECTIONS.education}>
       <EntryList className="entry-grid">
         {educations.map((item) => (
           <Entry

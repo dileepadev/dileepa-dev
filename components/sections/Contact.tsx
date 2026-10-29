@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { Mail, Send } from "lucide-react";
+import { Mail, MessagesSquare, Send } from "lucide-react";
 import { IndexSection } from "@/components/ui";
 import { api, ApiError } from "@/lib/api";
 import type { About } from "@/lib/api-types";
@@ -47,6 +47,7 @@ export function Contact({ about }: { about: About | null }) {
   return (
     <IndexSection
       id="contact"
+      art={MessagesSquare}
       label={SECTIONS.contact.label}
       title={SECTIONS.contact.title}
       intro={intro}
