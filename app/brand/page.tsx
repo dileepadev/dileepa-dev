@@ -5,8 +5,13 @@ import {
   ArrowRight,
   CheckCircle2,
   Code2,
+  Copy,
   Download,
   ExternalLink,
+  Search,
+  Send,
+  Share2,
+  X,
   XCircle,
 } from "lucide-react";
 import {
@@ -234,6 +239,88 @@ export async function generateMetadata({ params }): Promise<Metadata> {
   });
 }`;
 
+type RadiusRole = {
+  name: string;
+  value: string;
+  token: string;
+  /** Classes for the specimen; omitted for the nested specimen. */
+  specimen?: string;
+  use: string;
+};
+
+/**
+ * The corner radius scale (v2.1.0 draft), after Apple's shape system: three
+ * kinds of corner, each specimen drawn at the size it is used at.
+ */
+const RADIUS_KINDS: { kind: string; rule: string; roles: RadiusRole[] }[] = [
+  {
+    kind: "Fixed",
+    rule: "A constant radius, for containers and the marks inside them.",
+    roles: [
+      {
+        name: "Panel",
+        value: "32px",
+        token: "--radius-panel",
+        specimen: "h-24 w-full rounded-panel",
+        use: "Page panels, the profile rail, the footer, the mobile menu.",
+      },
+      {
+        name: "Tile",
+        value: "22px",
+        token: "--radius-tile",
+        specimen: "h-24 w-full rounded-tile",
+        use: "A card on a panel, a menu, a toast.",
+      },
+      {
+        name: "Block",
+        value: "12px",
+        token: "--radius-block",
+        specimen: "h-24 w-full rounded-block",
+        use: "Media and blocks inside a card: images, code, icon wells.",
+      },
+      {
+        name: "Inline",
+        value: "6px",
+        token: "--radius-inline",
+        specimen: "h-6 w-14 rounded-inline",
+        use: "Marks inside text: inline code, keys.",
+      },
+    ],
+  },
+  {
+    kind: "Capsule",
+    rule: "Half the height, for every control. An icon alone is a circle.",
+    roles: [
+      {
+        name: "Capsule",
+        value: "height ÷ 2",
+        token: "--radius-pill",
+        specimen: "h-10 w-3/4 rounded-full",
+        use: "Buttons, icon buttons, selects, search, toggles, nav items, chips, badges.",
+      },
+      {
+        name: "Field",
+        value: "20px",
+        token: "--radius-field",
+        specimen: "h-20 w-full rounded-field",
+        use: "Every text field. On one line it is a capsule; a textarea keeps the same ends as it grows.",
+      },
+    ],
+  },
+  {
+    kind: "Concentric",
+    rule: "The parent's radius less the inset, for anything nested tight inside another shape, so the two curves run parallel.",
+    roles: [
+      {
+        name: "Row",
+        value: "22 − 6 = 16px",
+        token: "--radius-row",
+        use: "A row inside a menu, 6px in from the menu's tile corner.",
+      },
+    ],
+  },
+];
+
 export default async function BrandPage() {
   const [about, galleryPhotos] = await Promise.all([
     api.getAbout(),
@@ -283,9 +370,18 @@ export default async function BrandPage() {
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
   --font-weights: 400, 500, 700; /* No 600 */
 
+  /* Corners (v2.1.0 draft): fixed, capsule, concentric */
+  --radius-panel: 32px;  /* page panels, the rail, the mobile menu */
+  --radius-tile: 22px;   /* a card, a menu, a toast */
+  --radius-block: 12px;  /* media and blocks inside a card */
+  --radius-inline: 6px;  /* marks inside text */
+  --radius-pill: 999px;  /* every control: a capsule */
+  --radius-field: 20px;  /* every field: half the control height */
+  --radius-row: 16px;    /* a row 6px inside a menu: 22 - 6 */
+
   /* Spatial */
-  --control-h: 40px;
-  --container-max: 1020px;
+  --control-h: 40px;     /* 32px at the .btn--sm action size */
+  --container-max: 1200px;
 }`;
 
   return (
@@ -301,8 +397,8 @@ export default async function BrandPage() {
               <div className="section-label">{PAGES.brand.label}</div>
               <h1>{PAGES.brand.title}</h1>
             </div>
-            <div className="count-badge inline-flex items-center gap-1.5 font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1 transition-colors cursor-default">
-              <span className="font-medium text-fg">v2.0</span>
+            <div className="count-badge inline-flex items-center gap-1.5 font-mono text-small text-fg-muted px-2.5 py-1 shrink-0 mt-1">
+              <span className="font-medium text-fg">v2.1</span>
               <span>Design system</span>
             </div>
           </div>
@@ -355,15 +451,15 @@ export default async function BrandPage() {
             intro="The platform lockup is the handle: @dileepadev, with the @ one step muted and the wordmark at full contrast. No hue - the split is in contrast alone."
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          <div className="grid grid-cols-1 @2xl/section:grid-cols-2 gap-6 mt-6">
             {/* Primary Lockup Showcase */}
-            <div className="p-6 rounded-lg border border-border-strong bg-bg-surface flex flex-col justify-between">
+            <div className="p-6 tile flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between text-xs font-mono text-fg-muted mb-6">
                   <span>Primary lockup</span>
                   <span className="text-brand">Default</span>
                 </div>
-                <div className="py-8 flex items-center justify-center border border-border-strong/60 rounded bg-bg">
+                <div className="py-8 flex items-center justify-center rounded-block bg-bg-surface">
                   <div className="scale-125 sm:scale-150 transform">
                     <Lockup href="#mark" />
                   </div>
@@ -398,14 +494,14 @@ export default async function BrandPage() {
             </div>
 
             {/* Reduced Mark Showcase */}
-            <div className="p-6 rounded-lg border border-border-strong bg-bg-surface flex flex-col justify-between">
+            <div className="p-6 tile flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between text-xs font-mono text-fg-muted mb-6">
                   <span>Reduced mark</span>
                   <span>Square placements</span>
                 </div>
-                <div className="py-8 flex items-center justify-center border border-border-strong/60 rounded bg-bg">
-                  <div className="w-16 h-16 rounded-md border border-border-strong bg-bg-surface flex items-center justify-center font-sans font-medium text-2xl text-fg">
+                <div className="py-8 flex items-center justify-center rounded-block bg-bg-surface">
+                  <div className="w-16 h-16 rounded-block border border-border-strong bg-bg flex items-center justify-center font-sans font-medium text-2xl text-fg">
                     <span>@</span>
                   </div>
                 </div>
@@ -440,8 +536,8 @@ export default async function BrandPage() {
           </div>
 
           {/* Do's and Don'ts */}
-          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 rounded-sm border border-brand/40 bg-brand/5">
+          <div className="mt-6 grid grid-cols-1 @2xl/section:grid-cols-2 gap-4">
+            <div className="tile p-4">
               <div className="flex items-center gap-2 font-mono text-xs font-bold text-brand mb-2">
                 <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
                 <span>Mark rules - do</span>
@@ -458,7 +554,7 @@ export default async function BrandPage() {
               </ul>
             </div>
 
-            <div className="p-4 rounded-sm border border-error/40 bg-error/5">
+            <div className="tile p-4">
               <div className="flex items-center gap-2 font-mono text-xs font-bold text-error mb-2">
                 <XCircle className="h-4 w-4" aria-hidden="true" />
                 <span>Mark rules - don&apos;t</span>
@@ -488,7 +584,7 @@ export default async function BrandPage() {
           {/* Accent stops: the ends of the neutral ramp */}
           <div className="mt-6">
             <Subsection title="Accent stops">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+              <div className="grid grid-cols-1 @xl/section:grid-cols-2 gap-4 mb-8">
                 <ColorSwatch
                   name="Ink (accent on dark)"
                   token="--brand / --ink-100"
@@ -513,12 +609,12 @@ export default async function BrandPage() {
             </Subsection>
 
             {/* Palette Proportions */}
-            <div className="p-4 rounded-lg border border-border-strong bg-bg-surface mb-8">
+            <div className="p-4 tile mb-8">
               <div className="flex items-center justify-between text-xs font-mono text-fg-muted mb-2">
                 <span>Palette proportion budget</span>
                 <span className="text-fg">Contrast, not hue</span>
               </div>
-              <div className="h-4 w-full rounded overflow-hidden flex font-mono text-label text-bg font-bold">
+              <div className="h-4 w-full rounded-full overflow-hidden flex font-mono text-label text-bg font-bold">
                 <div
                   style={{ width: "85%" }}
                   className="bg-fg-muted flex items-center justify-center truncate"
@@ -548,7 +644,7 @@ export default async function BrandPage() {
 
             {/* Dark Neutrals Ramp */}
             <Subsection title="Dark ramp (Carbon foundation)">
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-8">
+              <div className="grid grid-cols-2 @xl/section:grid-cols-3 @4xl/section:grid-cols-4 gap-3 mb-8">
                 <ColorSwatch
                   name="Carbon"
                   token="--ink-900 / --carbon"
@@ -617,7 +713,7 @@ export default async function BrandPage() {
 
             {/* Light Neutrals Ramp */}
             <Subsection title="Light ramp (Paper foundation)">
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-8">
+              <div className="grid grid-cols-2 @xl/section:grid-cols-3 @4xl/section:grid-cols-4 gap-3 mb-8">
                 <ColorSwatch
                   name="Pure Paper"
                   token="--paper-0"
@@ -677,7 +773,7 @@ export default async function BrandPage() {
 
             {/* Functional colors */}
             <Subsection title="Functional & state colors">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
+              <div className="grid grid-cols-1 @xl/section:grid-cols-3 gap-3 mb-8">
                 <ColorSwatch
                   name="Success"
                   token="--success"
@@ -712,24 +808,24 @@ export default async function BrandPage() {
             </Subsection>
 
             {/* Contrast & Forbidden Pairings */}
-            <div className="p-4 rounded-lg border border-border-strong bg-bg-surface">
+            <div className="p-4 tile">
               <div className="font-mono text-xs font-bold text-fg mb-3">
                 Verified contrast and forbidden pairings
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono">
+              <div className="grid grid-cols-1 @xl/section:grid-cols-2 gap-4 text-xs font-mono">
                 <div className="space-y-2">
                   <div className="text-fg-muted font-medium">
                     Allowed pairings:
                   </div>
-                  <div className="flex items-center justify-between p-2 rounded bg-bg border border-border">
+                  <div className="flex items-center justify-between px-3 py-2 rounded-block bg-bg-surface">
                     <span>Ink 100 on Carbon</span>
                     <span className="text-brand font-medium">18.0:1 (AAA)</span>
                   </div>
-                  <div className="flex items-center justify-between p-2 rounded bg-bg border border-border">
+                  <div className="flex items-center justify-between px-3 py-2 rounded-block bg-bg-surface">
                     <span>Paper 900 on Paper</span>
                     <span className="text-brand font-medium">17.3:1 (AAA)</span>
                   </div>
-                  <div className="flex items-center justify-between p-2 rounded bg-bg border border-border">
+                  <div className="flex items-center justify-between px-3 py-2 rounded-block bg-bg-surface">
                     <span>Muted text on Carbon / Paper</span>
                     <span className="text-brand font-medium">
                       6.1 / 5.0:1 (AA)
@@ -741,11 +837,11 @@ export default async function BrandPage() {
                   <div className="text-error font-medium">
                     Forbidden pairings (never ship):
                   </div>
-                  <div className="flex items-center justify-between p-2 rounded bg-error/10 border border-error/30">
+                  <div className="flex items-center justify-between px-3 py-2 rounded-block bg-error/10">
                     <span>Ink 500 (border) as text on Carbon</span>
                     <span className="text-error font-medium">1.5:1 (Fail)</span>
                   </div>
-                  <div className="flex items-center justify-between p-2 rounded bg-error/10 border border-error/30">
+                  <div className="flex items-center justify-between px-3 py-2 rounded-block bg-error/10">
                     <span>Paper 300 (border) as text on Paper</span>
                     <span className="text-error font-medium">1.4:1 (Fail)</span>
                   </div>
@@ -769,8 +865,8 @@ export default async function BrandPage() {
             intro="Two families: Manrope for display and UI, JetBrains Mono for code and data. Weights 400, 500, and 700 only - no 600."
           />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6 mb-8">
-            <div className="p-5 rounded-lg border border-border-strong bg-bg-surface">
+          <div className="grid grid-cols-1 @xl/section:grid-cols-2 gap-6 mt-6 mb-8">
+            <div className="p-5 tile">
               <div className="flex items-center justify-between text-xs font-mono text-fg-muted mb-2">
                 <span>Display & UI typeface</span>
                 <span className="text-brand">Manrope</span>
@@ -788,7 +884,7 @@ export default async function BrandPage() {
               </div>
             </div>
 
-            <div className="p-5 rounded-lg border border-border-strong bg-bg-surface">
+            <div className="p-5 tile">
               <div className="flex items-center justify-between text-xs font-mono text-fg-muted mb-2">
                 <span>Code & Data typeface</span>
                 <span className="text-brand">JetBrains Mono</span>
@@ -807,69 +903,72 @@ export default async function BrandPage() {
             </div>
           </div>
 
-          {/* Live Scale Showcase */}
-          <div className="rounded-lg border border-border-strong bg-bg-surface divide-y divide-border-strong">
-            <div className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-[180px_1fr] md:items-baseline gap-2 sm:gap-6">
+          {/* Live scale: each row set with the token it documents (v2.1.0
+              draft - fluid display sizes, weight 500 for every heading). */}
+          <div className="tile divide-y divide-border-hairline">
+            <div className="p-4 sm:p-6 grid grid-cols-1 @2xl/section:grid-cols-[200px_1fr] md:items-baseline gap-2 sm:gap-6">
               <div className="font-mono text-xs text-fg-muted shrink-0">
-                Display · 44px / 1.1 · 700
+                Display · 44–80px / 1.02 · 500
               </div>
-              <div className="font-sans text-4xl sm:text-display font-bold tracking-tight text-fg">
+              <div className="font-sans text-display font-medium tracking-[var(--track-display)] text-fg">
                 Building AI systems
               </div>
             </div>
-
-            <div className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-[180px_1fr] md:items-baseline gap-2 sm:gap-6">
+            <div className="p-4 sm:p-6 grid grid-cols-1 @2xl/section:grid-cols-[200px_1fr] md:items-baseline gap-2 sm:gap-6">
               <div className="font-mono text-xs text-fg-muted shrink-0">
-                H1 · 36px / 1.15 · 700
+                H1 · 36–56px / 1.06 · 500
               </div>
-              <div className="font-sans text-3xl sm:text-h1 font-bold tracking-tight text-fg">
+              <div className="font-sans text-h1 font-medium tracking-[var(--track-display)] text-fg">
                 Engineering in production
               </div>
             </div>
-
-            <div className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-[180px_1fr] md:items-baseline gap-2 sm:gap-6">
+            <div className="p-4 sm:p-6 grid grid-cols-1 @2xl/section:grid-cols-[200px_1fr] md:items-baseline gap-2 sm:gap-6">
               <div className="font-mono text-xs text-fg-muted shrink-0">
-                H2 · 22px / 1.3 · 700
+                H2 · 28px / 1.2 · 500
               </div>
-              <div className="font-sans text-h2 font-bold tracking-tight text-fg">
+              <div className="font-sans text-h2 font-medium tracking-[var(--track-tight)] text-fg">
                 Section titles and key milestones
               </div>
             </div>
-
-            <div className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-[180px_1fr] md:items-baseline gap-2 sm:gap-6">
+            <div className="p-4 sm:p-6 grid grid-cols-1 @2xl/section:grid-cols-[200px_1fr] md:items-baseline gap-2 sm:gap-6">
               <div className="font-mono text-xs text-fg-muted shrink-0">
-                H3 · 18px / 1.35 · 500
+                Lead · 20–26px / 1.35 · 400
               </div>
-              <div className="font-sans text-h3 font-medium text-fg">
-                Subsection headings and article card titles
+              <div className="font-sans text-lead text-fg-muted max-w-[48ch]">
+                The opening line under a page or section title.
               </div>
             </div>
-
-            <div className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-[180px_1fr] md:items-baseline gap-2 sm:gap-6">
+            <div className="p-4 sm:p-6 grid grid-cols-1 @2xl/section:grid-cols-[200px_1fr] md:items-baseline gap-2 sm:gap-6">
               <div className="font-mono text-xs text-fg-muted shrink-0">
-                Body · 16px / 1.65 · 400
+                H3 · 19px / 1.35 · 500
               </div>
-              <div className="font-sans text-base text-fg leading-relaxed max-w-[68ch]">
+              <div className="font-sans text-h3 font-medium text-fg">
+                Subsection headings and card titles
+              </div>
+            </div>
+            <div className="p-4 sm:p-6 grid grid-cols-1 @2xl/section:grid-cols-[200px_1fr] md:items-baseline gap-2 sm:gap-6">
+              <div className="font-mono text-xs text-fg-muted shrink-0">
+                Body · 17px / 1.65 · 400
+              </div>
+              <div className="font-sans text-body text-fg max-w-[68ch]">
                 Clear technical notes on what I build, what went wrong along the
                 way, and how systems perform under load.
               </div>
             </div>
-
-            <div className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-[180px_1fr] md:items-baseline gap-2 sm:gap-6">
+            <div className="p-4 sm:p-6 grid grid-cols-1 @2xl/section:grid-cols-[200px_1fr] md:items-baseline gap-2 sm:gap-6">
               <div className="font-mono text-xs text-fg-muted shrink-0">
-                Small · 14px / 1.55 · 400
+                Small · 15px / 1.55 · 400
               </div>
-              <div className="font-mono text-small text-fg-muted">
-                JetBrains Mono captions, dates, and terminal outputs.
+              <div className="font-sans text-small text-fg-muted">
+                Descriptions, captions and supporting copy.
               </div>
             </div>
-
-            <div className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-[180px_1fr] md:items-baseline gap-2 sm:gap-6">
+            <div className="p-4 sm:p-6 grid grid-cols-1 @2xl/section:grid-cols-[200px_1fr] md:items-baseline gap-2 sm:gap-6">
               <div className="font-mono text-xs text-fg-muted shrink-0">
-                Label · 12px / 1.45 · 500
+                Label · 13px / 1.45 · 500
               </div>
-              <div className="font-mono text-xs text-fg-muted">
-                Section labels, badges, and status chips
+              <div className="font-mono text-label font-medium text-fg-muted">
+                Section labels, dates, badges and status chips
               </div>
             </div>
           </div>
@@ -893,11 +992,11 @@ export default async function BrandPage() {
                 neutral fields to guarantee contrast and prevent visual clash
                 across platform crops.
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+              <div className="grid grid-cols-1 @xl/section:grid-cols-3 gap-6 mb-8">
                 {/* Field 1: Default */}
-                <div className="p-4 rounded-lg border border-border-strong bg-bg-surface flex flex-col items-center text-center">
+                <div className="p-4 tile flex flex-col items-center text-center">
                   <div
-                    className="w-44 h-44 rounded-sm border border-border-strong overflow-hidden flex items-center justify-center mb-3"
+                    className="w-44 h-44 rounded-block border border-border-hairline overflow-hidden flex items-center justify-center mb-3"
                     style={{ backgroundColor: "#D2D2D2" }}
                   >
                     <Image
@@ -917,9 +1016,9 @@ export default async function BrandPage() {
                 </div>
 
                 {/* Field 2: On Dark */}
-                <div className="p-4 rounded-lg border border-border-strong bg-bg-surface flex flex-col items-center text-center">
+                <div className="p-4 tile flex flex-col items-center text-center">
                   <div
-                    className="w-44 h-44 rounded-sm border border-border-strong overflow-hidden flex items-center justify-center mb-3"
+                    className="w-44 h-44 rounded-block border border-border-hairline overflow-hidden flex items-center justify-center mb-3"
                     style={{ backgroundColor: "#F1F1F1" }}
                   >
                     <Image
@@ -939,9 +1038,9 @@ export default async function BrandPage() {
                 </div>
 
                 {/* Field 3: On Light */}
-                <div className="p-4 rounded-lg border border-border-strong bg-bg-surface flex flex-col items-center text-center">
+                <div className="p-4 tile flex flex-col items-center text-center">
                   <div
-                    className="w-44 h-44 rounded-sm border border-border-strong overflow-hidden flex items-center justify-center mb-3"
+                    className="w-44 h-44 rounded-block border border-border-hairline overflow-hidden flex items-center justify-center mb-3"
                     style={{ backgroundColor: "#6A6A6A" }}
                   >
                     <Image
@@ -969,18 +1068,18 @@ export default async function BrandPage() {
                   The only other photograph surface on the website. Authentic,
                   documentary captures from delivered workshops and talks.
                 </p>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 @xl/section:grid-cols-4 gap-3">
                   {galleryPhotos.map((photo, i) => (
                     <div
                       key={photo.url || i}
-                      className="group relative aspect-4/3 rounded overflow-hidden border border-border-strong bg-bg-surface"
+                      className="group relative aspect-4/3 rounded-block overflow-hidden bg-bg"
                     >
                       <Image
                         src={photo.url}
                         alt={photo.caption || photo.eventTitle || "Event photo"}
                         fill
                         sizes="(max-width: 640px) 50vw, 25vw"
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        className="object-cover"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-bg/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-2 flex items-end">
                         <span className="font-mono text-label text-fg line-clamp-2">
@@ -1011,14 +1110,14 @@ export default async function BrandPage() {
               title="Favicon suite"
               note="The circular portrait at every size, and no vector - the identity is a photograph (brand guide §3.2)."
             >
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 mb-8">
+              <div className="grid grid-cols-1 @xl/section:grid-cols-2 @5xl/section:grid-cols-3 gap-4 mb-8">
                 {FAVICONS.map((icon) => (
                   <div
                     key={icon.filename}
-                    className="rounded-lg border border-border-strong bg-bg-surface p-4 flex flex-col justify-between gap-3 shadow-xs transition-colors"
+                    className="tile p-4 flex flex-col justify-between gap-3"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded border border-border-strong bg-bg flex items-center justify-center p-1 shrink-0 overflow-hidden">
+                      <div className="w-12 h-12 rounded-block bg-bg-surface flex items-center justify-center p-1 shrink-0 overflow-hidden">
                         {/* Served as the file itself, not through the image
                             optimizer. This grid exists to show what actually
                             ships in /public - a re-encoded, re-scaled copy of
@@ -1083,11 +1182,11 @@ export default async function BrandPage() {
               title="Platform metadata & crawlers"
               note="Search engines, AI agent crawlers, and platform syndication feeds configured on dileepa.dev."
             >
-              <div className="rounded-lg border border-border-strong bg-bg-surface overflow-hidden divide-y divide-border-strong/60 shadow-xs mb-8">
+              <div className="tile overflow-hidden divide-y divide-border-hairline mb-8">
                 {METADATA_ENDPOINTS.map((ep) => (
                   <div
                     key={ep.path}
-                    className="p-4 sm:px-6 sm:py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-surface-hover/30 transition-colors"
+                    className="p-4 sm:px-6 sm:py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
                   >
                     <div className="space-y-0.5 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
@@ -1128,7 +1227,7 @@ export default async function BrandPage() {
                     label="Copy meta snippet"
                   />
                 </div>
-                <pre className="p-4 rounded border border-border-strong/60 bg-bg overflow-x-auto font-mono text-xs text-fg-muted leading-relaxed">
+                <pre className="p-4 rounded-block bg-bg-surface overflow-x-auto font-mono text-xs text-fg-muted leading-relaxed">
                   <code>{metadataSnippet}</code>
                 </pre>
               </div>
@@ -1145,7 +1244,7 @@ export default async function BrandPage() {
                     label="Copy page snippet"
                   />
                 </div>
-                <pre className="p-4 rounded border border-border-strong/60 bg-bg overflow-x-auto font-mono text-xs text-fg-muted leading-relaxed">
+                <pre className="p-4 rounded-block bg-bg-surface overflow-x-auto font-mono text-xs text-fg-muted leading-relaxed">
                   <code>{pageMetadataSnippet}</code>
                 </pre>
               </div>
@@ -1160,15 +1259,15 @@ export default async function BrandPage() {
           <SectionHeading
             label="Components"
             title="UI components and spatial rules"
-            intro="Universal control height of 40px, container width capped at 1020px, and hairline borders."
+            intro="Every control - a button, a field, a select, a toggle, a chip - is a capsule, 40px tall or 32px at the action size, and an icon alone is a circle. What can be pressed has an edge; what only labels does not. Containers keep fixed corners, and anything nested tight inside one is concentric with it. The content column is capped at 1200px."
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 mb-8">
+          <div className="grid grid-cols-1 @2xl/section:grid-cols-2 gap-6 mt-6 mb-8">
             {/* Buttons Showcase */}
-            <div className="p-5 rounded-lg border border-border-strong bg-bg-surface space-y-4">
+            <div className="p-5 tile space-y-4">
               <div className="flex items-center justify-between text-xs font-mono text-fg-muted">
                 <span>Button variants (`Button`, `LinkButton`)</span>
-                <span className="text-brand">40px height</span>
+                <span className="text-fg">40px · 32px · capsule</span>
               </div>
               <div className="flex flex-wrap items-center gap-3">
                 <Button variant="primary">Primary button</Button>
@@ -1181,7 +1280,33 @@ export default async function BrandPage() {
                   Disabled
                 </Button>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono text-fg-muted pt-3 border-t border-border-strong/40">
+              {/* The action size, and the icon-only button at both sizes. */}
+              <div className="flex flex-wrap items-center gap-3">
+                <Button variant="secondary" size="sm">
+                  <Copy aria-hidden="true" />
+                  <span>Copy</span>
+                </Button>
+                <Button variant="secondary" size="sm">
+                  <Share2 aria-hidden="true" />
+                  <span>Share</span>
+                </Button>
+                <Button
+                  variant="secondary"
+                  className="btn--icon"
+                  aria-label="Close (example)"
+                >
+                  <X aria-hidden="true" />
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="btn--icon"
+                  aria-label="Close, small (example)"
+                >
+                  <X aria-hidden="true" />
+                </Button>
+              </div>
+              <div className="grid grid-cols-1 gap-2 text-xs font-mono text-fg-muted pt-3 border-t border-border-strong/40">
                 <div>
                   <span className="text-fg font-medium">.btn--primary:</span>{" "}
                   Solid ink fill (`var(--brand-fill)`), the page colour as text
@@ -1191,18 +1316,26 @@ export default async function BrandPage() {
                   <span className="text-fg font-medium">.btn--secondary:</span>{" "}
                   Transparent, border (`var(--border-strong)`), hover surface.
                 </div>
+                <div>
+                  <span className="text-fg font-medium">.btn--sm:</span> The
+                  action size - copy, share, download, open. 32px, 14px icons.
+                </div>
+                <div>
+                  <span className="text-fg font-medium">.btn--icon:</span> An
+                  icon alone: a circle as wide as it is tall, at either size.
+                </div>
               </div>
             </div>
 
             {/* Badges & Chips Showcase */}
-            <div className="p-5 rounded-lg border border-border-strong bg-bg-surface space-y-4">
+            <div className="p-5 tile space-y-4">
               <div className="text-xs font-mono text-fg-muted">
                 Badges and chip indicators (`Badge`, `Chip`, `StatusBadge`)
               </div>
               <div className="space-y-3">
                 <div>
                   <div className="text-label font-mono text-fg-muted mb-1.5">
-                    Static (read-only metadata, status, tech stack - calm, no
+                    Static (read-only metadata, status, tech stack - no edge, no
                     hover):
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
@@ -1210,13 +1343,13 @@ export default async function BrandPage() {
                     <Badge variant="filled">Active</Badge>
                     <Badge>Upcoming</Badge>
                     <Chip>Agent Framework</Chip>
-                    <Chip>v2.0</Chip>
+                    <Chip>v2.1</Chip>
                   </div>
                 </div>
                 <div>
                   <div className="text-label font-mono text-fg-muted mb-1.5">
-                    Interactive (links, filter buttons - cursor-pointer &amp;
-                    brand hover):
+                    Interactive (links and filters - an edge, and the text rises
+                    to full contrast on hover):
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
                     <Badge interactive>Next.js</Badge>
@@ -1230,7 +1363,137 @@ export default async function BrandPage() {
                 targets
               </div>
             </div>
+
+            {/* Form controls: one corner for a field and its button */}
+            <div className="p-5 tile space-y-4 @2xl/section:col-span-2">
+              <div className="flex items-center justify-between gap-3 text-xs font-mono text-fg-muted">
+                <span>
+                  Form controls (`.field`, `.search-input`, `.toggle-group`)
+                </span>
+                <span className="text-fg">40px · 20px corner</span>
+              </div>
+              <div className="grid grid-cols-1 @2xl/section:grid-cols-2 gap-4">
+                <div className="field space-y-3">
+                  <div className="flex gap-2">
+                    <input
+                      type="email"
+                      readOnly
+                      placeholder="you@example.com"
+                      aria-label="Email (example)"
+                    />
+                    <Button variant="primary" className="shrink-0">
+                      <Send aria-hidden="true" />
+                      <span>Send</span>
+                    </Button>
+                  </div>
+                  <textarea
+                    readOnly
+                    rows={3}
+                    placeholder="A textarea takes the same corner as the field above it."
+                    aria-label="Message (example)"
+                  />
+                </div>
+                <div className="space-y-3">
+                  <div className="search-input-wrap">
+                    <Search className="search-input-icon" aria-hidden="true" />
+                    <input
+                      type="search"
+                      readOnly
+                      className="search-input"
+                      placeholder="Search posts"
+                      aria-label="Search (example)"
+                    />
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <div
+                      className="toggle-group"
+                      role="group"
+                      aria-label="View (example)"
+                    >
+                      <button
+                        type="button"
+                        className="toggle-group-option"
+                        aria-pressed="true"
+                      >
+                        Grid
+                      </button>
+                      <button
+                        type="button"
+                        className="toggle-group-option"
+                        aria-pressed="false"
+                      >
+                        List
+                      </button>
+                    </div>
+                    <Chip>Next.js</Chip>
+                    <Chip>Azure</Chip>
+                  </div>
+                </div>
+              </div>
+              <div className="font-mono text-label text-fg-muted pt-3 border-t border-border-strong/40">
+                Every field has a 20px corner, half its height, so on one line
+                it is a capsule like the button beside it, and the textarea
+                keeps the same ends as it grows. A field&apos;s edge is
+                --border-input, 3:1 against the page (WCAG 1.4.11) - the only
+                sign that it is a field. A button, a select or a toggle that
+                acts takes the quieter --border-strong; a badge that only labels
+                takes none.
+              </div>
+            </div>
           </div>
+
+          {/* Corner radius: fixed, capsule, concentric */}
+          <Subsection
+            title="Corner radius"
+            note="Three kinds of corner, after Apple's shape system: fixed for containers, capsules for controls, and concentric for anything nested tight inside another shape."
+          >
+            <div className="space-y-6">
+              {RADIUS_KINDS.map((group) => (
+                <div key={group.kind} className="space-y-3">
+                  <p className="text-small text-fg-muted">
+                    <span className="font-medium text-fg">{group.kind}.</span>{" "}
+                    {group.rule}
+                  </p>
+                  <ul className="grid grid-cols-1 @xl/section:grid-cols-2 @4xl/section:grid-cols-3 gap-3">
+                    {group.roles.map((role) => (
+                      <li key={role.name} className="tile p-4 space-y-3">
+                        <div
+                          className="h-24 flex items-center"
+                          aria-hidden="true"
+                        >
+                          {role.specimen ? (
+                            <div
+                              className={`border border-border-strong bg-bg-surface ${role.specimen}`}
+                            />
+                          ) : (
+                            // A menu with one row in it: the row sits 6px in.
+                            <div className="w-full rounded-tile border border-border-strong bg-bg-surface p-1.5">
+                              <div className="h-8 rounded-row bg-surface-hover" />
+                              <div className="h-8" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex items-baseline justify-between gap-2">
+                          <span className="font-medium text-sm text-fg">
+                            {role.name}
+                          </span>
+                          <span className="font-mono text-label text-fg-muted">
+                            {role.value}
+                          </span>
+                        </div>
+                        <p className="text-label text-fg-muted leading-relaxed">
+                          {role.use}
+                        </p>
+                        <code className="font-mono text-label text-fg-muted">
+                          {role.token}
+                        </code>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </Subsection>
         </Container>
       </Section>
 
@@ -1255,12 +1518,12 @@ export default async function BrandPage() {
             intro="Direct, technical, and understated. Speak as an engineer explaining real systems to peers. Avoid hyperbole and empty buzzwords."
           />
 
-          <div className="p-5 rounded-lg border border-error/30 bg-bg-surface mt-6">
+          <div className="tile p-5 mt-6">
             <div className="flex items-center gap-2 font-mono text-xs font-bold text-error mb-4">
               <XCircle className="h-4 w-4" aria-hidden="true" />
               <span>Banned terms in all content and copy</span>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
+            <div className="flex flex-wrap gap-2">
               {[
                 "passionate about",
                 "leveraging",
@@ -1277,7 +1540,7 @@ export default async function BrandPage() {
               ].map((term) => (
                 <div
                   key={term}
-                  className="px-2.5 py-1.5 rounded bg-error/10 border border-error/20 font-mono text-xs text-error flex items-center justify-between"
+                  className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-error/10 font-mono text-xs text-error"
                 >
                   <span className="line-through">{term}</span>
                   <span className="text-label text-error/80">✗</span>
@@ -1301,7 +1564,7 @@ export default async function BrandPage() {
             intro="Canonical tokens as defined in `docs/brand-tokens.css` and `DESIGN.md`."
           />
 
-          <div className="rounded-lg border border-border-strong bg-bg-surface p-4 sm:p-6 mt-6">
+          <div className="tile p-4 sm:p-6 mt-6">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2 font-mono text-xs text-fg-muted">
                 <Code2 className="h-4 w-4 text-brand" aria-hidden="true" />
@@ -1312,7 +1575,7 @@ export default async function BrandPage() {
                 label="Copy CSS variables"
               />
             </div>
-            <pre className="p-4 rounded border border-border-strong/60 bg-bg overflow-x-auto font-mono text-xs text-fg-muted leading-relaxed">
+            <pre className="p-4 rounded-block bg-bg-surface overflow-x-auto font-mono text-xs text-fg-muted leading-relaxed">
               <code>{cssTokensSnippet}</code>
             </pre>
 
@@ -1321,21 +1584,16 @@ export default async function BrandPage() {
                 Canonical specification: DESIGN.md & docs/brand-guide.md
               </div>
               <div className="flex items-center gap-3">
-                <Link
-                  href="/sitemap"
-                  className="hover:text-brand transition-colors inline-flex items-center gap-1"
-                >
-                  <span>Sitemap</span>
-                  <ArrowRight className="h-3 w-3" aria-hidden="true" />
+                <Link href="/sitemap" className="text-link">
+                  Sitemap
                 </Link>
                 <a
                   href={SITE_CONFIG.repository}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-brand transition-colors inline-flex items-center gap-1"
+                  className="text-link"
                 >
-                  <span>GitHub</span>
-                  <ExternalLink className="h-3 w-3" aria-hidden="true" />
+                  GitHub
                 </a>
               </div>
             </div>

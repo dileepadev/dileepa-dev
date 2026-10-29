@@ -51,14 +51,13 @@ export function ColorSwatch({
     <button
       type="button"
       onClick={handleCopy}
-      className={cn(
-        "group relative flex flex-col justify-between p-3.5 rounded-sm border text-left transition-all duration-150 cursor-pointer w-full",
-        "border-border-strong bg-bg hover:bg-surface-hover focus:outline-none focus-visible:ring-1 focus-visible:ring-brand",
-      )}
+      // A tile like every card on a panel; the copy affordance is the
+      // marker that appears on the colour strip, not a hover fill.
+      className="tile group relative flex flex-col justify-between p-4 text-left cursor-pointer w-full"
     >
       {/* Color tile representation */}
       <div
-        className="w-full h-12 rounded-xs border mb-3 flex items-center justify-between px-2.5 transition-transform duration-150 group-hover:scale-[1.02]"
+        className="w-full h-12 rounded-block border mb-3 flex items-center justify-between px-2.5"
         style={{
           backgroundColor: bgHex || hex,
           borderColor: borderHex || "var(--border)",
@@ -70,12 +69,12 @@ export function ColorSwatch({
         </span>
         <span
           className={cn(
-            "p-1 rounded bg-bg/80 text-fg text-xs backdrop-blur-xs transition-opacity duration-150",
+            "p-1 rounded-full bg-bg/80 text-fg text-xs backdrop-blur-xs transition-opacity duration-150",
             copied ? "opacity-100" : "opacity-0 group-hover:opacity-100",
           )}
         >
           {copied ? (
-            <Check className="h-3.5 w-3.5 text-brand" aria-hidden="true" />
+            <Check className="h-3.5 w-3.5" aria-hidden="true" />
           ) : (
             <Copy className="h-3.5 w-3.5" aria-hidden="true" />
           )}
@@ -83,17 +82,13 @@ export function ColorSwatch({
       </div>
 
       <div className="space-y-1">
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <span className="font-mono text-xs font-medium text-fg">{hex}</span>
           {contrastBadge && (
             <span
               className={cn(
-                "inline-flex items-center px-1.5 py-0.2 rounded text-label font-mono",
-                contrastBadge.includes("AAA")
-                  ? "bg-brand/15 text-brand border border-brand/30"
-                  : contrastBadge.includes("AA")
-                    ? "bg-bg-surface text-fg border border-border-strong"
-                    : "bg-error/15 text-error border border-error/30",
+                "chip",
+                !contrastBadge.includes("AA") && "text-error",
               )}
             >
               {contrastBadge}
@@ -114,7 +109,7 @@ export function ColorSwatch({
       <span className="sr-only">Copy hex code</span>
 
       {copied && (
-        <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded bg-brand-fill text-on-brand text-label font-mono font-medium shadow-xs">
+        <div className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-brand-fill text-on-brand text-label font-mono font-medium">
           Copied
         </div>
       )}
@@ -194,9 +189,9 @@ export function SocialCardPreview() {
   };
 
   return (
-    <div className="rounded-lg border border-border-strong bg-bg-surface overflow-hidden shadow-xs">
+    <div className="tile overflow-hidden">
       {/* Control bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 bg-bg border-b border-border-strong text-xs font-mono">
+      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-border-hairline text-xs font-mono">
         <div className="flex items-center gap-2">
           <span className="text-fg font-medium">Social card simulator</span>
           <span className="text-border-strong select-none">/</span>
@@ -205,8 +200,8 @@ export function SocialCardPreview() {
             value={variant}
             onChange={setVariant}
             options={[
-              { value: "standard", label: "Default (1200×630)" },
-              { value: "detailed", label: "Detailed (1600×900)" },
+              { value: "standard", label: "1200×630" },
+              { value: "detailed", label: "1600×900" },
             ]}
           />
         </div>
@@ -216,15 +211,15 @@ export function SocialCardPreview() {
           value={platform}
           onChange={setPlatform}
           options={[
-            { value: "twitter", label: "Twitter / X" },
-            { value: "linkedin", label: "LinkedIn / Slack" },
+            { value: "twitter", label: "X" },
+            { value: "linkedin", label: "LinkedIn" },
           ]}
         />
       </div>
 
       {/* Preview container */}
-      <div className="p-4 sm:p-6 bg-bg flex justify-center">
-        <div className="w-full max-w-xl rounded-xl border border-border-strong bg-bg-surface overflow-hidden shadow-md">
+      <div className="p-4 sm:p-6 flex justify-center">
+        <div className="w-full max-w-xl rounded-block border border-border-strong bg-bg-surface overflow-hidden">
           {/* OG Image */}
           <div
             className={cn(
@@ -270,14 +265,14 @@ export function SocialCardPreview() {
       </div>
 
       {/* Action Footer */}
-      <div className="px-4 py-3 bg-bg-surface border-t border-border-strong flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+      <div className="px-4 py-3 border-t border-border-hairline flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
         <div className="flex items-center gap-2 text-fg-muted">
           <span>Dimensions: {dimensions}</span>
           <span>·</span>
           <span>Ratio: {ratio}</span>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <a
             href={currentImage}
             download={currentFilename}

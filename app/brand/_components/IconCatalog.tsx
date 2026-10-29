@@ -35,7 +35,6 @@ import {
   List,
   Mail,
   MapPin,
-  Maximize2,
   Megaphone,
   Menu,
   MessageSquare,
@@ -119,8 +118,7 @@ const INTERFACE_ICONS: { title: string; icons: Entry[] }[] = [
       [SlidersHorizontal, "SlidersHorizontal", "Filters"],
       [RotateCcw, "RotateCcw", "Retry after an error"],
       [RefreshCw, "RefreshCw", "Reconnect when offline"],
-      [ZoomIn, "ZoomIn", "Open an image"],
-      [Maximize2, "Maximize2", "Expand an image"],
+      [ZoomIn, "ZoomIn", "Open an image full size"],
       [SmilePlus, "SmilePlus", "Add a reaction"],
       [Sun, "Sun", "Switch to light"],
       [Moon, "Moon", "Switch to dark"],
@@ -182,74 +180,27 @@ const PILLAR_ICONS: [PillarIconComponent, string][] = [
 ];
 
 /**
- * The icon-only buttons, drawn at their real size, radius and stroke. A
- * specimen rather than the live control: several are fixed to the viewport
- * or live inside a dialog, and would not sit still on this page.
+ * The icon-only buttons, drawn at their real size. Every one is a circle - a
+ * capsule as wide as it is tall - at the one stroke weight, so the sizes are
+ * the only thing that varies. A specimen rather than the live control: several
+ * are fixed to the viewport or live inside a dialog, and would not sit still
+ * on this page.
  */
 const ICON_BUTTONS: {
   label: string;
   icon: LucideIcon;
   box: number;
   glyph: number;
-  stroke: number;
-  radius: string;
 }[] = [
-  {
-    label: "Home (rail)",
-    icon: House,
-    box: 38,
-    glyph: 16,
-    stroke: 1.75,
-    radius: "var(--radius-pill)",
-  },
-  {
-    label: "Theme (rail photo)",
-    icon: Moon,
-    box: 40,
-    glyph: 16,
-    stroke: 1.75,
-    radius: "var(--radius-pill)",
-  },
-  {
-    label: "Theme (nav)",
-    icon: Sun,
-    box: 36,
-    glyph: 16,
-    stroke: 1.75,
-    radius: "var(--radius)",
-  },
-  {
-    label: "Menu (mobile nav)",
-    icon: Menu,
-    box: 36,
-    glyph: 16,
-    stroke: 2,
-    radius: "var(--radius)",
-  },
-  {
-    label: "Back to top",
-    icon: ArrowUp,
-    box: 40,
-    glyph: 16,
-    stroke: 2,
-    radius: "var(--radius)",
-  },
-  {
-    label: "Close (lightbox)",
-    icon: X,
-    box: 36,
-    glyph: 16,
-    stroke: 2.5,
-    radius: "var(--radius-sm)",
-  },
-  {
-    label: "Clear (search)",
-    icon: X,
-    box: 26,
-    glyph: 14,
-    stroke: 2,
-    radius: "var(--radius-sm)",
-  },
+  { label: "Icon button", icon: Copy, box: 40, glyph: 16 },
+  { label: "Icon button, small", icon: Copy, box: 32, glyph: 14 },
+  { label: "Theme (rail photo)", icon: Moon, box: 40, glyph: 16 },
+  { label: "Back to top", icon: ArrowUp, box: 40, glyph: 16 },
+  { label: "Home (rail)", icon: House, box: 38, glyph: 16 },
+  { label: "Theme (nav, rail)", icon: Sun, box: 36, glyph: 16 },
+  { label: "Menu (mobile nav)", icon: Menu, box: 36, glyph: 16 },
+  { label: "Close (image viewer)", icon: X, box: 32, glyph: 14 },
+  { label: "Clear (search)", icon: X, box: 26, glyph: 14 },
 ];
 
 export const INTERFACE_ICON_COUNT = INTERFACE_ICONS.reduce(
@@ -266,22 +217,17 @@ function Caption({ name, use }: { name: string; use: string }) {
   );
 }
 
-const tile =
-  "flex items-center gap-3 rounded-md border border-border-strong bg-bg-surface p-3";
+const tile = "tile flex items-center gap-3 p-4";
 
 export function IconCatalog() {
   return (
     <div className="space-y-8 mt-6">
       {INTERFACE_ICONS.map((group) => (
         <Subsection key={group.title} title={group.title}>
-          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+          <ul className="grid grid-cols-1 @xl/section:grid-cols-2 @4xl/section:grid-cols-3 gap-2">
             {group.icons.map(([Icon, name, use]) => (
               <li key={name} className={tile}>
-                <Icon
-                  className="h-5 w-5 shrink-0 text-fg"
-                  strokeWidth={1.75}
-                  aria-hidden="true"
-                />
+                <Icon className="h-5 w-5 shrink-0 text-fg" aria-hidden="true" />
                 <Caption name={name} use={use} />
               </li>
             ))}
@@ -290,35 +236,30 @@ export function IconCatalog() {
       ))}
 
       <Subsection title="Icon buttons">
-        <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
-          {ICON_BUTTONS.map(
-            ({ label, icon: Icon, box, glyph, stroke, radius }) => (
-              <li
-                key={label}
-                className="flex flex-col items-center gap-3 rounded-md border border-border-strong bg-bg-surface p-4 text-center"
+        <ul className="grid grid-cols-2 @xl/section:grid-cols-3 @4xl/section:grid-cols-4 gap-2">
+          {ICON_BUTTONS.map(({ label, icon: Icon, box, glyph }) => (
+            <li
+              key={label}
+              className="tile flex flex-col items-center gap-3 p-4 text-center"
+            >
+              <span
+                className="inline-flex items-center justify-center rounded-full border border-border-strong bg-bg-surface text-fg"
+                style={{ width: box, height: box }}
+                aria-hidden="true"
               >
-                <span
-                  className="inline-flex items-center justify-center border border-border-strong bg-bg text-fg"
-                  style={{ width: box, height: box, borderRadius: radius }}
-                  aria-hidden="true"
-                >
-                  <Icon
-                    style={{ width: glyph, height: glyph }}
-                    strokeWidth={stroke}
-                  />
-                </span>
-                <Caption
-                  name={label}
-                  use={`${box}px · ${glyph}px glyph · ${stroke} stroke`}
-                />
-              </li>
-            ),
-          )}
+                <Icon style={{ width: glyph, height: glyph }} />
+              </span>
+              <Caption
+                name={label}
+                use={`${box}px circle · ${glyph}px glyph`}
+              />
+            </li>
+          ))}
         </ul>
       </Subsection>
 
       <Subsection title="Pillar marks">
-        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+        <ul className="grid grid-cols-1 @xl/section:grid-cols-2 @4xl/section:grid-cols-3 gap-2">
           {PILLAR_ICONS.map(([Icon, name]) => (
             <li key={name} className={tile}>
               <Icon className="h-6 w-6 shrink-0 text-fg" aria-hidden="true" />
@@ -329,7 +270,7 @@ export function IconCatalog() {
       </Subsection>
 
       <Subsection title="Social marks">
-        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+        <ul className="grid grid-cols-1 @xl/section:grid-cols-2 @4xl/section:grid-cols-3 gap-2">
           {SOCIAL_ICONS.map(({ icon: Icon, label }) => (
             <li key={label} className={tile}>
               <Icon className="h-5 w-5 shrink-0 text-fg" aria-hidden="true" />
@@ -340,8 +281,10 @@ export function IconCatalog() {
       </Subsection>
 
       <div className="font-mono text-label text-fg-muted pt-3 border-t border-border-strong/40">
-        Lucide · 16px in controls, 14px in small buttons · stroke 1.75, 2 for
-        direction glyphs · always currentColor, never a colour of its own
+        Lucide · 16px in controls and beside body text, 14px in small buttons
+        and beside small text, 32px as an empty-state illustration · one stroke
+        weight, 1.75, everywhere · always currentColor, never a colour of its
+        own
       </div>
     </div>
   );
