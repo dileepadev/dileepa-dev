@@ -153,6 +153,27 @@
   --radius-xl: 16px;
   --radius-pill: 999px;
 
+  /* v2.1.0 draft: three kinds of corner, after Apple's shape system.
+     Fixed - a constant radius - for containers and marks: panel (a page
+     panel, the rail, the footer, the mobile menu), tile (a card on a panel,
+     a menu, a toast), block (media and blocks inside a card - an image,
+     code, an icon well), inline (a mark inside text - inline code, a key).
+     Capsule - half the height - for every control: a button, a field,
+     search, a select, a toggle, a nav item, a chip, a badge; an icon alone
+     is a circle. A field's corner is fixed at half the control height, so a
+     one-line field is a capsule and a textarea keeps the same end radius as
+     it grows. Concentric - the parent's radius less the inset - for
+     anything nested tight inside another shape: a row 6px inside a menu
+     takes the tile's less 6px. A person is a circle.
+     --radius and --radius-xl are no longer used by the site and go when
+     this sheet becomes canonical. */
+  --radius-panel: 32px;
+  --radius-tile: 22px;
+  --radius-block: var(--radius-lg);
+  --radius-inline: var(--radius-sm);
+  --radius-field: calc(var(--control-h) / 2);
+  --radius-row: calc(var(--radius-tile) - 6px);
+
   /* One control height. A button, a text input and an icon button used
      to be 38px, 45px and 36px respectively; when three controls share a
      row - a form field beside its submit button, a toggle beside a nav
@@ -343,7 +364,7 @@ pre,
 }
 pre {
   background: var(--bg-raised);
-  border-radius: var(--radius);
+  border-radius: var(--radius-block);
   padding: var(--space-4);
   overflow-x: auto;
 }
@@ -390,7 +411,7 @@ a {
   line-height: 1;
   letter-spacing: var(--track-label);
   padding: 0 var(--space-5);
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   border: var(--hairline) solid transparent;
   cursor: pointer;
   transition:
@@ -450,7 +471,7 @@ a {
 .card {
   background: var(--bg-surface);
   border: var(--hairline) solid var(--border-strong);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-tile);
   padding: var(--space-6);
   transition:
     background var(--dur) var(--ease),
@@ -475,10 +496,16 @@ a {
   font-weight: 500;
   letter-spacing: var(--track-label);
   padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-pill);
   background: var(--bg-surface);
   color: var(--fg-muted);
-  border: var(--hairline) solid var(--border-strong);
+  /* No edge: a badge only labels. An edge is what marks a thing you can
+     press (v2.1.0 draft). */
+  border: var(--hairline) solid transparent;
+}
+a > .badge:not(.badge--filled),
+.badge--interactive {
+  border-color: var(--border-strong);
 }
 .badge--filled {
   background: var(--brand-fill);
@@ -495,16 +522,19 @@ a {
   letter-spacing: var(--track-label);
   color: var(--fg-muted);
   background: var(--bg-surface);
-  border: var(--hairline) solid var(--border-strong);
-  border-radius: var(--radius-sm);
+  border: var(--hairline) solid transparent;
+  border-radius: var(--radius-pill);
   padding: var(--space-2) var(--space-3);
   cursor: default;
 }
+/* A chip that acts has an edge, the secondary button's; a chip that only
+   labels has none (v2.1.0 draft). */
 a > .chip,
 a.chip,
 button > .chip,
 button.chip,
 .chip--interactive {
+  border-color: var(--border-strong);
   cursor: pointer;
   transition:
     background var(--dur) var(--ease),
@@ -517,7 +547,6 @@ button:hover > .chip,
 button.chip:hover,
 .chip--interactive:hover {
   background: var(--surface-hover);
-  border-color: var(--brand);
   color: var(--fg);
 }
 
@@ -529,7 +558,7 @@ button.chip:hover,
   padding: 0 var(--space-3);
   background: var(--bg-surface);
   border: var(--hairline) solid var(--border-input);
-  border-radius: var(--radius);
+  border-radius: var(--radius-field); /* a capsule; a textarea keeps its ends (v2.1.0 draft) */
   color: var(--fg);
   font-family: var(--font-sans);
   font-size: var(--text-body);

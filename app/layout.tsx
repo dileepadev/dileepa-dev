@@ -266,7 +266,7 @@ export default async function RootLayout({
         <ThemeProvider>
           <a
             href="#main"
-            className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-60 focus:rounded focus:bg-bg-surface focus:px-4 focus:py-2 focus:text-fg"
+            className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-60 focus:rounded-full focus:bg-bg-surface focus:px-4 focus:py-2 focus:text-fg"
           >
             Skip to content
           </a>
@@ -291,7 +291,7 @@ export default async function RootLayout({
                 background: "var(--bg-surface)",
                 color: "var(--fg)",
                 border: "var(--hairline) solid var(--border)",
-                borderRadius: "var(--radius)",
+                borderRadius: "var(--radius-tile)",
                 fontSize: "var(--text-small)",
               },
             }}

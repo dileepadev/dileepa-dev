@@ -81,15 +81,17 @@
   --radius-sm: var(--radius-sm);
   --radius-lg: var(--radius-lg);
   --radius-xl: var(--radius-xl);
+  /* v2.1.0 draft: corners by role - rounded-panel, -tile, -block, -inline
+     (fixed), -field (a field's corner), -row (a row inside a menu, concentric
+     with it). Controls are capsules: rounded-full. */
+  --radius-panel: var(--radius-panel);
+  --radius-tile: var(--radius-tile);
+  --radius-block: var(--radius-block);
+  --radius-field: var(--radius-field);
+  --radius-row: var(--radius-row);
+  --radius-inline: var(--radius-inline);
 
   --ease-brand: var(--ease);
-}
-
-/* Tailwind 4 keeps bare `rounded` as a 0.25rem legacy alias and does not read
-   it from the theme, so every `rounded` in the app was drawing 4px against a
-   token that says 8px. Redefining the utility fixes all of them at once. */
-@utility rounded {
-  border-radius: var(--radius);
 }
 
 /* ============================================================
@@ -472,16 +474,20 @@ pre {
   position: relative;
 }
 
+/* The bar floats, so it is a capsule, like the tab bar it stands in for. Its
+   36px items sit 12px inside the 60px bar: 30 less 12 is 18, half their
+   height, so a capsule inside a capsule is concentric by construction. The
+   wordmark starts further in, clear of the round end. */
 .nav {
   height: 60px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
-  padding: 0 var(--space-4);
+  padding: 0 var(--space-3) 0 var(--space-6);
   background: var(--bg-surface);
   border: var(--hairline) solid var(--border-strong);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-pill);
   box-shadow: var(--shadow-nav);
   transition:
     background-color var(--dur) var(--ease),
@@ -520,7 +526,7 @@ pre {
   justify-content: center;
   padding: 0 var(--space-3);
   height: 36px;
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   border: var(--hairline) solid transparent;
   font-size: var(--text-small);
   font-weight: 500;
@@ -561,7 +567,7 @@ pre {
   height: 36px;
   padding: 0;
   border: var(--hairline) solid transparent;
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   background: transparent;
   color: var(--fg-muted);
   cursor: pointer;
@@ -592,17 +598,19 @@ pre {
   box-shadow: 0 0 0 var(--ring-width) var(--ring);
 }
 
-/* Mobile dropdown menu */
+/* Mobile dropdown menu: a sheet at the panel radius. Its rows sit 10px in,
+   so their corner is the panel's less 10px - 22px, a capsule at the row's
+   44px - and the two curves run parallel. */
 .nav-mobile-menu {
   position: absolute;
   top: calc(100% + var(--space-2));
   left: 0;
   right: 0;
   z-index: 50;
-  padding: var(--space-3);
+  padding: 10px;
   background: var(--bg-surface);
   border: var(--hairline) solid var(--border-strong);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-panel);
   box-shadow: var(--shadow-nav);
   animation: dropdown-in var(--dur) var(--ease);
 }
@@ -628,7 +636,7 @@ pre {
   align-items: center;
   justify-content: space-between;
   padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius);
+  border-radius: calc(var(--radius-panel) - 10px);
   font-size: var(--text-body);
   font-weight: 500;
   color: var(--fg-muted);
@@ -667,7 +675,7 @@ pre {
   align-items: center;
   justify-content: space-between;
   padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius);
+  border-radius: calc(var(--radius-panel) - 10px);
   font-size: var(--text-small);
   font-weight: 500;
   color: var(--fg-muted);
@@ -708,7 +716,7 @@ pre {
   align-items: center;
   justify-content: center;
   border: var(--hairline) solid transparent;
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   background: transparent;
   color: var(--fg-muted);
   cursor: pointer;
@@ -927,59 +935,13 @@ pre {
   flex-shrink: 0;
 }
 
-/* The profile window */
-.profile-window {
-  width: 100%;
-  max-width: 28rem;
-  background: var(--bg-surface);
-  border: var(--hairline) solid var(--border-strong);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-nav);
-  overflow: hidden;
-}
-
-.pw-bar {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-  height: 40px;
-  padding: 0 var(--space-4);
-  border-bottom: var(--hairline) solid var(--border);
-}
-
-.pw-dots {
-  display: inline-flex;
-  gap: 6px;
-}
-
-/* Neutral, not traffic-light colours - the brand has one hue. */
-.pw-dots span {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--border-strong);
-}
-
-.pw-title {
-  font-family: var(--font-code);
-  font-size: var(--text-label);
-  color: var(--fg-muted);
-}
-
-.pw-id {
-  display: flex;
-  align-items: center;
-  gap: var(--space-5);
-  padding: var(--space-6) var(--space-6) var(--space-5);
-}
-
 .portrait {
   display: block;
   width: 88px;
   height: 88px;
   flex: 0 0 auto;
   object-fit: cover;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-block);
   background: var(--bg-raised);
   max-width: none;
 }
@@ -998,63 +960,17 @@ pre {
   color: var(--fg-muted);
 }
 
-.pw-data {
-  padding: 0 var(--space-6) var(--space-3);
-}
-
-.pw-row {
-  display: grid;
-  grid-template-columns: 5.5rem minmax(0, 1fr);
-  gap: var(--space-4);
-  padding-block: var(--space-3);
-  border-top: var(--hairline) solid var(--border);
-}
-
-.pw-row dt {
-  font-family: var(--font-code);
-  font-size: var(--text-label);
-  line-height: var(--lh-small);
-  color: var(--fg-muted);
-  padding-top: 0.1em;
-}
-
-.pw-row dd {
-  margin: 0;
-  font-size: var(--text-small);
-  line-height: var(--lh-small);
-  color: var(--fg);
-}
-
-.pw-link {
-  transition: color var(--dur) var(--ease);
-}
-
-.pw-link:hover {
-  color: var(--brand);
-}
-
-.pw-muted {
-  color: var(--fg-muted);
-}
-
-.pw-status {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
 /* --- Surfaces shared by the cards below ---------------------------------- */
 
 .pillar,
 .tools-panel,
-.project-card,
 .entry-grid .entry,
 .item-cards .item,
 .post-featured,
 .contact-panel {
   background: var(--bg-surface);
   border: var(--hairline) solid var(--border-strong);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-tile);
 }
 
 /* --- About: pillars as a bento ------------------------------------------- */
@@ -1065,14 +981,14 @@ pre {
   margin-top: var(--space-12);
 }
 
-@media (min-width: 640px) {
+@container section (min-width: 30rem) {
   .pillars {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 /* Three by two: six equal statements, read across. */
-@media (min-width: 1024px) {
+@container section (min-width: 52rem) {
   .pillars {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -1088,7 +1004,7 @@ pre {
   height: 2.5rem;
   padding: 0.6rem;
   margin-bottom: var(--space-8);
-  border-radius: var(--radius);
+  border-radius: var(--radius-block);
   border: var(--hairline) solid var(--border-strong);
   background: var(--bg);
   color: var(--fg);
@@ -1112,7 +1028,7 @@ pre {
   gap: var(--space-12);
 }
 
-@media (min-width: 1024px) {
+@container section (min-width: 56rem) {
   .work-grid {
     grid-template-columns: minmax(0, 1fr) 22rem;
     column-gap: var(--space-16);
@@ -1189,7 +1105,7 @@ pre {
   padding: var(--space-6);
 }
 
-@media (min-width: 1024px) {
+@container section (min-width: 56rem) {
   .tools-panel {
     position: sticky;
     top: calc(88px + var(--space-6));
@@ -1227,7 +1143,7 @@ pre {
   line-height: 1;
   padding: 0.45rem 0.6rem;
   border: var(--hairline) solid var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-inline);
   background: var(--bg);
   color: var(--fg-muted);
 }
@@ -1240,63 +1156,6 @@ pre {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
 }
 
-.project-card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  height: 100%;
-  padding: var(--space-6);
-}
-
-.project-card-meta {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: var(--space-2) var(--space-4);
-  font-family: var(--font-code);
-  font-size: var(--text-label);
-  color: var(--fg-muted);
-}
-
-.project-card-title {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin-top: var(--space-4);
-  font-size: var(--text-lead);
-  line-height: var(--lh-lead);
-  letter-spacing: -0.01em;
-}
-
-.project-card-arrow {
-  width: 1rem;
-  height: 1rem;
-  flex: 0 0 auto;
-  color: var(--fg-muted);
-  transition:
-    transform var(--dur) var(--ease),
-    color var(--dur) var(--ease);
-}
-
-.project-card:hover .project-card-arrow {
-  color: var(--fg);
-  transform: translateX(3px);
-}
-
-.project-card p {
-  color: var(--fg-muted);
-  font-size: var(--text-small);
-  line-height: var(--lh-small);
-}
-
-.project-card-stack {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  margin-top: auto;
-  padding-top: var(--space-3);
-}
-
 /* --- Education: four cards ----------------------------------------------- */
 
 /* Two up, not auto-fit: four records on a three-column grid left the
@@ -1306,7 +1165,7 @@ pre {
   gap: var(--space-4);
 }
 
-@media (min-width: 768px) {
+@container section (min-width: 36rem) {
   .entry-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1328,7 +1187,7 @@ pre {
   gap: var(--space-4);
 }
 
-@media (min-width: 768px) {
+@container section (min-width: 36rem) {
   .item-cards {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1381,7 +1240,7 @@ pre {
   border-bottom: var(--hairline) solid var(--border);
 }
 
-@media (min-width: 768px) {
+@container section (min-width: 40rem) {
   .event-row {
     grid-template-columns: 6.5rem minmax(0, 1fr) 13rem;
     column-gap: var(--space-8);
@@ -1457,7 +1316,7 @@ pre {
   gap: var(--space-8);
 }
 
-@media (min-width: 1024px) {
+@container section (min-width: 46rem) {
   .post-feature {
     grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
     column-gap: var(--space-12);
@@ -1527,7 +1386,7 @@ pre {
   padding: clamp(var(--space-6), 1rem + 3vw, var(--space-12));
 }
 
-@media (min-width: 1024px) {
+@container section (min-width: 46rem) {
   .contact-panel {
     grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
     column-gap: var(--space-16);
@@ -1577,7 +1436,7 @@ pre {
   padding: var(--space-6);
   background: var(--bg-surface);
   border: var(--hairline) solid var(--border-strong);
-  border-radius: 24px;
+  border-radius: var(--radius-panel);
   scrollbar-width: none;
 }
 
@@ -1611,7 +1470,7 @@ pre {
   aspect-ratio: 16 / 11;
   object-fit: cover;
   object-position: center 22%;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-block);
   background: var(--bg-raised);
 }
 
@@ -1658,7 +1517,7 @@ pre {
   display: block;
   margin-inline: calc(-1 * var(--space-2));
   padding: 0.35rem var(--space-2);
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   font-size: var(--text-small);
   line-height: var(--lh-small);
   font-weight: 500;
@@ -1693,7 +1552,7 @@ pre {
 .shell-main .site-footer {
   background: var(--bg-surface);
   border: var(--hairline) solid var(--border-strong);
-  border-radius: 24px;
+  border-radius: var(--radius-panel);
   margin-bottom: var(--space-6);
 }
 
@@ -1731,12 +1590,10 @@ pre {
   :is(
     .pillar,
     .tools-panel,
-    .project-card,
     .entry-grid .entry,
     .item-cards .item,
     .post-featured,
-    .contact-panel,
-    .hero-readout
+    .contact-panel
   ) {
   background: var(--bg);
 }
@@ -1760,16 +1617,6 @@ pre {
   }
 }
 
-.hero-readout {
-  padding: var(--space-2) var(--space-5);
-  border: var(--hairline) solid var(--border-strong);
-  border-radius: var(--radius-xl);
-}
-
-.hero-readout .pw-row:first-child {
-  border-top: 0;
-}
-
 @media (min-width: 1024px) {
   /* Beside the rail the panel is the hero's whole width: the headline takes
      it, and the readout runs under it as a two-by-two strip. */
@@ -1780,16 +1627,6 @@ pre {
 
   .shell-main .hero-title {
     max-width: 16ch;
-  }
-
-  .shell-main .hero-readout {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: var(--space-8);
-  }
-
-  .shell-main .hero-readout .pw-row:nth-child(2) {
-    border-top: 0;
   }
 
   /* The rail already carries the primary action and the social links. */
@@ -1810,8 +1647,6 @@ pre {
    ============================================================ */
 
 :root {
-  --panel-radius: 32px;
-  --tile-radius: 22px;
   --panel-shadow:
     0 1px 2px color-mix(in srgb, var(--paper-900) 4%, transparent),
     0 12px 40px color-mix(in srgb, var(--paper-900) 6%, transparent);
@@ -1827,7 +1662,7 @@ pre {
 .shell-main .hero-wrap,
 .shell-main .site-footer {
   border: 0;
-  border-radius: var(--panel-radius);
+  border-radius: var(--radius-panel);
   box-shadow: var(--panel-shadow);
 }
 
@@ -1868,11 +1703,10 @@ pre {
   color: var(--fg);
 }
 
-/* The rail's one action, as a solid pill in the text colour - black on
-   paper, white on Carbon. */
+/* The rail's one action, solid in the text colour - black on paper, white
+   on Carbon. A capsule, like every button. */
 .rail-actions .btn {
   min-height: 48px;
-  border-radius: var(--radius-pill);
   background: var(--fg);
   border-color: var(--fg);
   color: var(--bg);
@@ -1965,6 +1799,7 @@ pre {
 
 .rail-id .theme-toggle {
   margin-left: auto;
+  border-color: var(--border-strong);
 }
 
 .rail-toc {
@@ -2064,19 +1899,18 @@ pre {
   :is(
     .pillar,
     .tools-panel,
-    .project-card,
     .entry-grid .entry,
     .item-cards .item,
     .post-featured,
     .contact-panel
   ) {
   border: 0;
-  border-radius: var(--tile-radius);
+  border-radius: var(--radius-tile);
 }
 
 .shell-main .pillar-icon {
   border: 0;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-block);
   background: var(--bg-surface);
 }
 
@@ -2085,48 +1919,19 @@ pre {
 .shell-main .badge {
   border-color: transparent;
   border-radius: var(--radius-pill);
-  background: var(--bg-surface);
 }
 
-.shell-main .btn {
-  border-radius: var(--radius-pill);
+/* The filled badge keeps its ink fill - it is the one badge that is not a
+   quiet pill on a surface. */
+.shell-main .tools-list li,
+.shell-main .chip,
+.shell-main .badge:not(.badge-filled) {
+  background: var(--bg-surface);
 }
 
 /* The section marker line is the terminal style; F is headings only. */
 .shell-main .section-marker {
   display: none;
-}
-
-/* Hero readout: one tile per record. Scoped through .hero-wrap to outrank
-   the panel-card rule above, whose :is() list carries a two-class selector. */
-.shell-main .hero-wrap .hero-readout {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
-  gap: var(--space-3);
-  padding: 0;
-  border: 0;
-  background: none;
-}
-
-.shell-main .hero-readout .pw-row,
-.shell-main .hero-readout .pw-row:first-child {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  padding: var(--space-5);
-  border: 0;
-  border-radius: var(--tile-radius);
-  background: var(--bg);
-}
-
-.shell-main .hero-readout dt {
-  font-family: var(--font-sans);
-  font-size: var(--text-label);
-}
-
-/* The keys are lowercase data names; as labels they take sentence case. */
-.shell-main .hero-readout dt::first-letter {
-  text-transform: uppercase;
 }
 
 /* Work: one rounded tile per role instead of the line and nodes. */
@@ -2144,7 +1949,7 @@ pre {
 .shell-main .timeline .entry,
 .shell-main .timeline .entry:last-child {
   padding: var(--space-6);
-  border-radius: var(--tile-radius);
+  border-radius: var(--radius-tile);
   background: var(--bg);
 }
 
@@ -2196,7 +2001,7 @@ pre {
   gap: var(--space-3);
 }
 
-@media (min-width: 768px) {
+@container section (min-width: 46rem) {
   .hero-latest {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -2207,7 +2012,7 @@ pre {
   flex-direction: column;
   gap: var(--space-2);
   padding: var(--space-5);
-  border-radius: var(--tile-radius);
+  border-radius: var(--radius-tile);
   background: var(--bg);
 }
 
@@ -2238,19 +2043,19 @@ pre {
   gap: var(--space-4);
 }
 
-@media (min-width: 768px) {
+@container section (min-width: 34rem) {
   .tile-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-@media (min-width: 768px) {
+@container section (min-width: 34rem) {
   .tile-grid--3 {
     grid-template-columns: minmax(0, 1fr);
   }
 }
 
-@media (min-width: 1200px) {
+@container section (min-width: 50rem) {
   .tile-grid--3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -2261,7 +2066,7 @@ pre {
   flex-direction: column;
   gap: var(--space-3);
   padding: var(--space-6);
-  border-radius: var(--tile-radius);
+  border-radius: var(--radius-tile);
   background: var(--bg);
 }
 
@@ -2362,11 +2167,6 @@ pre {
   border-color: var(--border-strong);
   background: var(--surface-hover);
   color: var(--fg);
-}
-
-.shell-main :is(.filter-trigger, .sort-dropdown-trigger):hover {
-  border-color: transparent;
-  background: color-mix(in srgb, var(--fg) 6%, var(--bg));
 }
 
 .active-filter-chip {
@@ -2536,11 +2336,17 @@ pre {
   flex: 0 0 auto;
 }
 
+/* 16px at the default size; `.btn--sm` steps down to 14px. Without a size
+   an icon-only button drew Lucide's 24px default. */
 .btn svg {
   flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
 }
 
-/* Mutually exclusive options: a recessed track, the chosen one raised. */
+/* Mutually exclusive options: a recessed track, the chosen one raised. Both
+   are capsules, and a capsule inside a capsule with an even inset is
+   concentric by construction. */
 .toggle-group {
   flex: 0 0 auto;
   display: inline-flex;
@@ -2550,10 +2356,6 @@ pre {
   border-radius: var(--radius-pill);
   background: var(--bg);
   border: var(--hairline) solid var(--border-strong);
-}
-
-.shell-main .toggle-group {
-  border-color: transparent;
 }
 
 .toggle-group-option {
@@ -2581,44 +2383,38 @@ pre {
 .toggle-group-option[aria-pressed="true"] {
   background: var(--bg-surface);
   color: var(--fg);
-  box-shadow: 0 1px 2px color-mix(in srgb, var(--ink-900) 12%, transparent);
+  box-shadow:
+    0 0 0 var(--hairline) var(--border-strong),
+    0 1px 2px color-mix(in srgb, var(--ink-900) 12%, transparent);
 }
 
+/* Controls take the soft ring that follows their corner; text links keep
+   the global outline. */
 .toggle-group-option:focus-visible {
-  outline: 2px solid var(--brand);
-  outline-offset: 1px;
+  outline: none;
+  box-shadow: 0 0 0 var(--ring-width) var(--ring);
 }
 
 /* ============================================================
    v2.1.0 draft - consistency pass over every route
 
    The pages share these controls; the rail layout put them on a new surface,
-   so they move together: pills for every small control, page-ground fills
-   for anything sitting on a panel, surface fills for anything inside a tile.
+   so they move together: capsules for every control, chip and badge,
+   page-ground fills for anything sitting on a panel, surface fills for
+   anything inside a tile.
    ============================================================ */
-
-/* Hero readout: two by two, never three and an orphan. */
-.shell-main .hero-wrap .hero-readout {
-  grid-template-columns: minmax(0, 1fr);
-}
-
-@media (min-width: 640px) {
-  .shell-main .hero-wrap .hero-readout {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
 
 /* Chips, badges and page counts: pills on the page ground when they sit on
    a panel, on the surface colour when they sit inside a tile. */
-.shell-main :is(.chip, .badge, .count-badge) {
+.shell-main :is(.chip, .badge:not(.badge-filled), .count-badge) {
   border-color: transparent;
   border-radius: var(--radius-pill);
   background: var(--bg);
 }
 
 .shell-main
-  :is(.project-card, .item-cards .item, .tools-panel, .post-featured)
-  :is(.chip, .badge),
+  :is(.tile, .tile-card, .item-cards .item, .tools-panel, .post-featured)
+  :is(.chip, .badge:not(.badge-filled)),
 .shell-main .tools-list li {
   background: var(--bg-surface);
 }
@@ -2631,21 +2427,43 @@ a.chip:hover {
   color: var(--brand);
 }
 
-.shell-main .chip--interactive:hover {
-  border-color: transparent;
-  background: var(--bg);
+/* What can be pressed has an edge; what only labels does not.
+
+   - A text field - search, a form field, a textarea - has nothing inside it
+     that says "type here", so its edge is the signal: --border-input, held
+     to WCAG 1.4.11's 3:1 against what it sits on.
+   - A button, a select, a toggle track, a chip that acts: told apart by its
+     label, so the quieter --border-strong, the secondary button's edge.
+   - Badges, tags and counts that only label: no edge, a quiet fill. The
+     edge is what tells a tag you can press from one you cannot.
+   - Items inside a bar or a menu - nav links, menu rows - and text actions
+     like Reply: no edge of their own. The bar or the menu is their edge, the
+     words are a text action's. */
+.shell-main
+  :is(
+    a.chip,
+    a > .chip,
+    button.chip,
+    .chip--interactive,
+    a > .badge:not(.badge-filled),
+    .badge--interactive,
+    .active-filter-chip
+  ) {
+  border: var(--hairline) solid var(--border-strong);
 }
 
-/* Search, filters and sort: the same pill shape as the buttons beside them. */
-.shell-main .search-input,
-.shell-main :is(.filter-trigger, .sort-dropdown-trigger) {
-  border-color: transparent;
-  border-radius: var(--radius-pill);
-  background: var(--bg);
-}
-
-.shell-main .form :is(input, textarea) {
-  border-radius: 14px;
+/* Hover changes the text and the fill, never the edge. */
+.shell-main
+  :is(
+    a.chip,
+    a > .chip,
+    button.chip,
+    .chip--interactive,
+    a > .badge:not(.badge-filled),
+    .badge--interactive,
+    .active-filter-chip
+  ):hover {
+  border-color: var(--border-strong);
 }
 
 /* Page titles and section headings never leave a word alone on their last
@@ -2678,7 +2496,8 @@ a.chip:hover {
    reference's values are.
 
    Height rather than vertical padding, so a button and an input placed on the
-   same row are the same object: 40px, both of them, in every theme. */
+   same row are the same object: 40px and a capsule, both of them, in every
+   theme. */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -2690,7 +2509,7 @@ a.chip:hover {
   line-height: 1;
   letter-spacing: var(--track-label);
   padding: 0 var(--space-5);
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   border: var(--hairline) solid transparent;
   cursor: pointer;
   transition:
@@ -2879,29 +2698,6 @@ a.chip:hover {
   margin-top: var(--space-10);
 }
 
-.card {
-  border-color: var(--border-strong);
-  transition:
-    background var(--dur) var(--ease),
-    border-color var(--dur) var(--ease);
-}
-
-.card:hover {
-  background: var(--surface-hover);
-  border-color: var(--brand);
-}
-
-.card h3 {
-  margin-bottom: var(--space-2);
-  letter-spacing: var(--track-tight);
-}
-
-.card p {
-  color: var(--fg-muted);
-  font-size: var(--text-small);
-  line-height: var(--lh-small);
-}
-
 /* --- Subsections and item lists (v2.1.0 draft) ------------------------- */
 
 .subsection {
@@ -3070,26 +2866,17 @@ a.chip:hover {
   position: relative;
   margin: 0;
   overflow: hidden;
-  border-radius: var(--radius);
-  border: var(--hairline) solid var(--border-strong);
-  background: var(--bg-surface);
+  border-radius: var(--radius-block);
+  background: var(--bg);
   aspect-ratio: 4 / 3;
-  transition: border-color var(--dur) var(--ease);
 }
 
-.gallery figure:hover {
-  border-color: var(--brand);
-}
-
+/* A photo is media: the block radius, no border, and nothing moves on
+   hover (v2.1.0 draft) - the caption fading in is the whole response. */
 .gallery img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform var(--dur) var(--ease);
-}
-
-.gallery a:hover img {
-  transform: scale(1.03);
 }
 
 .gallery figcaption {
@@ -3135,8 +2922,8 @@ a.chip:hover {
 }
 
 .contact-email svg {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   flex: 0 0 auto;
   fill: none;
   stroke: currentColor;
@@ -3213,9 +3000,13 @@ a.chip:hover {
 .field textarea {
   width: 100%;
   padding: var(--space-3) var(--space-4);
+  /* Every field has one corner, half the control height. A one-line field
+     is therefore a capsule, like the button that submits it; a textarea
+     keeps the same end radius as it grows taller, the way a message field
+     does, so a form reads as one set. */
+  border-radius: var(--radius-field);
   background: var(--bg-surface);
-  border: var(--hairline) solid var(--border-strong);
-  border-radius: var(--radius);
+  border: var(--hairline) solid var(--border-input);
   color: var(--fg);
   -webkit-text-fill-color: var(--fg);
   font-family: var(--font-sans);
@@ -3243,7 +3034,7 @@ a.chip:hover {
 .field input:hover:not(:disabled):not(:focus),
 .field textarea:hover:not(:disabled):not(:focus) {
   background: var(--surface-hover);
-  border-color: color-mix(in srgb, var(--fg) 20%, var(--border-strong));
+  border-color: color-mix(in srgb, var(--fg) 25%, var(--border-input));
 }
 
 .form input:invalid,
@@ -3407,8 +3198,8 @@ a.chip:hover {
   padding-left: calc(var(--space-3) + 24px);
   padding-right: calc(var(--space-3) + 24px);
   background: var(--bg-surface);
-  border: var(--hairline) solid var(--border-strong);
-  border-radius: var(--radius);
+  border: var(--hairline) solid var(--border-input);
+  border-radius: var(--radius-field);
   color: var(--fg);
   -webkit-text-fill-color: var(--fg);
   font-family: var(--font-sans);
@@ -3423,7 +3214,7 @@ a.chip:hover {
 
 .search-input:hover:not(:focus) {
   background: var(--surface-hover);
-  border-color: color-mix(in srgb, var(--fg) 20%, var(--border-strong));
+  border-color: color-mix(in srgb, var(--fg) 25%, var(--border-input));
 }
 
 .search-input:focus {
@@ -3458,10 +3249,12 @@ a.chip:hover {
   color: var(--fg-muted);
   background: var(--bg-surface);
   border: var(--hairline) solid var(--border-strong);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-pill);
   pointer-events: none;
 }
 
+/* 26px, 7px inside a 40px capsule: 20 less 7 is 13, half its size, so a
+   circle is the concentric shape. */
 .search-input-clear {
   position: absolute;
   right: var(--space-2);
@@ -3471,7 +3264,7 @@ a.chip:hover {
   width: 26px;
   height: 26px;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-pill);
   background: transparent;
   color: var(--fg-muted);
   cursor: pointer;
@@ -3493,15 +3286,23 @@ a.chip:hover {
   flex-shrink: 0;
 }
 
+/* A select is a button that opens a menu, so it is drawn as the secondary
+   button is: transparent, with the button's edge. */
+.sort-dropdown-trigger,
+.filter-trigger {
+  border: var(--hairline) solid var(--border-strong);
+  border-radius: var(--radius-pill);
+  background: transparent;
+}
+
 .sort-dropdown-trigger {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
   height: var(--control-h);
   padding: 0 var(--space-4);
-  background: var(--bg-surface);
+  background: transparent;
   border: var(--hairline) solid var(--border-strong);
-  border-radius: var(--radius);
   color: var(--fg);
   font-family: var(--font-sans);
   font-size: var(--text-small);
@@ -3523,8 +3324,8 @@ a.chip:hover {
 }
 
 .sort-dropdown-icon {
-  width: 15px;
-  height: 15px;
+  width: 16px;
+  height: 16px;
   color: var(--fg-muted);
   flex-shrink: 0;
   transition: color var(--dur) var(--ease);
@@ -3554,13 +3355,11 @@ a.chip:hover {
   right: 0;
   z-index: 50;
   min-width: 190px;
-  padding: var(--space-1);
+  padding: 6px;
   background: var(--bg-surface);
   border: var(--hairline) solid var(--border-strong);
-  border-radius: var(--radius);
-  box-shadow:
-    0 10px 30px -5px rgb(0 0 0 / 0.35),
-    0 4px 6px -2px rgb(0 0 0 / 0.15);
+  border-radius: var(--radius-tile);
+  box-shadow: var(--shadow-nav);
   list-style: none;
   margin: 0;
   animation: dropdown-in var(--dur) var(--ease);
@@ -3583,7 +3382,7 @@ a.chip:hover {
   justify-content: space-between;
   gap: var(--space-3);
   padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-row);
   font-family: var(--font-sans);
   font-size: var(--text-small);
   font-weight: 500;
@@ -3628,167 +3427,9 @@ a.chip:hover {
   color: var(--fg-muted);
 }
 
-/* --- View tabs (All / Series) ------------------------------------------- */
-
-.view-tabs {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  padding: 3px;
-  background: var(--bg-surface);
-  border: var(--hairline) solid var(--border-strong);
-  border-radius: var(--radius);
-  margin-bottom: var(--space-6);
-}
-
-.view-tab {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: 0 var(--space-3);
-  height: 32px;
-  border-radius: var(--radius-sm);
-  border: var(--hairline) solid transparent;
-  background: transparent;
-  font-family: var(--font-sans);
-  font-size: var(--text-small);
-  font-weight: 500;
-  color: var(--fg-muted);
-  cursor: pointer;
-  transition:
-    background-color var(--dur) var(--ease),
-    border-color var(--dur) var(--ease),
-    color var(--dur) var(--ease);
-}
-
-.view-tab:hover {
-  color: var(--fg);
-  background: var(--surface-hover);
-  border-color: var(--border-strong);
-}
-
-.view-tab.is-active {
-  color: var(--brand);
-  background: var(--surface-hover);
-  border-color: var(--brand);
-}
-
-.view-tab-count {
-  font-family: var(--font-mono);
-  font-size: var(--text-label);
-  padding: 1px 6px;
-  border-radius: var(--radius-sm);
-  background: var(--raised-hover);
-  color: var(--fg-muted);
-}
-
-.view-tab.is-active .view-tab-count {
-  color: var(--brand);
-}
-
-/* --- Series cards & grid ------------------------------------------------ */
-
-.series-grid {
-  display: grid;
-  gap: var(--space-6);
-}
-
-.series-card {
-  border: var(--hairline) solid var(--border-strong);
-  border-radius: var(--radius-lg);
-  background: var(--bg-surface);
-  padding: var(--space-6);
-  transition:
-    border-color var(--dur) var(--ease),
-    box-shadow var(--dur) var(--ease);
-}
-
-.series-card:hover {
-  border-color: var(--brand);
-}
-
-.series-card-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-4);
-  flex-wrap: wrap;
-}
-
-.series-card-title {
-  font-size: var(--text-h3);
-  font-weight: 500;
-  letter-spacing: -0.02em;
-  color: var(--fg);
-  margin-top: var(--space-1);
-}
-
-.series-card-desc {
-  margin-top: var(--space-3);
-  color: var(--fg-muted);
-  font-size: var(--text-body);
-  line-height: var(--lh-body);
-}
-
-.series-posts-list {
-  margin-top: var(--space-5);
-  padding-top: var(--space-4);
-  border-top: var(--hairline) solid var(--border);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.series-post-row {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-3);
-  font-size: var(--text-small);
-}
-
-.series-post-num {
-  font-family: var(--font-mono);
-  color: var(--fg-muted);
-  flex-shrink: 0;
-  width: 1.5rem;
-}
-
-.series-post-title {
-  color: var(--fg);
-  text-decoration: none;
-  transition: color var(--dur) var(--ease);
-}
-
-.series-post-title:hover {
-  color: var(--fg-muted);
-}
-
-.series-detail-header {
-  margin-bottom: var(--space-8);
-  padding-bottom: var(--space-6);
-  border-bottom: var(--hairline) solid var(--border);
-}
-
-.series-back-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin-bottom: var(--space-4);
-  font-family: var(--font-mono);
-  font-size: var(--text-small);
-  color: var(--brand);
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  transition: color var(--dur) var(--ease);
-}
-
-.series-back-btn:hover {
-  color: var(--fg);
-}
-
 /* --- Back to top -------------------------------------------------------- */
+
+/* An icon alone, so a circle, like every icon-only control. */
 
 .back-to-top {
   position: fixed;
@@ -3801,7 +3442,7 @@ a.chip:hover {
   width: 40px;
   height: 40px;
   padding: 0;
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   border: var(--hairline) solid var(--border-strong);
   background: var(--bg-surface);
   color: var(--fg-muted);
@@ -3889,8 +3530,8 @@ a.chip:hover {
 }
 
 .socials svg {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   fill: currentColor;
 }
 
@@ -3975,7 +3616,7 @@ a.chip:hover {
 .curl-hint:focus-visible {
   outline: 2px solid var(--brand);
   outline-offset: 3px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-inline);
 }
 .footer-meta {
   display: flex;
@@ -4150,7 +3791,7 @@ a.chip:hover {
 }
 
 .prose img {
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-block);
   border: var(--hairline) solid var(--border-strong);
 }
 
@@ -4159,7 +3800,7 @@ a.chip:hover {
   font-size: 0.875em;
   background: var(--bg-raised);
   border: var(--hairline) solid var(--border-strong);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-inline);
   padding: 0.1em 0.35em;
 }
 
@@ -4167,6 +3808,11 @@ a.chip:hover {
   width: 100%;
   border-collapse: collapse;
   font-size: var(--text-small);
+}
+
+.prose-table {
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 .prose th,
@@ -4244,7 +3890,7 @@ a.chip:hover {
   font-size: 0.875em;
   font-weight: 500;
   padding: 0.15em 0.4em;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-inline);
   background: var(--surface-hover);
   border: var(--hairline) solid var(--border-strong);
   color: var(--brand);
@@ -4288,6 +3934,87 @@ textarea:-webkit-autofill:focus {
   transition: background-color 9999s ease-in-out 0s;
 }
 
+/* One stroke weight for every interface icon (v2.1.0 draft). Lucide draws
+   at 2 unless told otherwise, and the site had told it 1.7, 1.75, 1.8, 2
+   and 2.5 in different places - the same Copy icon at two weights. CSS
+   outranks the stroke-width attribute, so this settles it once. */
+svg.lucide {
+  stroke-width: 1.75;
+}
+
+/* ============================================================
+   v2.1.0 draft - grids split by the room they have
+   ============================================================ */
+
+/* Each section's content box is a size container. The content grids below
+   (pillars, timelines, cards, the hero's latest tiles, the contact panel)
+   split on its width, not the window's: their breakpoints were set before
+   the profile rail took 360px of a wide window, and at 1024px they were
+   laying out three columns in a 540px panel - a role tile 120px wide, a
+   pillar description at four words a line. */
+main .container {
+  container: section / inline-size;
+}
+
+/* ============================================================
+   v2.1.0 draft - corners by role
+   ============================================================ */
+
+/* A card on a panel: borderless, on the page ground, at the tile radius -
+   the shape every block that sits directly on a panel takes. Blocks inside
+   a tile step down to the surface colour at the block radius
+   (`rounded-block bg-bg-surface`). */
+.tile {
+  border-radius: var(--radius-tile);
+  background: var(--bg);
+}
+
+/* Every menu that opens over the page - filter, sort, share, the nav's
+   More, the reaction picker - is one surface: the surface colour, a strong
+   hairline, the tile radius and the nav's shadow. They had three shadows
+   between them. A row inside one sits 6px in, so it takes the row radius,
+   the tile's less 6px, and the curves stay parallel. The reaction picker is
+   a single row of emoji, so a capsule. */
+.popover {
+  background: var(--bg-surface);
+  border: var(--hairline) solid var(--border-strong);
+  border-radius: var(--radius-tile);
+  box-shadow: var(--shadow-nav);
+}
+
+.popover.popover--pill {
+  border-radius: var(--radius-pill);
+}
+
+/* The filter trigger takes the sort trigger's states: an open menu marks
+   its trigger's edge, an applied filter brings the label to full contrast. */
+.shell-main .filter-trigger.is-open {
+  border-color: var(--brand);
+}
+
+/* A control or a chip holds one line. A label that wraps inside one - "Copy
+   standard bio" on a phone, a contrast chip in a narrow swatch - turns it
+   into a lozenge; the row around it wraps instead. */
+.btn,
+.chip,
+.badge,
+.count-badge,
+.tile-pill,
+.entry-date,
+.toggle-group-option {
+  white-space: nowrap;
+}
+
+/* An icon-only button: a circle, as wide as it is tall, at either size. */
+.btn.btn--icon {
+  width: var(--control-h);
+  padding: 0;
+}
+
+.btn.btn--sm.btn--icon {
+  width: 32px;
+}
+
 /* ============================================================
    v2.1.0 draft - the terminal window on the 404, 500 and 503 pages
    ============================================================ */
@@ -4299,7 +4026,7 @@ textarea:-webkit-autofill:focus {
   container-type: inline-size;
   overflow: hidden;
   border: var(--hairline) solid var(--border-strong);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-tile);
   background: var(--bg);
   font-family: var(--font-code);
 }
@@ -4356,7 +4083,7 @@ textarea:-webkit-autofill:focus {
   position: relative;
   overflow: hidden;
   padding: var(--space-4);
-  border-radius: var(--radius);
+  border-radius: var(--radius-block);
   background: var(--bg-surface);
   color: var(--fg);
 }
@@ -4393,7 +4120,7 @@ textarea:-webkit-autofill:focus {
   margin-block: 6px;
   padding: 2px 10px;
   border: var(--hairline) solid var(--border-strong);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-inline);
 }
 
 /* What a panel shows while an action runs - a ping, a reboot, a probe. */
@@ -4436,9 +4163,9 @@ textarea:-webkit-autofill:focus {
 
 /* A readout standing on its own, outside a window - the 503 page's status. */
 .terminal-readout-box {
-  padding: var(--space-4);
-  border: var(--hairline) solid var(--border-strong);
-  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  border-radius: var(--radius-tile);
+  background: var(--bg);
   font-family: var(--font-code);
   font-size: var(--text-label);
   color: var(--fg-muted);
