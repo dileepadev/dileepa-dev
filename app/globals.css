@@ -1862,9 +1862,12 @@ pre {
   gap: var(--space-2);
 }
 
-/* Availability is live, so its dot breathes - a ring that grows and fades.
-   Only here: the Current and Upcoming pills keep a still dot. */
-.rail-status .hero-status-dot {
+/* A status dot marks something live - available for work, a current role
+   or community, an upcoming event - so every one breathes: a ring that grows
+   and fades, the same two-second beat everywhere (v2.1.0 draft). The dots
+   that mark where you are in the nav and footer stay still; they are a
+   place, not a status. */
+.hero-status-dot {
   animation: status-pulse 2s var(--ease) infinite;
 }
 
@@ -1881,7 +1884,7 @@ pre {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .rail-status .hero-status-dot {
+  .hero-status-dot {
     animation: none;
   }
 }
