@@ -4125,6 +4125,40 @@ main .container {
   container: section / inline-size;
 }
 
+/* A copy button's confirmation (v2.1.0 draft; behaviour in `useCopy`). The
+   copy icon and the tick are two icons that swap, not one that changes, so a
+   transition has nothing to run on; each animates as it appears instead, at
+   the hover timing. The tick, in the success green, grows in from 60%; the
+   copy icon fades back in when the two seconds are up. */
+.copy-tick {
+  color: var(--success);
+  animation: copy-tick-in var(--dur) var(--ease) both;
+}
+
+.copy-icon {
+  animation: copy-icon-in var(--dur) var(--ease) both;
+}
+
+@keyframes copy-tick-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes copy-icon-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 /* The page path above a page's title: a filled capsule on the page ground,
    so the route reads as a row of its own - it was one more line of muted
    mono over the page label. The page you are on is at full contrast; the

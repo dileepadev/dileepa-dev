@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Check, Copy, Download } from "lucide-react";
+import { useCopy } from "@/components/ui/useCopy";
 import { buttonClasses, ToggleGroup } from "@/components/ui";
 import { SITE_CONFIG } from "@/lib/constants";
 import { cn } from "@/lib/utils";
@@ -30,17 +31,9 @@ export function ColorSwatch({
   borderHex,
   textHex,
 }: ColorSwatchProps) {
-  const [copied, setCopied] = useState(false);
+  const { copied, copy } = useCopy();
 
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(hex);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1800);
-    } catch {
-      // Ignore clipboard failure
-    }
-  };
+  const handleCopy = () => copy(hex);
 
   // No `aria-label` on the button. An override there replaces the visible
   // text with a string that does not contain it, which is the "Label in Name"
@@ -74,9 +67,9 @@ export function ColorSwatch({
           )}
         >
           {copied ? (
-            <Check className="h-3.5 w-3.5" aria-hidden="true" />
+            <Check className="h-3.5 w-3.5 copy-tick" aria-hidden="true" />
           ) : (
-            <Copy className="h-3.5 w-3.5" aria-hidden="true" />
+            <Copy className="copy-icon h-3.5 w-3.5" aria-hidden="true" />
           )}
         </span>
       </div>
@@ -128,17 +121,9 @@ export function CopySnippetButton({
   label?: string;
   className?: string;
 }) {
-  const [copied, setCopied] = useState(false);
+  const { copied, copy } = useCopy();
 
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // Ignore clipboard failure
-    }
-  };
+  const handleCopy = () => copy(text);
 
   // No `aria-label` on the button. An override there replaces the visible
   // text with a string that does not contain it, which is the "Label in Name"
@@ -153,12 +138,12 @@ export function CopySnippetButton({
     >
       {copied ? (
         <>
-          <Check aria-hidden="true" />
+          <Check className="copy-tick" aria-hidden="true" />
           <span>Copied</span>
         </>
       ) : (
         <>
-          <Copy aria-hidden="true" />
+          <Copy className="copy-icon" aria-hidden="true" />
           <span>{label}</span>
         </>
       )}
@@ -169,7 +154,7 @@ export function CopySnippetButton({
 export function SocialCardPreview() {
   const [platform, setPlatform] = useState<"twitter" | "linkedin">("twitter");
   const [variant, setVariant] = useState<"standard" | "detailed">("standard");
-  const [copied, setCopied] = useState(false);
+  const { copied, copy } = useCopy();
 
   const currentImage = variant === "standard" ? "/og.png" : "/og2.png";
   const currentFilename =
@@ -180,15 +165,7 @@ export function SocialCardPreview() {
   const ratio =
     variant === "standard" ? "1.91:1 (standard)" : "16:9 (widescreen)";
 
-  const handleCopyUrl = async () => {
-    try {
-      await navigator.clipboard.writeText(`https://dileepa.dev${currentImage}`);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // Ignore clipboard failure
-    }
-  };
+  const handleCopyUrl = () => copy(`https://dileepa.dev${currentImage}`);
 
   return (
     <div className="tile overflow-hidden">
@@ -291,9 +268,9 @@ export function SocialCardPreview() {
             className={buttonClasses({ size: "sm" })}
           >
             {copied ? (
-              <Check aria-hidden="true" />
+              <Check className="copy-tick" aria-hidden="true" />
             ) : (
-              <Copy aria-hidden="true" />
+              <Copy className="copy-icon" aria-hidden="true" />
             )}
             {copied ? "Copied" : "Copy image URL"}
           </button>

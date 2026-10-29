@@ -807,7 +807,7 @@ export default async function BrandPage() {
                   name="Success"
                   token="--success"
                   hex="#23B888 / #087F5B"
-                  role="Success states only - sent, saved. Never decoration."
+                  role="Success states only - copied, sent. Never decoration."
                   bgHex="#23B888"
                   textHex="#050505"
                 />

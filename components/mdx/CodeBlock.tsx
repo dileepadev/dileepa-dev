@@ -1,8 +1,9 @@
 "use client";
 
-import { isValidElement, useState, useRef, ReactNode } from "react";
+import { isValidElement, useRef, ReactNode } from "react";
 import { Check, Copy, Terminal } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useCopy } from "@/components/ui/useCopy";
 
 const LANGUAGE_MAP: Record<string, string> = {
   ts: "TypeScript",
@@ -81,7 +82,7 @@ function getNodeText(node: ReactNode): string {
  * prominent language label, and one-click copy button.
  */
 export function CodeBlock({ children, className, ...props }: PreProps) {
-  const [copied, setCopied] = useState(false);
+  const { copied, copy } = useCopy();
   const preRef = useRef<HTMLPreElement>(null);
 
   // Shiki stamps `data-language` on the blocks it highlights. A fence in a
@@ -102,38 +103,12 @@ export function CodeBlock({ children, className, ...props }: PreProps) {
       rawLanguage.charAt(0).toUpperCase() + rawLanguage.slice(1)
     : "Code";
 
-  const handleCopy = async () => {
-    try {
-      let textToCopy = "";
-      if (preRef.current) {
-        textToCopy = preRef.current.innerText;
-      } else {
-        textToCopy = getNodeText(children);
-      }
-
-      // Trim any trailing newline artifact
-      textToCopy = textToCopy.replace(/\n$/, "");
-
-      if (navigator?.clipboard?.writeText) {
-        await navigator.clipboard.writeText(textToCopy);
-      } else {
-        // Fallback for older contexts
-        const textArea = document.createElement("textarea");
-        textArea.value = textToCopy;
-        textArea.style.position = "fixed";
-        textArea.style.opacity = "0";
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-        document.execCommand("copy");
-        document.body.removeChild(textArea);
-      }
-
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      setCopied(false);
-    }
+  const handleCopy = () => {
+    const text = preRef.current
+      ? preRef.current.innerText
+      : getNodeText(children);
+    // Trim the trailing newline the block's last line leaves.
+    return copy(text.replace(/\n$/, ""));
   };
 
   return (
@@ -150,17 +125,17 @@ export function CodeBlock({ children, className, ...props }: PreProps) {
         <button
           type="button"
           onClick={handleCopy}
-          aria-label={copied ? "Copied code" : "Copy code to clipboard"}
+          aria-label="Copy code"
           className="code-copy-btn btn btn--secondary btn--sm"
         >
           {copied ? (
             <>
-              <Check aria-hidden="true" />
+              <Check className="copy-tick" aria-hidden="true" />
               <span>Copied</span>
             </>
           ) : (
             <>
-              <Copy aria-hidden="true" />
+              <Copy className="copy-icon" aria-hidden="true" />
               <span>Copy</span>
             </>
           )}

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Check, Copy, Globe, RefreshCw, ShieldCheck } from "lucide-react";
+import { useCopy } from "./useCopy";
 import { cn } from "@/lib/utils";
 import { TerminalCard, TerminalPanel, TerminalReadout } from "./TerminalCard";
 import { ToggleGroup } from "./ToggleGroup";
@@ -46,7 +47,7 @@ export function ApiOfflineVisual({
   const [frameIndex, setFrameIndex] = useState(0);
   const [isProbing, setIsProbing] = useState(false);
   const [probeResult, setProbeResult] = useState<string | null>(null);
-  const [copiedStatus, setCopiedStatus] = useState(false);
+  const { copied: copiedStatus, copy } = useCopy();
 
   // Cycle ASCII uplink animation
   useEffect(() => {
@@ -95,13 +96,7 @@ export function ApiOfflineVisual({
       `Fallback: Degraded Cache Mode`,
     ].join("\n");
 
-    try {
-      await navigator.clipboard.writeText(report);
-      setCopiedStatus(true);
-      setTimeout(() => setCopiedStatus(false), 2000);
-    } catch {
-      // ignore
-    }
+    await copy(report);
   };
 
   const frame = UPLINK_FRAMES[frameIndex];
@@ -165,7 +160,11 @@ export function ApiOfflineVisual({
               onClick={handleCopyStatus}
               className="btn btn--secondary btn--sm"
             >
-              {copiedStatus ? <Check /> : <Copy />}
+              {copiedStatus ? (
+                <Check className="copy-tick" />
+              ) : (
+                <Copy className="copy-icon" />
+              )}
               <span>{copiedStatus ? "Copied" : "Copy report"}</span>
             </button>
           </div>

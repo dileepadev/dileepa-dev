@@ -32,6 +32,7 @@ import {
   StatusBadge,
   buttonClasses,
 } from "@/components/ui";
+import { useCopy } from "@/components/ui/useCopy";
 import type { About, Experience, SpeakingTopic } from "@/lib/api-types";
 import { SITE_CONFIG } from "@/lib/constants";
 import { ZoomHint } from "@/components/ui/ZoomHint";
@@ -140,7 +141,9 @@ export function ProfileClient({
   experiences,
   speakingTopics = [],
 }: ProfileClientProps) {
-  const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  // The site's one copy behaviour, keyed so one hook drives every copy
+  // button here: a tick and "Copied" on the button pressed, for two seconds.
+  const { copied: copiedKey, copy } = useCopy();
   const [lightboxPhoto, setLightboxPhoto] = useState<ProfilePhoto | null>(null);
 
   // The API's copy wins wherever it has any, so the page is edited from the
@@ -165,11 +168,10 @@ export function ProfileClient({
   const currentCompany = experiences[0]?.company || "AI Systems & Engineering";
   const location = about?.location || "Sri Lanka";
 
-  const handleCopy = useCallback((key: string, text: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedKey(key);
-    setTimeout(() => setCopiedKey(null), 2000);
-  }, []);
+  const handleCopy = useCallback(
+    (key: string, text: string) => copy(text, key),
+    [copy],
+  );
 
   const handleShare = useCallback(
     async (photo: ProfilePhoto) => {
@@ -347,12 +349,12 @@ export function ProfileClient({
             >
               {copiedKey === "email" ? (
                 <>
-                  <Check className="h-4 w-4 text-brand" />
-                  <span>Copied email!</span>
+                  <Check className="h-4 w-4 copy-tick" />
+                  <span>Copied</span>
                 </>
               ) : (
                 <>
-                  <Copy className="h-4 w-4" />
+                  <Copy className="copy-icon h-4 w-4" />
                   <span>Copy email</span>
                 </>
               )}
@@ -397,12 +399,12 @@ export function ProfileClient({
               >
                 {copiedKey === "short-bio" ? (
                   <>
-                    <Check className="h-3.5 w-3.5 text-brand" />
-                    <span>Copied!</span>
+                    <Check className="h-3.5 w-3.5 copy-tick" />
+                    <span>Copied</span>
                   </>
                 ) : (
                   <>
-                    <Copy className="h-3.5 w-3.5" />
+                    <Copy className="copy-icon h-3.5 w-3.5" />
                     <span>Copy short bio</span>
                   </>
                 )}
@@ -434,12 +436,12 @@ export function ProfileClient({
               >
                 {copiedKey === "full-bio" ? (
                   <>
-                    <Check className="h-3.5 w-3.5 text-brand" />
-                    <span>Copied!</span>
+                    <Check className="h-3.5 w-3.5 copy-tick" />
+                    <span>Copied</span>
                   </>
                 ) : (
                   <>
-                    <Copy className="h-3.5 w-3.5" />
+                    <Copy className="copy-icon h-3.5 w-3.5" />
                     <span>Copy standard bio</span>
                   </>
                 )}
@@ -538,9 +540,9 @@ export function ProfileClient({
                     aria-label={`Share ${photo.title}`}
                   >
                     {copiedKey === photo.id ? (
-                      <Check aria-hidden="true" />
+                      <Check className="copy-tick" aria-hidden="true" />
                     ) : (
-                      <Share2 aria-hidden="true" />
+                      <Share2 className="copy-icon" aria-hidden="true" />
                     )}
                   </button>
                 </div>
@@ -639,12 +641,12 @@ export function ProfileClient({
                   >
                     {isCopied ? (
                       <>
-                        <Check aria-hidden="true" />
+                        <Check className="copy-tick" aria-hidden="true" />
                         <span>Copied</span>
                       </>
                     ) : (
                       <>
-                        <Copy aria-hidden="true" />
+                        <Copy className="copy-icon" aria-hidden="true" />
                         <span>Copy</span>
                       </>
                     )}

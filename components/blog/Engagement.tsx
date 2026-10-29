@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Check, Eye, Link2, MessageSquare, Share2 } from "lucide-react";
+import { useCopy } from "@/components/ui/useCopy";
 import { FaLinkedin, FaXTwitter } from "@/components/icons/SocialIcons";
 import { api } from "@/lib/api";
 import type { BlogEngagement, ReactionKind } from "@/lib/api-types";
@@ -25,18 +26,9 @@ const actionClasses = "btn btn--secondary btn--sm";
 
 function ShareActions({ url, title }: { url: string; title: string }) {
   const [open, setOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
-
-  async function copy() {
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // Clipboard access can be refused; the two share links still work, so
-      // there is nothing useful to say here.
-    }
-  }
+  // The site's one copy behaviour: a tick and "Copied" on the item for two
+  // seconds, a toast only if the copy fails.
+  const { copied, copy } = useCopy();
 
   const encodedUrl = encodeURIComponent(url);
   const encodedTitle = encodeURIComponent(title);
@@ -83,18 +75,21 @@ function ShareActions({ url, title }: { url: string; title: string }) {
           <button
             type="button"
             role="menuitem"
-            onClick={copy}
+            onClick={() => copy(url)}
             className="inline-flex items-center gap-2 rounded-row px-3 py-2 font-mono text-small text-fg-muted transition-colors hover:bg-surface-hover hover:text-fg"
           >
             {copied ? (
               <Check
-                className="h-4 w-4 shrink-0 text-brand"
+                className="copy-tick h-4 w-4 shrink-0"
                 aria-hidden="true"
               />
             ) : (
-              <Link2 className="h-4 w-4 shrink-0" aria-hidden="true" />
+              <Link2
+                className="copy-icon h-4 w-4 shrink-0"
+                aria-hidden="true"
+              />
             )}
-            <span>{copied ? "Link copied" : "Copy link"}</span>
+            <span>{copied ? "Copied" : "Copy link"}</span>
           </button>
         </div>
       )}

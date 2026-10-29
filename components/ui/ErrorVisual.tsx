@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Check, Copy, Mail, RotateCcw } from "lucide-react";
+import { useCopy } from "./useCopy";
 import { cn } from "@/lib/utils";
 import { TerminalCard, TerminalPanel, TerminalReadout } from "./TerminalCard";
 import { ToggleGroup } from "./ToggleGroup";
@@ -50,7 +51,7 @@ export function ErrorVisual({ error, reset }: ErrorVisualProps) {
   );
   const [frameIndex, setFrameIndex] = useState(0);
   const [isResetting, setIsResetting] = useState(false);
-  const [copiedTrace, setCopiedTrace] = useState(false);
+  const { copied: copiedTrace, copy } = useCopy();
   const [asciiPortrait, setAsciiPortrait] = useState<string[]>([]);
   const [isAsciiPhotoActive, setIsAsciiPhotoActive] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -117,13 +118,7 @@ export function ErrorVisual({ error, reset }: ErrorVisualProps) {
       `URL: ${typeof window !== "undefined" ? window.location.href : "unknown"}`,
     ].join("\n");
 
-    try {
-      await navigator.clipboard.writeText(report);
-      setCopiedTrace(true);
-      setTimeout(() => setCopiedTrace(false), 2000);
-    } catch {
-      // ignore
-    }
+    await copy(report);
   };
 
   const frame = OSCILLOSCOPE_FRAMES[frameIndex];
@@ -191,8 +186,12 @@ export function ErrorVisual({ error, reset }: ErrorVisualProps) {
               onClick={handleCopyTrace}
               className="btn btn--secondary btn--sm"
             >
-              {copiedTrace ? <Check /> : <Copy />}
-              <span>{copiedTrace ? "Copied trace" : "Copy report"}</span>
+              {copiedTrace ? (
+                <Check className="copy-tick" />
+              ) : (
+                <Copy className="copy-icon" />
+              )}
+              <span>{copiedTrace ? "Copied" : "Copy report"}</span>
             </button>
           </div>
         </>
