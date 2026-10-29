@@ -157,7 +157,13 @@ const METADATA_ENDPOINTS = [
     path: "/llms.txt",
     type: "AI context index",
     description:
-      "Standard plaintext reference describing dileepadev for AI models and autonomous agents.",
+      "The site in the llmstxt.org format for AI assistants: who he is, every section, and the latest posts, projects and talks - rebuilt daily from the API.",
+  },
+  {
+    path: "/llms-full.txt",
+    type: "AI context index, in full",
+    description:
+      "Everything llms.txt lists, in full: every post, talk, project, video and community, with the work history and education.",
   },
   {
     path: "/blog/rss.xml",
@@ -365,10 +371,15 @@ export default async function BrandPage() {
   --paper-400: #6a6a6a;
   --paper-900: #131313;
 
+  /* Text roles (v2.1.0 draft) - dark values; light in comments */
+  --fg: var(--ink-100);       /* titles, 18.0:1 - light #131313, 17.3:1 */
+  --fg-body: #a8a8a8;         /* paragraphs, 8.6:1 - light #4f4f4f, 7.6:1 */
+  --fg-muted: var(--ink-400); /* dates, names, labels, 6.1:1 - light #6a6a6a, 5.1:1 */
+
   /* Typography */
   --font-sans: "Manrope", system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
-  --font-weights: 400, 500, 700; /* No 600 */
+  --font-weights: 400, 500, 700; /* 400 and 500 in the interface, every heading 500; 700 only for bold in running text; no 600 */
 
   /* Corners (v2.1.0 draft): fixed, capsule, concentric */
   --radius-panel: 32px;  /* page panels, the rail, the mobile menu */
@@ -455,7 +466,7 @@ export default async function BrandPage() {
             {/* Primary Lockup Showcase */}
             <div className="p-6 tile flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between text-xs font-mono text-fg-muted mb-6">
+                <div className="flex items-center justify-between text-label font-mono text-fg-muted mb-6">
                   <span>Primary lockup</span>
                   <span className="text-brand">Default</span>
                 </div>
@@ -464,7 +475,7 @@ export default async function BrandPage() {
                     <Lockup href="#mark" />
                   </div>
                 </div>
-                <div className="mt-4 space-y-2 text-xs font-mono text-fg-muted">
+                <div className="mt-4 space-y-2 text-label font-mono text-fg-muted">
                   <div className="flex justify-between border-b border-border-strong/40 pb-1">
                     <span>Wordmark font</span>
                     <span className="text-fg">Manrope Medium (500)</span>
@@ -496,7 +507,7 @@ export default async function BrandPage() {
             {/* Reduced Mark Showcase */}
             <div className="p-6 tile flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between text-xs font-mono text-fg-muted mb-6">
+                <div className="flex items-center justify-between text-label font-mono text-fg-muted mb-6">
                   <span>Reduced mark</span>
                   <span>Square placements</span>
                 </div>
@@ -505,7 +516,7 @@ export default async function BrandPage() {
                     <span>@</span>
                   </div>
                 </div>
-                <div className="mt-4 space-y-2 text-xs font-mono text-fg-muted">
+                <div className="mt-4 space-y-2 text-label font-mono text-fg-muted">
                   <div className="flex justify-between border-b border-border-strong/40 pb-1">
                     <span>Role</span>
                     <span className="text-fg">Favicon, avatar, stamp</span>
@@ -538,11 +549,11 @@ export default async function BrandPage() {
           {/* Do's and Don'ts */}
           <div className="mt-6 grid grid-cols-1 @2xl/section:grid-cols-2 gap-4">
             <div className="tile p-4">
-              <div className="flex items-center gap-2 font-mono text-xs font-bold text-brand mb-2">
+              <div className="flex items-center gap-2 font-mono text-label font-medium text-brand mb-2">
                 <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
                 <span>Mark rules - do</span>
               </div>
-              <ul className="text-xs text-fg-muted space-y-1.5 list-disc list-inside">
+              <ul className="text-label text-fg-muted space-y-1.5 list-disc list-inside">
                 <li>Wordmark at full contrast; the @ one step muted</li>
                 <li>
                   Set the @ at the wordmark&apos;s weight (500), never bold
@@ -555,11 +566,11 @@ export default async function BrandPage() {
             </div>
 
             <div className="tile p-4">
-              <div className="flex items-center gap-2 font-mono text-xs font-bold text-error mb-2">
+              <div className="flex items-center gap-2 font-mono text-label font-medium text-error mb-2">
                 <XCircle className="h-4 w-4" aria-hidden="true" />
                 <span>Mark rules - don&apos;t</span>
               </div>
-              <ul className="text-xs text-fg-muted space-y-1.5 list-disc list-inside">
+              <ul className="text-label text-fg-muted space-y-1.5 list-disc list-inside">
                 <li>Never color the lockup - it is black and white only</li>
                 <li>Never apply gradients, drop shadows, or outlines</li>
                 <li>
@@ -610,11 +621,11 @@ export default async function BrandPage() {
 
             {/* Palette Proportions */}
             <div className="p-4 tile mb-8">
-              <div className="flex items-center justify-between text-xs font-mono text-fg-muted mb-2">
+              <div className="flex items-center justify-between text-label font-mono text-fg-muted mb-2">
                 <span>Palette proportion budget</span>
                 <span className="text-fg">Contrast, not hue</span>
               </div>
-              <div className="h-4 w-full rounded-full overflow-hidden flex font-mono text-label text-bg font-bold">
+              <div className="h-4 w-full rounded-full overflow-hidden flex font-mono text-label text-bg font-medium">
                 <div
                   style={{ width: "85%" }}
                   className="bg-fg-muted flex items-center justify-center truncate"
@@ -635,7 +646,7 @@ export default async function BrandPage() {
                   title="1% Functional"
                 />
               </div>
-              <p className="mt-2 text-xs text-fg-muted">
+              <p className="mt-2 text-small text-fg-muted">
                 Full-contrast ink is the emphasis. One filled primary action per
                 surface stays the focal point; everything around it sits on the
                 muted and surface steps.
@@ -694,16 +705,25 @@ export default async function BrandPage() {
                   name="Text muted"
                   token="--ink-400 / --fg-muted"
                   hex="#8D8D8D"
-                  role="Secondary metadata and subtitles (6.1:1)."
-                  contrastBadge="WCAG AAA"
+                  role="Dates, names, labels, captions, leads (6.1:1)."
+                  contrastBadge="WCAG AA"
                   bgHex="#8D8D8D"
+                  textHex="#050505"
+                />
+                <ColorSwatch
+                  name="Text body"
+                  token="--fg-body"
+                  hex="#A8A8A8"
+                  role="Every paragraph, card text too (8.6:1)."
+                  contrastBadge="WCAG AAA"
+                  bgHex="#A8A8A8"
                   textHex="#050505"
                 />
                 <ColorSwatch
                   name="Text primary"
                   token="--ink-100 / --fg"
                   hex="#F1F1F1"
-                  role="Headings and primary body copy (18:1)."
+                  role="Titles, headings, emphasis (18:1)."
                   contrastBadge="WCAG AAA"
                   bgHex="#F1F1F1"
                   textHex="#050505"
@@ -752,18 +772,27 @@ export default async function BrandPage() {
                 />
                 <ColorSwatch
                   name="Paper Muted"
-                  token="--paper-400"
+                  token="--paper-400 / --fg-muted"
                   hex="#6A6A6A"
-                  role="Secondary text on light mode (5.1:1)."
+                  role="Dates, names, labels, captions (5.1:1)."
                   contrastBadge="WCAG AA"
                   bgHex="#6A6A6A"
                   textHex="#ffffff"
                 />
                 <ColorSwatch
+                  name="Paper Body"
+                  token="--fg-body"
+                  hex="#4F4F4F"
+                  role="Every paragraph, card text too (7.6:1)."
+                  contrastBadge="WCAG AAA"
+                  bgHex="#4F4F4F"
+                  textHex="#ffffff"
+                />
+                <ColorSwatch
                   name="Paper Primary"
-                  token="--paper-900"
+                  token="--paper-900 / --fg"
                   hex="#131313"
-                  role="Primary headings and text on light mode."
+                  role="Titles, headings, emphasis (17.3:1)."
                   contrastBadge="WCAG AAA"
                   bgHex="#131313"
                   textHex="#ffffff"
@@ -778,7 +807,7 @@ export default async function BrandPage() {
                   name="Success"
                   token="--success"
                   hex="#23B888 / #087F5B"
-                  role="Success states only - confirmations, sent, saved. Never decoration."
+                  role="Success states only - sent, saved. Never decoration."
                   bgHex="#23B888"
                   textHex="#050505"
                 />
@@ -809,10 +838,10 @@ export default async function BrandPage() {
 
             {/* Contrast & Forbidden Pairings */}
             <div className="p-4 tile">
-              <div className="font-mono text-xs font-bold text-fg mb-3">
+              <div className="font-mono text-label font-medium text-fg mb-3">
                 Verified contrast and forbidden pairings
               </div>
-              <div className="grid grid-cols-1 @xl/section:grid-cols-2 gap-4 text-xs font-mono">
+              <div className="grid grid-cols-1 @xl/section:grid-cols-2 gap-4 text-label font-mono">
                 <div className="space-y-2">
                   <div className="text-fg-muted font-medium">
                     Allowed pairings:
@@ -867,14 +896,14 @@ export default async function BrandPage() {
 
           <div className="grid grid-cols-1 @xl/section:grid-cols-2 gap-6 mt-6 mb-8">
             <div className="p-5 tile">
-              <div className="flex items-center justify-between text-xs font-mono text-fg-muted mb-2">
+              <div className="flex items-center justify-between text-label font-mono text-fg-muted mb-2">
                 <span>Display & UI typeface</span>
                 <span className="text-brand">Manrope</span>
               </div>
-              <div className="font-sans text-3xl font-bold text-fg mb-3">
+              <div className="font-sans text-h2 font-medium text-fg mb-3">
                 Manrope
               </div>
-              <p className="text-xs text-fg-muted leading-relaxed">
+              <p className="text-small text-fg-muted leading-relaxed">
                 Geometric enough to convey engineering rigor, with subtle human
                 curves. Used for all headings, navigation, button labels, and
                 narrative body copy.
@@ -885,14 +914,14 @@ export default async function BrandPage() {
             </div>
 
             <div className="p-5 tile">
-              <div className="flex items-center justify-between text-xs font-mono text-fg-muted mb-2">
+              <div className="flex items-center justify-between text-label font-mono text-fg-muted mb-2">
                 <span>Code & Data typeface</span>
                 <span className="text-brand">JetBrains Mono</span>
               </div>
-              <div className="font-mono text-3xl font-bold text-fg mb-3">
+              <div className="font-mono text-h2 font-medium text-fg mb-3">
                 JetBrains Mono
               </div>
-              <p className="text-xs text-fg-muted leading-relaxed">
+              <p className="text-small text-fg-muted leading-relaxed">
                 Legible at small sizes, designed for technical reading. Used for
                 source code, dates, terminal commands, metadata chips, and
                 numerical values.
@@ -907,7 +936,7 @@ export default async function BrandPage() {
               draft - fluid display sizes, weight 500 for every heading). */}
           <div className="tile divide-y divide-border-hairline">
             <div className="p-4 sm:p-6 grid grid-cols-1 @2xl/section:grid-cols-[200px_1fr] md:items-baseline gap-2 sm:gap-6">
-              <div className="font-mono text-xs text-fg-muted shrink-0">
+              <div className="font-mono text-label text-fg-muted shrink-0">
                 Display · 44–80px / 1.02 · 500
               </div>
               <div className="font-sans text-display font-medium tracking-[var(--track-display)] text-fg">
@@ -915,7 +944,7 @@ export default async function BrandPage() {
               </div>
             </div>
             <div className="p-4 sm:p-6 grid grid-cols-1 @2xl/section:grid-cols-[200px_1fr] md:items-baseline gap-2 sm:gap-6">
-              <div className="font-mono text-xs text-fg-muted shrink-0">
+              <div className="font-mono text-label text-fg-muted shrink-0">
                 H1 · 36–56px / 1.06 · 500
               </div>
               <div className="font-sans text-h1 font-medium tracking-[var(--track-display)] text-fg">
@@ -923,7 +952,7 @@ export default async function BrandPage() {
               </div>
             </div>
             <div className="p-4 sm:p-6 grid grid-cols-1 @2xl/section:grid-cols-[200px_1fr] md:items-baseline gap-2 sm:gap-6">
-              <div className="font-mono text-xs text-fg-muted shrink-0">
+              <div className="font-mono text-label text-fg-muted shrink-0">
                 H2 · 28px / 1.2 · 500
               </div>
               <div className="font-sans text-h2 font-medium tracking-[var(--track-tight)] text-fg">
@@ -931,15 +960,16 @@ export default async function BrandPage() {
               </div>
             </div>
             <div className="p-4 sm:p-6 grid grid-cols-1 @2xl/section:grid-cols-[200px_1fr] md:items-baseline gap-2 sm:gap-6">
-              <div className="font-mono text-xs text-fg-muted shrink-0">
-                Lead · 20–26px / 1.35 · 400
+              <div className="font-mono text-label text-fg-muted shrink-0">
+                Lead · 20–26px / 1.35 · 400 · --fg-muted
               </div>
               <div className="font-sans text-lead text-fg-muted max-w-[48ch]">
-                The opening line under a page or section title.
+                The opening line under a page or section title - large text, so
+                the muted colour still reads.
               </div>
             </div>
             <div className="p-4 sm:p-6 grid grid-cols-1 @2xl/section:grid-cols-[200px_1fr] md:items-baseline gap-2 sm:gap-6">
-              <div className="font-mono text-xs text-fg-muted shrink-0">
+              <div className="font-mono text-label text-fg-muted shrink-0">
                 H3 · 19px / 1.35 · 500
               </div>
               <div className="font-sans text-h3 font-medium text-fg">
@@ -947,31 +977,40 @@ export default async function BrandPage() {
               </div>
             </div>
             <div className="p-4 sm:p-6 grid grid-cols-1 @2xl/section:grid-cols-[200px_1fr] md:items-baseline gap-2 sm:gap-6">
-              <div className="font-mono text-xs text-fg-muted shrink-0">
-                Body · 17px / 1.65 · 400
+              <div className="font-mono text-label text-fg-muted shrink-0">
+                Body · 17px / 1.65 · 400 · --fg-body
               </div>
-              <div className="font-sans text-body text-fg max-w-[68ch]">
+              <div className="font-sans text-body text-fg-body max-w-[68ch]">
                 Clear technical notes on what I build, what went wrong along the
                 way, and how systems perform under load.
               </div>
             </div>
             <div className="p-4 sm:p-6 grid grid-cols-1 @2xl/section:grid-cols-[200px_1fr] md:items-baseline gap-2 sm:gap-6">
-              <div className="font-mono text-xs text-fg-muted shrink-0">
-                Small · 15px / 1.55 · 400
+              <div className="font-mono text-label text-fg-muted shrink-0">
+                Small · 15px / 1.55 · 400 · --fg-muted
               </div>
               <div className="font-sans text-small text-fg-muted">
-                Descriptions, captions and supporting copy.
+                Dates, names, roles, captions and notes - what you glance at. A
+                paragraph, a card&apos;s description included, is Body.
               </div>
             </div>
             <div className="p-4 sm:p-6 grid grid-cols-1 @2xl/section:grid-cols-[200px_1fr] md:items-baseline gap-2 sm:gap-6">
-              <div className="font-mono text-xs text-fg-muted shrink-0">
+              <div className="font-mono text-label text-fg-muted shrink-0">
                 Label · 13px / 1.45 · 500
               </div>
               <div className="font-mono text-label font-medium text-fg-muted">
-                Section labels, dates, badges and status chips
+                Section labels, dates, badges and status chips - the smallest
+                size on the site
               </div>
             </div>
           </div>
+          <p className="mt-4 text-small text-fg-muted">
+            Every size is one of these steps; nothing is set below 13px. Two
+            weights carry the interface, 400 and 500 - every heading is 500 -
+            and 700 is kept for bold inside running text. Text clears WCAG 1.4.3
+            everywhere: titles about 18:1, body about 8:1, muted 5-6:1, against
+            4.5:1 required.
+          </p>
         </Container>
       </Section>
 
@@ -987,7 +1026,7 @@ export default async function BrandPage() {
           {/* Portrait fields */}
           <div className="mt-6">
             <Subsection title="The three portrait field grounds">
-              <p className="text-xs text-fg-muted mb-4">
+              <p className="text-small text-fg-muted mb-4">
                 The official hero portrait for {name} ({role}) sits on verified
                 neutral fields to guarantee contrast and prevent visual clash
                 across platform crops.
@@ -1007,7 +1046,7 @@ export default async function BrandPage() {
                       className="object-contain w-full h-full"
                     />
                   </div>
-                  <div className="font-mono text-xs font-medium text-fg">
+                  <div className="font-mono text-label font-medium text-fg">
                     portrait-field (#D2D2D2)
                   </div>
                   <div className="text-label text-fg-muted mt-1">
@@ -1029,7 +1068,7 @@ export default async function BrandPage() {
                       className="object-contain w-full h-full"
                     />
                   </div>
-                  <div className="font-mono text-xs font-medium text-fg">
+                  <div className="font-mono text-label font-medium text-fg">
                     portrait-on-dark (#F1F1F1)
                   </div>
                   <div className="text-label text-fg-muted mt-1">
@@ -1051,7 +1090,7 @@ export default async function BrandPage() {
                       className="object-contain w-full h-full"
                     />
                   </div>
-                  <div className="font-mono text-xs font-medium text-fg">
+                  <div className="font-mono text-label font-medium text-fg">
                     portrait-on-light (#6A6A6A)
                   </div>
                   <div className="text-label text-fg-muted mt-1">
@@ -1064,7 +1103,7 @@ export default async function BrandPage() {
             {/* Event Gallery Context */}
             {galleryPhotos.length > 0 && (
               <Subsection title="Event gallery photography">
-                <p className="text-xs text-fg-muted mb-4">
+                <p className="text-small text-fg-muted mb-4">
                   The only other photograph surface on the website. Authentic,
                   documentary captures from delivered workshops and talks.
                 </p>
@@ -1133,7 +1172,7 @@ export default async function BrandPage() {
                         />
                       </div>
                       <div className="min-w-0">
-                        <div className="font-bold text-xs text-fg">
+                        <div className="font-medium text-label text-fg">
                           {icon.label}
                         </div>
                         <div className="font-mono text-label text-brand">
@@ -1190,12 +1229,14 @@ export default async function BrandPage() {
                   >
                     <div className="space-y-0.5 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-mono text-xs font-bold text-fg">
+                        <span className="font-mono text-label font-medium text-fg">
                           {ep.path}
                         </span>
                         <span className="chip">{ep.type}</span>
                       </div>
-                      <p className="text-xs text-fg-muted">{ep.description}</p>
+                      <p className="text-small text-fg-muted">
+                        {ep.description}
+                      </p>
                     </div>
 
                     <a
@@ -1227,7 +1268,7 @@ export default async function BrandPage() {
                     label="Copy meta snippet"
                   />
                 </div>
-                <pre className="p-4 rounded-block bg-bg-surface overflow-x-auto font-mono text-xs text-fg-muted leading-relaxed">
+                <pre className="p-4 rounded-block bg-bg-surface overflow-x-auto font-mono text-label text-fg-muted leading-relaxed">
                   <code>{metadataSnippet}</code>
                 </pre>
               </div>
@@ -1244,7 +1285,7 @@ export default async function BrandPage() {
                     label="Copy page snippet"
                   />
                 </div>
-                <pre className="p-4 rounded-block bg-bg-surface overflow-x-auto font-mono text-xs text-fg-muted leading-relaxed">
+                <pre className="p-4 rounded-block bg-bg-surface overflow-x-auto font-mono text-label text-fg-muted leading-relaxed">
                   <code>{pageMetadataSnippet}</code>
                 </pre>
               </div>
@@ -1265,7 +1306,7 @@ export default async function BrandPage() {
           <div className="grid grid-cols-1 @2xl/section:grid-cols-2 gap-6 mt-6 mb-8">
             {/* Buttons Showcase */}
             <div className="p-5 tile space-y-4">
-              <div className="flex items-center justify-between text-xs font-mono text-fg-muted">
+              <div className="flex items-center justify-between text-label font-mono text-fg-muted">
                 <span>Button variants (`Button`, `LinkButton`)</span>
                 <span className="text-fg">40px · 32px · capsule</span>
               </div>
@@ -1306,7 +1347,7 @@ export default async function BrandPage() {
                   <X aria-hidden="true" />
                 </Button>
               </div>
-              <div className="grid grid-cols-1 gap-2 text-xs font-mono text-fg-muted pt-3 border-t border-border-strong/40">
+              <div className="grid grid-cols-1 gap-2 text-label font-mono text-fg-muted pt-3 border-t border-border-strong/40">
                 <div>
                   <span className="text-fg font-medium">.btn--primary:</span>{" "}
                   Solid ink fill (`var(--brand-fill)`), the page colour as text
@@ -1329,7 +1370,7 @@ export default async function BrandPage() {
 
             {/* Badges & Chips Showcase */}
             <div className="p-5 tile space-y-4">
-              <div className="text-xs font-mono text-fg-muted">
+              <div className="text-label font-mono text-fg-muted">
                 Badges and chip indicators (`Badge`, `Chip`, `StatusBadge`)
               </div>
               <div className="space-y-3">
@@ -1357,7 +1398,7 @@ export default async function BrandPage() {
                   </div>
                 </div>
               </div>
-              <div className="font-mono text-label text-fg-muted pt-2 border-t border-border-strong/40">
+              <div className="text-small text-fg-muted pt-2 border-t border-border-strong/40">
                 Font: JetBrains Mono (Chip) / Manrope (Badge) · Size: 12px ·
                 Tracking: 0.01em · Hover reserved strictly for interactive
                 targets
@@ -1366,7 +1407,7 @@ export default async function BrandPage() {
 
             {/* Form controls: one corner for a field and its button */}
             <div className="p-5 tile space-y-4 @2xl/section:col-span-2">
-              <div className="flex items-center justify-between gap-3 text-xs font-mono text-fg-muted">
+              <div className="flex items-center justify-between gap-3 text-label font-mono text-fg-muted">
                 <span>
                   Form controls (`.field`, `.search-input`, `.toggle-group`)
                 </span>
@@ -1430,7 +1471,7 @@ export default async function BrandPage() {
                   </div>
                 </div>
               </div>
-              <div className="font-mono text-label text-fg-muted pt-3 border-t border-border-strong/40">
+              <div className="text-small text-fg-muted pt-3 border-t border-border-strong/40">
                 Every field has a 20px corner, half its height, so on one line
                 it is a capsule like the button beside it, and the textarea
                 keeps the same ends as it grows. A field&apos;s edge is
@@ -1474,7 +1515,7 @@ export default async function BrandPage() {
                           )}
                         </div>
                         <div className="flex items-baseline justify-between gap-2">
-                          <span className="font-medium text-sm text-fg">
+                          <span className="font-medium text-small text-fg">
                             {role.name}
                           </span>
                           <span className="font-mono text-label text-fg-muted">
@@ -1519,7 +1560,7 @@ export default async function BrandPage() {
           />
 
           <div className="tile p-5 mt-6">
-            <div className="flex items-center gap-2 font-mono text-xs font-bold text-error mb-4">
+            <div className="flex items-center gap-2 font-mono text-label font-medium text-error mb-4">
               <XCircle className="h-4 w-4" aria-hidden="true" />
               <span>Banned terms in all content and copy</span>
             </div>
@@ -1540,14 +1581,14 @@ export default async function BrandPage() {
               ].map((term) => (
                 <div
                   key={term}
-                  className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-error/10 font-mono text-xs text-error"
+                  className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-error/10 font-mono text-label text-error"
                 >
                   <span className="line-through">{term}</span>
-                  <span className="text-label text-error/80">✗</span>
+                  <span className="text-label text-error">✗</span>
                 </div>
               ))}
             </div>
-            <p className="mt-4 text-xs text-fg-muted">
+            <p className="mt-4 text-small text-fg-muted">
               Never use vague marketing filler. Describe the architecture, the
               failures, and the concrete outcome plainly.
             </p>
@@ -1566,7 +1607,7 @@ export default async function BrandPage() {
 
           <div className="tile p-4 sm:p-6 mt-6">
             <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2 font-mono text-xs text-fg-muted">
+              <div className="flex items-center gap-2 font-mono text-label text-fg-muted">
                 <Code2 className="h-4 w-4 text-brand" aria-hidden="true" />
                 <span>brand-tokens.css</span>
               </div>
@@ -1575,11 +1616,11 @@ export default async function BrandPage() {
                 label="Copy CSS variables"
               />
             </div>
-            <pre className="p-4 rounded-block bg-bg-surface overflow-x-auto font-mono text-xs text-fg-muted leading-relaxed">
+            <pre className="p-4 rounded-block bg-bg-surface overflow-x-auto font-mono text-label text-fg-muted leading-relaxed">
               <code>{cssTokensSnippet}</code>
             </pre>
 
-            <div className="mt-6 pt-4 border-t border-border-strong flex items-center justify-between flex-wrap gap-4 text-xs font-mono text-fg-muted">
+            <div className="mt-6 pt-4 border-t border-border-strong flex items-center justify-between flex-wrap gap-4 text-label font-mono text-fg-muted">
               <div>
                 Canonical specification: DESIGN.md & docs/brand-guide.md
               </div>

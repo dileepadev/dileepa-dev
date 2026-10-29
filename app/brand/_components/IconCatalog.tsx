@@ -8,6 +8,7 @@ import {
   ArrowUpDown,
   ArrowUpRight,
   Briefcase,
+  BriefcaseBusiness,
   Building2,
   Calendar,
   Check,
@@ -27,10 +28,12 @@ import {
   FolderOpen,
   FolderSearch,
   Globe,
+  GraduationCap,
   Hash,
   History,
   House,
   ImageIcon,
+  Layers,
   Link2,
   List,
   Mail,
@@ -38,8 +41,10 @@ import {
   Megaphone,
   Menu,
   MessageSquare,
+  MessagesSquare,
   Mic,
   Moon,
+  Network,
   PenLine,
   Presentation,
   RefreshCw,
@@ -156,6 +161,11 @@ const INTERFACE_ICONS: { title: string; icons: Entry[] }[] = [
       [Tag, "Tag", "Release, tags"],
       [Rss, "Rss", "Feed"],
       [List, "List", "Table of contents"],
+      [Layers, "Layers", "The About section mark"],
+      [BriefcaseBusiness, "BriefcaseBusiness", "The Work section mark"],
+      [GraduationCap, "GraduationCap", "The Education section mark"],
+      [Network, "Network", "The Community section mark"],
+      [MessagesSquare, "MessagesSquare", "The Contact section mark"],
       [ImageIcon, "ImageIcon", "Image placeholder"],
     ],
   },
@@ -168,6 +178,19 @@ const INTERFACE_ICONS: { title: string; icons: Entry[] }[] = [
       [ShieldCheck, "ShieldCheck", "Fallback active"],
     ],
   },
+];
+
+/**
+ * The homepage's section marks, in page order: each section's icon drawn as a
+ * dotted line on the hero's dot grid in the panel's top-right corner. Angular
+ * shapes only, and never an icon the section already uses.
+ */
+const SECTION_MARKS: [LucideIcon, string, string][] = [
+  [Layers, "About", "Layers - systems across the stack"],
+  [BriefcaseBusiness, "Work", "BriefcaseBusiness - where I have worked"],
+  [GraduationCap, "Education", "GraduationCap - academic background"],
+  [Network, "Community", "Network - bringing developers together"],
+  [MessagesSquare, "Contact", "MessagesSquare - let us talk"],
 ];
 
 const PILLAR_ICONS: [PillarIconComponent, string][] = [
@@ -211,7 +234,7 @@ export const INTERFACE_ICON_COUNT = INTERFACE_ICONS.reduce(
 function Caption({ name, use }: { name: string; use: string }) {
   return (
     <span className="min-w-0">
-      <span className="block font-mono text-xs text-fg">{name}</span>
+      <span className="block font-mono text-label text-fg">{name}</span>
       <span className="block text-label text-fg-muted">{use}</span>
     </span>
   );
@@ -258,6 +281,19 @@ export function IconCatalog() {
         </ul>
       </Subsection>
 
+      <Subsection title="Section marks">
+        <ul className="grid grid-cols-1 @xl/section:grid-cols-2 @4xl/section:grid-cols-3 gap-2">
+          {SECTION_MARKS.map(([Icon, section, note]) => (
+            <li key={section} className="tile p-4 space-y-3">
+              <div className="section-mark" aria-hidden="true">
+                <Icon />
+              </div>
+              <Caption name={section} use={note} />
+            </li>
+          ))}
+        </ul>
+      </Subsection>
+
       <Subsection title="Pillar marks">
         <ul className="grid grid-cols-1 @xl/section:grid-cols-2 @4xl/section:grid-cols-3 gap-2">
           {PILLAR_ICONS.map(([Icon, name]) => (
@@ -280,11 +316,13 @@ export function IconCatalog() {
         </ul>
       </Subsection>
 
-      <div className="font-mono text-label text-fg-muted pt-3 border-t border-border-strong/40">
+      <div className="text-small text-fg-muted pt-3 border-t border-border-strong/40">
         Lucide · 16px in controls and beside body text, 14px in small buttons
         and beside small text, 32px as an empty-state illustration · one stroke
         weight, 1.75, everywhere · always currentColor, never a colour of its
-        own
+        own · a homepage section mark is the section&apos;s icon at 160px, drawn
+        as a dotted line on the hero&apos;s dot grid in the panel&apos;s
+        top-right corner
       </div>
     </div>
   );
