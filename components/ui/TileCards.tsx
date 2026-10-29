@@ -42,7 +42,9 @@ export function CommunityCard({
   return (
     <li className="tile-card">
       <div className="tile-meta">
-        <span>{community.period}</span>
+        {community.period && (
+          <span className="entry-date">{community.period}</span>
+        )}
         <span className="tile-pill">
           {community.current && (
             <span className="hero-status-dot" aria-hidden="true" />
@@ -91,12 +93,18 @@ export function EventCard({
     <li className="tile-card">
       <div className="tile-meta">
         {date && (
-          <span className="date-block">
-            <span className="date-day" aria-hidden="true">
+          // A calendar leaf: the month on an ink band, the day large, the
+          // year under it - read at a glance, like the page of a desk
+          // calendar, where a bare number over a muted caption was not.
+          <span className="date-leaf">
+            <span className="date-leaf-month" aria-hidden="true">
+              {date.month}
+            </span>
+            <span className="date-leaf-day" aria-hidden="true">
               {date.day}
             </span>
-            <span className="date-month" aria-hidden="true">
-              {date.month} {date.year}
+            <span className="date-leaf-year" aria-hidden="true">
+              {date.year}
             </span>
             <span className="sr-only">
               {formatDate(event.startAt, event.timezone)}

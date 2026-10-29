@@ -1261,27 +1261,6 @@ pre {
   }
 }
 
-.date-block {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
-
-.date-day {
-  font-size: 2.5rem;
-  line-height: 1;
-  font-weight: 500;
-  letter-spacing: -0.04em;
-  color: var(--fg);
-  font-variant-numeric: tabular-nums;
-}
-
-.date-month {
-  font-family: var(--font-code);
-  font-size: var(--text-label);
-  color: var(--fg-muted);
-}
-
 .event-title {
   font-size: var(--text-h3);
   line-height: var(--lh-h3);
@@ -2172,14 +2151,46 @@ pre {
   border-radius: var(--radius-pill);
 }
 
-/* An event's meta row leads with its date block. */
-.tile-meta .date-block {
+/* An event's meta row leads with its date as a calendar leaf: the month on
+   a band in the inverted ink, the day at the H2 size, the year in mono
+   under it. On the surface colour, so it lifts off the card's page ground. */
+.date-leaf {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  width: 4.5rem;
+  overflow: hidden;
+  border-radius: var(--radius-block);
+  background: var(--bg-surface);
   line-height: 1;
+  text-align: center;
 }
 
-.tile-meta .date-day {
+.date-leaf-month {
+  align-self: stretch;
+  padding: 0.3rem 0;
+  background: var(--fg);
+  color: var(--bg);
   font-family: var(--font-sans);
-  font-size: 2.25rem;
+  font-size: var(--text-label);
+  font-weight: 500;
+}
+
+.date-leaf-day {
+  padding-top: 0.45rem;
+  font-family: var(--font-sans);
+  font-size: var(--text-h2);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+
+.date-leaf-year {
+  padding: 0.3rem 0 0.5rem;
+  font-family: var(--font-code);
+  font-size: var(--text-label);
+  color: var(--fg-muted);
 }
 
 /* Filters and sort: the control height, so a row of them lines up with the
@@ -2284,7 +2295,9 @@ pre {
   gap: var(--space-2);
 }
 
-.shell-main :is(.timeline, .entry-grid) .entry-date,
+/* A date range - a role's, a course's, a community's - is one pill in mono,
+   wherever it sits. */
+.shell-main :is(.timeline, .entry-grid, .tile-meta) .entry-date,
 .entry-current {
   display: inline-flex;
   align-items: center;
@@ -2297,7 +2310,7 @@ pre {
   color: var(--fg);
 }
 
-.shell-main :is(.timeline, .entry-grid) .entry-date {
+.shell-main :is(.timeline, .entry-grid, .tile-meta) .entry-date {
   font-family: var(--font-code);
 }
 
