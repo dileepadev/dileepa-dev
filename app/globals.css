@@ -2072,6 +2072,10 @@ pre {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  /* A grid item sizes to its content by default; this lets a card shrink to
+     its column, so a long pill in the meta row truncates instead of pushing
+     the grid past a phone's width. */
+  min-width: 0;
   padding: var(--space-6);
   border-radius: var(--radius-tile);
   background: var(--bg);
@@ -2081,6 +2085,9 @@ pre {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+  /* On a narrow card the pill drops under the date rather than running off
+     the card's edge. */
+  flex-wrap: wrap;
   gap: var(--space-3);
   min-height: 1.75rem;
   font-family: var(--font-code);
@@ -2105,6 +2112,7 @@ pre {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .tile-title {
@@ -2151,46 +2159,47 @@ pre {
   border-radius: var(--radius-pill);
 }
 
-/* An event's meta row leads with its date as a calendar leaf: the month on
-   a band in the inverted ink, the day at the H2 size, the year in mono
-   under it. On the surface colour, so it lifts off the card's page ground. */
-.date-leaf {
+/* An event's meta row leads with its date as a stamp: the day at the H2
+   size, a hairline, then the month at full contrast over the year, both at
+   the Small size - large enough to read at a glance. On the surface colour
+   at the block radius, so it lifts off the card's page ground. */
+.date-stamp {
+  flex: none;
   display: inline-flex;
-  flex-direction: column;
   align-items: center;
-  width: 4.5rem;
-  overflow: hidden;
+  gap: 0.7rem;
+  padding: 0.45rem 0.85rem 0.45rem 0.75rem;
   border-radius: var(--radius-block);
   background: var(--bg-surface);
-  line-height: 1;
-  text-align: center;
+  font-family: var(--font-sans);
 }
 
-.date-leaf-month {
-  align-self: stretch;
-  padding: 0.3rem 0;
-  background: var(--fg);
-  color: var(--bg);
-  font-family: var(--font-sans);
-  font-size: var(--text-label);
-  font-weight: 500;
-}
-
-.date-leaf-day {
-  padding-top: 0.45rem;
-  font-family: var(--font-sans);
+.date-stamp-day {
   font-size: var(--text-h2);
+  line-height: 1;
   font-weight: 500;
   letter-spacing: -0.03em;
   color: var(--fg);
   font-variant-numeric: tabular-nums;
 }
 
-.date-leaf-year {
-  padding: 0.3rem 0 0.5rem;
-  font-family: var(--font-code);
-  font-size: var(--text-label);
+.date-stamp-rest {
+  display: flex;
+  flex-direction: column;
+  padding-left: 0.7rem;
+  border-left: var(--hairline) solid var(--border-strong);
+  font-size: var(--text-small);
+  line-height: 1.25;
+}
+
+.date-stamp-month {
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.date-stamp-year {
   color: var(--fg-muted);
+  font-variant-numeric: tabular-nums;
 }
 
 /* Filters and sort: the control height, so a row of them lines up with the

@@ -93,18 +93,17 @@ export function EventCard({
     <li className="tile-card">
       <div className="tile-meta">
         {date && (
-          // A calendar leaf: the month on an ink band, the day large, the
-          // year under it - read at a glance, like the page of a desk
-          // calendar, where a bare number over a muted caption was not.
-          <span className="date-leaf">
-            <span className="date-leaf-month" aria-hidden="true">
-              {date.month}
-            </span>
-            <span className="date-leaf-day" aria-hidden="true">
+          // A date stamp: the day large, and beside it the month at full
+          // contrast over the year, both at a readable 15px. The calendar
+          // leaf before it set the month and year at 13px, on an ink band
+          // and in muted mono, and they were hard to read.
+          <span className="date-stamp">
+            <span className="date-stamp-day" aria-hidden="true">
               {date.day}
             </span>
-            <span className="date-leaf-year" aria-hidden="true">
-              {date.year}
+            <span className="date-stamp-rest" aria-hidden="true">
+              <span className="date-stamp-month">{date.month}</span>
+              <span className="date-stamp-year">{date.year}</span>
             </span>
             <span className="sr-only">
               {formatDate(event.startAt, event.timezone)}
