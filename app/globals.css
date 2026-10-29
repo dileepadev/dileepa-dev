@@ -3563,7 +3563,12 @@ a.chip:hover {
 
 /* --- Back to top -------------------------------------------------------- */
 
-/* An icon alone, so a circle, like every icon-only control. */
+/* An icon alone, so a circle, like every icon-only control. Its edge is the
+   reading-progress ring (v2.1.0 draft): the track is the hairline in
+   --border-strong that a button edge always is, and the arc over it fills
+   in --fg as the page is read. The arc's length is written from the scroll
+   position in BackToTop.tsx, so it has no transition of its own - it moves
+   exactly as fast as the page does. */
 
 .back-to-top {
   position: fixed;
@@ -3577,7 +3582,7 @@ a.chip:hover {
   height: 40px;
   padding: 0;
   border-radius: var(--radius-pill);
-  border: var(--hairline) solid var(--border-strong);
+  border: 0;
   background: var(--bg-surface);
   color: var(--fg-muted);
   box-shadow: var(--shadow-nav);
@@ -3589,7 +3594,6 @@ a.chip:hover {
     opacity var(--dur) var(--ease),
     transform var(--dur) var(--ease),
     background-color var(--dur) var(--ease),
-    border-color var(--dur) var(--ease),
     color var(--dur) var(--ease);
 }
 
@@ -3597,6 +3601,28 @@ a.chip:hover {
   opacity: 1;
   transform: translateY(0) scale(1);
   pointer-events: auto;
+}
+
+.back-to-top-ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* Start the arc at twelve o'clock and fill clockwise. */
+  transform: rotate(-90deg);
+  fill: none;
+  pointer-events: none;
+}
+
+.back-to-top-track {
+  stroke: var(--border-strong);
+  stroke-width: 1;
+}
+
+.back-to-top-progress {
+  stroke: var(--fg);
+  stroke-width: 2;
+  stroke-linecap: round;
 }
 
 .back-to-top:hover {
