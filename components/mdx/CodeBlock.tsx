@@ -137,7 +137,7 @@ export function CodeBlock({ children, className, ...props }: PreProps) {
   };
 
   return (
-    <div className="code-block-wrapper my-6 overflow-hidden rounded-lg border border-border-strong bg-bg-surface transition-colors duration-200">
+    <div className="code-block-wrapper my-6 overflow-hidden rounded-block border border-border-strong bg-bg-surface transition-colors duration-200">
       {/* Code Header Bar */}
       <div className="flex items-center justify-between border-b border-border-strong bg-bg-surface px-4 py-2 text-small">
         <div className="flex items-center gap-2">

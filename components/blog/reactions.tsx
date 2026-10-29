@@ -198,7 +198,7 @@ export function ReactionPicker({
           // On the post bar it is the same small button as Comment and Share
           // beside it; on a comment it stays a text action, like Reply.
           compact
-            ? "emoji-btn inline-flex items-center gap-2 rounded-sm font-mono text-small transition-colors " +
+            ? "emoji-btn inline-flex items-center gap-2 rounded-inline font-mono text-small transition-colors " +
               "disabled:cursor-not-allowed disabled:opacity-60 " +
               (active ? "text-brand" : "text-fg-muted hover:text-brand")
             : "emoji-btn btn btn--secondary btn--sm disabled:cursor-not-allowed disabled:opacity-60"
@@ -209,11 +209,7 @@ export function ReactionPicker({
             {active.emoji}
           </span>
         ) : (
-          <SmilePlus
-            className="h-4 w-4 shrink-0"
-            strokeWidth={1.75}
-            aria-hidden="true"
-          />
+          <SmilePlus className="h-4 w-4 shrink-0" aria-hidden="true" />
         )}
         <span>{active ? active.label : "React"}</span>
       </button>
@@ -223,8 +219,7 @@ export function ReactionPicker({
           role="menu"
           aria-label="Choose a reaction"
           className={
-            "absolute left-0 z-20 flex gap-0.5 rounded-full border border-border-strong " +
-            "bg-bg-surface p-1 shadow-lg " +
+            "popover popover--pill absolute left-0 z-20 flex gap-0.5 p-1 " +
             // Direction is not cosmetic. On a comment the trigger sits at the
             // bottom of the card, so opening upward covers the comment being
             // reacted to - you cannot see what you are rating. Below it is the

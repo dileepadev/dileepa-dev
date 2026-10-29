@@ -201,9 +201,9 @@ export function TocList({
                 "block py-1 transition-colors duration-[160ms] ease-brand no-underline leading-snug",
                 variant === "inline"
                   ? cn(
-                      "pl-2 rounded-xs",
+                      "pl-2 rounded-row",
                       isActive
-                        ? "text-brand font-medium bg-brand/5"
+                        ? "text-brand font-medium bg-bg-surface"
                         : "text-fg-muted hover:text-fg",
                     )
                   : cn(
@@ -228,14 +228,10 @@ export function TableOfContents({ headings }: { headings: Heading[] }) {
   if (headings.length < 2) return null;
 
   return (
-    <details className="group rounded-lg border border-border-strong bg-bg-surface p-4 lg:hidden">
+    <details className="tile group p-4 lg:hidden">
       <summary className="flex cursor-pointer items-center justify-between font-mono text-small text-fg">
         <span className="inline-flex items-center gap-2">
-          <List
-            className="h-4 w-4 shrink-0 text-brand"
-            strokeWidth={1.75}
-            aria-hidden="true"
-          />
+          <List className="h-4 w-4 shrink-0 text-brand" aria-hidden="true" />
           <span className="font-medium">On this page</span>
           <span className="text-xs text-fg-muted font-normal">
             ({headings.length})
@@ -243,7 +239,6 @@ export function TableOfContents({ headings }: { headings: Heading[] }) {
         </span>
         <ChevronDown
           className="h-4 w-4 shrink-0 text-fg-muted transition-transform duration-[160ms] ease-brand group-open:rotate-180"
-          strokeWidth={1.75}
           aria-hidden="true"
         />
       </summary>

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { ImageIcon, Maximize2 } from "lucide-react";
+import { ImageIcon } from "lucide-react";
+import { ZoomHint } from "@/components/ui/ZoomHint";
 import { ImageLightbox } from "@/components/ui/ImageLightbox";
 import { cn } from "@/lib/utils";
 
@@ -78,10 +79,10 @@ export function MarkdownImage({
       <span
         role="img"
         aria-label={alt || "Image could not be loaded"}
-        className="my-6 block overflow-hidden rounded-lg border border-border-strong bg-bg-surface p-6 text-center"
+        className="my-6 block overflow-hidden rounded-block border border-border-strong bg-bg-surface p-6 text-center"
       >
         <span className="flex flex-col items-center justify-center gap-2 text-fg-muted">
-          <ImageIcon className="h-7 w-7 text-fg-muted/50" aria-hidden="true" />
+          <ImageIcon className="h-8 w-8 text-fg-muted" aria-hidden="true" />
           <span className="font-mono text-small text-fg-muted">
             {alt || "Image could not be loaded"}
           </span>
@@ -95,7 +96,7 @@ export function MarkdownImage({
       <span
         role="figure"
         aria-label={alt || "Blog content image"}
-        className="group my-6 block overflow-hidden rounded-lg border border-border-strong bg-bg-surface transition-colors duration-200"
+        className="group my-6 block overflow-hidden rounded-block border border-border-strong bg-bg-surface transition-colors duration-200"
       >
         <button
           type="button"
@@ -104,7 +105,7 @@ export function MarkdownImage({
           aria-label={
             alt ? `View full screen image: ${alt}` : "View full screen image"
           }
-          className="relative block w-full cursor-zoom-in border-none bg-transparent p-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+          className="relative block w-full cursor-zoom-in border-none bg-transparent p-0 text-left"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -115,18 +116,14 @@ export function MarkdownImage({
             onError={() => setHasError(true)}
             onLoad={() => setIsLoaded(true)}
             className={cn(
-              "h-auto w-full max-w-full object-contain transition-all duration-200 group-hover:scale-[1.005]",
+              "h-auto w-full max-w-full object-contain transition-opacity duration-200",
               isLoaded ? "opacity-100" : "opacity-90",
               className,
             )}
             {...props}
           />
 
-          {/* Hover zoom indicator overlay badge */}
-          <span className="pointer-events-none absolute bottom-3 right-3 flex items-center gap-1.5 rounded-sm border border-border-strong bg-bg-surface/90 px-2 py-1 font-mono text-label text-fg shadow-sm backdrop-blur-sm opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-            <Maximize2 className="h-3 w-3 text-brand" aria-hidden="true" />
-            <span>Full screen</span>
-          </span>
+          <ZoomHint />
         </button>
 
         {alt && (

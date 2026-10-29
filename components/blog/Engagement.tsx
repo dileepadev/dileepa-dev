@@ -50,11 +50,7 @@ function ShareActions({ url, title }: { url: string; title: string }) {
         aria-haspopup="true"
         className={actionClasses}
       >
-        <Share2
-          className="h-4 w-4 shrink-0"
-          strokeWidth={1.75}
-          aria-hidden="true"
-        />
+        <Share2 className="h-4 w-4 shrink-0" aria-hidden="true" />
         <span>Share</span>
       </button>
 
@@ -62,14 +58,14 @@ function ShareActions({ url, title }: { url: string; title: string }) {
         <div
           role="menu"
           aria-label="Share this post"
-          className="absolute right-0 bottom-full z-20 mb-2 flex flex-col gap-1 rounded-sm border border-border-strong bg-bg-surface p-1 shadow-lg"
+          className="absolute right-0 bottom-full z-20 mb-2 popover flex flex-col gap-1 p-1.5"
         >
           <a
             href={`https://x.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`}
             target="_blank"
             rel="noopener noreferrer"
             role="menuitem"
-            className="inline-flex items-center gap-2 rounded-sm px-3 py-2 font-mono text-small text-fg-muted no-underline transition-colors hover:bg-surface-hover hover:text-fg"
+            className="inline-flex items-center gap-2 rounded-row px-3 py-2 font-mono text-small text-fg-muted no-underline transition-colors hover:bg-surface-hover hover:text-fg"
           >
             <FaXTwitter className="h-4 w-4 shrink-0" aria-hidden="true" />
             <span>X</span>
@@ -79,7 +75,7 @@ function ShareActions({ url, title }: { url: string; title: string }) {
             target="_blank"
             rel="noopener noreferrer"
             role="menuitem"
-            className="inline-flex items-center gap-2 rounded-sm px-3 py-2 font-mono text-small text-fg-muted no-underline transition-colors hover:bg-surface-hover hover:text-fg"
+            className="inline-flex items-center gap-2 rounded-row px-3 py-2 font-mono text-small text-fg-muted no-underline transition-colors hover:bg-surface-hover hover:text-fg"
           >
             <FaLinkedin className="h-4 w-4 shrink-0" aria-hidden="true" />
             <span>LinkedIn</span>
@@ -88,20 +84,15 @@ function ShareActions({ url, title }: { url: string; title: string }) {
             type="button"
             role="menuitem"
             onClick={copy}
-            className="inline-flex items-center gap-2 rounded-sm px-3 py-2 font-mono text-small text-fg-muted transition-colors hover:bg-surface-hover hover:text-fg"
+            className="inline-flex items-center gap-2 rounded-row px-3 py-2 font-mono text-small text-fg-muted transition-colors hover:bg-surface-hover hover:text-fg"
           >
             {copied ? (
               <Check
                 className="h-4 w-4 shrink-0 text-brand"
-                strokeWidth={1.75}
                 aria-hidden="true"
               />
             ) : (
-              <Link2
-                className="h-4 w-4 shrink-0"
-                strokeWidth={1.75}
-                aria-hidden="true"
-              />
+              <Link2 className="h-4 w-4 shrink-0" aria-hidden="true" />
             )}
             <span>{copied ? "Link copied" : "Copy link"}</span>
           </button>
@@ -209,11 +200,7 @@ export function Engagement({
             )}
             {data && data.views > 0 && (
               <span className="inline-flex items-center gap-1.5">
-                <Eye
-                  className="h-4 w-4 shrink-0"
-                  strokeWidth={1.75}
-                  aria-hidden="true"
-                />
+                <Eye className="h-4 w-4 shrink-0" aria-hidden="true" />
                 <span className="tabular-nums">
                   {data.views.toLocaleString()}
                 </span>
@@ -238,11 +225,7 @@ export function Engagement({
 
         {onComment && (
           <button type="button" onClick={onComment} className={actionClasses}>
-            <MessageSquare
-              className="h-4 w-4 shrink-0"
-              strokeWidth={1.75}
-              aria-hidden="true"
-            />
+            <MessageSquare className="h-4 w-4 shrink-0" aria-hidden="true" />
             <span>Comment</span>
           </button>
         )}

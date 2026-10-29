@@ -92,11 +92,7 @@ function CommentCard({
             onClick={onReply}
             className="inline-flex items-center gap-2 font-mono text-small text-fg-muted transition-colors hover:text-brand"
           >
-            <Reply
-              className="h-4 w-4 shrink-0"
-              strokeWidth={1.75}
-              aria-hidden="true"
-            />
+            <Reply className="h-4 w-4 shrink-0" aria-hidden="true" />
             Reply
           </button>
         )}
@@ -249,11 +245,7 @@ function CommentForm({
           className="btn btn--primary inline-flex items-center gap-2"
           disabled={sending}
         >
-          <MessageSquare
-            className="h-4 w-4 shrink-0"
-            strokeWidth={1.75}
-            aria-hidden="true"
-          />
+          <MessageSquare className="h-4 w-4 shrink-0" aria-hidden="true" />
           <span>
             {sending ? "Posting…" : parentId ? "Post reply" : "Post comment"}
           </span>
@@ -293,11 +285,7 @@ export function Comments({
   return (
     <section aria-labelledby="comments-heading" className="flex flex-col gap-8">
       <h2 id="comments-heading" className="flex items-center gap-2 text-h3">
-        <MessageSquare
-          className="h-5 w-5 shrink-0"
-          strokeWidth={1.75}
-          aria-hidden="true"
-        />
+        <MessageSquare className="h-4 w-4 shrink-0" aria-hidden="true" />
         {total === 0
           ? "Comments"
           : `${total} ${total === 1 ? "comment" : "comments"}`}

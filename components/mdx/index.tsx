@@ -39,6 +39,14 @@ export const mdxComponents: MDXComponents = {
 
   // Enhanced code block with syntax highlighting, language badge, and copy button.
   pre: (props) => <CodeBlock {...props} />,
+
+  // A table wider than the column scrolls inside its own box, rather than
+  // pushing the whole page sideways on a phone.
+  table: (props) => (
+    <div className="prose-table">
+      <table {...props} />
+    </div>
+  ),
 };
 
 export { CodeBlock } from "./CodeBlock";
