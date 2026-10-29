@@ -1,35 +1,12 @@
-import { NextResponse } from "next/server";
-import { SITE_CONFIG } from "@/lib/constants";
+import { buildLlmsTxt, llmsResponse } from "@/lib/llms";
 
-export const dynamic = "force-static";
+/**
+ * The short llms.txt: the newest posts and talks, every project and the index
+ * pages. The everything version is `/llms-full.txt`; both are built in
+ * `lib/llms.ts`. Rebuilt daily, like the pages they describe.
+ */
+export const revalidate = 86400;
 
-export function GET() {
-  const content = `# ${SITE_CONFIG.name}
-
-> ${SITE_CONFIG.description}
-
-## About
-Dileepa Bandara is an AI engineer building agentic systems, LLM orchestration workflows, and developer communities.
-
-## Core Navigation
-- [Homepage](${SITE_CONFIG.url}/)
-- [Projects](${SITE_CONFIG.url}/projects)
-- [Blog](${SITE_CONFIG.url}/blog)
-- [Events](${SITE_CONFIG.url}/events)
-- [Communities](${SITE_CONFIG.url}/communities)
-- [Videos](${SITE_CONFIG.url}/videos)
-- [Event Gallery](${SITE_CONFIG.url}/gallery)
-- [Site Directory](${SITE_CONFIG.url}/sitemap)
-
-## Feeds
-- [RSS Feed](${SITE_CONFIG.url}/blog/rss.xml)
-- [Sitemap](${SITE_CONFIG.url}/sitemap.xml)
-`;
-
-  return new NextResponse(content, {
-    headers: {
-      "Content-Type": "text/plain; charset=utf-8",
-      "Cache-Control": "public, max-age=86400, stale-while-revalidate=604800",
-    },
-  });
+export async function GET() {
+  return llmsResponse(await buildLlmsTxt({ full: false }));
 }

@@ -252,6 +252,14 @@ export default async function SitemapPage() {
         badge: "TXT",
       },
       {
+        id: "root/llms-full",
+        name: "llms-full.txt",
+        path: "/llms-full.txt",
+        title: "LLM & AI Agent Context File, in full",
+        type: "system",
+        badge: "TXT",
+      },
+      {
         id: "root/manifest",
         name: "manifest.json",
         path: "/manifest.json",
