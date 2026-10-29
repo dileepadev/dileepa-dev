@@ -244,6 +244,46 @@ body {
   }
 }
 
+/* The image viewer opens and closes at the same calm pace (v2.1.0 draft):
+   the backdrop, the toolbar and the caption fade; the photo fades in a beat
+   later and eases up from 96%. Closing reverses it in 200ms - the time
+   `ImageLightbox` waits before it unmounts. */
+.lightbox[data-state="open"] {
+  animation: lightbox-fade 220ms var(--ease) both;
+}
+
+.lightbox[data-state="open"] .lightbox-image {
+  animation: lightbox-image-in 300ms var(--ease) 60ms both;
+}
+
+.lightbox[data-state="closing"] {
+  animation: lightbox-fade 200ms var(--ease) reverse both;
+}
+
+.lightbox[data-state="closing"] .lightbox-image {
+  animation: lightbox-image-in 180ms var(--ease) reverse both;
+}
+
+@keyframes lightbox-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes lightbox-image-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* Reduced motion: every view transition - the theme reveal and the page
    change - swaps at once. */
 @media (prefers-reduced-motion: reduce) {

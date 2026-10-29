@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useCallback, ReactNode } from "react";
+import { useEffect, useCallback, useRef, useState, ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { X, ExternalLink, ZoomIn } from "lucide-react";
 
@@ -11,8 +11,18 @@ interface ImageLightboxProps {
   onClose: () => void;
 }
 
+/** How long the close animation runs, in step with `.lightbox` in globals.css. */
+const CLOSE_MS = 200;
+
 /**
  * Accessible, keyboard-navigable full-screen image viewer (lightbox).
+ *
+ * It opens and closes at the pace of the page transitions (v2.1.0 draft): the
+ * backdrop fades, and the photo fades in a beat later while it eases up from
+ * 96% to full size; closing plays the same, a little quicker. Every way out -
+ * Escape, the close button, a click on the backdrop - runs the close, and the
+ * parent's `onClose` fires once it has finished. With reduced motion it opens
+ * and closes at once.
  */
 export function ImageLightbox({
   src,
@@ -20,13 +30,41 @@ export function ImageLightbox({
   isOpen,
   onClose,
 }: ImageLightboxProps) {
+  const [closing, setClosing] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const requestClose = useCallback(() => {
+    if (timer.current) return;
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    if (reduced) {
+      onClose();
+      return;
+    }
+    setClosing(true);
+    timer.current = setTimeout(() => {
+      timer.current = null;
+      setClosing(false);
+      onClose();
+    }, CLOSE_MS);
+  }, [onClose]);
+
+  // A close still running when the viewer unmounts does not fire later.
+  useEffect(
+    () => () => {
+      if (timer.current) clearTimeout(timer.current);
+    },
+    [],
+  );
+
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        onClose();
+        requestClose();
       }
     },
-    [onClose],
+    [requestClose],
   );
 
   useEffect(() => {
@@ -54,8 +92,9 @@ export function ImageLightbox({
       // dark tokens - and with them the site's own buttons, which would
       // otherwise draw light-theme ink on a black backdrop.
       data-theme="dark"
-      className="fixed inset-0 z-50 flex flex-col items-center justify-between bg-black/90 p-4 text-fg backdrop-blur-md transition-opacity duration-200 sm:p-6"
-      onClick={onClose}
+      data-state={closing ? "closing" : "open"}
+      className="lightbox fixed inset-0 z-50 flex flex-col items-center justify-between bg-black/90 p-4 text-fg backdrop-blur-md sm:p-6"
+      onClick={requestClose}
     >
       {/* Top Header Bar */}
       <div
@@ -82,7 +121,7 @@ export function ImageLightbox({
 
           <button
             type="button"
-            onClick={onClose}
+            onClick={requestClose}
             title="Close (Esc)"
             aria-label="Close full screen image"
             className="btn btn--secondary btn--sm btn--icon"
@@ -101,7 +140,7 @@ export function ImageLightbox({
         <img
           src={src}
           alt={alt ?? ""}
-          className="max-h-[82vh] max-w-[94vw] select-none rounded-block object-contain shadow-2xl transition-transform duration-200"
+          className="lightbox-image max-h-[82vh] max-w-[94vw] select-none rounded-block object-contain shadow-2xl"
         />
       </div>
 
