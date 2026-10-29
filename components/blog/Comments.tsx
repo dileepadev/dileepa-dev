@@ -153,7 +153,12 @@ function CommentForm({
 
   const nameField = (
     <label>
-      <span>Name</span>
+      <span>
+        Name{" "}
+        <span className="req" aria-hidden="true">
+          *
+        </span>
+      </span>
       <input
         type="text"
         name="author"
@@ -197,7 +202,12 @@ function CommentForm({
       )}
 
       <label>
-        <span>{parentId ? "Reply" : "Comment"}</span>
+        <span>
+          {parentId ? "Reply" : "Comment"}{" "}
+          <span className="req" aria-hidden="true">
+            *
+          </span>
+        </span>
         <textarea
           ref={formRef}
           name="comment"

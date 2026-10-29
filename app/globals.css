@@ -3035,7 +3035,10 @@ a.chip:hover {
   grid-column: 1 / -1;
 }
 
-.form .req {
+/* A required field's star, in both forms - the contact form and the
+   comment form. Hidden from assistive technology: the field's own
+   `required` says it. */
+:is(.form, .field) .req {
   color: var(--brand);
   margin-left: 2px;
 }
