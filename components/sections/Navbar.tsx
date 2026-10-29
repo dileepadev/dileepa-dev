@@ -143,7 +143,7 @@ export function Navbar() {
                     <span>Explore</span>
                     <ChevronDown
                       className={cn(
-                        "h-3.5 w-3.5 transition-transform duration-150",
+                        "h-3.5 w-3.5 transition-transform",
                         exploreOpen && "rotate-180",
                       )}
                       aria-hidden="true"
@@ -154,7 +154,7 @@ export function Navbar() {
                     <div
                       role="menu"
                       aria-label="Explore pages"
-                      className="absolute right-0 top-full mt-2 popover w-48 p-1.5 z-50 animate-in fade-in zoom-in-95 duration-150"
+                      className="absolute right-0 top-full mt-2 popover w-48 p-1.5 z-50"
                     >
                       {MORE_LINKS.map((item) => {
                         const isCurrent = pathname.startsWith(item.href);

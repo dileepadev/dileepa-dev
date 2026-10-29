@@ -198,7 +198,7 @@ export function TocList({
               onClick={(e) => handleClick(e, heading.id)}
               aria-current={isActive ? "location" : undefined}
               className={cn(
-                "block py-1 transition-colors duration-[160ms] ease-brand no-underline leading-snug",
+                "block py-1 transition-colors no-underline leading-snug",
                 variant === "inline"
                   ? cn(
                       "pl-2 rounded-row",
@@ -238,7 +238,7 @@ export function TableOfContents({ headings }: { headings: Heading[] }) {
           </span>
         </span>
         <ChevronDown
-          className="h-4 w-4 shrink-0 text-fg-muted transition-transform duration-[160ms] ease-brand group-open:rotate-180"
+          className="h-4 w-4 shrink-0 text-fg-muted transition-transform group-open:rotate-180"
           aria-hidden="true"
         />
       </summary>

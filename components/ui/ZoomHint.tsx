@@ -12,7 +12,7 @@ export function ZoomHint({ label = "View full size" }: { label?: string }) {
   return (
     <span
       aria-hidden="true"
-      className="pointer-events-none absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-full border border-border-strong bg-bg-surface/90 px-2.5 py-1 font-mono text-label text-fg backdrop-blur-sm opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100"
+      className="pointer-events-none absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-full border border-border-strong bg-bg-surface/90 px-2.5 py-1 font-mono text-label text-fg backdrop-blur-sm opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
     >
       <ZoomIn className="h-3.5 w-3.5" />
       <span>{label}</span>

@@ -182,7 +182,7 @@ export function FilterSelect({
 
         <ChevronDown
           className={cn(
-            "h-3.5 w-3.5 shrink-0 text-fg-muted transition-transform duration-150 ml-0.5",
+            "h-3.5 w-3.5 shrink-0 text-fg-muted transition-transform ml-0.5",
             isOpen && "rotate-180",
           )}
           aria-hidden="true"
@@ -194,7 +194,7 @@ export function FilterSelect({
           id={listboxId}
           role="listbox"
           aria-label={`Filter options for ${label}`}
-          className="absolute top-[calc(100%+6px)] left-0 z-50 min-w-[180px] max-h-[260px] overflow-y-auto popover p-1.5 list-none m-0 animate-in fade-in zoom-in-95 duration-150"
+          className="absolute top-[calc(100%+6px)] left-0 z-50 min-w-[180px] max-h-[260px] overflow-y-auto popover p-1.5 list-none m-0"
         >
           {allItems.map((item, idx) => {
             const isSelected =

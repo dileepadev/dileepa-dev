@@ -181,7 +181,7 @@ function TreeBranch({
       {/* Branch line item */}
       <div
         className={cn(
-          "group flex items-center gap-2 py-1.5 px-2 rounded-row transition-colors duration-150",
+          "group flex items-center gap-2 py-1.5 px-2 rounded-row transition-colors",
           "hover:bg-surface-hover",
         )}
       >

@@ -249,7 +249,7 @@ export function ReactionPicker({
                 }}
                 className={
                   "emoji-btn inline-flex h-9 w-9 items-center justify-center rounded-full " +
-                  "text-[1.15rem] transition-[background-color] duration-[160ms] ease-brand " +
+                  "text-[1.15rem] transition-[background-color] " +
                   "disabled:cursor-not-allowed disabled:opacity-60 " +
                   (selected
                     ? "bg-surface-hover ring-1 ring-brand"

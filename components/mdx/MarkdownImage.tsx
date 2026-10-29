@@ -96,7 +96,7 @@ export function MarkdownImage({
       <span
         role="figure"
         aria-label={alt || "Blog content image"}
-        className="group my-6 block overflow-hidden rounded-block border border-border-strong bg-bg-surface transition-colors duration-200"
+        className="group my-6 block overflow-hidden rounded-block border border-border-strong bg-bg-surface transition-colors"
       >
         <button
           type="button"
@@ -116,7 +116,7 @@ export function MarkdownImage({
             onError={() => setHasError(true)}
             onLoad={() => setIsLoaded(true)}
             className={cn(
-              "h-auto w-full max-w-full object-contain transition-opacity duration-200",
+              "h-auto w-full max-w-full object-contain transition-opacity",
               isLoaded ? "opacity-100" : "opacity-90",
               className,
             )}

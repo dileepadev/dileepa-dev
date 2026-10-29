@@ -28,7 +28,7 @@ export function Badge({
       className={cn(
         "badge inline-block border px-3 py-1 text-label font-medium tracking-[0.01em]",
         interactive
-          ? "badge--interactive cursor-pointer transition-colors duration-[160ms] ease-brand hover:text-fg"
+          ? "badge--interactive cursor-pointer transition-colors hover:text-fg"
           : "cursor-default",
         variant === "filled"
           ? "badge-filled border-transparent bg-brand-fill text-on-brand"
@@ -59,7 +59,7 @@ export function Chip({ children, interactive = false, className }: ChipProps) {
         "chip inline-block",
         "px-3 py-1 font-mono text-label/[1] tracking-[0.01em] text-fg-muted",
         interactive
-          ? "chip--interactive cursor-pointer transition-colors duration-[160ms] ease-brand hover:text-fg"
+          ? "chip--interactive cursor-pointer transition-colors hover:text-fg"
           : "cursor-default",
         className,
       )}

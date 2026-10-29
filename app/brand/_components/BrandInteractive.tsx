@@ -69,7 +69,7 @@ export function ColorSwatch({
         </span>
         <span
           className={cn(
-            "p-1 rounded-full bg-bg/80 text-fg text-label backdrop-blur-xs transition-opacity duration-150",
+            "p-1 rounded-full bg-bg/80 text-fg text-label backdrop-blur-xs transition-opacity",
             copied ? "opacity-100" : "opacity-0 group-hover:opacity-100",
           )}
         >
