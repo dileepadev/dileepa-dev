@@ -379,7 +379,7 @@ export default async function BrandPage() {
   /* Typography */
   --font-sans: "Manrope", system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
-  --font-weights: 400, 500, 700; /* 400 and 500 in the interface, every heading 500; 700 only for bold in running text; no 600 */
+  --font-weights: 400, 500, 700; /* 400 and 500 in the interface, every heading 500; 700 for the display and bold in running text; no 600 */
 
   /* Corners (v2.1.0 draft): fixed, capsule, concentric */
   --radius-panel: 32px;  /* page panels, the rail, the mobile menu */
@@ -937,9 +937,9 @@ export default async function BrandPage() {
           <div className="tile divide-y divide-border-hairline">
             <div className="p-4 sm:p-6 grid grid-cols-1 @2xl/section:grid-cols-[200px_1fr] md:items-baseline gap-2 sm:gap-6">
               <div className="font-mono text-label text-fg-muted shrink-0">
-                Display · 44–80px / 1.02 · 500
+                Display · 44–80px / 1.02 · 700
               </div>
-              <div className="font-sans text-display font-medium tracking-[var(--track-display)] text-fg">
+              <div className="font-sans text-display font-bold tracking-[var(--track-display)] text-fg">
                 Building AI systems
               </div>
             </div>
@@ -1007,9 +1007,9 @@ export default async function BrandPage() {
           <p className="mt-4 text-small text-fg-muted">
             Every size is one of these steps; nothing is set below 13px. Two
             weights carry the interface, 400 and 500 - every heading is 500 -
-            and 700 is kept for bold inside running text. Text clears WCAG 1.4.3
-            everywhere: titles about 18:1, body about 8:1, muted 5-6:1, against
-            4.5:1 required.
+            and 700 is kept for the display line and bold inside running text.
+            Text clears WCAG 1.4.3 everywhere: titles about 18:1, body about
+            8:1, muted 5-6:1, against 4.5:1 required.
           </p>
         </Container>
       </Section>

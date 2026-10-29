@@ -357,7 +357,9 @@ h3 {
 .display {
   font-size: var(--text-display);
   line-height: var(--lh-display);
-  font-weight: 500;
+  /* 700, a step above every heading's 500 (v2.1.0 draft): at 500 the
+     display read as a larger H1 rather than a different rank. */
+  font-weight: 700;
   letter-spacing: var(--track-display);
 }
 
