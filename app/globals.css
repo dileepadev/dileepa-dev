@@ -4006,6 +4006,29 @@ main .container {
   container: section / inline-size;
 }
 
+/* The page path above a page's title: a filled capsule on the page ground,
+   so the route reads as a row of its own - it was one more line of muted
+   mono over the page label. The page you are on is at full contrast; the
+   ones above it are links. Not pressable as a whole, so no edge. */
+.page-path {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  max-width: 100%;
+  min-width: 0;
+  padding: 0.3rem 0.9rem;
+  border-radius: var(--radius-pill);
+  background: var(--bg);
+}
+
+.page-path [aria-current="page"] {
+  color: var(--fg);
+}
+
+.page-path-sep {
+  color: color-mix(in srgb, var(--fg-muted) 55%, transparent);
+}
+
 /* One hover, one timing (v2.1.0 draft). Everything a pointer can hover -
    links, buttons, form controls, a summary - eases its colours, fills,
    edges and shadow over --dur on --ease, the timing every component rule
