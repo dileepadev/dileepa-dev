@@ -237,9 +237,14 @@ export default async function RootLayout({
     // --font-sans out of them at :root, and a custom property that is only
     // declared on <body> is undefined there - which makes the whole
     // declaration invalid and drops the site to a system font.
+    // `data-scroll-behavior`: the stylesheet scrolls smoothly for in-page
+    // anchors, and this tells Next to switch that off while it changes
+    // routes, so a new page starts at the top instead of gliding there
+    // under the page transition.
     <html
       lang="en"
       className={`${manrope.variable} ${jetbrainsMono.variable}`}
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
       <head>

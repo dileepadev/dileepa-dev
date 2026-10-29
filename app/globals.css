@@ -214,6 +214,38 @@ body {
   z-index: 9999;
 }
 
+/* Page transitions (v2.1.0 draft), from `app/template.tsx`. Calm on
+   purpose: the old page fades out quickly, the new one fades in a beat
+   later and settles up 6px - no slide, no scale, nothing that pulls the
+   eye across the screen. Asymmetric, so the leaving page is out of the way
+   before the arriving one shows. */
+::view-transition-old(.page-exit) {
+  animation: page-fade-out 160ms var(--ease) both;
+}
+
+::view-transition-new(.page-enter) {
+  animation: page-fade-in 280ms var(--ease) 100ms both;
+}
+
+@keyframes page-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Reduced motion: every view transition - the theme reveal and the page
+   change - swaps at once. */
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(*),
   ::view-transition-old(*),
