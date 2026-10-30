@@ -135,10 +135,13 @@ export function Footer({ about }: { about?: About | null }) {
               /
             </span>
             <a
-              href={`${SITE_CONFIG.repository}/releases/latest`}
+              // This version's own release, not "latest": the label is the
+              // version the site is running, and a deploy can lead or trail
+              // the newest release on GitHub.
+              href={`${SITE_CONFIG.repository}/releases/tag/v${SITE_CONFIG.version}`}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label={`Version ${SITE_CONFIG.version}: view the latest release on GitHub`}
+              aria-label={`Version ${SITE_CONFIG.version}: view this release on GitHub`}
               className="inline-flex items-center gap-1.5"
             >
               <Tag className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
