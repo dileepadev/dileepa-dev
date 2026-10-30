@@ -110,17 +110,16 @@ export function Navbar() {
 
             <div className="nav-right">
               {/* Desktop links */}
-              <nav className="nav-links" aria-label="Sections">
+              <nav className="nav-links" aria-label="Main">
                 {NAV_LINKS.map((link) => {
-                  const hash = hashOf(link.href);
-                  const isCurrent = pathname === "/" && hash === active;
+                  const isCurrent = isNavCurrent(link.href, pathname, active);
 
                   return (
                     <Link
                       key={link.href}
                       href={link.href}
                       className={cn("nav-link", isCurrent && "is-active")}
-                      aria-current={isCurrent ? "true" : undefined}
+                      aria-current={currentAs(link.href, isCurrent)}
                     >
                       {link.label}
                     </Link>
@@ -215,11 +214,12 @@ export function Navbar() {
           {mobileOpen && (
             <div className="nav-mobile-menu">
               <nav aria-label="Mobile navigation">
-                <div className="nav-mobile-section-label">Sections</div>
+                {/* The footer's names for the same two groups - see
+                    FOOTER_LINKS. */}
+                <div className="nav-mobile-section-label">About me</div>
                 <div className="nav-mobile-links">
                   {NAV_LINKS.map((link) => {
-                    const hash = hashOf(link.href);
-                    const isCurrent = pathname === "/" && hash === active;
+                    const isCurrent = isNavCurrent(link.href, pathname, active);
 
                     return (
                       <Link
@@ -230,7 +230,7 @@ export function Navbar() {
                           "nav-mobile-link",
                           isCurrent && "is-active",
                         )}
-                        aria-current={isCurrent ? "true" : undefined}
+                        aria-current={currentAs(link.href, isCurrent)}
                       >
                         <span>{link.label}</span>
                         {isCurrent && (
@@ -282,6 +282,38 @@ export function hashOf(href: string): string {
 }
 
 /**
+ * `aria-current` for a primary nav link: "true" for a section in view, "page"
+ * for the page that is open.
+ */
+export function currentAs(
+  href: string,
+  isCurrent: boolean,
+): "true" | "page" | undefined {
+  if (!isCurrent) return undefined;
+  return isSectionLink(href) ? "true" : "page";
+}
+
+/** A link to a homepage section ("/#about") rather than to a page ("/work"). */
+export function isSectionLink(href: string): boolean {
+  return href.startsWith("/#");
+}
+
+/**
+ * Whether a primary nav link is where the reader is (v2.1.0 draft): a
+ * homepage section while it is scrolled into view, a page while it - or a
+ * page under it - is open. The nav holds both kinds since Work and Education
+ * became pages.
+ */
+export function isNavCurrent(
+  href: string,
+  pathname: string,
+  active: string | null,
+): boolean {
+  if (isSectionLink(href)) return pathname === "/" && hashOf(href) === active;
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+/**
  * Marks the section currently in view.
  *
  * Tracks scroll position against each section boundary with a top offset to clear the sticky navbar.
@@ -293,7 +325,9 @@ export function useScrollSpy(enabled: boolean): string | null {
   useEffect(() => {
     if (!enabled) return;
 
-    const sectionIds = NAV_LINKS.map((link) => hashOf(link.href));
+    const sectionIds = NAV_LINKS.filter((link) => isSectionLink(link.href)).map(
+      (link) => hashOf(link.href),
+    );
 
     function updateActiveSection() {
       const scrollY = window.scrollY;

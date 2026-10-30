@@ -159,37 +159,49 @@ export const TERMINAL = {
 /**
  * Primary navigation.
  *
- * The homepage is the site: everything is a section on it, and the index pages
- * exist for the full lists. So the nav points at sections, not routes - which
- * is what the layout reference does, and why the links are all hashes.
+ * The homepage is the front door, not the whole site (v2.1.0 draft): it keeps
+ * the hero, About and Contact, and Work and Education are pages of their own
+ * beside the index pages. So the nav mixes the two kinds of link - a hash for
+ * a homepage section, a path for a page - and `isNavCurrent` in `Navbar.tsx`
+ * marks each the way it needs: a section while it is scrolled into view, a
+ * page while it is open. Community has no link of its own: its four parts -
+ * communities, events, blog, videos - are pages in the second group.
  */
 export const NAV_LINKS: NavLink[] = [
   { label: "About", href: "/#about" },
-  { label: "Work", href: "/#work" },
-  { label: "Education", href: "/#education" },
-  { label: "Community", href: "/#community" },
+  { label: "Work", href: "/work" },
+  { label: "Education", href: "/education" },
   { label: "Contact", href: "/#contact" },
 ];
 
+/**
+ * The footer's link columns, shown below the width the rail appears.
+ *
+ * Named for what they hold (v2.1.0 draft): "About me" - who, where they
+ * have worked and studied, how to reach them - and "Explore" - what they
+ * make and do. They were "Site" and "Elsewhere", which no longer described
+ * them once every link in both pointed at a page of this site. The mobile
+ * menu uses the same two names.
+ */
 export const FOOTER_LINKS: { title: string; links: NavLink[] }[] = [
   {
-    title: "Site",
+    title: "About me",
     links: [
       { label: "About", href: "/#about" },
-      { label: "Work", href: "/#work" },
-      { label: "Education", href: "/#education" },
-      { label: "Community", href: "/#community" },
+      { label: "Work", href: "/work" },
+      { label: "Education", href: "/education" },
       { label: "Contact", href: "/#contact" },
     ],
   },
   {
-    title: "Elsewhere",
+    title: "Explore",
     links: [
       { label: "Projects", href: "/projects" },
-      { label: "Communities", href: "/communities" },
-      { label: "Events", href: "/events" },
-      { label: "Videos", href: "/videos" },
       { label: "Blog", href: "/blog" },
+      { label: "Events", href: "/events" },
+      { label: "Gallery", href: "/gallery" },
+      { label: "Videos", href: "/videos" },
+      { label: "Communities", href: "/communities" },
     ],
   },
 ];
@@ -205,23 +217,6 @@ export const SECTIONS = {
   about: {
     label: "About",
     title: "An engineer who designs systems and explains them to a room.",
-  },
-  work: {
-    label: "Work",
-    title: "Where I have worked",
-    intro:
-      "Roles spanning AI engineering, software development, and building production systems.",
-  },
-  education: {
-    label: "Education",
-    title: "Academic background",
-    intro: "Where I studied and what I learned along the way.",
-  },
-  community: {
-    label: "Community",
-    title: "Speaking, writing, building",
-    intro:
-      "Sharing ideas, bringing developers together, and contributing to the tech community.",
   },
   contact: {
     label: "Contact",
@@ -264,66 +259,6 @@ export const SUBSECTIONS = {
   },
 } as const;
 
-/**
- * What the six cards under About say.
- *
- * These represent the core areas of work and activity: AI engineering,
- * open-source projects, public speaking, technical writing, videos,
- * and community volunteering.
- */
-/**
- * The fallback for the six About cards.
- *
- * They are served by `GET /pillars` now, so this list is only what renders when
- * that call comes back empty - an API outage, or a deployment where the
- * collection has not been seeded yet. `icon` names the same closed set the API
- * does; `components/sections/About.tsx` resolves it either way.
- */
-export const PILLARS = [
-  {
-    key: "ai-engineering",
-    icon: "cpu",
-    title: "AI engineering",
-    description:
-      "Building agentic systems, orchestrating LLM workflows, and designing evaluation pipelines for production applications.",
-  },
-  {
-    key: "open-source",
-    icon: "code",
-    title: "Open source",
-    description:
-      "Developing tools, contributing to projects, and sharing technical implementations across AI and software engineering.",
-  },
-  {
-    key: "public-speaking",
-    icon: "mic",
-    title: "Public speaking",
-    description:
-      "Speaking at conferences and meetups, leading technical workshops, and sharing lessons from building AI systems.",
-  },
-  {
-    key: "technical-writing",
-    icon: "book",
-    title: "Technical writing",
-    description:
-      "Writing about agentic systems, engineering practices, and lessons from building AI in production.",
-  },
-  {
-    key: "technical-videos",
-    icon: "video",
-    title: "Technical videos",
-    description:
-      "Creating technical tutorials and walkthroughs on AI systems, software engineering, and cloud infrastructure.",
-  },
-  {
-    key: "community-building",
-    icon: "users",
-    title: "Community building",
-    description:
-      "Organising technical meetups, mentoring engineers, and creating spaces for people and AI agents to learn and build.",
-  },
-] as const;
-
 /** Copy for pages that can legitimately be empty. */
 export const EMPTY_STATES = {
   projects: {
@@ -363,6 +298,29 @@ export const EMPTY_STATES = {
  * voice (sentence case, no banned buzzwords) and single-source maintainability.
  */
 export const PAGES = {
+  work: {
+    meta: {
+      title: "Work and experience",
+      description:
+        "Roles in AI engineering and software development, the tools behind them, and the open source projects alongside.",
+    },
+    label: "Work",
+    title: "Where I have worked",
+    intro:
+      "Roles spanning AI engineering, software development, and building production systems.",
+  },
+
+  education: {
+    meta: {
+      title: "Education and qualifications",
+      description:
+        "Degrees, diplomas, and the schooling behind them, with results and dates.",
+    },
+    label: "Education",
+    title: "Academic background",
+    intro: "Where I studied and what I learned along the way.",
+  },
+
   blog: {
     meta: {
       title: "Writing on AI systems and engineering",
@@ -545,6 +503,24 @@ export interface PageSummary {
  * Ordered list of all standalone pages across the site.
  */
 export const PAGES_LIST: PageSummary[] = [
+  {
+    key: "work",
+    path: "/work",
+    label: PAGES.work.label,
+    title: PAGES.work.title,
+    intro: PAGES.work.intro,
+    description: PAGES.work.meta.description,
+    badge: "Work",
+  },
+  {
+    key: "education",
+    path: "/education",
+    label: PAGES.education.label,
+    title: PAGES.education.title,
+    intro: PAGES.education.intro,
+    description: PAGES.education.meta.description,
+    badge: "Education",
+  },
   {
     key: "projects",
     path: "/projects",

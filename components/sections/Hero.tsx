@@ -113,7 +113,7 @@ export function Hero({
                 <Mail className="h-4 w-4 shrink-0" aria-hidden="true" />
                 <span>Get in touch</span>
               </LinkButton>
-              <LinkButton href="/#work" variant="secondary">
+              <LinkButton href="/work" variant="secondary">
                 <Briefcase className="h-4 w-4 shrink-0" aria-hidden="true" />
                 <span>See the work</span>
               </LinkButton>

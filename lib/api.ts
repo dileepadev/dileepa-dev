@@ -709,44 +709,20 @@ export async function getGallery(limit = 24): Promise<GalleryPhoto[]> {
 /**
  * Everything the homepage needs, in one round of requests.
  *
+ * The hero, About and Contact (v2.1.0 draft): roles, courses, communities and
+ * projects moved to their own pages, so they are no longer fetched here. The
+ * hero's "now" cards need only the newest post, talk and video.
+ *
  * Every call here degrades, so one dead endpoint costs one section rather than
  * the page. The console will say which.
  */
 export async function getHomepageData() {
-  const [
-    about,
-    experiences,
-    educations,
-    tools,
-    communities,
-    pillars,
-    projects,
-    events,
-    posts,
-    videos,
-  ] = await Promise.all([
+  const [about, events, posts, videos] = await Promise.all([
     api.getAbout(),
-    api.getExperiences(),
-    api.getEducations(),
-    api.getTools(),
-    api.getCommunities(),
-    api.getPillars(),
-    api.getProjects({ featured: true, limit: 3 }),
-    api.getEvents({ limit: 4 }),
-    api.getBlogs({ limit: 4 }),
+    api.getEvents({ limit: 1 }),
+    api.getBlogs({ limit: 1 }),
     api.getVideos(),
   ]);
 
-  return {
-    about,
-    experiences,
-    educations,
-    tools,
-    communities,
-    pillars,
-    projects,
-    events,
-    posts,
-    videos,
-  };
+  return { about, events, posts, videos };
 }

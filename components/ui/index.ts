@@ -27,6 +27,7 @@ export {
   type ActiveFilterItem,
 } from "./ListingControls";
 export { BackToTop } from "./BackToTop";
+export { KeepExploring } from "./KeepExploring";
 export { CurlHint } from "./CurlHint";
 export { LoadMore } from "./LoadMore";
 export { ImageLightbox } from "./ImageLightbox";

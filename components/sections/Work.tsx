@@ -1,54 +1,31 @@
-import Link from "next/link";
-import {
-  BriefcaseBusiness,
-  FolderGit2,
-  GraduationCap,
-  Terminal,
-} from "lucide-react";
-import {
-  Chip,
-  Entry,
-  EntryList,
-  IndexSection,
-  Subsection,
-  ViewAll,
-} from "@/components/ui";
-import type { Education, Experience, Project, Tool } from "@/lib/api-types";
-import { SECTIONS, SUBSECTIONS } from "@/lib/constants";
-import { humanise } from "@/lib/format";
+import { Terminal } from "lucide-react";
+import { Entry, EntryList } from "@/components/ui";
+import type { Education, Experience, Tool } from "@/lib/api-types";
+import { SUBSECTIONS } from "@/lib/constants";
 
 /**
- * Work - roles, then the stack, then the open source.
+ * The /work page's body - roles, then the stack beside them.
  *
- * All three are the same question ("what does this person actually do?") asked
- * at three scales, so they share a section rather than each claiming one.
+ * The open source projects that used to close it have their own page at
+ * /projects, so they are not repeated here. It was
+ * the homepage's Work section until the homepage became the front door rather
+ * than the whole site (v2.1.0 draft); `app/work/page.tsx` gives it its heading,
+ * so the headings in here start at `h2`.
  */
-export function Work({
+export function WorkContent({
   experiences,
   tools,
-  projects,
 }: {
   experiences: Experience[];
   tools: Tool[];
-  projects: Project[];
 }) {
-  const hasContent =
-    experiences.length > 0 || tools.length > 0 || projects.length > 0;
+  const hasContent = experiences.length > 0 || tools.length > 0;
 
   if (!hasContent) return null;
 
   return (
-    <IndexSection
-      id="work"
-      art={BriefcaseBusiness}
-      {...SECTIONS.work}
-      meta={
-        experiences.length > 0
-          ? `${experiences.length} ${experiences.length === 1 ? "role" : "roles"}`
-          : undefined
-      }
-    >
-      <div className="work-grid">
+    <>
+      <div className="work-grid mt-10 sm:mt-12">
         {experiences.length > 0 && (
           <EntryList className="timeline">
             {experiences.map((item) => (
@@ -70,7 +47,7 @@ export function Work({
           <aside className="tools-panel" aria-labelledby="tools-title">
             <div className="tools-panel-head">
               <Terminal className="h-4 w-4" aria-hidden="true" />
-              <h3 id="tools-title">{SUBSECTIONS.tools.title}</h3>
+              <h2 id="tools-title">{SUBSECTIONS.tools.title}</h2>
             </div>
             {SUBSECTIONS.tools.note && (
               <p className="tools-panel-note">{SUBSECTIONS.tools.note}</p>
@@ -83,61 +60,16 @@ export function Work({
           </aside>
         )}
       </div>
-
-      {projects.length > 0 && (
-        <div className="mt-20">
-          <Subsection
-            {...SUBSECTIONS.projects}
-            icon={<FolderGit2 className="h-4 w-4" />}
-          >
-            <ul className="tile-grid">
-              {projects.map((project) => (
-                <li key={project.id} className="tile-card">
-                  <div className="tile-meta">
-                    <span>{project.role}</span>
-                    <span className="tile-pill">
-                      {project.status === "active" && (
-                        <span className="hero-status-dot" aria-hidden="true" />
-                      )}
-                      {humanise(project.status)}
-                    </span>
-                  </div>
-                  <h3 className="tile-title">
-                    <Link
-                      href={`/projects/${project.slug}`}
-                      className="text-link"
-                    >
-                      {project.name}
-                    </Link>
-                  </h3>
-                  {(project.tagline || project.description) && (
-                    <p className="tile-desc">
-                      {project.tagline || project.description}
-                    </p>
-                  )}
-                  {(project.stack ?? []).length > 0 && (
-                    <div className="tile-foot">
-                      {(project.stack ?? []).slice(0, 5).map((tech) => (
-                        <Chip key={tech}>{tech}</Chip>
-                      ))}
-                    </div>
-                  )}
-                </li>
-              ))}
-            </ul>
-            <ViewAll href="/projects">All projects</ViewAll>
-          </Subsection>
-        </div>
-      )}
-    </IndexSection>
+    </>
   );
 }
 
-export function EducationSection({ educations }: { educations: Education[] }) {
+/** The /education page's body: one tile per course. Was the homepage section. */
+export function EducationContent({ educations }: { educations: Education[] }) {
   if (educations.length === 0) return null;
 
   return (
-    <IndexSection id="education" art={GraduationCap} {...SECTIONS.education}>
+    <div className="mt-10 sm:mt-12">
       <EntryList className="entry-grid">
         {educations.map((item) => (
           <Entry
@@ -150,6 +82,6 @@ export function EducationSection({ educations }: { educations: Education[] }) {
           />
         ))}
       </EntryList>
-    </IndexSection>
+    </div>
   );
 }

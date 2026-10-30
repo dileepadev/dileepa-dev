@@ -1048,63 +1048,13 @@ pre {
 
 /* --- Surfaces shared by the cards below ---------------------------------- */
 
-.pillar,
 .tools-panel,
 .entry-grid .entry,
 .item-cards .item,
-.post-featured,
 .contact-panel {
   background: var(--bg-surface);
   border: var(--hairline) solid var(--border-strong);
   border-radius: var(--radius-tile);
-}
-
-/* --- About: pillars as a bento ------------------------------------------- */
-
-.pillars {
-  display: grid;
-  gap: var(--space-4);
-  margin-top: var(--space-12);
-}
-
-@container section (min-width: 30rem) {
-  .pillars {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-/* Three by two: six equal statements, read across. */
-@container section (min-width: 52rem) {
-  .pillars {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-.pillar {
-  padding: var(--space-6);
-}
-
-.pillar-icon {
-  display: block;
-  width: 2.5rem;
-  height: 2.5rem;
-  padding: 0.6rem;
-  margin-bottom: var(--space-8);
-  border-radius: var(--radius-block);
-  border: var(--hairline) solid var(--border-strong);
-  background: var(--bg);
-  color: var(--fg);
-}
-
-.pillar h3 {
-  letter-spacing: var(--track-tight);
-}
-
-.pillar p {
-  margin-top: var(--space-2);
-  color: var(--fg-body);
-  font-size: var(--text-body);
-  line-height: var(--lh-body);
 }
 
 /* --- Work: timeline beside the tools panel ------------------------------- */
@@ -1205,7 +1155,11 @@ pre {
   color: var(--fg-muted);
 }
 
-.tools-panel-head h3 {
+/* An h2 since Work became its own page under an h1 (v2.1.0 draft), drawn
+   at the H3 size it always had - the panel is a sidebar, not a section. */
+.tools-panel-head h2 {
+  font-size: var(--text-h3);
+  line-height: var(--lh-h3);
   color: var(--fg);
 }
 
@@ -1374,88 +1328,46 @@ pre {
   }
 }
 
-/* --- Blog: one featured post beside the next three ----------------------- */
+/* --- Keep exploring: where to go next ------------------------------------- */
 
-.post-feature {
-  display: grid;
-  gap: var(--space-8);
+/* From `KeepExploring` (v2.1.0 draft): the close of a short page, set off by
+   a hairline and the space a subsection gets, its heading at the H3 size. */
+.keep-exploring {
+  margin-top: var(--space-16);
+  padding-top: var(--space-10);
+  border-top: var(--hairline) solid var(--border);
 }
 
-@container section (min-width: 46rem) {
-  .post-feature {
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-    column-gap: var(--space-12);
-    align-items: stretch;
-  }
-}
-
-.post-featured {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  padding: clamp(var(--space-6), 1rem + 2vw, var(--space-10));
-}
-
-.post-kicker,
-.post-meta {
-  font-family: var(--font-code);
-  font-size: var(--text-label);
-  color: var(--fg-muted);
-}
-
-.post-featured-title {
-  font-size: clamp(1.5rem, 1.15rem + 1.2vw, 2.125rem);
-  line-height: 1.15;
-  font-weight: 500;
-  letter-spacing: -0.025em;
-  text-wrap: balance;
-  transition: color var(--dur) var(--ease);
-}
-
-.post-featured p {
-  color: var(--fg-body);
-}
-
-.post-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-5);
-  margin-top: auto;
-  padding-top: var(--space-6);
-}
-
-.post-rest .item {
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-2);
-}
-
-.post-rest .item:first-child {
-  border-top: 0;
-  padding-top: 0;
-}
-
-.post-rest .item-meta {
-  flex-direction: row;
-  justify-content: flex-start;
-  gap: var(--space-4);
-  text-align: left;
-  font-family: var(--font-code);
-  font-size: var(--text-label);
+.keep-exploring-title {
+  margin-bottom: var(--space-6);
+  font-size: var(--text-h3);
+  line-height: var(--lh-h3);
 }
 
 /* --- Contact: one panel ---------------------------------------------------- */
 
+/* Stacked (v2.1.0 draft): the address as a header row across the panel,
+   a hairline, then the form at full width. Side by side, the address and
+   one line of links sat at the top of a column as tall as the form, and
+   left most of that column empty beside it. */
 .contact-panel {
   display: grid;
-  gap: var(--space-10);
+  gap: var(--space-8);
   padding: clamp(var(--space-6), 1rem + 3vw, var(--space-12));
 }
 
-@container section (min-width: 46rem) {
-  .contact-panel {
-    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
-    column-gap: var(--space-16);
-  }
+.contact-info {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-8);
+  padding-bottom: var(--space-8);
+  border-bottom: var(--hairline) solid var(--border);
+}
+
+.contact-info .contact-links {
+  margin: 0;
 }
 
 .contact-panel .form {
@@ -1465,7 +1377,8 @@ pre {
 }
 
 .contact-info .section-copy {
-  margin: 0 0 var(--space-8);
+  flex-basis: 100%;
+  margin: 0;
 }
 
 /* ============================================================
@@ -1663,14 +1576,7 @@ pre {
 /* Cards inside a panel sit on the page ground, one step down, so they read
    as objects in the panel rather than holes in it. */
 .shell-main
-  :is(
-    .pillar,
-    .tools-panel,
-    .entry-grid .entry,
-    .item-cards .item,
-    .post-featured,
-    .contact-panel
-  ) {
+  :is(.tools-panel, .entry-grid .entry, .item-cards .item, .contact-panel) {
   background: var(--bg);
 }
 
@@ -1975,22 +1881,9 @@ pre {
 
 /* Tiles inside panels: borderless, rounded, on the page ground. */
 .shell-main
-  :is(
-    .pillar,
-    .tools-panel,
-    .entry-grid .entry,
-    .item-cards .item,
-    .post-featured,
-    .contact-panel
-  ) {
+  :is(.tools-panel, .entry-grid .entry, .item-cards .item, .contact-panel) {
   border: 0;
   border-radius: var(--radius-tile);
-}
-
-.shell-main .pillar-icon {
-  border: 0;
-  border-radius: var(--radius-block);
-  background: var(--bg-surface);
 }
 
 .shell-main .tools-list li,
@@ -2399,17 +2292,6 @@ pre {
   font-family: var(--font-sans);
 }
 
-/* Blog: the three posts beside the featured one, as cards. */
-.post-rest {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-.post-rest .tile-card {
-  flex: 1 1 auto;
-}
-
 /* Every content link that stays on the site carries the same arrow the
    external ones do, drawn the same way: one mask, the text colour, so it
    changes with the text on hover. */
@@ -2535,7 +2417,7 @@ pre {
 }
 
 .shell-main
-  :is(.tile, .tile-card, .item-cards .item, .tools-panel, .post-featured)
+  :is(.tile, .tile-card, .item-cards .item, .tools-panel)
   :is(.chip, .badge:not(.badge-filled)),
 .shell-main .tools-list li {
   background: var(--bg-surface);

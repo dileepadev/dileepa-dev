@@ -12,7 +12,7 @@ import { NAV_LINKS, SITE_CONFIG } from "@/lib/constants";
 import { portrait as portraitUrl } from "@/lib/format";
 import { SOCIAL_ICONS } from "@/lib/social-icons";
 import { cn } from "@/lib/utils";
-import { hashOf, MORE_LINKS, useScrollSpy } from "./Navbar";
+import { currentAs, isNavCurrent, MORE_LINKS, useScrollSpy } from "./Navbar";
 
 /**
  * The long pages whose rail turns into their table of contents, and the way
@@ -111,6 +111,11 @@ export function ProfileRail({ about }: { about: About | null }) {
           </LinkButton>
         </div>
 
+        {/* One list, not two (v2.1.0 draft). Split into the site links and
+            the index pages, each group wrapped on its own, and a group whose
+            last chip did not fit its row left that chip alone beside a hole
+            before the next group began. As one list the chips run on like
+            words in a line, at their own widths and padding. */}
         <nav className="rail-nav" aria-label="Site">
           <ul>
             <li>
@@ -128,22 +133,19 @@ export function ProfileRail({ about }: { about: About | null }) {
               </Link>
             </li>
             {NAV_LINKS.map((link) => {
-              const isCurrent =
-                pathname === "/" && hashOf(link.href) === active;
+              const isCurrent = isNavCurrent(link.href, pathname, active);
               return (
                 <li key={link.href}>
                   <Link
                     href={link.href}
                     className={cn("rail-link", isCurrent && "is-active")}
-                    aria-current={isCurrent ? "true" : undefined}
+                    aria-current={currentAs(link.href, isCurrent)}
                   >
                     {link.label}
                   </Link>
                 </li>
               );
             })}
-          </ul>
-          <ul>
             {MORE_LINKS.map((link) => {
               const isCurrent = pathname.startsWith(link.href);
               return (
