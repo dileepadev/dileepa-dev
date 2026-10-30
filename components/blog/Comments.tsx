@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { MessageSquare, Reply } from "lucide-react";
+import { useFormErrors } from "@/components/ui";
 import { api } from "@/lib/api";
 import type {
   CommentThread,
@@ -102,6 +103,21 @@ function CommentCard({
   );
 }
 
+/** The comment form's validation copy - see `useFormErrors`. */
+const COMMENT_MESSAGES = {
+  author: { missing: "Enter your name." },
+  email: {
+    missing: "",
+    invalid: "Enter an email address like jane@example.com.",
+  },
+  comment: { missing: "Write your comment." },
+};
+
+const REPLY_MESSAGES = {
+  ...COMMENT_MESSAGES,
+  comment: { missing: "Write your reply." },
+};
+
 function CommentForm({
   slug,
   parentId,
@@ -123,10 +139,14 @@ function CommentForm({
   const [honeypot, setHoneypot] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { validate, fieldProps, errorFor } = useFormErrors(
+    parentId ? REPLY_MESSAGES : COMMENT_MESSAGES,
+  );
 
-  async function submit(event: React.FormEvent) {
+  async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (sending) return;
+    if (!validate(event.currentTarget)) return;
     setSending(true);
     setError(null);
     try {
@@ -162,6 +182,7 @@ function CommentForm({
       <input
         type="text"
         name="author"
+        {...fieldProps("author")}
         value={author}
         onChange={(e) => setAuthor(e.target.value)}
         placeholder="Jane Doe"
@@ -170,11 +191,12 @@ function CommentForm({
         disabled={sending}
         required
       />
+      {errorFor("author")}
     </label>
   );
 
   return (
-    <form className="field flex flex-col gap-4" onSubmit={submit}>
+    <form className="field flex flex-col gap-4" onSubmit={submit} noValidate>
       {compact ? (
         nameField
       ) : (
@@ -190,6 +212,7 @@ function CommentForm({
             <input
               type="email"
               name="email"
+              {...fieldProps("email")}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="jane@example.com"
@@ -197,6 +220,7 @@ function CommentForm({
               autoComplete="email"
               disabled={sending}
             />
+            {errorFor("email")}
           </label>
         </div>
       )}
@@ -211,6 +235,7 @@ function CommentForm({
         <textarea
           ref={formRef}
           name="comment"
+          {...fieldProps("comment")}
           value={body}
           onChange={(e) => setBody(e.target.value)}
           rows={compact ? 3 : 4}
@@ -221,6 +246,7 @@ function CommentForm({
           disabled={sending}
           required
         />
+        {errorFor("comment")}
       </label>
 
       {/* The honeypot. Hidden from sight and from assistive technology, and

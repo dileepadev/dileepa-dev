@@ -3,14 +3,27 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { Mail, MessagesSquare, Send } from "lucide-react";
-import { IndexSection } from "@/components/ui";
+import { IndexSection, useFormErrors } from "@/components/ui";
 import { api, ApiError } from "@/lib/api";
 import type { About } from "@/lib/api-types";
 import { SECTIONS, SITE_CONFIG } from "@/lib/constants";
 import { paragraphs } from "@/lib/format";
 
+/** The contact form's validation copy - see `useFormErrors`. */
+const FIELD_MESSAGES = {
+  name: { missing: "Enter your name." },
+  email: {
+    missing: "Enter your email address, so I can reply.",
+    invalid: "Enter an email address like jane@example.com.",
+  },
+  subject: { missing: "Add a subject." },
+  message: { missing: "Write your message." },
+};
+
 export function Contact({ about }: { about: About | null }) {
   const [sending, setSending] = useState(false);
+  const { validate, fieldProps, errorFor, clear } =
+    useFormErrors(FIELD_MESSAGES);
   const email = about?.links?.email || SITE_CONFIG.email;
   const connectParagraphs = paragraphs(about?.connect);
   const intro = connectParagraphs[0] ?? SECTIONS.contact.intro;
@@ -19,6 +32,7 @@ export function Contact({ about }: { about: About | null }) {
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
+    if (!validate(form)) return;
     const data = new FormData(form);
 
     setSending(true);
@@ -31,6 +45,7 @@ export function Contact({ about }: { about: About | null }) {
       });
       toast.success("Message sent. I will reply to the address you gave.");
       form.reset();
+      clear();
     } catch (error) {
       // The API writes its error messages to be shown to a person, so the
       // message is surfaced rather than replaced with a generic one.
@@ -81,7 +96,7 @@ export function Contact({ about }: { about: About | null }) {
             </a>
           </p>
         </div>
-        <form className="form" onSubmit={onSubmit}>
+        <form className="form" onSubmit={onSubmit} noValidate>
           <label>
             <span>
               Name{" "}
@@ -92,11 +107,13 @@ export function Contact({ about }: { about: About | null }) {
             <input
               type="text"
               name="name"
+              {...fieldProps("name")}
               autoComplete="name"
               placeholder="Jane Doe"
               disabled={sending}
               required
             />
+            {errorFor("name")}
           </label>
           <label>
             <span>
@@ -108,11 +125,13 @@ export function Contact({ about }: { about: About | null }) {
             <input
               type="email"
               name="email"
+              {...fieldProps("email")}
               autoComplete="email"
               placeholder="jane@example.com"
               disabled={sending}
               required
             />
+            {errorFor("email")}
           </label>
           <label>
             <span>
@@ -124,10 +143,12 @@ export function Contact({ about }: { about: About | null }) {
             <input
               type="text"
               name="subject"
+              {...fieldProps("subject")}
               placeholder="Project inquiry, speaking, etc."
               disabled={sending}
               required
             />
+            {errorFor("subject")}
           </label>
           <label>
             <span>
@@ -138,11 +159,13 @@ export function Contact({ about }: { about: About | null }) {
             </span>
             <textarea
               name="message"
+              {...fieldProps("message")}
               rows={5}
               placeholder="Tell me about your project, idea, or questions…"
               disabled={sending}
               required
             />
+            {errorFor("message")}
           </label>
           {/* Names the action, not "Submit". Design system §8. */}
           <button
