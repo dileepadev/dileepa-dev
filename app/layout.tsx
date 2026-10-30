@@ -27,10 +27,16 @@ const manrope = Manrope({
   display: "swap",
 });
 
+// No `weight` list: JetBrains Mono is a variable font, so the one face
+// covers the 400 and 500 the site uses. Asking for those two by name made
+// Google Fonts answer, at times, with dynamic `/l/font?kit=...&skey=...`
+// URLs, which Turbopack's next/font cannot parse (the `&` is not escaped in
+// its internal query) - every route then failed to build with "next/font/
+// google queries have exactly one entry" (vercel/next.js#99114). Requesting
+// the variable axis gets the static `/s/...woff2` files.
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains-mono",
   subsets: ["latin"],
-  weight: ["400", "500"],
   display: "swap",
 });
 
