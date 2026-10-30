@@ -1587,10 +1587,18 @@ pre {
   gap: var(--space-6);
 }
 
+/* Above the headline on a phone: a 56px face and the name, then the space
+   a paragraph gets before the display type. */
 .hero-mobile-id {
   display: flex;
   align-items: center;
   gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+.hero-mobile-id .portrait {
+  width: 56px;
+  height: 56px;
 }
 
 @media (min-width: 1024px) {

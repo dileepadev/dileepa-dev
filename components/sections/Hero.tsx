@@ -105,6 +105,32 @@ export function Hero({
       <Container>
         <div className="hero">
           <div className="hero-copy">
+            {/* A phone has no profile rail, so the hero carries the face and
+                name - first, above the headline (v2.1.0 draft), so the first
+                screen says whose site this is; below the buttons it took a
+                full screen of scrolling to reach. Hidden at the width the
+                rail appears. */}
+            <div className="hero-mobile-id">
+              {portrait && (
+                <Image
+                  className="portrait"
+                  src={portrait}
+                  alt={name}
+                  width={240}
+                  height={240}
+                  sizes="56px"
+                />
+              )}
+              <div className="min-w-0">
+                <p className="hero-name">{name}</p>
+                {role && (
+                  <p className="hero-role">
+                    {role}
+                    {about?.location && <>, {about.location}</>}
+                  </p>
+                )}
+              </div>
+            </div>
             <h1 className="display hero-title">{tagline}</h1>
             {lead && <p className="hero-lead">{lead}</p>}
 
@@ -141,29 +167,6 @@ export function Hero({
           </div>
 
           <div className="hero-side">
-            {/* A phone has no profile rail, so the hero carries the face and
-                name there. Hidden at the width the rail appears. */}
-            <div className="hero-mobile-id">
-              {portrait && (
-                <Image
-                  className="portrait"
-                  src={portrait}
-                  alt={name}
-                  width={240}
-                  height={240}
-                  sizes="88px"
-                />
-              )}
-              <div className="min-w-0">
-                <p className="hero-name">{name}</p>
-                {role && (
-                  <p className="hero-role">
-                    {role}
-                    {about?.location && <>, {about.location}</>}
-                  </p>
-                )}
-              </div>
-            </div>
             {latest.length > 0 && (
               <ul className="hero-latest" aria-label="Latest">
                 {latest.map((item) => (
