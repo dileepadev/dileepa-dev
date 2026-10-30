@@ -1,13 +1,16 @@
 /**
- * The wordmark, drawn large in block characters.
+ * The lockup, `@dileepadev`, drawn large in block characters.
  *
  * **This is a display treatment of the lockup, not a second lockup.** The guide
- * is strict about the mark - the wordmark takes the neutral foreground, the
- * `/.` takes the accent, and the two never swap. Drawing it bigger does not
- * suspend that: `render()` returns the wordmark and the mark as separate
- * strings per row so the caller colours them the way it colours the small
- * lockup everywhere else. A banner that got the colours backwards would be the
- * one brand failure visible from across a room.
+ * is strict about the mark - the wordmark at full contrast, the `@` one step
+ * muted, and the two never swap. Drawing it bigger does not suspend that:
+ * `renderWordmark()` returns the mark and the wordmark as separate strings per
+ * row so the caller colours them the way the small lockup is coloured
+ * everywhere else (`components/ui/Lockup.tsx`). A banner that got the contrast
+ * backwards would be the one brand failure visible from across a room.
+ *
+ * v2.1.0 draft: the lockup was `dileepadev /.` - the wordmark, then the `/.` in
+ * the accent - until the black-and-white palette made the handle the logo.
  *
  * **Why a hand-built font and not a figlet.** The obvious font for this is ANSI
  * Shadow, which is what most `curl`-a-résumé sites use. Its glyphs are eight to
@@ -16,11 +19,11 @@
  * whole layout is sized for once a gutter and a box border are added. Widening
  * the document to fit the banner would be letting the decoration set the
  * measure for the content. So the font is hand-drawn on a 6-row body at
- * proportional widths, which puts the full wordmark and the mark inside 60
+ * proportional widths, which puts the mark and the full wordmark inside 60
  * columns with room to spare.
  *
- * Only the ten letters of the wordmark and the two mark characters exist here.
- * This is not a font; it is one word.
+ * Only the seven letters the wordmark uses and the `@` exist here. This is not
+ * a font; it is one word.
  */
 
 /**
@@ -80,16 +83,17 @@ const GLYPHS: Record<string, string[]> = {
 };
 
 /**
- * The `/.` - drawn as one glyph rather than two.
+ * The `@`, seven columns wide and the full six rows tall.
  *
- * Composing it from a slash and a full stop puts the shared inter-letter gap
- * between them, and the pair reads as `/ .` rather than `/.`. That is named in
- * the brand repo as one of the six conflicts the reference HTML got wrong, so
- * reproducing it here at eight times the size is not an option. The dot sits
- * tucked into the slash's baseline, which is what the small lockup does with a
- * negative-margin `::after`.
+ * An `@` is a wide character - a ring with a lowercase `a` inside it, the ring
+ * left open at the lower right where the `a`'s stem runs out into it - and the
+ * narrower drafts (five and six columns) closed the ring up into a blob that
+ * read as a `G` or an `e`. At seven the inner `a` has a counter of its own and
+ * the opening shows, which is what makes it an `@` rather than a circle. It
+ * spans the ascender and the descender rows, as `@` does in a text face, so it
+ * stands as tall as the `d` and reaches the `p`'s tail.
  */
-const MARK = ["    █ ", "   █  ", "  █   ", " █    ", "█ ██  ", "      "];
+const MARK = [" █████ ", "█     █", "█  ██ █", "█ █ █ █", "█  ███ ", " ████  "];
 
 // The mark is its own width, so the glyph loop below does not cover it.
 if (MARK.length !== ROWS) {
@@ -132,36 +136,31 @@ function draw(text: string): string[] {
 }
 
 /**
- * One row of the large lockup, split at the colour boundary.
+ * One row of the large lockup, split at the contrast boundary.
  *
- * `wordmark` takes the neutral foreground and `mark` takes the accent, which is
+ * `mark` - the `@` - is set one step muted and `wordmark` at full contrast,
  * the same division the small lockup makes in `components/ui/Lockup.tsx`. The
- * gap between them belongs to neither, so it travels with the mark where it is
- * invisible either way.
+ * mark comes first, as it does in the handle. The gap between them belongs to
+ * neither, so it travels with the mark, where it is invisible either way.
  */
 export interface WordmarkRow {
-  wordmark: string;
   mark: string;
+  wordmark: string;
 }
 
 /**
- * The gap between the wordmark and the mark.
- *
- * Wider than `GAP`, because the mark is a separate element of the lockup rather
- * than an eleventh letter, and at letter spacing it reads as part of the word.
- */
-const MARK_GAP = 4;
-
-/**
  * The large lockup, one entry per row.
+ *
+ * The `@` sits at letter spacing (`GAP`), not set apart: `@dileepadev` is one
+ * handle, and a wider gap would split it into a symbol and a word.
  *
  * Trailing whitespace is kept: the caller pads these into a fixed-width box and
  * a trimmed row would shorten the line the box border sits on.
  */
 export function renderWordmark(): WordmarkRow[] {
   return draw("dileepadev").map((row, index) => ({
+    mark: MARK[index] + " ".repeat(GAP),
     wordmark: row,
-    mark: " ".repeat(MARK_GAP) + MARK[index],
   }));
 }
 
@@ -174,5 +173,5 @@ export function renderWordmark(): WordmarkRow[] {
  */
 export const WORDMARK_WIDTH = (() => {
   const [row] = renderWordmark();
-  return row.wordmark.length + row.mark.length;
+  return row.mark.length + row.wordmark.length;
 })();

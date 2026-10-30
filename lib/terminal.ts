@@ -169,12 +169,12 @@ function short(url: string): string {
 /**
  * The masthead.
  *
- * The wordmark is drawn large in block characters by `lib/wordmark.ts`, and the
- * brand rule survives the change of scale intact: the wordmark takes the
- * neutral foreground, the `/.` takes the accent, and the two never swap. That is
- * the whole reason `renderWordmark` hands back the two halves separately
- * instead of one pre-joined string - a banner with the colours reversed is a
- * brand failure visible from across a room.
+ * The lockup, `@dileepadev`, is drawn large in block characters by
+ * `lib/wordmark.ts`, and the brand rule survives the change of scale intact:
+ * the `@` one step muted, the wordmark at full contrast, and the two never
+ * swap. That is the whole reason `renderWordmark` hands back the two halves
+ * separately instead of one pre-joined string - a banner with the contrast
+ * reversed is a brand failure visible from across a room.
  *
  * The border is double-ruled rather than the light rule everything else uses.
  * This is the one block on the page that is allowed to be loud, and a heavier
@@ -213,7 +213,7 @@ function banner(p: Palette, about: About | null): string[] {
   // whose trailing spaces got trimmed drift out of the column.
   const pad = indent(Math.max(0, Math.floor((boxInner - WORDMARK_WIDTH) / 2)));
   const art = renderWordmark().map((row) =>
-    line(pad + p.strong(row.wordmark) + p.brand(row.mark)),
+    line(pad + p.muted(row.mark) + p.strong(row.wordmark)),
   );
 
   const lines = ["", top, line(""), ...art, line("")];
