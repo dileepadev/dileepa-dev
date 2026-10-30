@@ -492,6 +492,13 @@ export const api = {
     );
   },
 
+  /**
+   * The video records as stored, without `getVideos`' YouTube lookups - for
+   * a surface that counts and lists videos but prints no durations (the
+   * terminal profile), so it does not spend a YouTube call per video.
+   */
+  getVideoRecords: () => degradePage<Video>("/videos"),
+
   // --- Projects ------------------------------------------------------------
 
   getProjects: (

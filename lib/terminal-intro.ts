@@ -42,13 +42,17 @@ const GUTTER = "  ";
  * is nine seconds of spinner alone. The numbers below are chosen against a
  * total, not against how each phase feels on its own:
  *
- *     masthead   14 x 55   =  770   (one row of the panel per frame)
+ *     masthead   26 x 30   =  780   (one row of the panel per frame)
  *     settle          180  =  180
  *     steps       4 x 360  = 1440   (one spinner turn each)
  *     bar         20 x 18  =  360
  *     settle          180  =  180
  *                            ----
- *                            2930ms
+ *                            2940ms
+ *
+ * v2.1.0 draft: the masthead grew from 14 rows to 26 when the portrait and
+ * its info panel replaced the block-letter wordmark, so a row reveals in 30ms
+ * rather than 55 and the wipe takes the same ~0.8s it did.
  *
  * Anyone changing one of these should re-add the column. Two and a half seconds
  * is already the ceiling for something standing between a reader and the answer
@@ -56,7 +60,7 @@ const GUTTER = "  ";
  */
 const TIMING = {
   /** Per row of the masthead as it wipes down. */
-  reveal: 55,
+  reveal: 30,
   /** Per spinner frame. `SPINNER.length` frames make one full turn. */
   spin: 45,
   /** Spinner turns per boot step before it resolves. One is enough to read. */

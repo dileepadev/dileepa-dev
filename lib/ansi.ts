@@ -19,14 +19,15 @@
 const ESC = "\u001b";
 
 /**
- * Matches an SGR escape sequence - the only kind this module emits.
+ * Matches the escape sequences this module emits: SGR (colour and weight) and
+ * OSC 8 (a hyperlink's opening and closing halves).
  *
  * Width has to be measured against what a reader sees, and an escape code
  * occupies bytes without occupying a column. Every alignment helper below
  * strips with this first; measuring `String.length` instead is what makes a
  * coloured table look correct until the first coloured cell.
  */
-const SGR = /\u001b\[[0-9;]*m/g;
+const SGR = /\u001b\[[0-9;]*m|\u001b\]8;;[^\u001b]*\u001b\\/g;
 
 export type ColorMode = "ansi" | "plain";
 
@@ -40,6 +41,16 @@ export interface Palette {
   muted: (text: string) => string;
   /** A link. Underlined: the palette has no colour to mark it with. */
   link: (text: string) => string;
+  /**
+   * Makes `text` a clickable hyperlink to `url` (v2.1.0 draft), with the OSC 8
+   * sequence iTerm2, Windows Terminal, GNOME Terminal, Konsole, kitty, WezTerm
+   * and VS Code's terminal understand. A terminal that does not swallows the
+   * sequence and shows the text as it was, so nothing is lost there - and the
+   * URL is still printed beside it for those. Plain mode returns the text.
+   */
+  href: (text: string, url: string) => string;
+  /** Whether escape codes are being written at all. */
+  colour: boolean;
 }
 
 function code(...parts: (string | number)[]): string {
@@ -51,7 +62,14 @@ const RESET = code(0);
 export function palette(mode: ColorMode): Palette {
   if (mode === "plain") {
     const asIs = (text: string) => text;
-    return { brand: asIs, strong: asIs, muted: asIs, link: asIs };
+    return {
+      brand: asIs,
+      strong: asIs,
+      muted: asIs,
+      link: asIs,
+      href: asIs,
+      colour: false,
+    };
   }
 
   const wrapIn = (open: string) => (text: string) =>
@@ -64,6 +82,9 @@ export function palette(mode: ColorMode): Palette {
     strong: wrapIn(code(1)),
     muted: wrapIn(code(2)),
     link: wrapIn(code(4)),
+    href: (text, url) =>
+      text ? `${ESC}]8;;${url}${ESC}\\${text}${ESC}]8;;${ESC}\\` : text,
+    colour: true,
   };
 }
 

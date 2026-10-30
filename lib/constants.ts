@@ -147,11 +147,12 @@ export const TERMINAL = {
    */
   limits: {
     experiences: 4,
-    educations: 2,
+    educations: 4,
     projects: 4,
     posts: 4,
-    communities: 3,
-    events: 2,
+    communities: 4,
+    events: 4,
+    videos: 4,
     tools: 28,
   },
 } as const;

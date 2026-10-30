@@ -37,8 +37,12 @@ import {
 import { api } from "./api";
 import type { About, Period } from "./api-types";
 import { SITE_CONFIG, TERMINAL } from "./constants";
-import { formatMonth, paragraphs } from "./format";
-import { renderWordmark, WORDMARK_WIDTH } from "./wordmark";
+import { formatMonth, humanise, paragraphs } from "./format";
+import {
+  PORTRAIT_COLOUR,
+  PORTRAIT_PLAIN,
+  PORTRAIT_WIDTH,
+} from "./portrait-ascii";
 
 const INNER = TERMINAL.columns;
 const GUTTER = "  ";
@@ -99,7 +103,7 @@ function twoCol(
   const available = INNER - depth;
   const rightText = strip(right).trim();
   const budget = available - (rightText ? rightText.length + 2 : 0);
-  const leftText = truncate(strip(left).trim(), Math.max(12, budget));
+  const leftText = truncate(clean(left), Math.max(12, budget));
   const gap = Math.max(2, available - leftText.length - rightText.length);
 
   return (
@@ -159,6 +163,59 @@ function first(...values: (string | null | undefined)[]): string {
   return "";
 }
 
+/**
+ * Text as it should print: escape codes removed and runs of whitespace
+ * collapsed. The API's records are hand-typed, and a double space in a name
+ * ("Microsoft  Student Ambassadors") shows in a monospaced column where a
+ * browser would have hidden it.
+ */
+function clean(text: string | null | undefined): string {
+  return strip(text ?? "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/**
+ * A title that wraps rather than truncates, the first line carrying `right`
+ * (a date, a status) in the right-hand column.
+ *
+ * `twoCol` cuts a long title with an ellipsis, which lost the end of half the
+ * post titles ("…in Long-Running…"). A title is the thing being listed; it
+ * keeps every word and takes a second line instead. With a `url`, every line
+ * of it is a hyperlink where the terminal supports one.
+ */
+function titled(
+  p: Palette,
+  title: string,
+  right: string,
+  url?: string,
+  depth = INDENT,
+): string[] {
+  const available = INNER - depth;
+  const rightText = clean(right);
+  const width = available - (rightText ? rightText.length + 2 : 0);
+  const rows = wrap(clean(title), width);
+  return rows.map((row, index) => {
+    const text = url ? p.href(p.strong(row), url) : p.strong(row);
+    if (index > 0 || !rightText) return indent(depth) + text;
+    const gap = Math.max(2, available - row.length - rightText.length);
+    return indent(depth) + text + indent(gap) + p.muted(rightText);
+  });
+}
+
+/** A URL on its own line, dimmed-underlined and clickable. */
+function urlLine(p: Palette, url: string, depth = INDENT): string {
+  return indent(depth) + p.href(p.link(url), url);
+}
+
+/** A closing "All posts   dileepa.dev/blog" row, its link clickable. */
+function allRow(p: Palette, label: string, path: string): string {
+  const url = `${ORIGIN}${path}`;
+  return twoCol(label, short(url), p.muted, (text) =>
+    p.href(p.link(text), url),
+  );
+}
+
 /** `https://dileepa.dev/blog` -> `dileepa.dev/blog`. A terminal has no chrome. */
 function short(url: string): string {
   return url.replace(/^https?:\/\//, "").replace(/\/$/, "");
@@ -166,74 +223,165 @@ function short(url: string): string {
 
 // --- Sections --------------------------------------------------------------
 
+type TerminalData = Awaited<ReturnType<typeof getTerminalData>>;
+
+/** Columns the masthead's info panel gives a label. "Community" is nine. */
+const INFO_LABEL = 10;
+
 /**
- * The masthead.
+ * The info panel beside the portrait: `neofetch`, describing a person.
  *
- * The lockup, `@dileepadev`, is drawn large in block characters by
- * `lib/wordmark.ts`, and the brand rule survives the change of scale intact:
- * the `@` one step muted, the wordmark at full contrast, and the two never
- * swap. That is the whole reason `renderWordmark` hands back the two halves
- * separately instead of one pre-joined string - a banner with the contrast
- * reversed is a brand failure visible from across a room.
- *
- * The border is double-ruled rather than the light rule everything else uses.
- * This is the one block on the page that is allowed to be loud, and a heavier
- * border is how it says so without spending a second colour to do it.
+ * `neofetch` prints a machine's logo beside `user@host` and a column of facts
+ * about it, and it is the thing developers screenshot to show off a setup.
+ * This is the same shape about the person who built the site - the handle,
+ * then what they do and how much of it - and every figure is counted from the
+ * API on render, so it cannot drift the way a typed "30+ talks" would.
  */
-function banner(p: Palette, about: About | null): string[] {
+function info(p: Palette, data: TerminalData, width: number): string[] {
+  const about = data.aboutRecord;
+  const valueWidth = width - INFO_LABEL;
+
+  const years = data.experiences
+    .flatMap((role) => role.period.match(/\d{4}/g) ?? [])
+    .map(Number);
+  const since = years.length > 0 ? Math.min(...years) : null;
+  const span = since ? new Date().getFullYear() - since : 0;
+
+  const latest = (value: string | null | undefined) =>
+    value ? ` · latest ${formatMonth(value)}` : "";
+  const newestVideo = [...data.videos].sort((a, b) =>
+    (b.date ?? "").localeCompare(a.date ?? ""),
+  )[0];
+  const active = data.projects.filter((x) => x.status === "active").length;
+  const current = data.communities.filter((x) => x.current).length;
+
+  // As many tools as fit the value column, in the API's order.
+  let stack = "";
+  for (const tool of data.tools) {
+    const name = clean(tool.name);
+    if (!name) continue;
+    const next = stack ? `${stack} · ${name}` : name;
+    if (next.length > valueWidth) break;
+    stack = next;
+  }
+
+  const status = clean(about?.status);
+  const rows: [string, string][] = [
+    ["Name", clean(first(about?.name, SITE_CONFIG.name))],
+    ["Role", clean(first(about?.title, "AI Engineer"))],
+    ["Location", clean(about?.location)],
+    ["Status", status],
+    [
+      "Building",
+      since ? `since ${since} · ${span} ${span === 1 ? "year" : "years"}` : "",
+    ],
+    [
+      "Talks",
+      data.events.length > 0
+        ? `${data.events.length}${latest(data.events[0]?.startAt)}`
+        : "",
+    ],
+    [
+      "Writing",
+      data.posts.length > 0
+        ? `${data.posts.length}${latest(data.posts[0]?.publishedDate)}`
+        : "",
+    ],
+    [
+      "Projects",
+      data.projects.length > 0
+        ? `${data.projects.length}${active ? ` · ${active} active` : ""}`
+        : "",
+    ],
+    [
+      "Videos",
+      data.videos.length > 0
+        ? `${data.videos.length}${latest(newestVideo?.date)}`
+        : "",
+    ],
+    [
+      "Community",
+      data.communities.length > 0
+        ? `${data.communities.length}${current ? ` · ${current} current` : ""}`
+        : "",
+    ],
+    ["Stack", stack],
+  ];
+
+  // The handle the lockup shows, as the `user` of `user@host`.
+  const handle = SITE_CONFIG.twitterHandle.replace(/^@/, "");
+  const host = short(ORIGIN);
+  const lines = [
+    p.strong(handle) + p.muted("@") + p.strong(host),
+    p.muted("─".repeat(handle.length + 1 + host.length)),
+  ];
+
+  for (const [label, value] of rows) {
+    if (!value) continue;
+    const text = truncate(value, valueWidth);
+    const shown =
+      label === "Status"
+        ? `${p.brand("●")} ${p.strong(truncate(status, valueWidth - 2))}`
+        : text;
+    lines.push(p.muted(padEnd(label, INFO_LABEL)) + shown);
+  }
+
+  // `neofetch` closes on a row of colour swatches. The palette here is black
+  // to white, so the swatches are its greys - and they say, quietly, that the
+  // terminal is drawing in colour. Plain mode has nothing to show.
+  if (p.colour) {
+    const greys = [255, 251, 247, 243, 239, 235];
+    lines.push("", greys.map((n) => `\u001b[38;5;${n}m███\u001b[0m`).join(""));
+  }
+  return lines;
+}
+
+/**
+ * The masthead: the portrait beside the info panel, in the double-ruled box.
+ *
+ * The portrait replaced the `@dileepadev` block letters (v2.1.0 draft). A
+ * face is what the rest of the site leads with - the rail, the phone hero -
+ * and it is the one thing a terminal is not expected to be able to show. It
+ * is drawn in quadrant blocks on the 256-colour grey ramp, background cut out, by
+ * `scripts/portrait-ascii.mjs`, and committed as `lib/portrait-ascii.ts`, so
+ * no request pays for the image work. Plain mode gets the same picture shaded
+ * in characters.
+ *
+ * The box border is double-ruled rather than the light rule everything else
+ * uses: the one block on the page that is allowed to be loud.
+ */
+function banner(p: Palette, data: TerminalData): string[] {
   const boxInner = INNER - 2;
   const line = (content: string) =>
-    `${GUTTER}${p.muted("\u2551")}${padEnd(content, boxInner)}${p.muted("\u2551")}`;
-  const top = `${GUTTER}${p.muted(`\u2554${"\u2550".repeat(boxInner)}\u2557`)}`;
-  const bottom = `${GUTTER}${p.muted(`\u255a${"\u2550".repeat(boxInner)}\u255d`)}`;
+    `${GUTTER}${p.muted("║")}${padEnd(content, boxInner)}${p.muted("║")}`;
+  const top = `${GUTTER}${p.muted(`╔${"═".repeat(boxInner)}╗`)}`;
+  const bottom = `${GUTTER}${p.muted(`╚${"═".repeat(boxInner)}╝`)}`;
 
-  const name = first(about?.name, SITE_CONFIG.name);
-  const role = first(about?.title, "AI Engineer");
-  const location = first(about?.location);
-  const meta = [role, location].filter(Boolean).join(" \u00b7 ");
-
-  /**
-   * Centres a row inside the box.
-   *
-   * Takes the plain text to measure and the already-styled text to place, which
-   * looks redundant and is not: an escape code costs bytes and no columns, so
-   * centring on the styled string pushes every coloured row left by however
-   * many bytes its colour happens to cost.
-   */
-  const centred = (plainText: string, styled: string) =>
-    line(
-      indent(Math.max(0, Math.floor((boxInner - plainText.length) / 2))) +
-        styled,
-    );
-
-  // The block is the thing the eye lands on first, and an off-centre one reads
-  // as a mistake. Everything under it follows the same axis.
-  // Every row of the block is the same width by construction, so they centre on
-  // one measurement rather than each finding its own - which would let a row
-  // whose trailing spaces got trimmed drift out of the column.
-  const pad = indent(Math.max(0, Math.floor((boxInner - WORDMARK_WIDTH) / 2)));
-  const art = renderWordmark().map((row) =>
-    line(pad + p.muted(row.mark) + p.strong(row.wordmark)),
+  const leftPad = 2;
+  const between = 2;
+  const portrait = p.colour ? PORTRAIT_COLOUR : PORTRAIT_PLAIN;
+  const panel = info(
+    p,
+    data,
+    boxInner - leftPad - PORTRAIT_WIDTH - between - 1,
   );
 
-  const lines = ["", top, line(""), ...art, line("")];
-
-  if (name) lines.push(centred(name, p.strong(name)));
-  if (meta) lines.push(centred(meta, p.muted(meta)));
-
-  // The availability line, carried by a filled dot rather than a word like
-  // "status:". The dot is the second and last accent in the panel - a third
-  // would be scattering the accent rather than spending it.
-  if (about?.status) {
+  // The portrait is taller than the panel (22 rows to 15), so the panel sits
+  // centred against it rather than hanging from its top.
+  const rows = Math.max(portrait.length, panel.length);
+  const offset = Math.max(0, Math.floor((rows - panel.length) / 2));
+  const lines = ["", top, line("")];
+  for (let row = 0; row < rows; row++) {
+    const picture = portrait[row] ?? indent(PORTRAIT_WIDTH);
     lines.push(
-      line(""),
-      centred(
-        `\u25cf ${about.status}`,
-        `${p.brand("\u25cf")} ${p.strong(about.status)}`,
+      line(
+        indent(leftPad) +
+          picture +
+          indent(between) +
+          (panel[row - offset] ?? ""),
       ),
     );
   }
-
   lines.push(line(""), bottom);
   return lines;
 }
@@ -263,39 +411,44 @@ function bio(p: Palette, record: About | null): string[] {
   return [...heading(p, "About"), ...prose(body, (line) => line)];
 }
 
-function work(
-  p: Palette,
-  experiences: Awaited<ReturnType<typeof api.getExperiences>>,
-): string[] {
+function work(p: Palette, experiences: TerminalData["experiences"]): string[] {
   if (experiences.length === 0) return [];
 
   const lines = heading(p, "Work");
   for (const role of experiences.slice(0, TERMINAL.limits.experiences)) {
+    // `period` is free text; "Present" is the only signal.
+    const now = /present/i.test(role.period);
     lines.push(
-      twoCol(role.title, periodText(role.period), p.strong, p.muted),
-      indent(INDENT) + p.muted(strip(role.company)),
+      ...titled(p, role.title, periodText(role.period)),
+      indent(INDENT) +
+        p.muted(clean(role.company)) +
+        (now ? ` ${p.brand("●")} ${p.strong("current")}` : ""),
       "",
     );
   }
-  lines.pop();
+  lines.push(allRow(p, "Full history", "/work"));
   return lines;
 }
 
 function education(
   p: Palette,
-  educations: Awaited<ReturnType<typeof api.getEducations>>,
+  educations: TerminalData["educations"],
 ): string[] {
   if (educations.length === 0) return [];
 
   const lines = heading(p, "Education");
   for (const entry of educations.slice(0, TERMINAL.limits.educations)) {
+    // The result - "First Class Honours", "4.0 GPA" - beside the school.
+    const detail = [clean(entry.institution), clean(entry.description)]
+      .filter(Boolean)
+      .join(" · ");
     lines.push(
-      twoCol(entry.course, periodText(entry.period), p.strong, p.muted),
-      indent(INDENT) + p.muted(strip(entry.institution)),
+      ...titled(p, entry.course, periodText(entry.period)),
+      ...prose(detail, p.muted),
       "",
     );
   }
-  lines.pop();
+  lines.push(allRow(p, "All education", "/education"));
   return lines;
 }
 
@@ -303,38 +456,25 @@ function education(
  * The tool list, as prose rather than a grid.
  *
  * A column layout would need a terminal width nobody sends, and a one-per-line
- * list would spend thirty rows on thirty words. Comma-separated and wrapped is
- * what fits and what reads.
+ * list would spend thirty rows on thirty words. Separated by middots and
+ * wrapped by item, not by word - half these names contain a space, and word
+ * wrapping would split "Claude Code" across two lines. Two columns are held
+ * back so a continued line can carry its trailing separator.
  */
-function skills(
-  p: Palette,
-  tools: Awaited<ReturnType<typeof api.getTools>>,
-): string[] {
+function skills(p: Palette, tools: TerminalData["tools"]): string[] {
   const names = tools
-    .map((tool) => tool.name?.trim())
-    .filter((name): name is string => Boolean(name))
+    .map((tool) => clean(tool.name))
+    .filter(Boolean)
     .slice(0, TERMINAL.limits.tools);
 
   if (names.length === 0) return [];
 
-  // Separated by middots rather than commas. A comma list reads as a sentence
-  // and invites being read; this is a set to be scanned, and the separator
-  // should disappear rather than punctuate.
-  //
-  // Wrapped by item rather than by word, which `prose` cannot do: it breaks on
-  // spaces, and half these names contain one. Word wrapping "Claude Code" and
-  // "React (Vite)" splits them across lines and strands a bare middot at the
-  // start of the next one.
-  // Two columns are held back so a continued line can carry a trailing
-  // separator without overrunning. Without it a wrap reads as a break between
-  // groups, and "Angular" over "NestJS" looks like two categories rather than
-  // two adjacent items in one list.
   const columns = INNER - INDENT - 2;
   const lines: string[] = [];
   let current = "";
 
   for (const name of names) {
-    const candidate = current ? `${current} \u00b7 ${name}` : name;
+    const candidate = current ? `${current} · ${name}` : name;
     if (candidate.length <= columns) {
       current = candidate;
     } else {
@@ -348,86 +488,124 @@ function skills(
     ...heading(p, "Tools I reach for"),
     ...lines.map(
       (line, index) =>
-        indent(INDENT) + line + (index < lines.length - 1 ? " \u00b7" : ""),
+        indent(INDENT) + line + (index < lines.length - 1 ? " ·" : ""),
     ),
   ];
 }
 
-function projects(
-  p: Palette,
-  records: Awaited<ReturnType<typeof api.getProjects>>,
-): string[] {
+function projects(p: Palette, records: TerminalData["projects"]): string[] {
   if (records.length === 0) return [];
 
   const lines = heading(p, "Projects");
   for (const project of records.slice(0, TERMINAL.limits.projects)) {
+    const url = `${ORIGIN}/projects/${project.slug}`;
     const stack = (project.stack ?? []).slice(0, 4).join(", ");
     lines.push(
-      twoCol(project.name, project.status ?? "", p.strong, p.muted),
-      ...prose(first(project.tagline), p.muted, INDENT),
+      ...titled(p, project.name, project.status ?? "", url),
+      ...prose(first(project.tagline), p.muted),
     );
     if (stack) lines.push(indent(INDENT) + p.muted(stack));
-    lines.push(
-      indent(INDENT) + p.link(`${ORIGIN}/projects/${project.slug}`),
-      "",
-    );
+    lines.push(urlLine(p, url), "");
   }
-  lines.push(
-    twoCol("All projects", `${short(ORIGIN)}/projects`, p.muted, p.link),
-  );
+  lines.push(allRow(p, "All projects", "/projects"));
   return lines;
 }
 
-function writing(
-  p: Palette,
-  posts: Awaited<ReturnType<typeof api.getBlogs>>,
-): string[] {
+/** Talks and workshops: what, when, where, and the page for each. */
+function talks(p: Palette, events: TerminalData["events"]): string[] {
+  if (events.length === 0) return [];
+
+  const lines = heading(p, "Talks and workshops");
+  for (const event of events.slice(0, TERMINAL.limits.events)) {
+    const url = `${ORIGIN}/events/${event.slug}`;
+    const where = [
+      event.status === "upcoming" ? "Upcoming" : "",
+      humanise(event.type),
+      clean(event.location?.venue) || humanise(event.format),
+    ]
+      .filter(Boolean)
+      .join(" · ");
+    lines.push(...titled(p, event.title, formatMonth(event.startAt), url));
+    if (where) lines.push(indent(INDENT) + p.muted(where));
+    lines.push(urlLine(p, url), "");
+  }
+  lines.push(allRow(p, "All events", "/events"));
+  return lines;
+}
+
+/**
+ * What he speaks on - the list an organiser reads first - and where the bios
+ * and headshots are.
+ */
+function topics(p: Palette, records: TerminalData["topics"]): string[] {
+  const titles = records.map((topic) => clean(topic.title)).filter(Boolean);
+  if (titles.length === 0) return [];
+
+  const lines = heading(p, "Speaking topics");
+  for (const title of titles) {
+    // A hanging indent: wrapped lines line up under the text, not the bullet.
+    wrap(title, INNER - INDENT - 2).forEach((row, index) =>
+      lines.push(indent(INDENT) + (index === 0 ? p.muted("· ") : "  ") + row),
+    );
+  }
+  lines.push("", allRow(p, "Media kit", "/profile"));
+  return lines;
+}
+
+function writing(p: Palette, posts: TerminalData["posts"]): string[] {
   if (posts.length === 0) return [];
 
   const lines = heading(p, "Writing");
   for (const post of posts.slice(0, TERMINAL.limits.posts)) {
+    const url = `${ORIGIN}/blog/${post.slug}`;
     lines.push(
-      twoCol(post.title, formatMonth(post.publishedDate), p.strong, p.muted),
-      indent(INDENT) + p.link(`${ORIGIN}/blog/${post.slug}`),
+      ...titled(p, post.title, formatMonth(post.publishedDate), url),
+      urlLine(p, url),
       "",
     );
   }
   lines.push(
-    twoCol("All writing", `${short(ORIGIN)}/blog`, p.muted, p.link),
-    twoCol("RSS", `${short(ORIGIN)}/blog/rss.xml`, p.muted, p.link),
+    allRow(p, "All writing", "/blog"),
+    allRow(p, "RSS", "/blog/rss.xml"),
   );
   return lines;
 }
 
-function community(
-  p: Palette,
-  communities: Awaited<ReturnType<typeof api.getCommunities>>,
-  events: Awaited<ReturnType<typeof api.getEvents>>,
-): string[] {
-  if (communities.length === 0 && events.length === 0) return [];
+function videos(p: Palette, records: TerminalData["videos"]): string[] {
+  if (records.length === 0) return [];
 
-  const lines = heading(p, "Community");
-
-  for (const entry of communities.slice(0, TERMINAL.limits.communities)) {
-    lines.push(twoCol(entry.name, first(entry.role), p.strong, p.muted));
-  }
-
-  if (events.length > 0) {
-    if (communities.length > 0) lines.push("");
-    for (const event of events.slice(0, TERMINAL.limits.events)) {
-      lines.push(
-        twoCol(event.title, formatMonth(event.startAt), p.strong, p.muted),
-        indent(INDENT) + p.link(`${ORIGIN}/events/${event.slug}`),
-        "",
-      );
-    }
-    lines.pop();
-  }
-
-  lines.push(
-    "",
-    twoCol("All events", `${short(ORIGIN)}/events`, p.muted, p.link),
+  const newest = [...records].sort((a, b) =>
+    (b.date ?? "").localeCompare(a.date ?? ""),
   );
+  const lines = heading(p, "Videos");
+  for (const video of newest.slice(0, TERMINAL.limits.videos)) {
+    lines.push(
+      ...titled(p, video.title, formatMonth(video.date), video.link),
+      urlLine(p, video.link),
+      "",
+    );
+  }
+  lines.push(allRow(p, "All videos", "/videos"));
+  return lines;
+}
+
+function communities(
+  p: Palette,
+  records: TerminalData["communities"],
+): string[] {
+  if (records.length === 0) return [];
+
+  const lines = heading(p, "Communities");
+  for (const entry of records.slice(0, TERMINAL.limits.communities)) {
+    lines.push(
+      ...titled(p, entry.name, clean(entry.period)),
+      indent(INDENT) +
+        p.muted(clean(entry.role)) +
+        (entry.current ? ` ${p.brand("●")} ${p.strong("current")}` : ""),
+      "",
+    );
+  }
+  lines.push(allRow(p, "All communities", "/communities"));
   return lines;
 }
 
@@ -436,25 +614,34 @@ function community(
  *
  * Driven off `about.links`, so a channel that is not configured is simply not
  * printed rather than rendered as an empty row - the same rule the footer's
- * social icons follow.
+ * social icons follow. Each is a hyperlink where the terminal supports one.
  */
 function links(p: Palette, record: About | null): string[] {
   const configured = record?.links;
-  const rows: [string, string][] = [
-    ["Email", first(configured?.email, SITE_CONFIG.email)],
-    ["GitHub", first(configured?.github)],
-    ["LinkedIn", first(configured?.linkedin)],
-    ["X", first(configured?.xtwitter)],
-    ["YouTube", first(configured?.youtube)],
-    ["Instagram", first(configured?.instagram)],
-    ["Links", SITE_CONFIG.linksUrl],
-  ].filter((row): row is [string, string] => Boolean(row[1]));
+  const email = first(configured?.email, SITE_CONFIG.email);
+  const rows: [string, string, string][] = (
+    [
+      ["Email", email, `mailto:${email}`],
+      ["GitHub", first(configured?.github), ""],
+      ["LinkedIn", first(configured?.linkedin), ""],
+      ["X", first(configured?.xtwitter), ""],
+      ["YouTube", first(configured?.youtube), ""],
+      ["Instagram", first(configured?.instagram), ""],
+      ["Facebook", first(configured?.facebook), ""],
+      ["Links", SITE_CONFIG.linksUrl, ""],
+    ] as [string, string, string][]
+  ).filter((row) => Boolean(row[1]));
 
   if (rows.length === 0) return [];
 
   const lines = heading(p, "Elsewhere");
-  for (const [label, value] of rows) {
-    lines.push(field(p, label, label === "Email" ? value : short(value)));
+  for (const [label, value, target] of rows) {
+    const text = label === "Email" ? value : short(value);
+    lines.push(
+      indent(INDENT) +
+        p.muted(padEnd(label, 12)) +
+        p.href(p.link(text), target || value),
+    );
   }
   return lines;
 }
@@ -467,11 +654,12 @@ function contact(p: Palette, record: About | null): string[] {
 }
 
 /**
- * The closing block.
+ * The closing block: where else this goes, and what else to try.
  *
- * It names the browser version first. This surface is a door, not a walled
- * garden, and a reader who wants the photographs, the gallery or the comment
- * threads should be told plainly where they are.
+ * It names the browser version first - this surface is a door, not a walled
+ * garden - then the commands worth knowing: this page, without colour, without
+ * the boot sequence (the flag a reader about to pipe this needs and will not
+ * guess), and the same site written for AI tools.
  */
 function colophon(p: Palette): string[] {
   return [
@@ -482,11 +670,8 @@ function colophon(p: Palette): string[] {
     field(p, "Source", short(SITE_CONFIG.repository)),
     field(p, "This page", TERMINAL.command),
     field(p, "No colour", `curl -L "${short(ORIGIN)}?nocolor"`),
-    // The boot sequence plays by default, so what the reader needs from this
-    // block is not how to see it - they just did - but how to turn it off. The
-    // reader most likely to want that is the one about to pipe this somewhere,
-    // and they will not find the flag by guessing.
     field(p, "Skip intro", `curl -L "${short(ORIGIN)}?static"`),
+    field(p, "For AI", `curl -L ${short(ORIGIN)}/llms.txt`),
     "",
     GUTTER +
       p.muted(
@@ -501,9 +686,11 @@ function colophon(p: Palette): string[] {
 /**
  * Everything the terminal rendering needs, in one round of requests.
  *
- * Deliberately not `getHomepageData()`: that one also resolves every video's
- * duration against the YouTube API, and this surface prints no durations. The
- * rest of the calls are the same ones, so Next's data cache serves both.
+ * The masthead counts talks, posts, projects, videos and communities, so those
+ * lists are fetched whole (the API caps a page at 100) and each section prints
+ * only its first few. They are the same cached calls the site's pages make.
+ * Videos come without `getVideos`' YouTube duration lookups - nothing here
+ * prints a duration.
  */
 async function getTerminalData() {
   const [
@@ -512,18 +699,22 @@ async function getTerminalData() {
     educations,
     tools,
     communities,
-    projectRecords,
+    projects,
     events,
     posts,
+    videos,
+    topics,
   ] = await Promise.all([
     api.getAbout(),
     api.getExperiences(),
     api.getEducations(),
     api.getTools(),
     api.getCommunities(),
-    api.getProjects({ limit: TERMINAL.limits.projects }),
-    api.getEvents({ limit: TERMINAL.limits.events }),
-    api.getBlogs({ limit: TERMINAL.limits.posts }),
+    api.getProjects({ limit: 100 }),
+    api.getEvents({ limit: 100 }),
+    api.getBlogs({ limit: 100 }),
+    api.getVideoRecords(),
+    api.getSpeakingTopics(),
   ]);
 
   return {
@@ -532,9 +723,11 @@ async function getTerminalData() {
     educations,
     tools,
     communities,
-    projectRecords,
+    projects,
     events,
     posts,
+    videos,
+    topics,
   };
 }
 
@@ -542,14 +735,13 @@ async function getTerminalData() {
  * The masthead alone, as lines, for the boot sequence to reveal one at a time.
  *
  * It shares `banner()` with the document rather than drawing its own, so the
- * animated and static forms can never show different mastheads. `getAbout` is
- * the same cached call the document makes, so asking for this first costs
- * nothing.
+ * animated and static forms can never show different mastheads. The data is
+ * the same cached set the document asks for next, so this costs nothing extra.
  */
 export async function renderTerminalMasthead(
   mode: ColorMode,
 ): Promise<string[]> {
-  return banner(palette(mode), await api.getAbout());
+  return banner(palette(mode), await getTerminalData());
 }
 
 /**
@@ -571,15 +763,18 @@ export async function renderTerminalProfile(
   const masthead = options.masthead ?? true;
 
   const document = [
-    ...(masthead ? banner(p, data.aboutRecord) : []),
+    ...(masthead ? banner(p, data) : []),
     ...lead(p, data.aboutRecord),
     ...bio(p, data.aboutRecord),
     ...work(p, data.experiences),
     ...skills(p, data.tools),
-    ...projects(p, data.projectRecords),
     ...education(p, data.educations),
-    ...community(p, data.communities, data.events),
+    ...projects(p, data.projects),
+    ...talks(p, data.events),
+    ...topics(p, data.topics),
     ...writing(p, data.posts),
+    ...videos(p, data.videos),
+    ...communities(p, data.communities),
     ...contact(p, data.aboutRecord),
     ...links(p, data.aboutRecord),
     ...colophon(p),
