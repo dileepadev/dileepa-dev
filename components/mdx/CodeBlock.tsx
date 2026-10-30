@@ -1,6 +1,6 @@
 "use client";
 
-import { isValidElement, useRef, ReactNode } from "react";
+import { useRef, ReactNode } from "react";
 import { Check, Copy, Terminal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCopy } from "@/components/ui/useCopy";
@@ -85,18 +85,14 @@ export function CodeBlock({ children, className, ...props }: PreProps) {
   const { copied, copy } = useCopy();
   const preRef = useRef<HTMLPreElement>(null);
 
-  // Shiki stamps `data-language` on the blocks it highlights. A fence in a
-  // language it has no grammar for (```git) is left unhighlighted, and the
-  // language survives only as `language-…` on the inner <code>.
-  const codeClassName = isValidElement<{ className?: string }>(children)
-    ? children.props.className
-    : undefined;
+  // `data-language` comes from Shiki for a highlighted block, and from
+  // `fenceLanguage` in ./index.tsx, on the server, for one it left plain.
+  // Not read off `children` here: in the browser this client component
+  // cannot see into its server-rendered children, so the label would differ
+  // from the server's and fail hydration.
   const rawLanguage =
     props["data-language"] ||
-    (`${className ?? ""} ${codeClassName ?? ""}`.match(
-      /language-([a-zA-Z0-9_+#-]+)/,
-    )?.[1] ??
-      "");
+    (className?.match(/language-([a-zA-Z0-9_+#-]+)/)?.[1] ?? "");
 
   const displayLanguage = rawLanguage
     ? LANGUAGE_MAP[rawLanguage.toLowerCase()] ||
