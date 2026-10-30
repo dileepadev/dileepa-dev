@@ -157,7 +157,7 @@ export async function buildLlmsTxt({ full }: { full: boolean }) {
   lines.push(
     full
       ? `This is the full version of ${name}'s llms.txt: every post, talk, project, video and community on the site, with his work history and education. The short version is at ${url("/llms.txt")}. Every link is a public HTML page.`
-      : `This is ${name}'s personal site (handle @dileepadev). The homepage covers who he is, his work history, education, community roles and how to get in touch; the pages below hold the full lists. Every list in full, with work history and education, is at ${url("/llms-full.txt")}. Every link is a public HTML page.`,
+      : `This is ${name}'s personal site (handle @dileepadev). The homepage covers who he is and how to get in touch; his work history, education, writing, talks, projects, videos and communities each have a page below. Every list in full, with work history and education, is at ${url("/llms-full.txt")}. Every link is a public HTML page.`,
     "",
     `- Contact: ${SITE_CONFIG.email}`,
   );
@@ -171,10 +171,22 @@ export async function buildLlmsTxt({ full }: { full: boolean }) {
   lines.push(
     "## Profile",
     "",
+    // Work and Education became pages in v2.1.0; the homepage keeps the
+    // hero, About and Contact.
     link(
       "Home",
       url("/"),
-      "About, work history, education, community roles and contact, on one page.",
+      "Who he is, his latest work, and how to get in touch.",
+    ),
+    link(
+      "Work",
+      url("/work"),
+      "Roles in AI engineering and software development, and the tools behind them.",
+    ),
+    link(
+      "Education",
+      url("/education"),
+      "Degrees, diplomas and schooling, with results and dates.",
     ),
     link(
       "Media kit",
