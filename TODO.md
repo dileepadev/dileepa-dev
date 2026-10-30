@@ -55,7 +55,7 @@ the wrong way to choose it.
 - [x] Full pass against `next build && next start`: 19 pages, 3 junk slugs, 3 cards and the
       terminal feature - all correct, **zero** `[content]` loads, zero errors
 
-### At release
+### At release v2.0.2
 
 - [x] `package.json` and `package-lock.json` at `2.0.2`
 - [x] `CHANGELOG.md` carries a `v2.0.2` section, dated **2026-09-14**
@@ -134,7 +134,7 @@ being handed to recruiters.
 - [ ] `curl -o /dev/null -w '%{http_code}' https://dileepa.dev/blog/does-not-exist` returns **404**
 - [ ] Fluid Active CPU falls back inside the 4h allowance over the following week
 
-### At release
+### At release v2.0.1
 
 - [x] `package.json` and `package-lock.json` at `2.0.1`
 - [x] `CHANGELOG.md` carries a `v2.0.1` section, dated **2026-09-08**
