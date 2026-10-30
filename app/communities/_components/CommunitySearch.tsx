@@ -16,7 +16,7 @@ import {
 import type { Community } from "@/lib/api-types";
 import {
   buildFacets,
-  compareNumber,
+  compareRecency,
   compareText,
   type FacetSpec,
   matchesTokens,
@@ -24,11 +24,13 @@ import {
   toOptions,
 } from "@/lib/listing";
 
-type CommunitySortKey = "default" | "current-first" | "name-asc" | "name-desc";
+type CommunitySortKey = "default" | "name-asc" | "name-desc";
 
+// "Most recent" - current roles first, then the latest end date, the order
+// `api.getCommunities` returns too - is the default. It replaces "Current
+// roles first", which it now includes.
 const SORT_OPTIONS: SortOption<CommunitySortKey>[] = [
-  { value: "default", label: "Default order" },
-  { value: "current-first", label: "Current roles first" },
+  { value: "default", label: "Most recent" },
   { value: "name-asc", label: "Name (A–Z)" },
   { value: "name-desc", label: "Name (Z–A)" },
 ];
@@ -113,22 +115,13 @@ export function CommunitySearch({ communities }: { communities: Community[] }) {
 
     return list.sort((a, b) => {
       switch (sortBy) {
-        case "current-first":
-          if (a.current !== b.current) return a.current ? -1 : 1;
-          return (
-            compareNumber(a.order, b.order, "desc") ||
-            compareText(a.name, b.name)
-          );
         case "name-asc":
           return compareText(a.name, b.name);
         case "name-desc":
           return compareText(b.name, a.name);
         case "default":
         default:
-          return (
-            compareNumber(a.order, b.order, "desc") ||
-            compareText(a.name, b.name)
-          );
+          return compareRecency(a, b);
       }
     });
   }, [filteredCommunities, sortBy]);

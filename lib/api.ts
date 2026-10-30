@@ -38,6 +38,7 @@ import type {
   Tool,
   Video,
 } from "./api-types";
+import { compareRecency } from "./listing";
 import { getYouTubeDuration } from "./youtube";
 
 /**
@@ -466,7 +467,11 @@ export const api = {
   getTools: () =>
     degradePage<Tool>("/tools", { revalidate: REVALIDATE.profile }),
 
-  getCommunities: () => degradePage<Community>("/communities"),
+  // Current roles first, then by the most recent end date (`compareRecency`),
+  // so every list of communities - the homepage, /communities, the terminal,
+  // llms.txt - reads newest first rather than in the admin's manual order.
+  getCommunities: async () =>
+    (await degradePage<Community>("/communities")).sort(compareRecency),
 
   getPillars: () =>
     degradePage<Pillar>("/pillars", { revalidate: REVALIDATE.profile }),
