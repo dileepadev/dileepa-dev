@@ -314,7 +314,6 @@ export default async function SitemapPage() {
             <div className="mb-2">
               <PagePath path="/sitemap" />
             </div>
-            <div className="section-label">{PAGES.sitemap.label}</div>
             <h1>{PAGES.sitemap.title}</h1>
           </div>
           {totalRoutes > 0 && (

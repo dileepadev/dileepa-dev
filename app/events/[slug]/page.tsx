@@ -189,8 +189,6 @@ export default async function EventPage({ params }: Params) {
         <div className="mb-2">
           <PagePath path={`/events/${event.slug}`} />
         </div>
-        <div className="section-label">Events</div>
-
         <h1>{event.title}</h1>
         {event.summary && <p className="section-intro">{event.summary}</p>}
 

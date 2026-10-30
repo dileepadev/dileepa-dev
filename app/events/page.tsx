@@ -44,7 +44,6 @@ export default async function EventsPage() {
             <div className="mb-2">
               <PagePath path="/events" />
             </div>
-            <div className="section-label">{PAGES.events.label}</div>
             <h1>{PAGES.events.title}</h1>
           </div>
           {total > 0 && (

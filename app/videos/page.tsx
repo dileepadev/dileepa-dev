@@ -43,7 +43,6 @@ export default async function VideosPage() {
             <div className="mb-2">
               <PagePath path="/videos" />
             </div>
-            <div className="section-label">{PAGES.videos.label}</div>
             <h1>{PAGES.videos.title}</h1>
           </div>
           {total > 0 && (

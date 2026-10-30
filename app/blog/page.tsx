@@ -45,7 +45,6 @@ export default async function BlogPage() {
             <div className="mb-2">
               <PagePath path="/blog" />
             </div>
-            <div className="section-label">{PAGES.blog.label}</div>
             <h1>{PAGES.blog.title}</h1>
           </div>
           {posts.length > 0 && (

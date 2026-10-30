@@ -17,7 +17,6 @@ export default function TermsOfServicePage() {
         <div className="mb-2">
           <PagePath path="/terms" />
         </div>
-        <div className="section-label">{PAGES.terms.label}</div>
         <h1>{PAGES.terms.title}</h1>
         <p className="section-intro">{PAGES.terms.intro}</p>
 

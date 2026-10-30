@@ -36,7 +36,6 @@ export default async function CommunitiesPage() {
             <div className="mb-2">
               <PagePath path="/communities" />
             </div>
-            <div className="section-label">{PAGES.communities.label}</div>
             <h1>{PAGES.communities.title}</h1>
           </div>
           {total > 0 && (

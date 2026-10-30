@@ -36,7 +36,6 @@ export default async function ProjectsPage() {
             <div className="mb-2">
               <PagePath path="/projects" />
             </div>
-            <div className="section-label">{PAGES.projects.label}</div>
             <h1>{PAGES.projects.title}</h1>
           </div>
           {total > 0 && (

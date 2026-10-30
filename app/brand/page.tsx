@@ -405,7 +405,6 @@ export default async function BrandPage() {
           </div>
           <div className="flex items-start justify-between gap-4 flex-wrap">
             <div>
-              <div className="section-label">{PAGES.brand.label}</div>
               <h1>{PAGES.brand.title}</h1>
             </div>
             <div className="count-badge inline-flex items-center gap-1.5 font-mono text-small text-fg-muted px-2.5 py-1 shrink-0 mt-1">

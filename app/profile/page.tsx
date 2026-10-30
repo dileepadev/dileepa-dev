@@ -37,15 +37,6 @@ export default async function ProfilePage() {
           <div className="mb-4">
             <PagePath path="/profile" />
           </div>
-          <div className="flex items-center gap-2 mb-3">
-            <div className="section-label">{PAGES.profile.label}</div>
-            <span className="text-fg-muted select-none" aria-hidden="true">
-              /
-            </span>
-            <span className="font-mono text-label text-fg-muted">
-              Media kit
-            </span>
-          </div>
           <h1 className="display">{PAGES.profile.title}</h1>
           <p className="section-intro mt-4 max-w-2xl">{PAGES.profile.intro}</p>
         </div>

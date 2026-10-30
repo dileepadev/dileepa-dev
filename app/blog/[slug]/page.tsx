@@ -157,8 +157,6 @@ export default async function BlogPostPage({ params }: Params) {
           <div className="mb-2">
             <PagePath path={`/blog/${post.slug}`} />
           </div>
-          <div className="section-label">Blog</div>
-
           <h1>{post.title}</h1>
           {post.description && (
             <p className="section-intro mb-3!">{post.description}</p>

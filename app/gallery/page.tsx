@@ -43,7 +43,6 @@ export default async function GalleryPage() {
             <div className="mb-2">
               <PagePath path="/gallery" />
             </div>
-            <div className="section-label">{PAGES.gallery.label}</div>
             <h1>{PAGES.gallery.title}</h1>
           </div>
           {total > 0 && (
