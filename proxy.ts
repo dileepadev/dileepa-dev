@@ -52,12 +52,17 @@ export function proxy(request: NextRequest) {
 
   if (!wanted) return NextResponse.next();
 
-  // The query string travels with the rewrite so `?nocolor` reaches the route
-  // that reads it.
   const destination = new URL(request.nextUrl);
   destination.pathname = TERMINAL.path;
 
-  return NextResponse.rewrite(destination);
+  // The query string travels on the rewritten URL, and again in a request
+  // header. On Vercel the route handler behind a rewrite sees an empty query
+  // (issue #30), so `?nocolor` and the other flags were silently dropped for
+  // `curl dileepa.dev`; request headers do survive the rewrite.
+  const headers = new Headers(request.headers);
+  headers.set(TERMINAL.queryHeader, request.nextUrl.search);
+
+  return NextResponse.rewrite(destination, { request: { headers } });
 }
 
 /**

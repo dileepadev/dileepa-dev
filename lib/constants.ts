@@ -117,6 +117,8 @@ export const TERMINAL = {
   columns: 72,
   /** The rewrite destination, and a stable URL in its own right. */
   path: "/terminal",
+  /** Carries the original query across the rewrite (issue #30). */
+  queryHeader: "x-terminal-query",
   /**
    * The boot sequence plays by default for a terminal client, and these force
    * it on for anyone else - a browser at `/terminal`, or a client the
