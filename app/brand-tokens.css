@@ -4,13 +4,6 @@
    Source: dileepadev/docs/brand/brand-tokens.css
    Vendored: brand tokens v2.1
 
-   DESIGN-FIRST DRAFT (feat/v2.1.0, dileepa-dev#27). The v2.1.0 redesign
-   is being worked out on this site before it is written down, so this
-   copy is temporarily AHEAD of the canonical sheet: the type scale below
-   is new. Once the design settles, the canonical file takes these values
-   (dileepadev#4) and this note goes. Until then, this is the one place
-   the new values live - do not copy them anywhere else.
-
    This is a copy, and a copy can drift. When the canonical file
    changes, re-copy it; never patch this one in place. The only
    permitted local change is the one below, which the design system
@@ -27,8 +20,8 @@
    CANONICAL TOKEN SHEET - do not fork, do not re-declare.
 
    This file is the single source of truth for every colour, type,
-   space, and motion value in the platform. Applications import it;
-   they never copy values out of it.
+   space, shape and motion value in the platform. Applications import
+   it; they never copy values out of it.
 
    This repo is the only home for it. Applications VENDOR this file -
    copy it in, record the source - and never hot-link it: raw.github
@@ -38,19 +31,18 @@
 
 /* ============================================================
    Dileepa - brand tokens v2.1
-   v2.1.0 DRAFT: the palette is black to white. The accent is the
-   text colour itself - near-white on Carbon, near-black on Paper - so
-   emphasis comes from contrast, weight and fill, never from a hue.
-   Logo lockup: "@dileepadev" - wordmark at full contrast, "@" muted.
-   Emerald survives only as --success, a state colour like --error.
+   The palette is black to white. The accent is the text colour itself
+   - near-white on Carbon, near-black on Paper - so emphasis comes from
+   contrast, weight and fill, never from a hue.
+   Logo lockup: "@dileepadev" - wordmark at full contrast, "@" one step
+   muted. Emerald survives only as --success, a state colour like
+   --error.
    Every pairing below is verified against WCAG AA minimum.
 
-   v2.1 supersedes v2.0: this revision reconciles the sheet against
-   dileepa-dev, the platform's flagship surface, after a post-launch
-   visual pass corrected drift between the original v2.0 values and
-   what actually shipped. Where the two disagreed, the shipped site
-   wins - see design-system.md §0 for the full account of what moved
-   and why. Nothing here is provisional; it is the recorded result.
+   v2.1 supersedes v2.0 (the emerald system). It was designed on
+   dileepa-dev, the platform's flagship surface, in its v2.1.0 release
+   (dileepa-dev#27), and written down here once that design settled
+   (dileepadev#4). See design-system.md §0 for what changed and why.
    ============================================================ */
 
 :root {
@@ -100,7 +92,7 @@
      for badges, chips, captions and metadata that were each inventing
      their own small size (0.72rem here, 0.75rem there, Tailwind's
      `text-xs` somewhere else) with no shared token behind any of them. */
-  /* v2.1.0 draft: a scale that grows with the viewport at the top and
+  /* v2.1: a scale that grows with the viewport at the top and
      reads larger at the bottom. The two big steps are fluid, so the mobile
      override that used to shrink the display in globals.css is gone. The
      body moves to 17px: the site is mostly reading, and 16px muted grey on
@@ -153,7 +145,7 @@
   --radius-xl: 16px;
   --radius-pill: 999px;
 
-  /* v2.1.0 draft: three kinds of corner, after Apple's shape system.
+  /* v2.1: three kinds of corner, after Apple's shape system.
      Fixed - a constant radius - for containers and marks: panel (a page
      panel, the rail, the footer, the mobile menu), tile (a card on a panel,
      a menu, a toast), block (media and blocks inside a card - an image,
@@ -165,8 +157,9 @@
      it grows. Concentric - the parent's radius less the inset - for
      anything nested tight inside another shape: a row 6px inside a menu
      takes the tile's less 6px. A person is a circle.
-     --radius and --radius-xl are no longer used by the site and go when
-     this sheet becomes canonical. */
+     --radius and --radius-xl are deprecated: kept so a consumer that has
+     not migrated still renders, and removed in the next major. New work
+     uses the named radii above. */
   --radius-panel: 32px;
   --radius-tile: 22px;
   --radius-block: var(--radius-lg);
@@ -214,7 +207,7 @@
   --border-input: #5b5b5b; /* 3.0:1 on --bg */
 
   --fg: var(--ink-100); /* 18.0:1 */
-  /* v2.1.0 draft: running text - any paragraph read sentence by sentence.
+  /* v2.1: running text - any paragraph read sentence by sentence.
      Clearly a step under --fg (about 8:1 against 18:1), so a title still
      leads the paragraph under it - at 12:1 the two read as one block - and
      clearly above --fg-muted, which is for what you glance at: dates,
@@ -222,7 +215,7 @@
   --fg-body: #a8a8a8; /* 8.6:1 */
   --fg-muted: var(--ink-400); /*  6.1:1 */
 
-  /* v2.1.0 draft: the accent is the text colour. */
+  /* v2.1: the accent is the text colour. */
   --brand: var(--ink-100); /* 18.0:1 on bg */
   --brand-fill: var(--ink-100);
   --on-brand: var(--ink-900); /* 18.0:1 on fill */
@@ -258,9 +251,7 @@
   --error: #c4292e; /* 5.3:1 */
   --warning: #b45309; /* 4.7:1 */
 
-  --shadow-nav:
-    0 8px 24px rgb(0 0 0 / 0.06),
-    0 1px 2px rgb(0 0 0 / 0.05);
+  --shadow-nav: 0 8px 24px rgb(0 0 0 / 0.06), 0 1px 2px rgb(0 0 0 / 0.05);
 }
 
 @media (prefers-color-scheme: light) {
@@ -280,9 +271,7 @@
     --success: var(--emerald-deep);
     --error: #c4292e;
     --warning: #b45309;
-    --shadow-nav:
-      0 8px 24px rgb(0 0 0 / 0.06),
-      0 1px 2px rgb(0 0 0 / 0.05);
+    --shadow-nav: 0 8px 24px rgb(0 0 0 / 0.06), 0 1px 2px rgb(0 0 0 / 0.05);
   }
 }
 
@@ -301,7 +290,7 @@
   --surface-hover: color-mix(in srgb, var(--fg) 7%, var(--bg-surface));
   --raised-hover: color-mix(in srgb, var(--fg) 9%, var(--bg-surface));
 
-  /* The button fill's hover and active steps. v2.1.0 draft: the fill is
+  /* The button fill's hover and active steps. v2.1: the fill is
      the text colour now, so mixing toward `--fg` would change nothing;
      the steps ease the fill toward the background instead. */
   --brand-fill-hover: color-mix(in srgb, var(--brand-fill) 86%, var(--bg));
@@ -339,7 +328,7 @@ h1 {
   font-weight: 500;
   letter-spacing: var(--track-display);
 }
-/* v2.1.0 draft: size carries H2's rank again, not weight. At 22px it
+/* v2.1: size carries H2's rank again, not weight. At 22px it
    needed 700 to stand above body text; at 28px it stands on size alone,
    and 500 matches the display and H1 above it. */
 h2 {
@@ -357,7 +346,7 @@ h3 {
 .display {
   font-size: var(--text-display);
   line-height: var(--lh-display);
-  /* 700, a step above every heading's 500 (v2.1.0 draft): at 500 the
+  /* 700, a step above every heading's 500 (v2.1): at 500 the
      display read as a larger H1 rather than a different rank. */
   font-weight: 700;
   letter-spacing: var(--track-display);
@@ -380,7 +369,7 @@ pre {
 }
 
 /* Links do not carry colour by default. A page where every anchor is
-   emerald by default has no way to make one anchor *mean* something -
+   the accent by default has no way to make one anchor *mean* something -
    the accent has to be applied deliberately by whatever is styling the
    link (a nav item, an item title, an inline mention in running prose),
    not inherited for free. Long-form prose is the deliberate exception,
@@ -490,7 +479,7 @@ a {
 /* The one hover pattern in the system, reused everywhere something
    bordered needs one: the surface lifts a step, the border warms to
    the accent. No shadow, no lift, no scale, no additional ring - a
-   ring on top of an already-emerald border double-draws the same edge
+   ring on top of an already-accented border double-draws the same edge
    and reads as the loudest hover on the page instead of the quietest. */
 .card:hover {
   background: var(--surface-hover);
@@ -499,7 +488,7 @@ a {
 
 /* Badges and chips - all pillar/tag badges share one treatment. With a
    single accent colour, they are told apart by label, not by hue.
-   `filled` is reserved: one emerald badge per surface, at most. */
+   `filled` is reserved: one filled badge per surface, at most. */
 .badge {
   display: inline-block;
   font-size: var(--text-label);
@@ -510,7 +499,7 @@ a {
   background: var(--bg-surface);
   color: var(--fg-muted);
   /* No edge: a badge only labels. An edge is what marks a thing you can
-     press (v2.1.0 draft). */
+     press (v2.1). */
   border: var(--hairline) solid transparent;
 }
 a > .badge:not(.badge--filled),
@@ -538,7 +527,7 @@ a > .badge:not(.badge--filled),
   cursor: default;
 }
 /* A chip that acts has an edge, the secondary button's; a chip that only
-   labels has none (v2.1.0 draft). */
+   labels has none (v2.1). */
 a > .chip,
 a.chip,
 button > .chip,
@@ -565,63 +554,63 @@ button.chip:hover,
 .input {
   width: 100%;
   height: var(--control-h);
-  padding: 0 var(--space-3);
+  padding: 0 var(--space-4);
   background: var(--bg-surface);
   border: var(--hairline) solid var(--border-input);
-  border-radius: var(--radius-field); /* a capsule; a textarea keeps its ends (v2.1.0 draft) */
+  border-radius: var(
+    --radius-field
+  ); /* a capsule; a textarea keeps its ends (v2.1) */
   color: var(--fg);
   font-family: var(--font-sans);
-  font-size: var(--text-body);
+  font-size: var(--text-small);
   outline: none;
   transition:
     border-color var(--dur) var(--ease),
     box-shadow var(--dur) var(--ease);
 }
+/* Focus is the edge itself, not the edge plus a halo (v2.1): the border
+   turns to the accent and an inset 1px thickens it to 2px, drawn inside
+   the border so nothing moves. Buttons and toggles keep the ring - they
+   have no edge to change. */
 .input:focus {
   border-color: var(--brand);
-  box-shadow: 0 0 0 var(--ring-width) var(--ring);
+  box-shadow: inset 0 0 0 var(--hairline) var(--brand);
 }
 textarea.input {
   height: auto;
   min-height: 140px;
-  padding: var(--space-3);
+  padding: var(--space-3) var(--space-4);
   resize: vertical;
   line-height: var(--lh-body);
 }
 
-/* Logo lockup (v2.0 shape, kept for the brand page): wordmark neutral,
-   Upright, weight 700 - not italic, not 600. The wordmark and mark are
-   flex siblings spaced by the wrapper's gap, and the dot sits flush
-   against the slash (no gap of its own) so the pair reads as one
-   character, "/.", rather than two with daylight between them. */
+/* Logo lockup: "@dileepadev". The handle is the logo - one word, so the
+   "@" sits against the wordmark with no daylight. Both are Manrope 500:
+   a 700 "@" beside a 500 word read as a symbol bolted on rather than the
+   first character of a handle. The wordmark is full contrast and the "@"
+   the muted step of the same ink - the two-part split the emerald mark
+   used to make, carried by contrast now the palette has no hue. The mark
+   is decorative: the accessible name comes from the link around it. */
 .lockup {
   display: inline-flex;
   align-items: baseline;
-  gap: 0.34em;
+  gap: 0.02em;
   flex: 0 0 auto;
   white-space: nowrap;
+}
+.mark {
+  font: 500 var(--text-h3) / 1 var(--font-sans);
+  font-style: normal;
+  color: var(--fg-muted);
+  letter-spacing: var(--track-tight);
 }
 .wordmark {
   font: 500 var(--text-h3) / 1 var(--font-sans);
   color: var(--fg);
   letter-spacing: var(--track-tight);
 }
-.mark {
-  font: 700 var(--text-h3) / 1 var(--font-sans);
-  font-style: normal;
-  color: var(--brand);
-}
-.mark::after {
-  content: "";
-  display: inline-block;
-  width: 0.22em;
-  height: 0.22em;
-  margin-right: 0.1em;
-  border-radius: 50%;
-  background: var(--brand);
-  vertical-align: baseline;
-}
-/* Usage: <span class="lockup"><span class="wordmark">dileepadev</span><span class="mark" aria-hidden="true">/</span></span> */
+
+/* Usage: <a class="lockup" href="/" aria-label="dileepadev - home"><span class="mark" aria-hidden="true">@</span><span class="wordmark">dileepadev</span></a> */
 
 /* ============================================================
    Quality floor
@@ -636,7 +625,7 @@ textarea.input {
   outline-offset: 2px;
 }
 
-/* Not emerald: the accent is a signal, and a scrollbar isn't signalling
+/* Not the accent: the accent is a signal, and a scrollbar isn't signalling
    anything. Spending it here is part of why it stops reading as
    deliberate where it's spent on purpose. */
 * {
