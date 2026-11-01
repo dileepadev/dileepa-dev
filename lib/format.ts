@@ -293,3 +293,21 @@ export function portrait(
   if (!images) return null;
   return images.profileWebp || images.profileJpg || images.profilePng || null;
 }
+
+/**
+ * A video's thumbnail, at a size that fills a 16:9 frame.
+ *
+ * The API stores YouTube's `0.jpg`, a 4:3 frame with the video letterboxed in
+ * it. `hqdefault` is the same 4:3 shape at 480px; cropped to 16:9 with
+ * `object-fit: cover`, the bars fall exactly outside the frame and what is
+ * left is the full 480x270 picture. Anything that is not a YouTube link keeps
+ * the stored thumbnail.
+ */
+export function videoThumbnail(link: string, stored?: string | null): string {
+  const id =
+    /(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/.exec(
+      link,
+    )?.[1] ?? /img\.youtube\.com\/vi\/([\w-]{11})\//.exec(stored ?? "")?.[1];
+  if (id) return `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+  return stored ?? "";
+}

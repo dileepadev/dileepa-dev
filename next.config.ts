@@ -121,7 +121,7 @@ function securityHeaders() {
     "style-src 'self' 'unsafe-inline' https://vercel.live",
     // next/font self-hosts Manrope and JetBrains Mono, so no font CDN appears.
     "font-src 'self' data: https://vercel.live https://assets.vercel.com",
-    `img-src 'self' data: blob: https://res.cloudinary.com ${analyticsImages.join(" ")} ${vercelImages.join(" ")}`,
+    `img-src 'self' data: blob: https://res.cloudinary.com https://i.ytimg.com ${analyticsImages.join(" ")} ${vercelImages.join(" ")}`,
     `connect-src 'self'${devConnect} ${api} ${analyticsConnect.join(" ")} ${vercelConnect.join(" ")}`
       .replace(/\s+/g, " ")
       .trim(),

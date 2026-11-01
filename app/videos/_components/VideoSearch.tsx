@@ -1,13 +1,12 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Calendar, Clock } from "lucide-react";
+import { Calendar, Play } from "lucide-react";
 import {
   Button,
   EmptyState,
   FilterSelect,
   type FilterOption,
-  Item,
   ItemList,
   ListingControls,
   type ActiveFilterItem,
@@ -15,7 +14,7 @@ import {
   type SortOption,
 } from "@/components/ui";
 import type { Video } from "@/lib/api-types";
-import { formatDate, videoDuration } from "@/lib/format";
+import { formatDate, videoDuration, videoThumbnail } from "@/lib/format";
 import {
   buildFacets,
   compareDate,
@@ -174,35 +173,7 @@ export function VideoSearch({ videos }: { videos: Video[] }) {
         <div className="mt-6">
           <ItemList>
             {paginatedVideos.map((video) => (
-              <Item
-                key={video.id}
-                headingLevel={2}
-                title={video.title}
-                href={video.link}
-                description={video.description || undefined}
-                meta={
-                  <>
-                    {video.date && (
-                      <span className="inline-flex items-center gap-1.5 text-fg font-medium">
-                        <Calendar
-                          className="h-3.5 w-3.5 shrink-0 text-fg-muted"
-                          aria-hidden="true"
-                        />
-                        <span>{formatDate(video.date)}</span>
-                      </span>
-                    )}
-                    {video.durationSeconds && (
-                      <span className="inline-flex items-center gap-1.5 text-fg-muted">
-                        <Clock
-                          className="h-3.5 w-3.5 shrink-0 text-fg-muted"
-                          aria-hidden="true"
-                        />
-                        <span>{videoDuration(video.durationSeconds)}</span>
-                      </span>
-                    )}
-                  </>
-                }
-              />
+              <VideoRow key={video.id} video={video} />
             ))}
           </ItemList>
 
@@ -220,5 +191,71 @@ export function VideoSearch({ videos }: { videos: Video[] }) {
         </div>
       )}
     </div>
+  );
+}
+
+/**
+ * One video: its thumbnail, then the title, date and description.
+ *
+ * The title is the link, as on every list. The thumbnail opens the same
+ * video, but it is hidden from assistive technology and the tab order, so a
+ * keyboard or screen reader meets each video once. The length sits on the
+ * picture, where video players put it.
+ */
+function VideoRow({ video }: { video: Video }) {
+  const duration = videoDuration(video.durationSeconds);
+  // "11 min watch" reads as a sentence; on the picture the length alone does.
+  const length = duration.replace(/ watch$/, "");
+  const thumbnail = videoThumbnail(video.link, video.thumbnail);
+
+  return (
+    <article className="video-item">
+      <a
+        href={video.link}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="video-thumb"
+        tabIndex={-1}
+        aria-hidden="true"
+      >
+        {thumbnail && (
+          // eslint-disable-next-line @next/next/no-img-element -- YouTube's own CDN already serves this size; next/image would proxy it through the optimiser for nothing.
+          <img
+            src={thumbnail}
+            alt=""
+            width={480}
+            height={270}
+            loading="lazy"
+            decoding="async"
+          />
+        )}
+        <span className="video-play">
+          <Play className="h-5 w-5" aria-hidden="true" />
+        </span>
+        {length && <span className="video-duration">{length}</span>}
+      </a>
+      <div className="min-w-0">
+        <h2 className="item-title">
+          <a
+            href={video.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-link"
+          >
+            {video.title}
+          </a>
+        </h2>
+        {video.date && (
+          <p className="video-date">
+            <Calendar className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+            <span>{formatDate(video.date)}</span>
+            {duration && <span className="sr-only">, {duration}</span>}
+          </p>
+        )}
+        {video.description && (
+          <p className="video-description">{video.description}</p>
+        )}
+      </div>
+    </article>
   );
 }

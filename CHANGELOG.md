@@ -132,6 +132,10 @@ Unreleased changes go here.
   under its field (`aria-invalid`, `aria-describedby`), focus moves to the first problem, and a
   message clears the moment its field is fixed. The comment form stars its required fields like
   the contact form.
+- **Videos show their thumbnails.** Each `/videos` row is a 16:9 thumbnail (YouTube's
+  `hqdefault`, cropped so the letterbox bars fall outside the frame) beside the title, date and
+  description, with the length on the picture and a play cue on hover. The title stays the one
+  link a keyboard reaches. `i.ytimg.com` joins the CSP's `img-src`.
 - `/brand` documents the system: the logo, the palette and contrast, type roles, the shape
   system and edge rule, the form controls, every icon the site draws, and the section marks.
 

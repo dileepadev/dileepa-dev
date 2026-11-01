@@ -18,11 +18,9 @@ export const metadata: Metadata = pageMetadata({
 });
 
 /**
- * Videos, as a list rather than a grid of thumbnails.
- *
- * Photographs appear in two places on this site - the hero portrait and the
- * event gallery - and a wall of YouTube thumbnails is not either of them. The
- * title and the date are what a reader is choosing between anyway.
+ * Videos, as a list of rows: a thumbnail beside the title, date and
+ * description. A list rather than a wall of thumbnails, so the title and date
+ * still lead, and the picture says what the video looks like.
  */
 export default async function VideosPage() {
   const videos = await api.getVideos();
