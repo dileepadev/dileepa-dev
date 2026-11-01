@@ -697,6 +697,7 @@ Unreleased changes go here.
 <!-- v0.0.1 -->
 
 [Unreleased]: https://github.com/dileepadev/dileepa-dev/branches
+[v2.1.0]: https://github.com/dileepadev/dileepa-dev/releases/tag/v2.1.0
 [v2.0.2]: https://github.com/dileepadev/dileepa-dev/releases/tag/v2.0.2
 [v2.0.1]: https://github.com/dileepadev/dileepa-dev/releases/tag/v2.0.1
 [v2.0.0]: https://github.com/dileepadev/dileepa-dev/releases/tag/v2.0.0
