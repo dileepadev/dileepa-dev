@@ -194,6 +194,10 @@ Unreleased changes go here.
   `next/font` cannot parse (vercel/next.js#99114). The variable font is now requested instead.
   The same failure could have hit a production deploy.
 - **Code blocks no longer mismatch on hydration:** a block's language is settled on the server.
+- **A newly added role is listed first.** Roles and education were shown in the API's `order`,
+  and a record added in the admin arrives with 0, so the current role landed last on `/work`
+  and `/profile` showed the previous job. Both now sort newest first by period, as communities
+  do: current first, then the latest end date.
 - **Field focus** draws one edge instead of an edge plus a grey halo.
 - **The theme switch's scrollbar** changes as the circular reveal reaches it, not before.
 - **Event cards** no longer push the events page sideways on a 390px phone, and wide tables in

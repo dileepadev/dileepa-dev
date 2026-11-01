@@ -482,11 +482,22 @@ export const api = {
   getAbout: () =>
     degrade<About | null>("/about", null, { revalidate: REVALIDATE.profile }),
 
-  getExperiences: () =>
-    degradePage<Experience>("/experiences", { revalidate: REVALIDATE.profile }),
+  // Newest first by period (`compareRecency`), like the communities: a role
+  // added in the admin leads as soon as it is current, whatever `order` it was
+  // given. The API sorts by `order`, and a new record arrives with 0 - last.
+  getExperiences: async () =>
+    (
+      await degradePage<Experience>("/experiences", {
+        revalidate: REVALIDATE.profile,
+      })
+    ).sort(compareRecency),
 
-  getEducations: () =>
-    degradePage<Education>("/educations", { revalidate: REVALIDATE.profile }),
+  getEducations: async () =>
+    (
+      await degradePage<Education>("/educations", {
+        revalidate: REVALIDATE.profile,
+      })
+    ).sort(compareRecency),
 
   getTools: () =>
     degradePage<Tool>("/tools", { revalidate: REVALIDATE.profile }),
