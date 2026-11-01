@@ -4,187 +4,69 @@ This file tracks tasks, improvements, and features planned for upcoming updates 
 this repository.
 
 > [!NOTE]
-> The v2.0.0 migration is shipped, tagged and closed - see
-> [issue #15](https://github.com/dileepadev/dileepa-dev/issues/15) and the `v2.0.0` entry in
-> [CHANGELOG.md](CHANGELOG.md) for what it covered. The cross-repository roadmap lives in
+> v2.0.0, v2.0.1 and v2.0.2 are shipped, tagged and closed. What each covered is in
+> [CHANGELOG.md](CHANGELOG.md). The cross-repository roadmap lives in
 > [`dileepadev/TODO.md`](https://github.com/dileepadev/dileepadev/blob/main/TODO.md).
 
-## v2.0.2 - sizing the cache from the budget
+## v2.1.0 - design system v2.1.0
 
-v2.0.1 took every ISR window to an hour and the render count fell with it, but Active CPU kept
-climbing. Two reasons, and the first is the important one.
+Tracking issue: [#27](https://github.com/dileepadev/dileepa-dev/issues/27). Pull request:
+[#29](https://github.com/dileepadev/dileepa-dev/pull/29). The design was built here first;
+`dileepadev` holds the written system
+([dileepadev#4](https://github.com/dileepadev/dileepadev/issues/4)).
 
-**An hour was never measured against the allowance.** The site prerenders ~150 pages and the
-traffic reaching them is almost entirely crawlers walking the sitemap, so a window of length `w`
-costs about `150 * (24h / w)` regenerations a day:
+- [x] Monochrome palette, `--fg-body`, `--border-input`; green only as `--success`
+- [x] `@dileepadev` lockup on the site, the brand page, the social cards and the terminal
+- [x] Profile rail and panels; floating nav below 1024px; `/work` and `/education` pages
+- [x] Type by role, the 13px floor, weight 700 only for the display line and `<strong>`
+- [x] Fixed / capsule / concentric corners and the edge rule; the 2px field focus edge
+- [x] Page cross-fades, the image viewer pace, one hover timing, pulsing status dots
+- [x] The site's own form validation messages; one copy behaviour; the reading-progress ring
+- [x] Blog: contents in the rail, heading ids from `github-slugger`, sized images, code labels
+- [x] Terminal profile: quadrant-block portrait, neofetch panel, current data, OSC 8 links
+- [x] `llms.txt` from the API and `llms-full.txt`
+- [x] New `og.png` / `og2.png`: the flat split card with the colour portrait
+- [x] Brand tokens and `docs/` re-vendored from `dileepadev` brand tokens v2.1.0
+- [x] `package.json` at `2.1.0`, the footer linked to the v2.1.0 release, `CHANGELOG.md` section
+- [x] `lint`, `typecheck`, `format:check` and `build` clean; reviewed on the preview deployment
 
-| Window | Regenerations/day | CPU/month at ~0.2s | Verdict |
-| --- | --- | --- | --- |
-| 300s (v2.0.0) | ~43,000 | far over | rendering on every request |
-| 3600s (v2.0.1) | ~3,600 | **~6 hours** | **still over the 4h allowance** |
-| 86400s (this) | ~150 | ~15 minutes | 16x margin |
+### At release v2.1.0
 
-An hour looked generous next to five minutes. That is the whole of why it was chosen, and it was
-the wrong way to choose it.
-
-**And the rest of the cost was not page rendering at all.** Production logs found it.
-
-- [x] **Every social card was being drawn per request.** A metadata route always attempts
-      build-time prerendering, but in a dynamic segment it has no slugs to prerender for, so all
-      three `opengraph-image` routes bailed to on-demand - `ƒ` in the v2.0.1 build output, and
-      caught in production at `cache=MISS`. Each card is a Satori layout pass and a resvg PNG
-      encode, the most CPU-expensive thing this site can be asked for, and a crawler asks for one
-      per post. `generateStaticParams` moves all 59 to once per deploy; the build now reports `●`
-- [x] **The blog card loaded every post to print one integer.** `readingTimeMinutes` comes off
-      the API record now, not out of the Git body via `getPostContent`
-- [x] **The v2.0.1 junk-slug gate was placed after the content load rather than before it** - so
-      it stopped the second full listing and left the first standing. `/blog/robots.txt` on a cold
-      instance still pulled a GitHub tree, 22 raw files and 22 `gray-matter` parses before
-      returning null; the logs show a 404 invocation printing `[content] 22 posts`. Verified
-      after the fix: four junk-slug shapes, two cards and a post render produce **zero**
-      `[content]` loads
-- [x] **Every revalidate window is a day**, applied to `REVALIDATE`, `CONTENT_REVALIDATE` and the
-      five route segments that state their own. The build reports `1d` on all 39 entries, with
-      no window left shorter
-- [x] **`robots.txt` declines the bulk AI and SEO crawlers by name.** The day-long window caps
-      what a crawl can cost, but the cap scales with how many distinct pages get walked -
-      declining the broadest crawlers is what turns a cap into headroom. Search and social stay
-      allowed: Googlebot, Bingbot, DuckDuckBot, and the `LinkedInBot` / `Twitterbot` / `Slackbot`
-      / `facebookexternalhit` group that fetches the card when a link is shared
-- [x] `npm run lint`, `npm run typecheck`, `npm run format:check` and `npm run build` all clean
-- [x] Full pass against `next build && next start`: 19 pages, 3 junk slugs, 3 cards and the
-      terminal feature - all correct, **zero** `[content]` loads, zero errors
-
-### At release v2.0.2
-
-- [x] `package.json` and `package-lock.json` at `2.0.2`
-- [x] `CHANGELOG.md` carries a `v2.0.2` section, dated **2026-09-14**
-- [ ] Merge [PR #25](https://github.com/dileepadev/dileepa-dev/pull/25) into `dev`, then `dev`
-      into `main`, and tag `v2.0.2` per [VERSIONING.md](VERSIONING.md)
-
-### Still to confirm
-
-- [ ] Active CPU growth per day, measured against the dashboard rather than inferred. Hobby
-      retains **one hour** of runtime logs - a `24h` query returns the same rows as a `1h` one,
-      and asking for anything older fails with `ExceedsBillingLimitError` - so the daily rate
-      cannot be read from logs and has to come from the usage page
-- [ ] **Cold instances still parse all 22 posts to render one post page.** `getPostContent` calls
-      `getAllContent()` before trying the single file it needs. Reordering would make it one
-      parse, but `getAllContent` is the only caller of `assertNotEmpty`, and AGENTS.md says that
-      guard must not be softened - so this needs the guard moved to an explicit build-time check
-      first, not a reorder
-
-## v2.0.1 - the Fluid Active CPU overage
-
-`dileepa.dev` is over its Vercel Hobby Fluid Active CPU allowance - **4h 49m against 4h** - while
-serving roughly **four real pageviews a day**. Full write-up in
-[issue #21](https://github.com/dileepadev/dileepa-dev/issues/21).
-
-Every ISR revalidate window on the site is shorter than the gap between visits, so essentially
-every request finds an expired entry, serves stale HTML **and** spawns a background regeneration.
-The site pays a full server render per request while also serving a stale body - the worst of
-both. ~1,500 renders a day to serve ~4 human pageviews.
-
-The failure mode is not a bill. Hobby has no overage billing, so the risk is Vercel pausing the
-project and `dileepa.dev` going dark - which is the one thing that cannot happen while the site is
-being handed to recruiters.
-
-### The fix
-
-- [x] **Raise every revalidate window to an hour.** `REVALIDATE` in `lib/api.ts` - `blog` 300,
-      `content` 900 and `events` 900 all become 3600; `profile` was already there. This is the
-      whole of the urgent fix and it is a constant change, nothing more
-- [x] **Raise the route segments that pin their own shorter windows.** `app/sitemap/page.tsx` at
-      300, and `app/brand/page.tsx`, `app/profile/page.tsx` and `app/terminal/route.ts` at 900.
-      The logs show them regenerating 65-77 times a day for pages that change a few times a year
-- [x] **`checkApiHealth` no longer de-opts the page that calls it.** `next: { revalidate: 0 }`
-      is an uncached fetch, and an uncached fetch inside a prerendered route flips it static →
-      dynamic at runtime, which Next answers with a 500. A short cached window detects an outage
-      just as well without taking the page down with it
-- [x] **Drop the health probe from the three slug routes.** `optional()` rethrows anything that
-      is not a 404, so an outage never reaches that branch on `/blog/[slug]`,
-      `/events/[slug]` or `/projects/[slug]` - the record is simply missing. All the probe did
-      there was turn every 404 into a 500. The index pages keep it, because `degradePage`
-      swallows the failure and an empty list genuinely is ambiguous there
-- [x] **A slug that cannot be a post costs no network.** `getPostContent` fell back to
-      `listRemote()` - a tree listing, 22 raw file fetches and 22 `gray-matter` parses - for
-      anything it could not resolve, including `/blog/robots.txt` and `/blog/${1}`. Post slugs
-      are date-prefixed by the content contract, so a slug that is not is answered from memory
-- [x] `npm run lint`, `npm run typecheck`, `npm run format:check` and `npm run build` all clean
-
-### Verified on the preview deployment
-
-`dpl_7BLZAybcP1nYYGoALfYNp4NSbLMP` (`883aab9`), built clean with no warnings.
-
-- [x] **Vercel's own build log reports `1h` on every route** - the table previously ran from `5m`
-      to `15m`. This is the authoritative check; a local build is not
-- [x] All four previously-500ing slug shapes return **404** - `/blog/does-not-exist-xyz`,
-      `/blog/robots.txt`, `/blog/${1}`, `/blog/2026-01-01-not-a-real-post` - as do
-      `/events/nope`, `/projects/nope` and `/nonexistent-page`
-- [x] **Runtime logs: 33× 200, 7× 404 (the probes above), zero 500s, zero errors, zero warnings**
-- [x] 16 routes return 200 and prerendered; `/terminal`, `/blog/rss.xml`, `/sitemap.xml`,
-      `/robots.txt`, `/llms.txt` and all three `opengraph-image` routes healthy
-- [x] `x-nextjs-stale-time: 300` on responses is the **client router cache**, not ISR - production
-      sends the same header while serving a `HIT` at `age` 2004, which a 300s ISR window could not
-      do. Do not read it as a revalidate window
-
-### Verify on production, after the merge
-
-- [ ] `x-vercel-cache` returns `HIT` on `/`, `/blog` and a post within the hour after a warm-up
-- [ ] `curl -o /dev/null -w '%{http_code}' https://dileepa.dev/blog/does-not-exist` returns **404**
-- [ ] Fluid Active CPU falls back inside the 4h allowance over the following week
-
-### At release v2.0.1
-
-- [x] `package.json` and `package-lock.json` at `2.0.1`
-- [x] `CHANGELOG.md` carries a `v2.0.1` section, dated **2026-09-08**
-- [ ] Merge [PR #23](https://github.com/dileepadev/dileepa-dev/pull/23) into `dev`
+- [ ] Mark PR #29 ready for review and merge it into `dev`
 - [ ] Open a PR from `dev` into `main` and merge it
-- [ ] Tag `v2.0.1` on `main` and push the tag, per [VERSIONING.md](VERSIONING.md)
-- [ ] Optionally create the GitHub release, pasting the `v2.0.1` changelog section
-- [ ] Close [issue #21](https://github.com/dileepadev/dileepa-dev/issues/21)
+- [ ] Tag `v2.1.0` on `main` and push the tag, per [VERSIONING.md](VERSIONING.md)
+- [ ] Create the GitHub release from the `v2.1.0` changelog section (the footer links to it)
+- [ ] Close [issue #27](https://github.com/dileepadev/dileepa-dev/issues/27)
+- [ ] Refresh link-preview caches for `https://dileepa.dev/` (LinkedIn Post Inspector, Facebook
+      Sharing Debugger); the card file name is unchanged, so platforms may keep the old one
 
-### Not code
+## Backlog
 
-- [ ] **Enable Vercel's bot filter** for the project. It is the other large lever and needs no
-      deploy - with ~4 real visitors a day, crawlers are effectively the entire bill. Keep
-      Googlebot and Bingbot allowed; being deindexed is a worse trade than a few CPU-minutes
-
-## Found while verifying v2.0.1, unrelated to it
+Real, open, and not scheduled to a release.
 
 - [ ] **The proxy rewrite drops the query string on Vercel, so `curl dileepa.dev?nocolor` is
-      ignored.** `/terminal?nocolor` is correct - 8,112 bytes of plain text. The same request to
-      `/`, which `proxy.ts` rewrites there, returns 15,521 bytes *byte-identical to `/terminal`
-      with no query at all*, with `Cache-Control: no-store`, meaning it took the intro-stream
-      branch: the route handler ran and saw an empty query. `proxy.ts` does read the query - a
-      curl client asking for `/?html` correctly gets the markup - so the loss is at
-      `NextResponse.rewrite`, and it does not reproduce under `next start`. Every flag README
-      documents on `/` is affected: `?nocolor`, `?static`, `?plain`, `?raw`, `?fast`, `?now`,
-      `?nointro`. **Pre-existing and identical on production**, so it is not a v2.0.1 regression -
-      confirmed by running the same probes against `dileepa.dev`. Deliberately left out of the
-      CPU patch: the fix needs iteration against preview deployments, which is not something to
-      attach to an urgent release.
-
-## Deferred to v2.1.0
-
-Not needed to get back under the allowance, and each one carries more risk than a patch should.
-
-- [ ] **On-demand revalidation.** A `revalidatePath` endpoint, called after a publish, so the
-      hour-long windows can go to a day and freshness goes back to instant. Needs a caller in
-      either `admin-dileepa-dev` (fires after a save) or `api-dileepa-dev` (fires on write) -
-      the API-side version covers direct API writes too. **This is the only part of this work
-      that touches another repository**, which is what makes it a MINOR rather than a PATCH
-- [ ] **A degraded render can be cached for an hour.** If the API is down while an index page
-      regenerates, `ApiOfflinePage` is what gets stored, and with hour-long windows it now
-      sticks for an hour rather than five minutes. On-demand revalidation is the fix - purge on
-      recovery - so this waits for the item above rather than being solved twice
+      ignored.** `/terminal?nocolor` is correct; the same request to `/`, which `proxy.ts`
+      rewrites there, reaches the route handler with an empty query and takes the intro-stream
+      branch. The loss is at `NextResponse.rewrite` on Vercel and does not reproduce under
+      `next start`. Every flag documented on `/` is affected: `?nocolor`, `?static`, `?plain`,
+      `?raw`, `?fast`, `?now`, `?nointro`. Still present on production as of 2026-11-01
+- [ ] **On-demand revalidation.** A `revalidatePath` endpoint, called after a publish, so
+      freshness is instant under the day-long windows. Needs a caller in `api-dileepa-dev` (fires
+      on write, covering direct API writes too) or `admin-dileepa-dev` (fires after a save)
+- [ ] **A degraded render can be cached for a day.** If the API is down while an index page
+      regenerates, `ApiOfflinePage` is what gets stored. On-demand revalidation is the fix -
+      purge on recovery - so this waits for the item above
 - [ ] **Take the root layout's `getAbout()` off the pages that do not need it.**
       `app/layout.tsx` puts a revalidating fetch in every route's tree, so `/terms`, `/privacy`,
-      `/brand` and the error screens are ISR functions rather than static files. Held back
-      deliberately: it changes rendering behaviour on every route, which is more blast radius
-      than a patch release should carry
+      `/brand` and the error screens are ISR functions rather than static files
 - [ ] **Prerender post HTML at build time** so Shiki runs once per deploy rather than once per
       regeneration. `/blog/[slug]` is the busiest and most expensive route on the site
+- [ ] **Cold instances still parse every post to render one post page.** `getPostContent` calls
+      `getAllContent()` before trying the single file it needs. `getAllContent` is the only
+      caller of `assertNotEmpty`, which AGENTS.md says must not be softened - so the guard has to
+      move to an explicit build-time check first, not a reorder
+- [ ] **Enable Vercel's bot filter** for the project (no deploy needed). Keep Googlebot, Bingbot
+      and the link-preview bots allowed
 
 ## Standing rules
 
