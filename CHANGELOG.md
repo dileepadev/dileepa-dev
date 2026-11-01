@@ -155,6 +155,18 @@ Unreleased changes go here.
 - The profile data is current, with clickable links (OSC 8) where the terminal supports them.
 - The banner draws `@dileepadev`.
 
+#### Rendering cost ([#31](https://github.com/dileepadev/dileepa-dev/issues/31))
+
+- **A post body compiles once.** Markdown, image sizes and Shiki highlighting are compiled by
+  `@mdx-js/mdx` and cached by a hash of the source, so a daily regeneration only evaluates the
+  result. The HTML is identical to before.
+- **A cold instance reads one post file,** not every post, to render a post page. The empty-set
+  guard still fails a wrong-ref build: the post route's `generateStaticParams` lists the content
+  once per build.
+- **On-demand revalidation:** `POST /api/revalidate` with `Authorization: Bearer
+  $REVALIDATE_SECRET` purges the given paths, or every page. It is off until `REVALIDATE_SECRET` is
+  set.
+
 #### Machine-readable
 
 - **`llms.txt` is built from the API** in the llmstxt.org format: profile, writing, projects,
@@ -164,6 +176,15 @@ Unreleased changes go here.
 
 ### Fixed - v2.1.0
 
+- **`curl dileepa.dev?nocolor` works on Vercel** ([#30](https://github.com/dileepadev/dileepa-dev/issues/30)).
+  The route behind `proxy.ts`'s rewrite received an empty query there, so every flag on `/`
+  (`?nocolor`, `?static`, `?plain`, `?raw`, `?fast`, `?now`, `?nointro`) was ignored and the colour
+  intro streamed. The proxy now carries the query in an `x-terminal-query` request header as well,
+  and the route reads it when its own query arrives empty.
+- **An API outage no longer caches the offline page for a day**
+  ([#31](https://github.com/dileepadev/dileepa-dev/issues/31)). A runtime regeneration that finds
+  the API down throws instead, so Next keeps serving the last good render; a build still renders
+  the offline page, so a deploy never fails because the API blinked.
 - **The dev build failed on every route** ("Can't resolve ... internal/font/google/font"). Google
   Fonts answered the two-weight JetBrains Mono request with dynamic URLs that Turbopack's
   `next/font` cannot parse (vercel/next.js#99114). The variable font is now requested instead.
@@ -190,7 +211,8 @@ Unreleased changes go here.
 
 ### Dependencies - v2.1.0
 
-- `github-slugger` is a direct dependency. It was already installed through `rehype-slug`.
+- `github-slugger` and `@mdx-js/mdx` are direct dependencies; both were already installed
+  transitively. `next-mdx-remote` is removed.
 
 ## [v2.0.2] - 2026-09-14
 
