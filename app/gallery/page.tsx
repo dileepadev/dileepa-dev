@@ -7,7 +7,7 @@ import {
   PagePath,
   Section,
 } from "@/components/ui";
-import { checkApiHealth, getGallery } from "@/lib/api";
+import { checkApiHealth, keepLastGoodRender, getGallery } from "@/lib/api";
 import { EMPTY_STATES, PAGES } from "@/lib/constants";
 import { pageMetadata } from "@/lib/metadata";
 
@@ -31,6 +31,7 @@ export default async function GalleryPage() {
   if (total === 0) {
     const health = await checkApiHealth();
     if (!health.ok) {
+      keepLastGoodRender("/gallery");
       return <ApiOfflinePage path="/gallery" />;
     }
   }

@@ -6,7 +6,7 @@ import {
   PagePath,
   Section,
 } from "@/components/ui";
-import { api, checkApiHealth } from "@/lib/api";
+import { api, checkApiHealth, keepLastGoodRender } from "@/lib/api";
 import { EMPTY_STATES, PAGES } from "@/lib/constants";
 import { pageMetadata } from "@/lib/metadata";
 import { BlogSearch } from "./_components/BlogSearch";
@@ -33,6 +33,7 @@ export default async function BlogPage() {
   if (posts.length === 0) {
     const health = await checkApiHealth();
     if (!health.ok) {
+      keepLastGoodRender("/blog");
       return <ApiOfflinePage path="/blog" />;
     }
   }

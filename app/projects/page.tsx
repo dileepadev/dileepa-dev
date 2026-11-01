@@ -6,7 +6,7 @@ import {
   PagePath,
   Section,
 } from "@/components/ui";
-import { api, checkApiHealth } from "@/lib/api";
+import { api, checkApiHealth, keepLastGoodRender } from "@/lib/api";
 import { EMPTY_STATES, PAGES } from "@/lib/constants";
 import { pageMetadata } from "@/lib/metadata";
 import { ProjectSearch } from "./_components/ProjectSearch";
@@ -24,6 +24,7 @@ export default async function ProjectsPage() {
   if (total === 0) {
     const health = await checkApiHealth();
     if (!health.ok) {
+      keepLastGoodRender("/projects");
       return <ApiOfflinePage path="/projects" />;
     }
   }

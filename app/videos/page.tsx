@@ -6,7 +6,7 @@ import {
   PagePath,
   Section,
 } from "@/components/ui";
-import { api, checkApiHealth } from "@/lib/api";
+import { api, checkApiHealth, keepLastGoodRender } from "@/lib/api";
 import { EMPTY_STATES, PAGES } from "@/lib/constants";
 import { pageMetadata } from "@/lib/metadata";
 import { VideoSearch } from "./_components/VideoSearch";
@@ -31,6 +31,7 @@ export default async function VideosPage() {
   if (total === 0) {
     const health = await checkApiHealth();
     if (!health.ok) {
+      keepLastGoodRender("/videos");
       return <ApiOfflinePage path="/videos" />;
     }
   }

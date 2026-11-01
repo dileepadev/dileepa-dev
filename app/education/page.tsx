@@ -7,7 +7,7 @@ import {
   PagePath,
   Section,
 } from "@/components/ui";
-import { api, checkApiHealth } from "@/lib/api";
+import { api, checkApiHealth, keepLastGoodRender } from "@/lib/api";
 import { PAGES } from "@/lib/constants";
 import { pageMetadata } from "@/lib/metadata";
 
@@ -32,6 +32,7 @@ export default async function EducationPage() {
   if (total === 0) {
     const health = await checkApiHealth();
     if (!health.ok) {
+      keepLastGoodRender("/education");
       return <ApiOfflinePage path="/education" />;
     }
   }

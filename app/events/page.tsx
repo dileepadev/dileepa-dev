@@ -6,7 +6,7 @@ import {
   PagePath,
   Section,
 } from "@/components/ui";
-import { api, checkApiHealth } from "@/lib/api";
+import { api, checkApiHealth, keepLastGoodRender } from "@/lib/api";
 import { EMPTY_STATES, PAGES } from "@/lib/constants";
 import { pageMetadata } from "@/lib/metadata";
 import { EventSearch } from "./_components/EventSearch";
@@ -30,6 +30,7 @@ export default async function EventsPage() {
   if (total === 0) {
     const health = await checkApiHealth();
     if (!health.ok) {
+      keepLastGoodRender("/events");
       return <ApiOfflinePage path="/events" />;
     }
   }

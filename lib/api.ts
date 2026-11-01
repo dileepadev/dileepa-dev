@@ -223,6 +223,30 @@ export function getApiHost(): string {
 const HEALTH_REVALIDATE = 30;
 
 /**
+ * Keeps the last good render when the API is down during a regeneration
+ * (issue #31).
+ *
+ * An index page whose list comes back empty checks the API's health, and on
+ * an outage renders `ApiOfflinePage`. At build that is right - a deploy should
+ * not fail because the API blinked. At runtime it was wrong: ISR stored the
+ * offline page and served it for the whole day-long window, though the page
+ * it replaced was fine. Throwing during a regeneration makes Next discard the
+ * attempt and go on serving the last successful render; a request that has no
+ * render to fall back to reaches `app/error.tsx`, which shows the same offline
+ * screen.
+ */
+export function keepLastGoodRender(path: string): void {
+  if (
+    process.env.NODE_ENV === "production" &&
+    process.env.NEXT_PHASE !== "phase-production-build"
+  ) {
+    throw new Error(
+      `[api] ${path}: API unavailable while regenerating; keeping the last good render`,
+    );
+  }
+}
+
+/**
  * Checks whether the upstream API is reachable and healthy.
  *
  * Wrapped in React `cache()` so multiple components or server routes can verify

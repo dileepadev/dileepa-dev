@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { ApiOfflinePage, Container, PagePath, Section } from "@/components/ui";
-import { api } from "@/lib/api";
+import { api, keepLastGoodRender } from "@/lib/api";
 import { PAGES } from "@/lib/constants";
 import { pageMetadata } from "@/lib/metadata";
 import { ProfileClient } from "./_components/ProfileClient";
@@ -27,6 +27,7 @@ export default async function ProfilePage() {
   ]);
 
   if (!about) {
+    keepLastGoodRender("/profile");
     return <ApiOfflinePage path="/profile" />;
   }
 

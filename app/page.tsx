@@ -1,6 +1,6 @@
 import { About, Contact, Hero } from "@/components/sections";
 import { ApiOfflinePage } from "@/components/ui";
-import { getHomepageData } from "@/lib/api";
+import { getHomepageData, keepLastGoodRender } from "@/lib/api";
 import { LegacyHashRedirect } from "./_components/LegacyHashRedirect";
 
 /**
@@ -18,6 +18,7 @@ export default async function HomePage() {
   const { about, events, posts, videos } = await getHomepageData();
 
   if (!about) {
+    keepLastGoodRender("/");
     return <ApiOfflinePage path="/" />;
   }
 

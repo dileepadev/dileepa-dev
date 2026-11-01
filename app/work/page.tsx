@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { WorkContent } from "@/components/sections";
 import { ApiOfflinePage, Container, PagePath, Section } from "@/components/ui";
-import { api, checkApiHealth } from "@/lib/api";
+import { api, checkApiHealth, keepLastGoodRender } from "@/lib/api";
 import { PAGES } from "@/lib/constants";
 import { pageMetadata } from "@/lib/metadata";
 
@@ -31,6 +31,7 @@ export default async function WorkPage() {
   if (roles === 0 && tools.length === 0) {
     const health = await checkApiHealth();
     if (!health.ok) {
+      keepLastGoodRender("/work");
       return <ApiOfflinePage path="/work" />;
     }
   }
