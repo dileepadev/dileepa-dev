@@ -11,7 +11,7 @@ import type { ReactionCounts, ReactionKind } from "@/lib/api-types";
  * so they cannot drift into teaching two vocabularies.
  *
  * **Why emoji rather than a custom icon set.** The palette is black to white
- * with no brand hue (v2.1.0 draft); the only hues in
+ * with no brand hue; the only hues in
  * the system are `--error` and `--warning`, both annotated "UI state only,
  * never a brand accent". Four hand-drawn colour icons would mean inventing four
  * brand hues and hard-coding them in a component, against that rule and against

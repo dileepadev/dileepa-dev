@@ -12,7 +12,7 @@ interface BackToTopProps {
 
 /**
  * Floating "Back to Top" button, with a ring that shows how far down the
- * page the reader is (v2.1.0 draft).
+ * page the reader is.
  *
  * It appears once the reader is past `threshold` and stays until they are
  * back above it, whichever way they are scrolling. The ring fills clockwise

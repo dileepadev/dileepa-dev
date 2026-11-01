@@ -106,7 +106,7 @@ export function Hero({
         <div className="hero">
           <div className="hero-copy">
             {/* A phone has no profile rail, so the hero carries the face and
-                name - first, above the headline (v2.1.0 draft), so the first
+                name - first, above the headline, so the first
                 screen says whose site this is; below the buttons it took a
                 full screen of scrolling to reach. Hidden at the width the
                 rail appears. */}

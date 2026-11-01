@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 /**
  * The terminal window the 404, 500 and 503 pages draw beside their message
- * (v2.1.0 draft).
+ *.
  *
  * One frame for all three, so they cannot drift apart again: a title bar with
  * the address, the view tabs on their own row (beside the address they were

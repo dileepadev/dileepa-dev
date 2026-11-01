@@ -3,7 +3,7 @@ import type { BlogPost, Community, EventRecord } from "@/lib/api-types";
 import { dateParts, formatDate, humanise, readingTime } from "@/lib/format";
 
 /**
- * The tile cards (v2.1.0 draft).
+ * The tile cards.
  *
  * One card shape for records in a grid: a meta row (dates or status on the
  * left, one pill on the right), the title as the card's only link, then a

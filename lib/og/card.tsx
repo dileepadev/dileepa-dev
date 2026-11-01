@@ -22,7 +22,7 @@ const SURFACE = "#0D0D0D"; // --ink-800 / --bg-surface
 const EDGE = "#2E2E2E"; // --ink-500 / --border-strong
 const TEXT = "#F1F1F1"; // --ink-100 / --fg
 const MUTED = "#8D8D8D"; // --ink-400 / --fg-muted
-// v2.1.0 draft: the palette is black and white; the accent is the text
+// The palette is black and white; the accent is the text
 // colour, so the card marks emphasis with weight and contrast, not a hue.
 const ACCENT = "#F1F1F1"; // --brand on Carbon (= --ink-100)
 

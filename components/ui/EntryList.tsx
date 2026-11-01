@@ -15,7 +15,7 @@ export function EntryList({
   className,
 }: {
   children: ReactNode;
-  /** `timeline` for roles, `entry-grid` for education (v2.1.0 draft). */
+  /** `timeline` for roles, `entry-grid` for education. */
   className?: string;
 }) {
   return <div className={className}>{children}</div>;

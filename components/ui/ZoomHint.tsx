@@ -1,11 +1,11 @@
 import { ZoomIn } from "lucide-react";
 
 /**
- * The hint on an image that opens full size (v2.1.0 draft).
+ * The hint on an image that opens full size.
  *
  * One affordance for every such image - a post figure, a profile photo, a
  * zoomable image: a small pill in the corner that appears on hover or
- * keyboard focus. The image itself does not darken or zoom; in v2.1 nothing
+ * keyboard focus. The image itself does not darken or zoom; in v2.1.0 nothing
  * moves on hover. Place it inside the `group` that holds the image.
  */
 export function ZoomHint({ label = "View full size" }: { label?: string }) {

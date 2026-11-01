@@ -282,7 +282,7 @@ export default async function RootLayout({
             Skip to content
           </a>
           <Navbar />
-          {/* v2.1.0 draft: the profile rail beside every page on a wide
+          {/* The profile rail beside every page on a wide
               screen. Below that width the rail hides and the nav above
               takes over, as before. */}
           <RailContentsProvider>

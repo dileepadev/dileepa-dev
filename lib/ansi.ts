@@ -5,7 +5,7 @@
  * the brand has to survive as escape codes and spaces. One rule carries over
  * unchanged from `app/brand-tokens.css`:
  *
- * - **Black and white, no hue (v2.1.0 draft).** The accent is weight, not
+ * - **Black and white, no hue.** The accent is weight, not
  *   colour: bold in the terminal's own foreground. Everything else is that
  *   foreground at full strength or dimmed - the escape-code equivalent of
  *   `--fg` and `--fg-muted` - so the output inherits whatever palette the
@@ -42,7 +42,7 @@ export interface Palette {
   /** A link. Underlined: the palette has no colour to mark it with. */
   link: (text: string) => string;
   /**
-   * Makes `text` a clickable hyperlink to `url` (v2.1.0 draft), with the OSC 8
+   * Makes `text` a clickable hyperlink to `url`, with the OSC 8
    * sequence iTerm2, Windows Terminal, GNOME Terminal, Konsole, kitty, WezTerm
    * and VS Code's terminal understand. A terminal that does not swallows the
    * sequence and shows the text as it was, so nothing is lost there - and the
@@ -76,7 +76,7 @@ export function palette(mode: ColorMode): Palette {
     text ? `${open}${text}${RESET}` : text;
 
   return {
-    // v2.1.0 draft: the brand is black and white, so the accent is weight -
+    // The brand is black and white, so the accent is weight -
     // bold in the reader's own foreground, legible on a dark or light terminal.
     brand: wrapIn(code(1)),
     strong: wrapIn(code(1)),

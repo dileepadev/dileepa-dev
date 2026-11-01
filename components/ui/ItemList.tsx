@@ -13,7 +13,7 @@ export function ItemList({
   className,
 }: {
   children: ReactNode;
-  /** `item-cards` lays the items out as a two-up card grid (v2.1.0 draft). */
+  /** `item-cards` lays the items out as a two-up card grid. */
   className?: string;
 }) {
   return <div className={className}>{children}</div>;

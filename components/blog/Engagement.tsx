@@ -21,7 +21,7 @@ import { ReactionPicker, ReactionSummary, totalReactions } from "./reactions";
  * stopped by a counter being down.
  */
 
-// The post's share control: the shared action button (v2.1.0 draft).
+// The post's share control: the shared action button.
 const actionClasses = "btn btn--secondary btn--sm";
 
 function ShareActions({ url, title }: { url: string; title: string }) {

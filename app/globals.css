@@ -28,10 +28,10 @@
 /* ============================================================
    Tailwind theme - the semantic tokens, and only those.
 
-   The raw palette (--emerald-bright, --ink-700, --paper-200, …) is
-   deliberately not exposed. It exists so the semantic layer can be defined
-   once; a component that reaches past --brand into --emerald-deep looks
-   correct on Paper and fails on Carbon.
+   The raw palette (--ink-700, --paper-200, …) is deliberately not exposed.
+   It exists so the semantic layer can be defined once; a component that
+   reaches past --fg into a raw step looks right in one theme and wrong in
+   the other.
    ============================================================ */
 @theme inline {
   --color-bg: var(--bg);
@@ -81,8 +81,7 @@
 
   --radius-sm: var(--radius-sm);
   --radius-lg: var(--radius-lg);
-  --radius-xl: var(--radius-xl);
-  /* v2.1.0 draft: corners by role - rounded-panel, -tile, -block, -inline
+  /* Corners by role - rounded-panel, -tile, -block, -inline
      (fixed), -field (a field's corner), -row (a row inside a menu, concentric
      with it). Controls are capsules: rounded-full. */
   --radius-panel: var(--radius-panel);
@@ -94,7 +93,7 @@
 
   --ease-brand: var(--ease);
 
-  /* v2.1.0 draft: one hover timing. Tailwind's transition utilities default
+  /* One hover timing. Tailwind's transition utilities default
      to the site's --dur and --ease, so a hover set in a class moves exactly
      as one set in this sheet. They were 150ms on Tailwind's own curve. */
   --default-transition-duration: var(--dur);
@@ -104,16 +103,8 @@
 /* ============================================================
    Local overrides - the fonts
 
-   Everything else comes from `brand-tokens.css` above. This block used to
-   restore the neutral ramp, the radius scale, the type steps, the control
-   height, the hairline, both border weights, the button fill and every
-   derived interaction token - around a hundred declarations - because the
-   vendored sheet was still at v2.0 and the shipped site had moved past it.
-   v2.1 reconciled the sheet against this site, so all of it was re-stating
-   values the sheet already sets. Two files declaring one neutral ramp is the
-   drift the token sheet exists to prevent, and it was here.
-
-   What is left is what genuinely differs, and each one says why.
+   Everything else comes from `brand-tokens.css` above. Only what genuinely
+   differs from the sheet is declared here, and each one says why.
    ============================================================ */
 :root {
   /* The token sheet names the families; next/font provides the files. The
@@ -130,7 +121,7 @@
   /* Emoji, named so reaction glyphs render from the platform's own set rather
      than whatever Manrope falls back to.
 
-     This is deliberately NOT a palette entry. The v2.1.0 draft palette is
+     This is deliberately NOT a palette entry. The palette is
      black to white with no hue at all, and reaction glyphs
      carry a lot of colour - so they are treated as content, the way a
      photograph is, rather than as chrome. Nothing here defines a colour: the
@@ -214,7 +205,7 @@ body {
   z-index: 9999;
 }
 
-/* Page transitions (v2.1.0 draft), from `app/template.tsx`. Calm on
+/* Page transitions, from `app/template.tsx`. Calm on
    purpose: the old page fades out quickly, the new one fades in a beat
    later and settles up 6px - no slide, no scale, nothing that pulls the
    eye across the screen. Asymmetric, so the leaving page is out of the way
@@ -244,7 +235,7 @@ body {
   }
 }
 
-/* The image viewer opens and closes at the same calm pace (v2.1.0 draft):
+/* The image viewer opens and closes at the same calm pace:
    the backdrop, the toolbar and the caption fade; the photo fades in a beat
    later and eases up from 96%. Closing reverses it in 200ms - the time
    `ImageLightbox` waits before it unmounts. */
@@ -302,8 +293,7 @@ body {
 /* The reference's links inherit their colour and carry no underline; every
    coloured link on the page states its own colour. The token sheet's blanket
    `a { color: var(--brand) }` is unlayered, so it beat every Tailwind text
-   utility in the app - including the primary button's label, which was
-   rendering emerald-on-emerald. */
+   utility in the app - including the primary button's label. */
 /* These three sit in `brand` - the same layer as the token sheet, later in it,
    so they win there - rather than unlayered, because they are defaults and a
    default has to lose to a utility. Unlayered, `a { color: inherit }` beat
@@ -319,7 +309,7 @@ body {
 
   /* Display and H1 tracking comes from the sheet (`--track-display`); H2
      keeps the gentler step. Weight is the sheet's too - 500 at every large
-     size, now that size alone separates the ranks (v2.1.0 draft). */
+     size, now that size alone separates the ranks. */
   h2 {
     letter-spacing: var(--track-tight);
   }
@@ -471,7 +461,7 @@ pre {
    it, so widening them costs nothing but unused text width - the flexible
    grids (pillar cards, gallery, the contact form) simply get more room. */
 .container {
-  /* v2.1.0 draft: 1200px with a 20px gutter a side on a phone. The homepage
+  /* 1200px with a 20px gutter a side on a phone. The homepage
      sections are two columns now - a 13rem rail and the content - and 1020px
      left the content column narrower than the single column it replaced.
      Running text keeps its own 68ch cap, so prose does not get wider. */
@@ -500,7 +490,7 @@ pre {
 .lockup {
   display: inline-flex;
   align-items: baseline;
-  /* v2.1.0 draft: `@dileepadev` is one word, so the `@` sits against it. */
+  /* `@dileepadev` is one word, so the `@` sits against it. */
   gap: 0.02em;
   /* The lockup never shrinks and never breaks. As a flex item next to a nav
      that wants the space, it was being squeezed narrow enough on a phone that
@@ -527,8 +517,7 @@ pre {
   font-weight: 500;
   font-style: normal;
   line-height: 1;
-  /* v2.1.0 draft: the mark is the muted step of the same ink as the
-     wordmark - the split the emerald "@" made, kept without a hue. */
+  /* The mark is the muted step of the same ink as the wordmark. */
   color: var(--fg-muted);
   letter-spacing: var(--track-tight);
   margin-left: 0;
@@ -633,9 +622,7 @@ pre {
   background: var(--raised-hover);
 }
 
-/* Current section: full-contrast text on the hover fill. v2.1.0 draft: the
-   text used to be emerald - off the nav now, because on the homepage the
-   accent belongs to the primary action. */
+/* Current section: full-contrast text on the hover fill. */
 .nav-link.is-active,
 .nav-link[aria-current="true"],
 .nav-link[aria-current="page"] {
@@ -848,7 +835,7 @@ pre {
 }
 
 /* ============================================================
-   v2.1.0 draft - the homepage, second pass
+   - the homepage, second pass
 
    The terminal profile (`curl -L dileepa.dev`) and the social card are the
    brand's one signature visual, so the page borrows from them with restraint:
@@ -1155,7 +1142,7 @@ pre {
   color: var(--fg-muted);
 }
 
-/* An h2 since Work became its own page under an h1 (v2.1.0 draft), drawn
+/* An h2 since Work became its own page under an h1, drawn
    at the H3 size it always had - the panel is a sidebar, not a section. */
 .tools-panel-head h2 {
   font-size: var(--text-h3);
@@ -1330,7 +1317,7 @@ pre {
 
 /* --- Keep exploring: where to go next ------------------------------------- */
 
-/* From `KeepExploring` (v2.1.0 draft): the close of a short page, set off by
+/* From `KeepExploring`: the close of a short page, set off by
    a hairline and the space a subsection gets, its heading at the H3 size. */
 .keep-exploring {
   margin-top: var(--space-16);
@@ -1346,7 +1333,7 @@ pre {
 
 /* --- Contact: one panel ---------------------------------------------------- */
 
-/* Stacked (v2.1.0 draft): the address as a header row across the panel,
+/* Stacked: the address as a header row across the panel,
    a hairline, then the form at full width. Side by side, the address and
    one line of links sat at the top of a column as tall as the form, and
    left most of that column empty beside it. */
@@ -1382,7 +1369,7 @@ pre {
 }
 
 /* ============================================================
-   v2.1.0 draft - the profile rail
+   - the profile rail
 
    On a wide screen every page sits beside one card: the photo, who, how to
    reach them and the whole navigation. Content scrolls past it in panels -
@@ -1627,7 +1614,7 @@ pre {
 }
 
 /* ============================================================
-   v2.1.0 draft - style F, "soft"
+   - style F, "soft"
 
    Rounder, quieter surfaces over the profile rail layout: panels lose their
    border and gain a soft shadow, the cards inside them become borderless
@@ -1829,7 +1816,7 @@ pre {
 
 /* A status dot marks something live - available for work, a current role
    or community, an upcoming event - so every one breathes: a ring that grows
-   and fades, the same two-second beat everywhere (v2.1.0 draft). The dots
+   and fades, the same two-second beat everywhere. The dots
    that mark where you are in the nav and footer stay still; they are a
    place, not a status. */
 .hero-status-dot {
@@ -1934,7 +1921,7 @@ pre {
 }
 
 /* ============================================================
-   v2.1.0 draft - links, cards and controls, one behaviour each
+   - links, cards and controls, one behaviour each
 
    Links: a card is not a link; its title is. Every text link hovers the same
    way - its text steps down to muted - and nothing moves.
@@ -1944,7 +1931,7 @@ pre {
    Controls: every button and every filter hovers by fill alone.
    ============================================================ */
 
-/* v2.1.0 draft, black and white: a link at full contrast fades to muted on
+/* black and white: a link at full contrast fades to muted on
    hover; a link that starts muted (an organisation, a footer link) comes up
    to full contrast. Either way the hover is a visible step without a hue. */
 .text-link {
@@ -2195,7 +2182,7 @@ pre {
 }
 
 /* ============================================================
-   v2.1.0 draft - rail fit, role dates, post cards, link arrows
+   - rail fit, role dates, post cards, link arrows
    ============================================================ */
 
 /* The rail fits the window: it is capped at the window height, and the
@@ -2324,7 +2311,7 @@ pre {
 }
 
 /* ============================================================
-   v2.1.0 draft - the action button and the toggle group
+   - the action button and the toggle group
 
    `.btn--sm` is the one size for actions that sit beside content: copy,
    download, share, open, expand. It sizes its own icons, so no call site sets
@@ -2408,7 +2395,7 @@ pre {
 }
 
 /* ============================================================
-   v2.1.0 draft - consistency pass over every route
+   - consistency pass over every route
 
    The pages share these controls; the rail layout put them on a new surface,
    so they move together: capsules for every control, chip and badge,
@@ -2555,7 +2542,7 @@ a.chip:hover {
 }
 
 /* One hover for every button on the site: the fill changes, nothing moves
-   and the edge keeps its colour (v2.1.0 draft). */
+   and the edge keeps its colour. */
 .btn--secondary:hover {
   background: var(--surface-hover);
   color: var(--fg);
@@ -2586,20 +2573,15 @@ a.chip:hover {
 
 /* --- Section headings --------------------------------------------------- */
 
-/* The section label and the subsection title are the same label, at two ranks.
-
-   They used to be two unrelated systems on one page: a sentence-case emerald
-   label at 0.875rem for sections, and an uppercase 0.16em-tracked 800-weight
-   label at 0.72rem with a glowing bar for subsections. Same size and case now;
-   colour and the accent rule are what separate them. */
+/* The section label and the subsection title are the same label, at two
+   ranks: same size and case, told apart by colour. */
 .section-label {
   font-family: var(--font-mono);
   font-size: var(--text-small);
   line-height: var(--lh-small);
   font-weight: 500;
   letter-spacing: var(--track-label);
-  /* v2.1.0 draft: muted, not emerald. Every page title had an emerald label
-     over it, which spent the accent on the least important text on the page. */
+  /* Muted: the label is the least important text over a title. */
   color: var(--fg-muted);
   /* Attached to the heading it labels. At --space-4 it floated a full line
      above and read as a separate element. */
@@ -2622,8 +2604,7 @@ a.chip:hover {
    reader's article style and sets a larger rhythm.
 
    Every paragraph read sentence by sentence - this one, an entry's
-   description, a card's, a pillar's - is set at the body size in --fg-body
-   (v2.1.0 draft). The muted colour and the small size are for what you
+   description, a card's, a pillar's - is set at the body size in --fg-body. The muted colour and the small size are for what you
    glance at: dates, names, roles, labels. Running text in the muted grey at
    15px read as fine print under a 26px title. */
 .section-copy p {
@@ -2639,7 +2620,7 @@ a.chip:hover {
   font-weight: 500;
 }
 
-/* --- Entry list - experience, education (v2.1.0 draft) ------------------ */
+/* --- Entry list - experience, education ------------------ */
 
 /* The role is the row's headline and the organisation sits under it, muted.
    The markup keeps the organisation first - it is what a screen reader has
@@ -2719,7 +2700,7 @@ a.chip:hover {
   margin-top: var(--space-10);
 }
 
-/* --- Subsections and item lists (v2.1.0 draft) ------------------------- */
+/* --- Subsections and item lists ------------------------- */
 
 .subsection {
   margin-top: clamp(var(--space-12), 2rem + 3vw, 5rem);
@@ -2729,9 +2710,7 @@ a.chip:hover {
   margin-top: 0;
 }
 
-/* The H3 step, at full contrast. It used to be the small step at 700 with an
-   emerald bar or icon beside it - four of them in the Community section alone,
-   which is four accents on one surface. */
+/* The H3 step, at full contrast. */
 .subsection-title {
   display: inline-flex;
   align-items: center;
@@ -2828,7 +2807,7 @@ a.chip:hover {
   gap: var(--space-1);
 }
 
-/* v2.1.0 draft: the calendar, clock and pin glyphs beside every date, length
+/* The calendar, clock and pin glyphs beside every date, length
    and place are dropped. "3 min read", "Online" and a date say what they are;
    the glyphs were three more marks per row on lists that run to thirty. */
 .item-meta > span.inline-flex > svg {
@@ -2855,8 +2834,7 @@ a.chip:hover {
   font-size: var(--text-small);
   font-weight: 500;
   letter-spacing: var(--track-label);
-  /* v2.1.0 draft: full-contrast text, not emerald - the Community section
-     alone closes four lists with one of these. */
+  /* Full-contrast text. */
   color: var(--fg);
   text-decoration: none;
   transition: color var(--dur) var(--ease);
@@ -2893,7 +2871,7 @@ a.chip:hover {
 }
 
 /* A photo is media: the block radius, no border, and nothing moves on
-   hover (v2.1.0 draft) - the caption fading in is the whole response. */
+   hover - the caption fading in is the whole response. */
 .gallery img {
   width: 100%;
   height: 100%;
@@ -2925,10 +2903,9 @@ a.chip:hover {
 /* No top margin of its own: `.section-intro` already sets the gap below the
    heading block, and the two together left 72px of empty page between the
    intro and the address. */
-/* v2.1.0 draft: the address at the lead step and full contrast, no underline.
-   It used to be this surface's emerald, beside an emerald Send button - two
-   accents in one section. The button keeps the accent; the address is the
-   largest text in the section, which is emphasis enough. */
+/* The address at the lead step and full contrast, no underline. The Send
+   button is the section's one filled control; the address is the largest
+   text, which is emphasis enough. */
 .contact-email {
   display: inline-flex;
   align-items: center;
@@ -2959,10 +2936,7 @@ a.chip:hover {
 
 /* The link-in-bio line, under the contact address.
 
-   Deliberately not `--brand`: the Send button is this surface's single
-   accent, and an emerald link beside it is exactly the scattering the brand
-   guide rules out. Muted body colour, and the external arrow every outbound
-   link on the site already gets. */
+   Muted body colour, and the external arrow every outbound link gets. */
 .contact-links {
   margin-top: var(--space-3);
   font-size: var(--text-small);
@@ -3075,7 +3049,7 @@ a.chip:hover {
   border-color: var(--error);
 }
 
-/* A field that failed validation (v2.1.0 draft), from `useFormErrors`: its
+/* A field that failed validation, from `useFormErrors`: its
    edge in --error, and on focus the same 2px edge a focused field takes,
    in --error rather than the accent, so the fault stays marked while it is
    being fixed. Replaces the browser's own validation bubble. */
@@ -3129,7 +3103,7 @@ a.chip:hover {
   opacity: 0.6;
 }
 
-/* Focus is the edge itself, not the edge plus a halo (v2.1.0 draft). The
+/* Focus is the edge itself, not the edge plus a halo. The
    hairline turns to the accent and an inset 1px of the same colour thickens
    it to 2px, so a field reads as one line, at full contrast, without the
    grey ring that sat outside it. The inset shadow draws inside the border,
@@ -3508,7 +3482,7 @@ a.chip:hover {
 /* --- Back to top -------------------------------------------------------- */
 
 /* An icon alone, so a circle, like every icon-only control. Its edge is the
-   reading-progress ring (v2.1.0 draft): the track is the hairline in
+   reading-progress ring: the track is the hairline in
    --border-strong that a button edge always is, and the arc over it fills
    in --fg as the page is read. The arc's length is written from the scroll
    position in BackToTop.tsx, so it has no transition of its own - it moves
@@ -3886,7 +3860,7 @@ a.chip:hover {
 .prose h2 {
   font-size: var(--text-h2);
   line-height: var(--lh-h2);
-  /* 500, like every heading in v2.1 - the article's H3 already was. Bold
+  /* 500, like every heading in v2.1.0 - the article's H3 already was. Bold
      stays for <strong>, the one place 700 means something in running text. */
   font-weight: 500;
   letter-spacing: var(--track-tight);
@@ -4073,7 +4047,7 @@ textarea:-webkit-autofill:focus {
   transition: background-color 9999s ease-in-out 0s;
 }
 
-/* One stroke weight for every interface icon (v2.1.0 draft). Lucide draws
+/* One stroke weight for every interface icon. Lucide draws
    at 2 unless told otherwise, and the site had told it 1.7, 1.75, 1.8, 2
    and 2.5 in different places - the same Copy icon at two weights. CSS
    outranks the stroke-width attribute, so this settles it once. */
@@ -4082,7 +4056,7 @@ svg.lucide {
 }
 
 /* ============================================================
-   v2.1.0 draft - grids split by the room they have
+   - grids split by the room they have
    ============================================================ */
 
 /* Each section's content box is a size container. The content grids below
@@ -4095,7 +4069,7 @@ main .container {
   container: section / inline-size;
 }
 
-/* A copy button's confirmation (v2.1.0 draft; behaviour in `useCopy`). The
+/* A copy button's confirmation (; behaviour in `useCopy`). The
    copy icon and the tick are two icons that swap, not one that changes, so a
    transition has nothing to run on; each animates as it appears instead, at
    the hover timing. The tick, in the success green, grows in from 60%; the
@@ -4152,7 +4126,7 @@ main .container {
   color: color-mix(in srgb, var(--fg-muted) 55%, transparent);
 }
 
-/* One hover, one timing (v2.1.0 draft). Everything a pointer can hover -
+/* One hover, one timing. Everything a pointer can hover -
    links, buttons, form controls, a summary - eases its colours, fills,
    edges and shadow over --dur on --ease, the timing every component rule
    in this sheet already uses. In the base layer, so a component that names
@@ -4168,7 +4142,7 @@ main .container {
 }
 
 /* ============================================================
-   v2.1.0 draft - section marks
+   - section marks
 
    Each homepage section keeps a corner of the hero's engineering paper -
    the same 22px dot grid, fading out from the panel's top-right corner -
@@ -4283,7 +4257,7 @@ main .container {
 }
 
 /* ============================================================
-   v2.1.0 draft - corners by role
+   - corners by role
    ============================================================ */
 
 /* A card on a panel: borderless, on the page ground, at the tile radius -
@@ -4345,7 +4319,7 @@ main .container {
 }
 
 /* ============================================================
-   v2.1.0 draft - the terminal window on the 404, 500 and 503 pages
+   - the terminal window on the 404, 500 and 503 pages
    ============================================================ */
 
 /* The card sizes its ASCII art to its own width (a container), so the radar

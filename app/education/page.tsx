@@ -18,7 +18,7 @@ export const metadata: Metadata = pageMetadata({
 });
 
 /**
- * Education - one tile per course (v2.1.0 draft).
+ * Education - one tile per course.
  *
  * Was the homepage's Education section; see `app/work/page.tsx` for why it
  * moved. Same heading as the index pages, same body as the section. Four

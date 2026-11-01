@@ -299,7 +299,7 @@ export function isSectionLink(href: string): boolean {
 }
 
 /**
- * Whether a primary nav link is where the reader is (v2.1.0 draft): a
+ * Whether a primary nav link is where the reader is: a
  * homepage section while it is scrolled into view, a page while it - or a
  * page under it - is open. The nav holds both kinds since Work and Education
  * became pages.

@@ -61,7 +61,7 @@ export const mdxComponents: MDXComponents = {
 };
 
 /**
- * The language of a fence Shiki left unhighlighted (v2.1.0 draft).
+ * The language of a fence Shiki left unhighlighted.
  *
  * Shiki stamps `data-language` on the blocks it highlights (lib/mdx.ts). A
  * fence in a language it has no grammar for - ```git - is left as plain

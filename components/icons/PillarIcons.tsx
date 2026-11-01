@@ -11,7 +11,7 @@ import type { SVGProps } from "react";
  * `.png` for surfaces that cannot take a vector.
  *
  * These components are ported from the `-symbol.svg` variant, which is the one
- * that strokes `currentColor` rather than a literal `#23B888`. That matters:
+ * that strokes `currentColor` rather than a literal colour. That matters:
  * the card colours the mark through `text-brand`, so it resolves to Ink 100
  * on Carbon and Paper 900 on Paper. A hard-coded hex would be right
  * in one theme and a contrast failure in the other.

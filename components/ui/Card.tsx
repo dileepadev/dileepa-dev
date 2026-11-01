@@ -9,8 +9,8 @@ interface CardProps {
   href?: string;
 }
 
-// A tile (v2.1.0 draft): a card on a panel is borderless, on the page
-// ground, at the tile radius. It does not change on hover - in v2.1 a card
+// A tile: a card on a panel is borderless, on the page
+// ground, at the tile radius. It does not change on hover - in v2.1.0 a card
 // is not a button, and the one thing that reacts is its link.
 const base = "tile block p-6";
 

@@ -4,7 +4,7 @@ import { getHomepageData } from "@/lib/api";
 import { LegacyHashRedirect } from "./_components/LegacyHashRedirect";
 
 /**
- * The homepage is the front door (v2.1.0 draft).
+ * The homepage is the front door.
  *
  * It used to be the whole site - hero, about, work, education, community and
  * contact in one scroll past 9,000px, every section competing for the same

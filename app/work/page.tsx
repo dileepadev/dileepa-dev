@@ -12,7 +12,7 @@ export const metadata: Metadata = pageMetadata({
 });
 
 /**
- * Work - roles and the tools behind them (v2.1.0 draft). The projects are
+ * Work - roles and the tools behind them. The projects are
  * at /projects, not repeated here.
  *
  * This was the homepage's Work section. The homepage now keeps the hero,

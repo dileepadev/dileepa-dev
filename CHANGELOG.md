@@ -16,7 +16,7 @@ Unreleased changes go here.
 ## [v2.1.0] - 2026-11-01
 
 > [!NOTE]
-> The site adopts **design system v2.1**, which was designed here first and then written down in
+> The site adopts **design system v2.1.0**, which was designed here first and then written down in
 > `dileepadev` ([dileepadev#4](https://github.com/dileepadev/dileepadev/issues/4)). The brand drops
 > its hue: the accent is the text colour, the logo is `@dileepadev`, and emerald survives only as
 > the success state. Visual only - no route, data or API changes. See
@@ -59,7 +59,7 @@ Unreleased changes go here.
 
 ### Brand tokens - v2.1.0
 
-- `app/brand-tokens.css` and `docs/` re-vendored from `dileepadev` brand tokens v2.1.
+- `app/brand-tokens.css` and `docs/` re-vendored from `dileepadev` brand tokens v2.1.0.
 
 ## [v2.0.2] - 2026-09-14
 
@@ -409,7 +409,7 @@ Unreleased changes go here.
   record, which is also what renders under the hero. A snippet that matches the first line a
   reader sees on the page beats one written for the snippet, and the previous text was a framing
   invented here from the speaking topics rather than anything the site says about itself.
-- **Brand tokens re-vendored at v2.1** and `app/globals.css` trimmed to match. The override block
+- **Brand tokens re-vendored at v2.1.0** and `app/globals.css` trimmed to match. The override block
   restored the neutral ramp, the radius scale, the type steps, the control height, the hairline,
   both border weights, the button fill and every derived interaction token - about a hundred
   declarations that the reconciled sheet now sets identically. Four font variables, the two

@@ -50,7 +50,7 @@ const GUTTER = "  ";
  *                            ----
  *                            2940ms
  *
- * v2.1.0 draft: the masthead grew from 14 rows to 26 when the portrait and
+ * The masthead grew from 14 rows to 26 when the portrait and
  * its info panel replaced the block-letter wordmark, so a row reveals in 30ms
  * rather than 55 and the wipe takes the same ~0.8s it did.
  *

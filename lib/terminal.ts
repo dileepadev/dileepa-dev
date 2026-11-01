@@ -339,7 +339,7 @@ function info(p: Palette, data: TerminalData, width: number): string[] {
 /**
  * The masthead: the portrait beside the info panel, in the double-ruled box.
  *
- * The portrait replaced the `@dileepadev` block letters (v2.1.0 draft). A
+ * The portrait replaced the `@dileepadev` block letters. A
  * face is what the rest of the site leads with - the rail, the phone hero -
  * and it is the one thing a terminal is not expected to be able to show. It
  * is drawn in quadrant blocks on the 256-colour grey ramp, background cut out, by

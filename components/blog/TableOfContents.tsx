@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 /**
  * The table of contents.
  *
- * Two placements share one list (v2.1.0 draft). On a wide screen the profile
+ * Two placements share one list. On a wide screen the profile
  * rail becomes the contents (`ProfileRail`, through `RailContents`) - the
  * rail is already the sticky column beside the article, so the contents take
  * its place rather than adding a third column that narrows the reading width.

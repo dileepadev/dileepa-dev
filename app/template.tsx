@@ -4,7 +4,7 @@ import { ViewTransition } from "react";
 import { usePathname } from "next/navigation";
 
 /**
- * Wraps every page in a view transition (v2.1.0 draft).
+ * Wraps every page in a view transition.
  *
  * Keyed by the path, so every change of page runs the transition: the page
  * that leaves runs `page-exit` and the page that arrives runs `page-enter`.

@@ -12,7 +12,7 @@ export interface FieldMessages {
 type Field = HTMLInputElement | HTMLTextAreaElement;
 
 /**
- * The site's own form validation messages (v2.1.0 draft).
+ * The site's own form validation messages.
  *
  * The forms used to lean on the browser for this: a required field left
  * empty raised the browser's own bubble - a different shape, font and

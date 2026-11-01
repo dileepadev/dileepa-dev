@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 /**
  * A row of mutually exclusive options - a view switch, a preview variant.
  *
- * v2.1.0 draft: the one switch the site uses, in the action size, so the
+ * The one switch the site uses, in the action size, so the
  * sitemap's "Tree view / Pages list" and the brand page's card variants are
  * the same control. Each option is a real button with `aria-pressed`.
  */

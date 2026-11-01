@@ -50,7 +50,7 @@ export function FilterSelect({
   // A value with no matching option still has to name itself: falling back to
   // `allLabel` would render "Tag: All tags" beside a lit active dot.
   //
-  // Unfiltered, the trigger says just "All" (v2.1.0 draft): its label already
+  // Unfiltered, the trigger says just "All": its label already
   // names the dimension, so "Type: All types" said it twice, and the extra
   // words were what pushed a row of four filters onto a second line. The
   // menu keeps `allLabel` in full, where it stands without the label.

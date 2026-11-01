@@ -10,7 +10,7 @@ import {
 import type { Heading } from "@/lib/mdx";
 
 /**
- * The page's table of contents, handed to the profile rail (v2.1.0 draft).
+ * The page's table of contents, handed to the profile rail.
  *
  * The rail lives in the root layout and the headings live in the post, so a
  * post renders `<RailContents headings={...} />` and the rail reads them back

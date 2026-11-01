@@ -31,7 +31,7 @@ const CONTENTS_PAGES: {
 ];
 
 /**
- * The profile rail (v2.1.0 draft).
+ * The profile rail.
  *
  * On a wide screen every page sits beside this card: who, what, how to reach
  * them, and the whole navigation. It replaces the floating nav there - the
@@ -111,7 +111,7 @@ export function ProfileRail({ about }: { about: About | null }) {
           </LinkButton>
         </div>
 
-        {/* One list, not two (v2.1.0 draft). Split into the site links and
+        {/* One list, not two. Split into the site links and
             the index pages, each group wrapped on its own, and a group whose
             last chip did not fit its row left that chip alone beside a hole
             before the next group began. As one list the chips run on like

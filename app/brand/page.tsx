@@ -255,7 +255,7 @@ type RadiusRole = {
 };
 
 /**
- * The corner radius scale (v2.1.0 draft), after Apple's shape system: three
+ * The corner radius scale, after Apple's shape system: three
  * kinds of corner, each specimen drawn at the size it is used at.
  */
 const RADIUS_KINDS: { kind: string; rule: string; roles: RadiusRole[] }[] = [
@@ -348,7 +348,7 @@ export default async function BrandPage() {
 </svg>`;
 
   const cssTokensSnippet = `:root {
-  /* Accent: the text colour itself (v2.1.0 draft) */
+  /* Accent: the text colour itself */
   --brand: var(--ink-100);   /* on Carbon, 18.0:1 */
   /* light theme: --brand: var(--paper-900), 17.3:1 on Paper */
 
@@ -371,7 +371,7 @@ export default async function BrandPage() {
   --paper-400: #6a6a6a;
   --paper-900: #131313;
 
-  /* Text roles (v2.1.0 draft) - dark values; light in comments */
+  /* Text roles - dark values; light in comments */
   --fg: var(--ink-100);       /* titles, 18.0:1 - light #131313, 17.3:1 */
   --fg-body: #a8a8a8;         /* paragraphs, 8.6:1 - light #4f4f4f, 7.6:1 */
   --fg-muted: var(--ink-400); /* dates, names, labels, 6.1:1 - light #6a6a6a, 5.1:1 */
@@ -381,7 +381,7 @@ export default async function BrandPage() {
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
   --font-weights: 400, 500, 700; /* 400 and 500 in the interface, every heading 500; 700 for the display and bold in running text; no 600 */
 
-  /* Corners (v2.1.0 draft): fixed, capsule, concentric */
+  /* Corners: fixed, capsule, concentric */
   --radius-panel: 32px;  /* page panels, the rail, the mobile menu */
   --radius-tile: 22px;   /* a card, a menu, a toast */
   --radius-block: 12px;  /* media and blocks inside a card */
@@ -408,7 +408,7 @@ export default async function BrandPage() {
               <h1>{PAGES.brand.title}</h1>
             </div>
             <div className="count-badge inline-flex items-center gap-1.5 font-mono text-small text-fg-muted px-2.5 py-1 shrink-0 mt-1">
-              <span className="font-medium text-fg">v2.1</span>
+              <span className="font-medium text-fg">v2.1.0</span>
               <span>Design system</span>
             </div>
           </div>
@@ -931,8 +931,7 @@ export default async function BrandPage() {
             </div>
           </div>
 
-          {/* Live scale: each row set with the token it documents (v2.1.0
-              draft - fluid display sizes, weight 500 for every heading). */}
+          {/* Live scale: each row set with the token it documents. */}
           <div className="tile divide-y divide-border-hairline">
             <div className="p-4 sm:p-6 grid grid-cols-1 @2xl/section:grid-cols-[200px_1fr] md:items-baseline gap-2 sm:gap-6">
               <div className="font-mono text-label text-fg-muted shrink-0">
@@ -1383,7 +1382,7 @@ export default async function BrandPage() {
                     <Badge variant="filled">Active</Badge>
                     <Badge>Upcoming</Badge>
                     <Chip>Agent Framework</Chip>
-                    <Chip>v2.1</Chip>
+                    <Chip>v2.1.0</Chip>
                   </div>
                 </div>
                 <div>

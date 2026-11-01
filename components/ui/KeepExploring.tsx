@@ -2,7 +2,7 @@ import Link from "next/link";
 import { PAGES_LIST, type PageSummary } from "@/lib/constants";
 
 /**
- * Where to go next, at the foot of a short page (v2.1.0 draft).
+ * Where to go next, at the foot of a short page.
  *
  * /education holds four records, so the page ended a screen in, with the
  * footer riding up under it - a different shape from every index page around

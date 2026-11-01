@@ -9,7 +9,7 @@ import { SUBSECTIONS } from "@/lib/constants";
  * The open source projects that used to close it have their own page at
  * /projects, so they are not repeated here. It was
  * the homepage's Work section until the homepage became the front door rather
- * than the whole site (v2.1.0 draft); `app/work/page.tsx` gives it its heading,
+ * than the whole site; `app/work/page.tsx` gives it its heading,
  * so the headings in here start at `h2`.
  */
 export function WorkContent({

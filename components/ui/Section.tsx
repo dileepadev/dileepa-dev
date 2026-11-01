@@ -27,7 +27,7 @@ export function Section({
 }
 
 /**
- * A homepage section (v2.1.0 draft).
+ * A homepage section.
  *
  * The header borrows the terminal profile's section rule - `▍ About ────` in
  * `curl -L dileepa.dev` - as a marker line: the section's name in mono, then a

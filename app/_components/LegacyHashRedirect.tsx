@@ -11,7 +11,7 @@ const MOVED: Record<string, string> = {
 };
 
 /**
- * Keeps the old homepage section links working (v2.1.0 draft).
+ * Keeps the old homepage section links working.
  *
  * Work, Education and Community were sections of the homepage, linked as
  * `/#work` and so on - from the nav, the footer, and anywhere those links were

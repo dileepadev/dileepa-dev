@@ -82,7 +82,7 @@ import {
 import { SOCIAL_ICONS } from "@/lib/social-icons";
 
 /**
- * Every icon the site draws, on one page (v2.1.0 draft).
+ * Every icon the site draws, on one page.
  *
  * The interface set is Lucide, listed by where it is used. When a component
  * starts importing a new icon, add it here too - the catalog is only useful

@@ -10,7 +10,7 @@ import { useCopy } from "./useCopy";
  * It sits beside the copyright rather than in the footer's link row: the row is
  * navigation, and this is not a seventh place to go. An easter egg nobody finds
  * is a feature nobody has, so it is drawn as what it is - a command you copy
- * (v2.1.0 draft): a small capsule with the shell prompt, the command in mono
+ *: a small capsule with the shell prompt, the command in mono
  * and a copy icon that turns to a tick once it is on the clipboard. It read
  * as plain text before, and nothing said it could be clicked.
  *

@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 type Variant = "primary" | "secondary";
 
 /**
- * `sm` is the action size (v2.1.0 draft): copy, download, share, open,
+ * `sm` is the action size: copy, download, share, open,
  * expand - the small controls that sit beside content rather than lead a
  * page. One size for all of them, so a "Copy" on the brand page and a "Copy"
  * on a code block are the same object.

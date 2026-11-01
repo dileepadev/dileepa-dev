@@ -1,7 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 
 /**
- * A section's mark as a tile (v2.1.0 draft): the section's Lucide icon, drawn
+ * A section's mark as a tile: the section's Lucide icon, drawn
  * crisp at a fine stroke on a raised rounded-square tile, like an app icon.
  * Nothing on it fades or overlaps, so every edge is sharp - the dotted and
  * extruded drafts before it read as soft against the dot grid.
@@ -15,7 +15,7 @@ export function SectionTile({ icon: Icon }: { icon: LucideIcon }) {
 }
 
 /**
- * A homepage section's mark (v2.1.0 draft): the section's icon tile on the
+ * A homepage section's mark: the section's icon tile on the
  * hero's dot grid, in the panel's top-right corner.
  *
  * The hero sits on engineering paper; each section below keeps a corner of

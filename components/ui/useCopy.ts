@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 export const COPIED_MS = 2000;
 
 /**
- * One copy behaviour for every copy button on the site (v2.1.0 draft).
+ * One copy behaviour for every copy button on the site.
  *
  * The buttons had drifted apart: the footer's curl hint raised a toast on
  * success, the error pages said "Copied" or "Copied trace", the share menu

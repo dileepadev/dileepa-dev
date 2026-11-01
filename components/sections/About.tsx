@@ -11,7 +11,7 @@ import { paragraphs as splitParagraphs } from "@/lib/format";
  * so the whole block is one field in the admin rather than a heading and a body
  * that can drift apart.
  *
- * The heading and the paragraphs are the whole section (v2.1.0 draft). Six
+ * The heading and the paragraphs are the whole section. Six
  * cards used to follow - AI engineering, open source, speaking, writing,
  * videos, community - each an icon, a title and three generic lines. They
  * restated the paragraphs above them and the pages the rail already links,

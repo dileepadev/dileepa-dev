@@ -716,7 +716,7 @@ export async function getGallery(limit = 24): Promise<GalleryPhoto[]> {
 /**
  * Everything the homepage needs, in one round of requests.
  *
- * The hero, About and Contact (v2.1.0 draft): roles, courses, communities and
+ * The hero, About and Contact: roles, courses, communities and
  * projects moved to their own pages, so they are no longer fetched here. The
  * hero's "now" cards need only the newest post, talk and video.
  *

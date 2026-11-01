@@ -160,7 +160,7 @@ export const TERMINAL = {
 /**
  * Primary navigation.
  *
- * The homepage is the front door, not the whole site (v2.1.0 draft): it keeps
+ * The homepage is the front door, not the whole site: it keeps
  * the hero, About and Contact, and Work and Education are pages of their own
  * beside the index pages. So the nav mixes the two kinds of link - a hash for
  * a homepage section, a path for a page - and `isNavCurrent` in `Navbar.tsx`
@@ -178,7 +178,7 @@ export const NAV_LINKS: NavLink[] = [
 /**
  * The footer's link columns, shown below the width the rail appears.
  *
- * Named for what they hold (v2.1.0 draft): "About me" - who, where they
+ * Named for what they hold: "About me" - who, where they
  * have worked and studied, how to reach them - and "Explore" - what they
  * make and do. They were "Site" and "Elsewhere", which no longer described
  * them once every link in both pointed at a page of this site. The mobile

@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 /**
- * The brand lockup: `@dileepadev` (v2.1.0 draft - was `dileepadev /.`).
+ * The brand lockup: `@dileepadev` (- was `dileepadev /.`).
  *
  * The handle the owner uses everywhere else, as the logo. The wordmark stays
  * at full contrast and the `@` one step muted - the same two-part split the

@@ -17,7 +17,7 @@ const CLOSE_MS = 200;
 /**
  * Accessible, keyboard-navigable full-screen image viewer (lightbox).
  *
- * It opens and closes at the pace of the page transitions (v2.1.0 draft): the
+ * It opens and closes at the pace of the page transitions: the
  * backdrop fades, and the photo fades in a beat later while it eases up from
  * 96% to full size; closing plays the same, a little quicker. Every way out -
  * Escape, the close button, a click on the backdrop - runs the close, and the
