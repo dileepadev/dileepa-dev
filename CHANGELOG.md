@@ -13,6 +13,54 @@ Changes are organized into the following categories:
 
 Unreleased changes go here.
 
+## [v2.1.0] - 2026-11-01
+
+> [!NOTE]
+> The site adopts **design system v2.1**, which was designed here first and then written down in
+> `dileepadev` ([dileepadev#4](https://github.com/dileepadev/dileepadev/issues/4)). The brand drops
+> its hue: the accent is the text colour, the logo is `@dileepadev`, and emerald survives only as
+> the success state. Visual only - no route, data or API changes. See
+> [issue #27](https://github.com/dileepadev/dileepa-dev/issues/27).
+
+### Changed - v2.1.0
+
+- **Monochrome palette.** Every accent resolves to `--brand`, the text colour. Paragraphs move to
+  `--fg-body`, fields to `--border-input` (3:1), and emerald is used only for success ticks.
+- **The lockup is `@dileepadev`** - the `@` muted, the wordmark at full contrast, both Manrope 500 -
+  on the site, the brand page and the terminal banner.
+- **Layout: a profile rail and panels.** At 1024px and up a sticky rail (portrait, name, status,
+  navigation, socials) sits beside a column of panels; below it a floating nav takes over. The
+  homepage becomes the front door (hero, About, Contact), and Work and Education get pages of
+  their own.
+- **Type by role.** A fluid display, H1 and lead; every heading at 500; 700 for the display line
+  only; 13px as the floor.
+- **One shape system.** Fixed corners for panels, tiles and blocks, capsules for every control
+  and field, concentric rows inside tiles. Edges only on things that act.
+- **Motion with a job.** Pages cross-fade, the image viewer opens at the same pace, hovers share
+  one timing, and live status dots pulse.
+- **New social cards.** `og.png` and `og2.png` are a flat split card - the name, `@dileepadev`,
+  "AI Engineer" and `dileepa.dev` beside the colour portrait.
+- **The terminal profile** (`curl -L dileepa.dev`) leads with a quadrant-block portrait and a
+  neofetch-style panel, with clickable links where the terminal supports them.
+
+### Added - v2.1.0
+
+- The site's own form validation messages in place of the browser's.
+- A reading-progress ring on the back-to-top button; one copy-button behaviour with a tick.
+- Section icon tiles, event date stamps, a highlighted page-path capsule.
+- `llms.txt` built from the API, plus `llms-full.txt`.
+
+### Fixed - v2.1.0
+
+- Field focus is one 2px edge, not an edge plus a grey halo.
+- Code blocks settle their language on the server, so they no longer mismatch on hydration.
+- JetBrains Mono is requested as a variable font, which fixes the Turbopack font URL error.
+- Unfiltered filters read "All"; communities list current roles first.
+
+### Brand tokens - v2.1.0
+
+- `app/brand-tokens.css` and `docs/` re-vendored from `dileepadev` brand tokens v2.1.
+
 ## [v2.0.2] - 2026-09-14
 
 > [!NOTE]
