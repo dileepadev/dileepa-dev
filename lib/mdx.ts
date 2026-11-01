@@ -10,7 +10,7 @@
 
 import rehypeShiki, { type RehypeShikiOptions } from "@shikijs/rehype";
 import GithubSlugger from "github-slugger";
-import type { MDXRemoteProps } from "next-mdx-remote/rsc";
+import type { CompileOptions } from "@mdx-js/mdx";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
@@ -32,30 +32,34 @@ const shikiOptions: RehypeShikiOptions = {
   ],
 };
 
-export const mdxOptions: MDXRemoteProps["options"] = {
-  parseFrontmatter: false,
-  mdxOptions: {
-    // Parse as Markdown, not MDX. The posts are plain Markdown by contract -
-    // `blog-dileepa-dev/AGENTS.md` says so, and a post needing a component is
-    // a missing feature here rather than JSX in prose. Left at the default
-    // `mdx`, ordinary Markdown is a syntax error: `<` starts JSX, so a bare
-    // `<https://…>` autolink or an `<!-- … -->` comment fails the whole build,
-    // and `{` starts an expression. Under `md` those are Markdown again.
-    format: "md",
-    remarkPlugins: [remarkGfm],
-    rehypePlugins: [
-      rehypeImageSize,
-      rehypeSlug,
-      [
-        rehypeAutolinkHeadings,
-        {
-          behavior: "wrap",
-          properties: { className: "heading-anchor" },
-        },
-      ],
-      [rehypeShiki, shikiOptions],
+/**
+ * The Markdown pipeline, shared by `PostBody` (`lib/post-body.tsx`).
+ *
+ * Parse as Markdown, not MDX. The posts are plain Markdown by contract -
+ * `blog-dileepa-dev/AGENTS.md` says so, and a post needing a component is a
+ * missing feature here rather than JSX in prose. Under the default `mdx`,
+ * ordinary Markdown is a syntax error: `<` starts JSX, so a bare
+ * `<https://…>` autolink or an `<!-- … -->` comment fails the whole build,
+ * and `{` starts an expression. Under `md` those are Markdown again.
+ */
+export const markdownPlugins: Pick<
+  CompileOptions,
+  "format" | "remarkPlugins" | "rehypePlugins"
+> = {
+  format: "md",
+  remarkPlugins: [remarkGfm],
+  rehypePlugins: [
+    rehypeImageSize,
+    rehypeSlug,
+    [
+      rehypeAutolinkHeadings,
+      {
+        behavior: "wrap",
+        properties: { className: "heading-anchor" },
+      },
     ],
-  },
+    [rehypeShiki, shikiOptions],
+  ],
 };
 
 export interface Heading {

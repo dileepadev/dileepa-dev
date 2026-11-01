@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { MDXRemote } from "next-mdx-remote/rsc";
 import { Calendar, Clock } from "lucide-react";
 import {
   pickReadNext,
@@ -15,11 +14,12 @@ import { RailContents } from "@/components/providers/RailContents";
 import { Badge, Container, PagePath, Section } from "@/components/ui";
 import { api } from "@/lib/api";
 import type { BlogPost } from "@/lib/api-types";
-import { getPostContent } from "@/lib/content";
+import { getAllContent, getPostContent } from "@/lib/content";
 import { SITE_CONFIG } from "@/lib/constants";
 import { pageMetadata } from "@/lib/metadata";
 import { jsonLd } from "@/lib/utils";
-import { extractHeadings, mdxOptions } from "@/lib/mdx";
+import { extractHeadings } from "@/lib/mdx";
+import { PostBody } from "@/lib/post-body";
 import {
   formatDate,
   postUrl,
@@ -53,6 +53,11 @@ interface Params {
 export const dynamicParams = true;
 
 export async function generateStaticParams() {
+  // The build's one full listing of the post bodies. It is what runs
+  // `assertNotEmpty`, so a ref without the posts directory fails the build
+  // here rather than prerendering a 404 for every post; a post page itself
+  // reads only its own file (`getPostContent`).
+  await getAllContent();
   const posts = await api.getAllBlogs();
   return (posts ?? []).map((post) => ({ slug: post.slug }));
 }
@@ -223,11 +228,7 @@ export default async function BlogPostPage({ params }: Params) {
             )}
 
             <div className="prose">
-              <MDXRemote
-                source={content.body}
-                components={mdxComponents}
-                options={mdxOptions}
-              />
+              <PostBody source={content.body} components={mdxComponents} />
             </div>
 
             {(post.tags ?? []).length > 0 && (
