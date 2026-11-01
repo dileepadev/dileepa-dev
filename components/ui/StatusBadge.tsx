@@ -9,15 +9,12 @@ interface StatusBadgeProps {
 
 /**
  * A clean status badge conforming to the chip design specification,
- * featuring a solid emerald dot indicator.
+ * featuring the shared status dot, which pulses like every live status.
  */
 export function StatusBadge({ children, className }: StatusBadgeProps) {
   return (
     <Chip className={cn("inline-flex items-center gap-2", className)}>
-      <span
-        className="h-1.5 w-1.5 rounded-full bg-brand shrink-0"
-        aria-hidden="true"
-      />
+      <span className="hero-status-dot" aria-hidden="true" />
       <span>{children}</span>
     </Chip>
   );

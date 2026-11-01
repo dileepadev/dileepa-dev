@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { BlogPost } from "@/lib/api-types";
+import { seriesTitle } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 /**
@@ -25,13 +26,10 @@ export function SeriesNav({
   const name = ordered[0]?.series?.name;
 
   return (
-    <nav
-      aria-label="Posts in this series"
-      className="rounded-lg border border-border-strong bg-bg-surface p-6"
-    >
+    <nav aria-label="Posts in this series" className="tile p-6">
       <p className="font-mono text-small font-medium text-brand">Series</p>
       <p className="mt-1 text-h3 font-medium tracking-[-0.02em] text-fg">
-        {name}
+        {seriesTitle(name)}
       </p>
       <ol className="mt-4 space-y-2">
         {ordered.map((post, index) => {

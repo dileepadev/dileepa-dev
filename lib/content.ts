@@ -268,6 +268,8 @@ export const contentSource = LOCAL_PATH
 // Cached for the process. The ref is pinned, so the content cannot change
 // underneath a running build.
 let cache: Promise<Map<string, PostContent>> | null = null;
+/** Posts read one file at a time by `getPostContent`, per instance. */
+const single = new Map<string, PostContent>();
 
 /**
  * An empty post set is a configuration fault, not an empty blog.
@@ -359,40 +361,44 @@ export async function getPostContent(
   const match = SLUG_PATTERN.exec(slug);
   if (!match) return null;
 
-  const posts = await getAllContent();
-  const existing = posts.get(slug);
-  if (existing) return existing;
+  // One file, not the whole set. A cold instance used to list and parse every
+  // post to render one of them (issue #31); the date-scoped path names the
+  // file, so read it directly. The empty-set guard does not depend on this
+  // path: `/blog/[slug]`'s `generateStaticParams` lists the content once per
+  // build, which is where `assertNotEmpty` fails a build on a wrong ref.
+  if (cache) {
+    const listed = (await getAllContent()).get(slug);
+    if (listed) return listed;
+  }
+  const known = single.get(slug);
+  if (known) return known;
 
-  // On-demand fallback: fetch directly by date-scoped slug path if newly added
   const [, year, month] = match;
   const relPath = `${POSTS_DIR}/${year}/${month}/${slug}.md`;
 
   try {
     if (LOCAL_PATH) {
       const fullPath = path.resolve(LOCAL_PATH, relPath);
-      const raw = await fs.readFile(fullPath, "utf8");
-      const parsed = parse(fullPath, raw);
-      posts.set(slug, parsed);
-      return parsed;
+      const raw = await fs.readFile(fullPath, "utf8").catch(() => null);
+      if (raw !== null) {
+        const parsed = parse(fullPath, raw);
+        single.set(slug, parsed);
+        return parsed;
+      }
+    } else {
+      const response = await fetchRetrying(
+        `https://raw.githubusercontent.com/${REPO}/${REF}/${relPath}`,
+        { next: { revalidate: CONTENT_REVALIDATE } },
+      );
+      if (response.ok) {
+        const parsed = parse(relPath, await response.text());
+        single.set(slug, parsed);
+        return parsed;
+      }
     }
 
-    const response = await fetchRetrying(
-      `https://raw.githubusercontent.com/${REPO}/${REF}/${relPath}`,
-      { next: { revalidate: CONTENT_REVALIDATE } },
-    );
-    if (response.ok) {
-      const raw = await response.text();
-      const parsed = parse(relPath, raw);
-      posts.set(slug, parsed);
-      return parsed;
-    }
-
-    // Fallback scan for a dated post filed outside its year/month directory.
-    const fresh = await (LOCAL_PATH ? listLocal() : listRemote());
-    for (const post of fresh) {
-      posts.set(post.slug, post);
-    }
-    return posts.get(slug) ?? null;
+    // A dated post filed outside its year/month directory: list the set.
+    return (await getAllContent()).get(slug) ?? null;
   } catch (error) {
     console.error(`[content] Failed on-demand fetch for ${slug}:`, error);
     return null;

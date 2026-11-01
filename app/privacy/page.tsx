@@ -17,7 +17,6 @@ export default function PrivacyPolicyPage() {
         <div className="mb-2">
           <PagePath path="/privacy" />
         </div>
-        <div className="section-label">{PAGES.privacy.label}</div>
         <h1>{PAGES.privacy.title}</h1>
         <p className="section-intro">{PAGES.privacy.intro}</p>
 

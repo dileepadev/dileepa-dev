@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useRef, ReactNode } from "react";
+import { useRef, ReactNode } from "react";
 import { Check, Copy, Terminal } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useCopy } from "@/components/ui/useCopy";
 
 const LANGUAGE_MAP: Record<string, string> = {
   ts: "TypeScript",
@@ -44,6 +45,16 @@ const LANGUAGE_MAP: Record<string, string> = {
   java: "Java",
   kotlin: "Kotlin",
   swift: "Swift",
+  powershell: "PowerShell",
+  ps1: "PowerShell",
+  pwsh: "PowerShell",
+  cmd: "Command Prompt",
+  bat: "Batch",
+  git: "Git",
+  text: "Text",
+  txt: "Text",
+  plaintext: "Text",
+  console: "Console",
 };
 
 interface PreProps extends React.HTMLAttributes<HTMLPreElement> {
@@ -71,54 +82,33 @@ function getNodeText(node: ReactNode): string {
  * prominent language label, and one-click copy button.
  */
 export function CodeBlock({ children, className, ...props }: PreProps) {
-  const [copied, setCopied] = useState(false);
+  const { copied, copy } = useCopy();
   const preRef = useRef<HTMLPreElement>(null);
 
+  // `data-language` comes from Shiki for a highlighted block, and from
+  // `fenceLanguage` in ./index.tsx, on the server, for one it left plain.
+  // Not read off `children` here: in the browser this client component
+  // cannot see into its server-rendered children, so the label would differ
+  // from the server's and fail hydration.
   const rawLanguage =
     props["data-language"] ||
-    (className?.match(/language-([a-zA-Z0-9_-]+)/)?.[1] ?? "");
+    (className?.match(/language-([a-zA-Z0-9_+#-]+)/)?.[1] ?? "");
 
   const displayLanguage = rawLanguage
     ? LANGUAGE_MAP[rawLanguage.toLowerCase()] ||
       rawLanguage.charAt(0).toUpperCase() + rawLanguage.slice(1)
     : "Code";
 
-  const handleCopy = async () => {
-    try {
-      let textToCopy = "";
-      if (preRef.current) {
-        textToCopy = preRef.current.innerText;
-      } else {
-        textToCopy = getNodeText(children);
-      }
-
-      // Trim any trailing newline artifact
-      textToCopy = textToCopy.replace(/\n$/, "");
-
-      if (navigator?.clipboard?.writeText) {
-        await navigator.clipboard.writeText(textToCopy);
-      } else {
-        // Fallback for older contexts
-        const textArea = document.createElement("textarea");
-        textArea.value = textToCopy;
-        textArea.style.position = "fixed";
-        textArea.style.opacity = "0";
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-        document.execCommand("copy");
-        document.body.removeChild(textArea);
-      }
-
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      setCopied(false);
-    }
+  const handleCopy = () => {
+    const text = preRef.current
+      ? preRef.current.innerText
+      : getNodeText(children);
+    // Trim the trailing newline the block's last line leaves.
+    return copy(text.replace(/\n$/, ""));
   };
 
   return (
-    <div className="code-block-wrapper my-6 overflow-hidden rounded-lg border border-border-strong bg-bg-surface transition-colors duration-200 hover:border-brand/40">
+    <div className="code-block-wrapper my-6 overflow-hidden rounded-block border border-border-strong bg-bg-surface transition-colors">
       {/* Code Header Bar */}
       <div className="flex items-center justify-between border-b border-border-strong bg-bg-surface px-4 py-2 text-small">
         <div className="flex items-center gap-2">
@@ -131,26 +121,17 @@ export function CodeBlock({ children, className, ...props }: PreProps) {
         <button
           type="button"
           onClick={handleCopy}
-          aria-label={copied ? "Copied code" : "Copy code to clipboard"}
-          className={cn(
-            "code-copy-btn inline-flex items-center gap-1.5 rounded-sm border px-2.5 py-1 font-mono text-label transition-all duration-150",
-            copied
-              ? "border-brand/60 bg-surface-hover text-brand font-medium"
-              : "border-border-strong bg-transparent text-fg-muted hover:border-brand hover:bg-surface-hover hover:text-fg active:scale-95",
-          )}
+          aria-label="Copy code"
+          className="code-copy-btn btn btn--secondary btn--sm"
         >
           {copied ? (
             <>
-              <Check
-                className="h-3 w-3 text-brand"
-                strokeWidth={2.5}
-                aria-hidden="true"
-              />
-              <span>Copied!</span>
+              <Check className="copy-tick" aria-hidden="true" />
+              <span>Copied</span>
             </>
           ) : (
             <>
-              <Copy className="h-3 w-3" strokeWidth={2} aria-hidden="true" />
+              <Copy className="copy-icon" aria-hidden="true" />
               <span>Copy</span>
             </>
           )}

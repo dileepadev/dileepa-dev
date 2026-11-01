@@ -20,20 +20,9 @@ export function EmptyState({
   className?: string;
 }) {
   return (
-    <div
-      className={cn(
-        "rounded-lg border border-border-strong bg-bg-surface px-6 py-12 text-center",
-        className,
-      )}
-    >
+    <div className={cn("tile px-6 py-12 text-center", className)}>
       <div className="mb-3 flex justify-center text-fg-muted/60">
-        {icon ?? (
-          <FolderSearch
-            className="h-8 w-8"
-            strokeWidth={1.5}
-            aria-hidden="true"
-          />
-        )}
+        {icon ?? <FolderSearch className="h-8 w-8" aria-hidden="true" />}
       </div>
       <p className="max-w-none text-fg">{title}</p>
       {hint && (

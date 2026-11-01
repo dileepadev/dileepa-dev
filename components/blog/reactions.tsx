@@ -10,8 +10,8 @@ import type { ReactionCounts, ReactionKind } from "@/lib/api-types";
  * One definition, three surfaces - posts, comments and replies all import this,
  * so they cannot drift into teaching two vocabularies.
  *
- * **Why emoji rather than a custom icon set.** §1 of the brand guide is that
- * emerald is the only accent and there is no second hue; the only other hues in
+ * **Why emoji rather than a custom icon set.** The palette is black to white
+ * with no brand hue; the only hues in
  * the system are `--error` and `--warning`, both annotated "UI state only,
  * never a brand accent". Four hand-drawn colour icons would mean inventing four
  * brand hues and hard-coding them in a component, against that rule and against
@@ -195,12 +195,13 @@ export function ReactionPicker({
         data-selected={active ? "true" : "false"}
         onClick={() => (open ? setOpen(false) : openNow())}
         className={
-          "emoji-btn inline-flex items-center gap-2 rounded-sm font-mono transition-colors " +
-          "disabled:cursor-not-allowed disabled:opacity-60 " +
-          (compact
-            ? "text-small "
-            : "min-h-[var(--control-h)] px-2 text-small ") +
-          (active ? "text-brand" : "text-fg-muted hover:text-brand")
+          // On the post bar it is the same small button as Comment and Share
+          // beside it; on a comment it stays a text action, like Reply.
+          compact
+            ? "emoji-btn inline-flex items-center gap-2 rounded-inline font-mono text-small transition-colors " +
+              "disabled:cursor-not-allowed disabled:opacity-60 " +
+              (active ? "text-brand" : "text-fg-muted hover:text-brand")
+            : "emoji-btn btn btn--secondary btn--sm disabled:cursor-not-allowed disabled:opacity-60"
         }
       >
         {active ? (
@@ -208,11 +209,7 @@ export function ReactionPicker({
             {active.emoji}
           </span>
         ) : (
-          <SmilePlus
-            className="h-4 w-4 shrink-0"
-            strokeWidth={1.75}
-            aria-hidden="true"
-          />
+          <SmilePlus className="h-4 w-4 shrink-0" aria-hidden="true" />
         )}
         <span>{active ? active.label : "React"}</span>
       </button>
@@ -222,8 +219,7 @@ export function ReactionPicker({
           role="menu"
           aria-label="Choose a reaction"
           className={
-            "absolute left-0 z-20 flex gap-0.5 rounded-full border border-border-strong " +
-            "bg-bg-surface p-1 shadow-lg " +
+            "popover popover--pill absolute left-0 z-20 flex gap-0.5 p-1 " +
             // Direction is not cosmetic. On a comment the trigger sits at the
             // bottom of the card, so opening upward covers the comment being
             // reacted to - you cannot see what you are rating. Below it is the
@@ -253,7 +249,7 @@ export function ReactionPicker({
                 }}
                 className={
                   "emoji-btn inline-flex h-9 w-9 items-center justify-center rounded-full " +
-                  "text-[1.15rem] transition-[background-color] duration-[160ms] ease-brand " +
+                  "text-[1.15rem] transition-[background-color] " +
                   "disabled:cursor-not-allowed disabled:opacity-60 " +
                   (selected
                     ? "bg-surface-hover ring-1 ring-brand"

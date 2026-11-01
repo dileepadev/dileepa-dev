@@ -67,21 +67,13 @@ export function LoadMore({
           className="inline-flex items-center gap-2"
         >
           <span>Load more ({nextBatch})</span>
-          <ArrowDown
-            className="h-3.5 w-3.5 shrink-0"
-            strokeWidth={2}
-            aria-hidden="true"
-          />
+          <ArrowDown className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
         </Button>
 
         {onShowAll && remaining > nextBatch && (
-          <button
-            type="button"
-            onClick={onShowAll}
-            className="cursor-pointer border-none bg-transparent px-2 py-1 font-mono text-small text-fg-muted transition-colors hover:text-brand"
-          >
+          <Button variant="secondary" onClick={onShowAll}>
             Show all
-          </button>
+          </Button>
         )}
       </div>
     </div>

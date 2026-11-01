@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { ApiOfflinePage, Container, PagePath, Section } from "@/components/ui";
-import { api } from "@/lib/api";
+import { api, keepLastGoodRender } from "@/lib/api";
 import { PAGES } from "@/lib/constants";
 import { pageMetadata } from "@/lib/metadata";
 import { ProfileClient } from "./_components/ProfileClient";
@@ -27,6 +27,7 @@ export default async function ProfilePage() {
   ]);
 
   if (!about) {
+    keepLastGoodRender("/profile");
     return <ApiOfflinePage path="/profile" />;
   }
 
@@ -36,11 +37,6 @@ export default async function ProfilePage() {
         <div className="mb-10 sm:mb-12">
           <div className="mb-4">
             <PagePath path="/profile" />
-          </div>
-          <div className="flex items-center gap-2 mb-3">
-            <div className="section-label">{PAGES.profile.label}</div>
-            <span className="text-border-strong select-none">/</span>
-            <span className="font-mono text-xs text-fg-muted">Media kit</span>
           </div>
           <h1 className="display">{PAGES.profile.title}</h1>
           <p className="section-intro mt-4 max-w-2xl">{PAGES.profile.intro}</p>

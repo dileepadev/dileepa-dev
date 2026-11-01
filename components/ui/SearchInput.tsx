@@ -60,11 +60,7 @@ export function SearchInput({
 
   return (
     <div className={cn("search-input-wrap", className)}>
-      <Search
-        className="search-input-icon"
-        strokeWidth={1.75}
-        aria-hidden="true"
-      />
+      <Search className="search-input-icon" aria-hidden="true" />
       <input
         ref={inputRef}
         type="search"
@@ -85,7 +81,7 @@ export function SearchInput({
           className="search-input-clear"
           aria-label="Clear search"
         >
-          <X className="h-3.5 w-3.5" strokeWidth={2} />
+          <X className="h-3.5 w-3.5" />
         </button>
       ) : (
         autoFocusHotkey && (

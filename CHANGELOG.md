@@ -13,6 +13,215 @@ Changes are organized into the following categories:
 
 Unreleased changes go here.
 
+## [v2.1.0] - 2026-11-01
+
+> [!NOTE]
+> The site adopts **design system v2.1.0**. It was designed here first, on real content, and only
+> then written down in `dileepadev`
+> ([dileepadev#4](https://github.com/dileepadev/dileepadev/issues/4)). The brand drops its hue:
+> the accent is the text colour, the logo is `@dileepadev`, and the success state is the only
+> colour left. Pages sit in panels beside a profile rail, and Work and Education get pages of their
+> own. Visual and structural only: no API, data-model or redirect changes. See
+> [issue #27](https://github.com/dileepadev/dileepa-dev/issues/27).
+
+### Changed - v2.1.0
+
+#### Brand
+
+- **Black to white, no hue.** `--brand` is the text colour itself: Ink 100 on Carbon (18.0:1)
+  and Paper 900 on Paper (17.3:1). A primary button is a solid ink fill with the page colour as
+  its text, and its hover eases toward the background instead of changing hue. One hue spent on
+  every signal had stopped signalling; contrast and weight carry emphasis now.
+- **Green is a state only.** `--success` (`#23B888` dark, `#087F5B` light) marks a completed action,
+  such as a copy tick, and is never used as decoration.
+- **The logo is `@dileepadev`.** The `@` is one step muted and the wordmark full contrast, both
+  Manrope 500, with no gap. It replaces `dileepadev /.` everywhere: the nav, the rail, the
+  generated social cards, the brand page and the terminal banner. The handle is what people
+  search, tag and type.
+- **New social cards.** `public/og.png` (1200x630) and `og2.png` (1600x900) are a flat split card:
+  `@dileepadev`, the name, "AI Engineer" and `dileepa.dev` beside the colour portrait. The old
+  cards still carried emerald and the retired lockup.
+
+#### Layout
+
+- **A profile rail beside every page.** From 1024px a sticky rail holds:
+  - the photo, with the theme switch on its corner;
+  - name and role, and a pulsing availability status;
+  - "Get in touch";
+  - the navigation as one flowing list of chips, with Contact kept in it;
+  - the social links.
+
+  The rail never scrolls on a laptop. The photo gives up height first and stays anchored on the
+  face; only a window under ~660px tall scrolls.
+- **Contents mode.** On a blog post and on `/brand` the rail becomes the page's table of contents.
+  It follows the route, so it renders on the server and nothing jumps.
+- **Panels.** Every section, the rail and the footer is a panel at a 32px radius, with padding
+  from one `--panel-pad`. Content grids switch on the panel's own width (container queries), not
+  the window's, so they fit beside the rail.
+- **The floating nav below 1024px.** A 60px capsule one gutter from the top, lined up with the
+  panels under it. Its menu groups are "About me" and "Explore", matching the footer.
+- **The homepage is the front door:** the hero, About and Contact.
+  - Work and Education move to `/work` and `/education`, each opening on a path capsule, a title,
+    a count and a lead, with roles and courses as tiles.
+  - Short pages end on "Keep exploring": three tiles to related pages.
+  - The open-source section left the Work page.
+- **The hero** carries the tagline, the lead and three "latest" tiles: the newest post, talk and
+  video, each with its date. On a phone the face and name sit above the headline.
+- **Section marks.** Each section has an app-icon tile in its top-right corner: the section's
+  Lucide icon at 4rem, on a top-lit gradient tile over the hero's dot grid. The icons are a person
+  for About, a briefcase for Work, a graduation cap for Education and speech bubbles for Contact.
+
+#### Type
+
+- **A fluid scale, set by role.**
+  - Sizes: Display 44-80px at 700; H1 36-56px; H2 28px; a new Lead step (20-26px); H3 19px;
+    Body 17px; Small 15px; Label 13px.
+  - Every heading is 500, and 700 is used only for the display line and `<strong>`. Display and
+    H1 tracking is -0.04em.
+- **A third text colour, `--fg-body`,** for every paragraph read sentence by sentence: `#a8a8a8`
+  on Carbon (8.6:1), `#4f4f4f` on Paper (7.6:1). It sits a step under the titles and above
+  `--fg-muted`, which keeps dates, names and labels. This came from an audit of 8,500 text
+  elements across 16 routes, both themes and two widths.
+- **Nothing below 13px.** `text-xs` and other off-scale sizes are gone.
+
+#### Shape, edges and focus
+
+- **Three kinds of corner,** after Apple's shape system:
+  - Fixed: panel 32, tile 22, block 12, inline 6.
+  - Capsule: every control, and a field's 20px corner.
+  - Concentric: menu rows 6px inside their tile.
+- **An edge means it acts.** Fields take `--border-input` (3:1, WCAG 1.4.11). Buttons, selects and
+  interactive chips take `--border-strong`. Labels have no edge.
+- **Focus.** A field focuses with a single 2px edge and no halo. Buttons and toggles keep the 3px
+  ring, since they have no edge to change.
+- **One card shape.** A tile with a meta row, the title as its only link, a line or two and a foot
+  of chips is shared by posts, events, communities and the homepage. A card is not a link and
+  has no hover; its title is.
+- **Every text link carries an arrow:** → on the site, ↗ off it. Prose links keep their underline.
+
+#### Motion
+
+- **Pages cross-fade.** On every change of path, the old page fades out in 160ms and the new one
+  fades in over 280ms while rising 6px (React `<ViewTransition>`). The rail and nav stay still,
+  and reduced motion swaps at once.
+- **The image viewer** opens (220ms, the photo easing up from 96% over 300ms) and closes (200ms)
+  at the same pace.
+- **One hover timing:** every hover and state change runs at 160ms on one curve, and menus open
+  with the same dropdown.
+- **Live status dots pulse** ("Open to work", Current, Upcoming). Nav and footer markers don't,
+  because they mark a place, not a status.
+
+#### Components and pages
+
+- Buttons gain a 32px action size, and there is one segmented ToggleGroup control. Selects read
+  "Status: All" when unfiltered.
+- One copy behaviour (`useCopy`) everywhere: the icon becomes a green tick and the label
+  "Copied" for two seconds, screen readers hear "Copied to clipboard", and a failure is reported
+  in a toast.
+- **The back-to-top button's edge is a reading-progress ring,** filling clockwise as the page is
+  read.
+- Event dates are a date stamp, the day at H2 size over the month and year. Community date
+  ranges are pills, with current roles listed first and the rest by their latest end date.
+- The page path (`home / blog`) sits in a highlighted capsule; a long slug ends in an ellipsis on
+  one line.
+- **The 404, 500 and 503 pages** share one terminal card that sizes to its own width and grows
+  instead of clipping.
+- The footer shows the package version, linked to its release, and marks the current page. The
+  curl hint is a command capsule with a copy button.
+- **Forms validate in the site's own UI,** not the browser's bubbles. Each message is written
+  under its field (`aria-invalid`, `aria-describedby`), focus moves to the first problem, and a
+  message clears the moment its field is fixed. The comment form stars its required fields like
+  the contact form.
+- **Videos show their thumbnails.** Each `/videos` row is a 16:9 thumbnail (YouTube's
+  `hqdefault`, cropped so the letterbox bars fall outside the frame) beside the title, date and
+  description, with the length on the picture and a play cue on hover. The title stays the one
+  link a keyboard reaches. `i.ytimg.com` joins the CSP's `img-src`.
+- `/brand` documents the system: the logo, the palette and contrast, type roles, the shape
+  system and edge rule, the form controls, every icon the site draws, and the section marks.
+
+#### Blog
+
+- **Wider posts.** The contents moved into the rail, so the article is 862px instead of 594px at
+  1440px, and paragraphs keep their 68ch measure.
+- **Contents links always land.** Heading ids now come from `github-slugger`, so links to headings
+  with an em dash or a slash work. A click holds its highlight until the scroll settles.
+- Post images carry their width and height, looked up from Cloudinary at build time, so the page
+  no longer shifts as they load.
+- Code blocks name their language. Wide tables scroll in their own box.
+- "Read next" uses the shared post cards, and series show as names ("Microsoft Foundry").
+- Production content is pinned to the blog commit that replaces the text diagrams in four posts
+  with images.
+
+#### Terminal profile (`curl -L dileepa.dev`)
+
+- **It leads with the portrait** as a 34x22 quadrant-block image in the 256-colour grey ramp, with
+  the studio backdrop cut out. Beside it sits a neofetch-style panel.
+- The profile data is current, with clickable links (OSC 8) where the terminal supports them.
+- The banner draws `@dileepadev`.
+
+#### Rendering cost ([#31](https://github.com/dileepadev/dileepa-dev/issues/31))
+
+- **A post body compiles once.** Markdown, image sizes and Shiki highlighting are compiled by
+  `@mdx-js/mdx` and cached by a hash of the source, so a daily regeneration only evaluates the
+  result. The HTML is identical to before.
+- **A cold instance reads one post file,** not every post, to render a post page. The empty-set
+  guard still fails a wrong-ref build: the post route's `generateStaticParams` lists the content
+  once per build.
+- **On-demand revalidation:** `POST /api/revalidate` with `Authorization: Bearer
+  $REVALIDATE_SECRET` purges the given paths, or every page. It is off until `REVALIDATE_SECRET` is
+  set.
+
+#### Machine-readable
+
+- **`llms.txt` is built from the API** in the llmstxt.org format: profile, writing, projects,
+  talks, and an Optional section. The new `llms-full.txt` (about 27KB) carries every post, event,
+  project, video and community, plus the work history. Both degrade to valid files when the API
+  is down. The homepage description and the `/work` and `/education` links are current.
+
+### Fixed - v2.1.0
+
+- **`curl dileepa.dev?nocolor` works on Vercel** ([#30](https://github.com/dileepadev/dileepa-dev/issues/30)).
+  The route behind `proxy.ts`'s rewrite received an empty query there, so every flag on `/`
+  (`?nocolor`, `?static`, `?plain`, `?raw`, `?fast`, `?now`, `?nointro`) was ignored and the colour
+  intro streamed. The proxy now carries the query in an `x-terminal-query` request header as well,
+  and the route reads it when its own query arrives empty.
+- **An API outage no longer caches the offline page for a day**
+  ([#31](https://github.com/dileepadev/dileepa-dev/issues/31)). A runtime regeneration that finds
+  the API down throws instead, so Next keeps serving the last good render; a build still renders
+  the offline page, so a deploy never fails because the API blinked.
+- **The dev build failed on every route** ("Can't resolve ... internal/font/google/font"). Google
+  Fonts answered the two-weight JetBrains Mono request with dynamic URLs that Turbopack's
+  `next/font` cannot parse (vercel/next.js#99114). The variable font is now requested instead.
+  The same failure could have hit a production deploy.
+- **Code blocks no longer mismatch on hydration:** a block's language is settled on the server.
+- **A newly added role is listed first.** Roles and education were shown in the API's `order`,
+  and a record added in the admin arrives with 0, so the current role landed last on `/work`
+  and `/profile` showed the previous job. Both now sort newest first by period, as communities
+  do: current first, then the latest end date.
+- **Field focus** draws one edge instead of an edge plus a grey halo.
+- **The theme switch's scrollbar** changes as the circular reveal reaches it, not before.
+- **Event cards** no longer push the events page sideways on a 390px phone, and wide tables in
+  posts scroll in place.
+- **The footer's current-page marker** works. Its colour utility used to lose to `.footer-meta a`.
+
+### Removed - v2.1.0
+
+- Emerald as an accent, the `dileepadev /.` lockup, and the text-on-emerald tokens.
+- The page label that repeated the path and the title over every page.
+- Unused styles: the profile window, the hero readout, project cards, `.card`, view tabs and
+  series cards, along with leftover draft markers and old-palette comments.
+
+### Brand tokens - v2.1.0
+
+- `app/brand-tokens.css` and the `docs/` copies are re-vendored from `dileepadev` brand tokens
+  v2.1.0, which were written from this site's shipped CSS. They hold current values only; the
+  unused `--radius` / `--radius-xl` are gone.
+
+### Dependencies - v2.1.0
+
+- `github-slugger` and `@mdx-js/mdx` are direct dependencies; both were already installed
+  transitively. `next-mdx-remote` is removed.
+
 ## [v2.0.2] - 2026-09-14
 
 > [!NOTE]
@@ -361,7 +570,7 @@ Unreleased changes go here.
   record, which is also what renders under the hero. A snippet that matches the first line a
   reader sees on the page beats one written for the snippet, and the previous text was a framing
   invented here from the speaking topics rather than anything the site says about itself.
-- **Brand tokens re-vendored at v2.1** and `app/globals.css` trimmed to match. The override block
+- **Brand tokens re-vendored at v2.1.0** and `app/globals.css` trimmed to match. The override block
   restored the neutral ramp, the radius scale, the type steps, the control height, the hairline,
   both border weights, the button fill and every derived interaction token - about a hundred
   declarations that the reconciled sheet now sets identically. Four font variables, the two
@@ -649,6 +858,7 @@ Unreleased changes go here.
 <!-- v0.0.1 -->
 
 [Unreleased]: https://github.com/dileepadev/dileepa-dev/branches
+[v2.1.0]: https://github.com/dileepadev/dileepa-dev/releases/tag/v2.1.0
 [v2.0.2]: https://github.com/dileepadev/dileepa-dev/releases/tag/v2.0.2
 [v2.0.1]: https://github.com/dileepadev/dileepa-dev/releases/tag/v2.0.1
 [v2.0.0]: https://github.com/dileepadev/dileepa-dev/releases/tag/v2.0.0

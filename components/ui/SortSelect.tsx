@@ -134,15 +134,10 @@ export function SortSelect<T extends string>({
         onClick={() => (isOpen ? closeMenu() : openMenu())}
         className={cn("sort-dropdown-trigger", isOpen && "is-open")}
       >
-        <ArrowUpDown
-          className="sort-dropdown-icon"
-          strokeWidth={1.75}
-          aria-hidden="true"
-        />
+        <ArrowUpDown className="sort-dropdown-icon" aria-hidden="true" />
         <span className="sort-dropdown-label">{selectedOption.label}</span>
         <ChevronDown
           className={cn("sort-dropdown-chevron", isOpen && "rotate-180")}
-          strokeWidth={1.75}
           aria-hidden="true"
         />
       </button>
@@ -176,11 +171,7 @@ export function SortSelect<T extends string>({
               >
                 <span className="sort-dropdown-item-text">{option.label}</span>
                 {isSelected && (
-                  <Check
-                    className="sort-dropdown-check"
-                    strokeWidth={2}
-                    aria-hidden="true"
-                  />
+                  <Check className="sort-dropdown-check" aria-hidden="true" />
                 )}
               </li>
             );

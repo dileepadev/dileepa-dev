@@ -45,37 +45,13 @@ export default async function SitemapPage() {
         path: "/#top",
         title: "Homepage on-page sections",
         type: "folder",
-        badge: "5 sections",
+        badge: "2 sections",
         children: [
           {
             id: "root/home/about",
             name: "#about",
             path: "/#about",
-            title: "About - Engineering background & focus pillars",
-            type: "section",
-            badge: "Section",
-          },
-          {
-            id: "root/home/work",
-            name: "#work",
-            path: "/#work",
-            title: "Work - Employment history, daily stack & projects",
-            type: "section",
-            badge: "Section",
-          },
-          {
-            id: "root/home/education",
-            name: "#education",
-            path: "/#education",
-            title: "Education - Qualifications & academic history",
-            type: "section",
-            badge: "Section",
-          },
-          {
-            id: "root/home/community",
-            name: "#community",
-            path: "/#community",
-            title: "Community - Leadership, talks, writing & videos",
+            title: "About - Engineering background",
             type: "section",
             badge: "Section",
           },
@@ -88,6 +64,22 @@ export default async function SitemapPage() {
             badge: "Section",
           },
         ],
+      },
+      {
+        id: "root/work",
+        name: "work",
+        path: "/work",
+        title: PAGES.work.title,
+        type: "page",
+        badge: "Experience",
+      },
+      {
+        id: "root/education",
+        name: "education",
+        path: "/education",
+        title: PAGES.education.title,
+        type: "page",
+        badge: "Education",
       },
       {
         id: "root/projects",
@@ -252,6 +244,14 @@ export default async function SitemapPage() {
         badge: "TXT",
       },
       {
+        id: "root/llms-full",
+        name: "llms-full.txt",
+        path: "/llms-full.txt",
+        title: "LLM & AI Agent Context File, in full",
+        type: "system",
+        badge: "TXT",
+      },
+      {
         id: "root/manifest",
         name: "manifest.json",
         path: "/manifest.json",
@@ -314,11 +314,10 @@ export default async function SitemapPage() {
             <div className="mb-2">
               <PagePath path="/sitemap" />
             </div>
-            <div className="section-label">{PAGES.sitemap.label}</div>
             <h1>{PAGES.sitemap.title}</h1>
           </div>
           {totalRoutes > 0 && (
-            <div className="inline-flex items-center gap-1.5 font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1 transition-colors duration-150 hover:border-brand hover:bg-surface-hover hover:text-fg cursor-default">
+            <div className="count-badge inline-flex items-center gap-1.5 font-mono text-small text-fg-muted px-2.5 py-1 shrink-0 mt-1">
               <span className="font-medium text-fg">{totalRoutes}</span>
               <span>Routes</span>
             </div>
@@ -327,11 +326,7 @@ export default async function SitemapPage() {
         <p className="section-intro">{PAGES.sitemap.intro}</p>
 
         <div className="mt-8">
-          <SiteTree
-            tree={tree}
-            totalRoutes={totalRoutes}
-            pagesList={PAGES_LIST}
-          />
+          <SiteTree tree={tree} pagesList={PAGES_LIST} />
         </div>
       </Container>
     </Section>
