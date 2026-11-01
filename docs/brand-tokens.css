@@ -12,34 +12,23 @@
    ============================================================ */
 
 /* ============================================================
-   Dileepa - brand tokens v2.1
+   Dileepa - brand tokens v2.1.0
    The palette is black to white. The accent is the text colour itself
    - near-white on Carbon, near-black on Paper - so emphasis comes from
-   contrast, weight and fill, never from a hue.
+   contrast, weight and fill, never from a hue. Colour appears only as a
+   state: --success, --error, --warning.
    Logo lockup: "@dileepadev" - wordmark at full contrast, "@" one step
-   muted. Emerald survives only as --success, a state colour like
-   --error.
+   muted.
    Every pairing below is verified against WCAG AA minimum.
-
-   v2.1 supersedes v2.0 (the emerald system). It was designed on
-   dileepa-dev, the platform's flagship surface, in its v2.1.0 release
-   (dileepa-dev#27), and written down here once that design settled
-   (dileepadev#4). See design-system.md §0 for what changed and why.
    ============================================================ */
 
 @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap");
 
 :root {
   /* --- raw palette (never reference these directly in components) --- */
-  --emerald-deep: #087f5b;
-  --emerald-bright: #23b888;
   --carbon: #050505;
   --paper: #f7f7f7;
 
-  /* Dark neutral ramp. Deeper than v2.0 at every stop - the page
-     foundation moved from #0D0D0D to #050505 - which is why a v2.0
-     surface and a v2.1 surface read as different weights of the same
-     design even though nothing else about the palette changed. */
   --ink-900: #050505;
   --ink-800: #0d0d0d;
   --ink-700: #141414;
@@ -48,11 +37,6 @@
   --ink-400: #8d8d8d;
   --ink-100: #f1f1f1;
 
-  /* Light neutral ramp. `paper-200`/`400`/`900` are materially unchanged
-     from v2.0 (sub-1% lightness adjustments, well inside rounding). The
-     real addition is `paper-300` - a second, more visible edge step
-     the v2.0 ramp had no room for once components needed to be told
-     apart from structural rules; see --border-strong below. */
   --paper-0: #ffffff;
   --paper-50: #f7f7f7;
   --paper-200: #e3e3e3;
@@ -60,28 +44,13 @@
   --paper-400: #6a6a6a;
   --paper-900: #131313;
 
-  /* text that sits ON a saturated fill */
-  --on-emerald-dark: #062b20; /* text on Emerald Bright fill */
-  --on-emerald-light: #f7f7f7; /* text on Emerald Deep fill */
-
   /* --- typography --- */
   --font-sans: "Manrope", system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
 
-  /* Display came down from 3rem/48px and H2 stepped up in weight rather
-     than size. The v2.0 ramp jumped straight from a 48px display to a
-     24px H2 set at weight 500 - barely above body text - so the middle
-     of the hierarchy was missing on any page with more than two heading
-     levels. `--text-label` is new: the one step below `--text-small`,
-     for badges, chips, captions and metadata that were each inventing
-     their own small size (0.72rem here, 0.75rem there, Tailwind's
-     `text-xs` somewhere else) with no shared token behind any of them. */
-  /* v2.1: a scale that grows with the viewport at the top and
-     reads larger at the bottom. The two big steps are fluid, so the mobile
-     override that used to shrink the display in globals.css is gone. The
-     body moves to 17px: the site is mostly reading, and 16px muted grey on
-     Carbon was the main reason it felt small. `--text-lead` is new - the
-     one sentence that opens a section, between H2 and body. */
+  /* The two big steps are fluid; everything from H2 down is fixed.
+     --text-lead is the one sentence that opens a section. --text-label
+     is the floor: nothing on any surface is set smaller. */
   --text-display: clamp(2.75rem, 1.4rem + 4.4vw, 5rem);
   --lh-display: 1.02;
   --text-h1: clamp(2.25rem, 1.65rem + 2vw, 3.5rem);
@@ -99,16 +68,15 @@
   --text-label: 0.8125rem;
   --lh-label: 1.45;
 
-  /* Tracking opens as type gets smaller: a 12px label needs the air a
-     44px display needs taken away. `--track-tight` applies to display,
-     H1, H2, and title-role text set at the H3 step (entry, item and
-     card titles, the hero name) - never to body, small, or mono text. */
+  /* Tracking opens as type gets smaller. --track-tight is for H2 and
+     title-role text at the H3 step (entry, item and card titles, the
+     hero name) - never body, small or mono text. --track-display is for
+     the display line and H1 only. */
   --track-tight: -0.02em;
-  /* Display and H1 only. At 80px, -0.02em still reads loose. */
   --track-display: -0.04em;
   --track-label: 0.01em;
 
-  /* --- space, radius, motion --- */
+  /* --- space --- */
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -120,30 +88,21 @@
   --space-12: 3rem;
   --space-16: 4rem;
 
-  /* Four steps and a pill, not two. A single `--radius`/`--radius-lg`
-     pair left the one floating element on a page - a nav bar, a
-     popover - with nowhere to go but an invented one-off value. */
-  --radius-sm: 6px;
-  --radius: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
-  --radius-pill: 999px;
-
-  /* v2.1: three kinds of corner, after Apple's shape system.
+  /* --- shape: three kinds of corner ---
      Fixed - a constant radius - for containers and marks: panel (a page
-     panel, the rail, the footer, the mobile menu), tile (a card on a panel,
-     a menu, a toast), block (media and blocks inside a card - an image,
-     code, an icon well), inline (a mark inside text - inline code, a key).
+     panel, the rail, the footer, the mobile menu), tile (a card on a
+     panel, a menu, a toast), block (an image, code, an icon well inside a
+     card), inline (inline code, a key).
      Capsule - half the height - for every control: a button, a field,
      search, a select, a toggle, a nav item, a chip, a badge; an icon alone
-     is a circle. A field's corner is fixed at half the control height, so a
-     one-line field is a capsule and a textarea keeps the same end radius as
-     it grows. Concentric - the parent's radius less the inset - for
-     anything nested tight inside another shape: a row 6px inside a menu
-     takes the tile's less 6px. A person is a circle.
-     --radius and --radius-xl are deprecated: kept so a consumer that has
-     not migrated still renders, and removed in the next major. New work
-     uses the named radii above. */
+     is a circle. A field's corner is half the control height, so a
+     one-line field is a capsule and a textarea keeps the same end radius.
+     Concentric - the parent's radius less the inset - for anything nested
+     tight inside another shape: a row 6px inside a menu takes the tile's
+     less 6px. A person is a circle. */
+  --radius-sm: 6px;
+  --radius-lg: 12px;
+  --radius-pill: 999px;
   --radius-panel: 32px;
   --radius-tile: 22px;
   --radius-block: var(--radius-lg);
@@ -151,17 +110,15 @@
   --radius-field: calc(var(--control-h) / 2);
   --radius-row: calc(var(--radius-tile) - 6px);
 
-  /* One control height. A button, a text input and an icon button used
-     to be 38px, 45px and 36px respectively; when three controls share a
-     row - a form field beside its submit button, a toggle beside a nav
-     link - they now share one baseline in every theme. */
+  /* One control height: a button, a field and an icon button beside each
+     other share one baseline. */
   --control-h: 40px;
 
-  /* 1px, not 0.5px. Sub-pixel hairlines render inconsistently across
-     browser zoom levels and OS display scaling; 1px is the value that
-     actually looks like a hairline on every screen that renders it. */
+  /* 1px, not 0.5px: sub-pixel hairlines render inconsistently across
+     zoom levels and display scaling. */
   --hairline: 1px;
 
+  /* --- motion: every state change --- */
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
   --dur: 160ms;
 }
@@ -175,38 +132,29 @@
   --bg-surface: var(--ink-800);
   --bg-raised: var(--ink-700);
 
-  /* Two border weights, not one. `--border` draws structural rules -
-     a section top, the line between list rows - and stays quiet enough
-     that a long list reads as text, not a table. `--border-strong`
-     draws the edge of a *thing*: a card, a chip, the nav, an icon
-     button. One value used to serve both jobs, so either the rules
-     shouted or the components had no visible edge at all. */
+  /* --border draws structural rules - a section top, the line between
+     list rows. --border-strong draws the edge of a thing you can press.
+     --border-input is a field's edge, the one edge held to WCAG 1.4.11's
+     3:1, because it is the only sign that the field is a field. */
   --border: var(--ink-600);
   --border-strong: var(--ink-500);
-  /* A text field's border is the only signal that it is a text field,
-     so it is the one edge held to WCAG 1.4.11's 3:1 minimum against
-     the page background rather than the quieter `--border-strong`
-     (1.4:1 - deliberately closer to invisible, because every other
-     component is identified by what's inside it, not its outline). */
   --border-input: #5b5b5b; /* 3.0:1 on --bg */
 
+  /* Three text steps: titles, running text, what you glance at (dates,
+     names, labels). */
   --fg: var(--ink-100); /* 18.0:1 */
-  /* v2.1: running text - any paragraph read sentence by sentence.
-     Clearly a step under --fg (about 8:1 against 18:1), so a title still
-     leads the paragraph under it - at 12:1 the two read as one block - and
-     clearly above --fg-muted, which is for what you glance at: dates,
-     names, labels. */
   --fg-body: #a8a8a8; /* 8.6:1 */
-  --fg-muted: var(--ink-400); /*  6.1:1 */
+  --fg-muted: var(--ink-400); /* 6.1:1 */
 
-  /* v2.1: the accent is the text colour. */
+  /* The accent is the text colour. */
   --brand: var(--ink-100); /* 18.0:1 on bg */
   --brand-fill: var(--ink-100);
   --on-brand: var(--ink-900); /* 18.0:1 on fill */
 
-  --success: var(--emerald-bright); /* state only, never decoration */
+  /* States only, never decoration. */
+  --success: #23b888;
   --error: #e5484d; /* 5.2:1 */
-  --warning: #d97706; /* UI state only, never a brand accent */
+  --warning: #d97706;
 
   --shadow-nav: 0 10px 30px rgb(0 0 0 / 0.45);
 }
@@ -223,15 +171,15 @@
   --border-strong: var(--paper-300);
   --border-input: #8f8f8f; /* 3.0:1 on --bg */
 
-  --fg: var(--paper-900);
+  --fg: var(--paper-900); /* 17.3:1 */
   --fg-body: #4f4f4f; /* 7.6:1 */
-  --fg-muted: var(--paper-400); /* 5.1:1 */
+  --fg-muted: var(--paper-400); /* 5.0:1 */
 
   --brand: var(--paper-900); /* 17.3:1 on bg */
   --brand-fill: var(--paper-900);
   --on-brand: var(--paper-50); /* 17.3:1 on fill */
 
-  --success: var(--emerald-deep); /* state only, never decoration */
+  --success: #087f5b;
   --error: #c4292e; /* 5.3:1 */
   --warning: #b45309; /* 4.7:1 */
 
@@ -252,7 +200,7 @@
     --brand: var(--paper-900);
     --brand-fill: var(--paper-900);
     --on-brand: var(--paper-50);
-    --success: var(--emerald-deep);
+    --success: #087f5b;
     --error: #c4292e;
     --warning: #b45309;
     --shadow-nav: 0 8px 24px rgb(0 0 0 / 0.06), 0 1px 2px rgb(0 0 0 / 0.05);
@@ -261,27 +209,22 @@
 
 /* ============================================================
    Derived states - one formula, both themes
-
-   Every hover, active, and focus treatment in the system reduces to
-   one of these four. `color-mix` toward `--fg` lightens on Carbon and
-   darkens on Paper from the same declaration, which is why a single
-   rule below answers "what does hover look like" everywhere instead
-   of each component inventing its own hover colour.
+   color-mix toward --fg lightens on Carbon and darkens on Paper from the
+   same declaration, so one rule answers "what does hover look like"
+   everywhere.
    ============================================================ */
 :root {
   /* A surface one step up from where it sits - the shared hover for
-     cards, chips, list rows and icon buttons. */
+     controls, chips, list rows and icon buttons. */
   --surface-hover: color-mix(in srgb, var(--fg) 7%, var(--bg-surface));
   --raised-hover: color-mix(in srgb, var(--fg) 9%, var(--bg-surface));
 
-  /* The button fill's hover and active steps. v2.1: the fill is
-     the text colour now, so mixing toward `--fg` would change nothing;
-     the steps ease the fill toward the background instead. */
+  /* The primary fill is the text colour, so its hover and active steps
+     ease it toward the background. */
   --brand-fill-hover: color-mix(in srgb, var(--brand-fill) 86%, var(--bg));
   --brand-fill-active: color-mix(in srgb, var(--brand-fill) 76%, var(--bg));
 
-  /* The one focus/emphasis ring: soft, 3px, accent-tinted. Used by every
-     bordered interactive element in place of a second, harder outline. */
+  /* The focus ring for controls with no edge of their own to change. */
   --ring: color-mix(in srgb, var(--brand) 32%, transparent);
   --ring-width: 3px;
 }
@@ -299,39 +242,34 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Every heading is 500; size carries the rank. */
 h1,
 h2,
 h3 {
   font-family: var(--font-sans);
   color: var(--fg);
   margin: 0;
+  font-weight: 500;
 }
 h1 {
   font-size: var(--text-h1);
   line-height: var(--lh-h1);
-  font-weight: 500;
   letter-spacing: var(--track-display);
 }
-/* v2.1: size carries H2's rank again, not weight. At 22px it
-   needed 700 to stand above body text; at 28px it stands on size alone,
-   and 500 matches the display and H1 above it. */
 h2 {
   font-size: var(--text-h2);
   line-height: var(--lh-h2);
-  font-weight: 500;
   letter-spacing: var(--track-tight);
 }
 h3 {
   font-size: var(--text-h3);
   line-height: var(--lh-h3);
-  font-weight: 500;
 }
 
+/* The display line is the one 700 outside <strong>. */
 .display {
   font-size: var(--text-display);
   line-height: var(--lh-display);
-  /* 700, a step above every heading's 500 (v2.1): at 500 the
-     display read as a larger H1 rather than a different rank. */
   font-weight: 700;
   letter-spacing: var(--track-display);
 }
@@ -352,13 +290,9 @@ pre {
   overflow-x: auto;
 }
 
-/* Links do not carry colour by default. A page where every anchor is
-   the accent by default has no way to make one anchor *mean* something -
-   the accent has to be applied deliberately by whatever is styling the
-   link (a nav item, an item title, an inline mention in running prose),
-   not inherited for free. Long-form prose is the deliberate exception,
-   immediately below: it is the one context where an unstyled link would
-   otherwise be invisible against its surrounding paragraph. */
+/* Links carry no colour of their own; a text link is marked by its arrow
+   (-> on the site, a north-east arrow off it) and steps to --fg-muted on
+   hover. Long-form prose underlines its links. */
 a {
   color: inherit;
   text-decoration: none;
@@ -381,8 +315,6 @@ a {
    Components
    ============================================================ */
 
-/* One control height across every interactive element on a row: a
-   button, an input and an icon toggle all resolve to --control-h. */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -404,21 +336,20 @@ a {
     color var(--dur) var(--ease);
 }
 
-/* The fill IS the accent - the same value as --brand, not a second,
-   independently chosen green. Hover and active mix toward --fg rather
-   than toward black/white, so both states gain contrast in both themes
-   at once instead of one theme's hover accidentally losing it. */
+/* One filled primary per surface. */
 .btn--primary {
   background: var(--brand-fill);
   color: var(--on-brand);
 }
 .btn--primary:hover {
   background: var(--brand-fill-hover);
+  border-color: var(--brand-fill-hover);
 }
 .btn--primary:active {
   background: var(--brand-fill-active);
 }
 
+/* The fill changes on hover; the edge keeps its colour. */
 .btn--secondary {
   background: transparent;
   color: var(--fg);
@@ -426,14 +357,12 @@ a {
 }
 .btn--secondary:hover {
   background: var(--surface-hover);
-  border-color: var(--brand);
+  color: var(--fg);
 }
 .btn--secondary:active {
   background: var(--raised-hover);
 }
 
-/* The soft ring, not the hard 2px outline below - a button already
-   shows its own border, so the outline would double it. */
 .btn:focus-visible {
   outline: none;
   box-shadow: 0 0 0 var(--ring-width) var(--ring);
@@ -448,31 +377,26 @@ a {
 }
 .btn--secondary:disabled:hover {
   background: transparent;
-  border-color: var(--border-strong);
 }
 
-.card {
+/* A page panel: the surface every section, the rail and the footer sit on. */
+.panel {
   background: var(--bg-surface);
   border: var(--hairline) solid var(--border-strong);
-  border-radius: var(--radius-tile);
-  padding: var(--space-6);
-  transition:
-    background var(--dur) var(--ease),
-    border-color var(--dur) var(--ease);
-}
-/* The one hover pattern in the system, reused everywhere something
-   bordered needs one: the surface lifts a step, the border warms to
-   the accent. No shadow, no lift, no scale, no additional ring - a
-   ring on top of an already-accented border double-draws the same edge
-   and reads as the loudest hover on the page instead of the quietest. */
-.card:hover {
-  background: var(--surface-hover);
-  border-color: var(--brand);
+  border-radius: var(--radius-panel);
+  padding: clamp(var(--space-6), 0.5rem + 3vw, var(--space-12));
 }
 
-/* Badges and chips - all pillar/tag badges share one treatment. With a
-   single accent colour, they are told apart by label, not by hue.
-   `filled` is reserved: one filled badge per surface, at most. */
+/* A card sits one step down on its panel, with no edge. A card is not a
+   link - its title is - so it has no hover of its own. */
+.card {
+  background: var(--bg);
+  border-radius: var(--radius-tile);
+  padding: var(--space-6);
+}
+
+/* A badge only labels, so it has no edge. With no hue to spend, badges
+   are told apart by label. One filled badge per surface, at most. */
 .badge {
   display: inline-block;
   font-size: var(--text-label);
@@ -482,8 +406,6 @@ a {
   border-radius: var(--radius-pill);
   background: var(--bg-surface);
   color: var(--fg-muted);
-  /* No edge: a badge only labels. An edge is what marks a thing you can
-     press (v2.1). */
   border: var(--hairline) solid transparent;
 }
 a > .badge:not(.badge--filled),
@@ -496,7 +418,8 @@ a > .badge:not(.badge--filled),
   border-color: transparent;
 }
 
-/* A stack/tag chip: mono, with hover reserved strictly for interactive targets. */
+/* A stack/tag chip, mono. A chip that acts has an edge, and on hover
+   lifts a step with an accent edge; a chip that only labels has neither. */
 .chip {
   display: inline-block;
   font-family: var(--font-mono);
@@ -510,8 +433,6 @@ a > .badge:not(.badge--filled),
   padding: var(--space-2) var(--space-3);
   cursor: default;
 }
-/* A chip that acts has an edge, the secondary button's; a chip that only
-   labels has none (v2.1). */
 a > .chip,
 a.chip,
 button > .chip,
@@ -530,20 +451,18 @@ button:hover > .chip,
 button.chip:hover,
 .chip--interactive:hover {
   background: var(--surface-hover);
+  border-color: var(--brand);
   color: var(--fg);
 }
 
-/* Form controls. Height, not just padding, so a field sits on the same
-   --control-h baseline as a button beside it. */
+/* Form fields sit on the --control-h baseline beside a button. */
 .input {
   width: 100%;
   height: var(--control-h);
   padding: 0 var(--space-4);
   background: var(--bg-surface);
   border: var(--hairline) solid var(--border-input);
-  border-radius: var(
-    --radius-field
-  ); /* a capsule; a textarea keeps its ends (v2.1) */
+  border-radius: var(--radius-field);
   color: var(--fg);
   font-family: var(--font-sans);
   font-size: var(--text-small);
@@ -552,13 +471,14 @@ button.chip:hover,
     border-color var(--dur) var(--ease),
     box-shadow var(--dur) var(--ease);
 }
-/* Focus is the edge itself, not the edge plus a halo (v2.1): the border
-   turns to the accent and an inset 1px thickens it to 2px, drawn inside
-   the border so nothing moves. Buttons and toggles keep the ring - they
-   have no edge to change. */
+/* Focus is the edge itself: the border turns to the accent and an inset
+   1px thickens it to 2px, drawn inside so nothing moves. No halo. */
 .input:focus {
   border-color: var(--brand);
   box-shadow: inset 0 0 0 var(--hairline) var(--brand);
+}
+.input[aria-invalid="true"] {
+  border-color: var(--error);
 }
 textarea.input {
   height: auto;
@@ -568,13 +488,10 @@ textarea.input {
   line-height: var(--lh-body);
 }
 
-/* Logo lockup: "@dileepadev". The handle is the logo - one word, so the
-   "@" sits against the wordmark with no daylight. Both are Manrope 500:
-   a 700 "@" beside a 500 word read as a symbol bolted on rather than the
-   first character of a handle. The wordmark is full contrast and the "@"
-   the muted step of the same ink - the two-part split the emerald mark
-   used to make, carried by contrast now the palette has no hue. The mark
-   is decorative: the accessible name comes from the link around it. */
+/* Logo lockup: "@dileepadev". One word, so the "@" sits against the
+   wordmark. Both Manrope 500; the wordmark at full contrast, the "@" one
+   step muted. The mark is decorative: the accessible name comes from the
+   link around it. */
 .lockup {
   display: inline-flex;
   align-items: baseline;
@@ -600,18 +517,13 @@ textarea.input {
    Quality floor
    ============================================================ */
 
-/* The default for anything with no border of its own. Bordered
-   interactive elements (buttons, inputs, cards, chips) use the soft
-   `--ring` box-shadow instead, set alongside each component above, so
-   focus never doubles an edge that's already visible. */
+/* The default for anything with no edge of its own. Fields focus with
+   their edge and buttons with --ring, set on each component above. */
 :focus-visible {
   outline: 2px solid var(--brand);
   outline-offset: 2px;
 }
 
-/* Not the accent: the accent is a signal, and a scrollbar isn't signalling
-   anything. Spending it here is part of why it stops reading as
-   deliberate where it's spent on purpose. */
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--border-strong) var(--bg);
@@ -641,8 +553,7 @@ textarea.input {
   }
 }
 
-/* Print - resume and documents force the light foundation.
-   Dark backgrounds break ATS parsing and print badly. */
+/* Print - resume and documents force the light foundation. */
 @media print {
   :root {
     --bg: #ffffff;

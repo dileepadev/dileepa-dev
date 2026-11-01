@@ -1,17 +1,11 @@
 # Personal brand guide
 
 **Dileepa - @dileepadev**
-Version 2.1
+Version 2.1.0
 
 For the full component contract - buttons, cards, forms, navigation, icons, states, layout - see
 [`design-system.md`](design-system.md). This document covers brand identity: colour, type, the
 mark, and the portrait.
-
-> [!NOTE]
-> **v2.1 replaces the emerald brand.** v2.0 spent one hue, emerald, as the accent and set the
-> lockup as `dileepadev /.`. v2.1 is black to white: the accent is the text colour itself, the
-> lockup is the handle, `@dileepadev`, and emerald survives only as the success state. It was
-> designed on `dileepa.dev` in its v2.1.0 release and written down here once it settled.
 
 ## 1. Color system
 
@@ -74,7 +68,7 @@ These are interface states, not brand. Never use them in content, graphics or de
 
 | State | Hex (dark / light) | Note |
 | --- | --- | --- |
-| Success | `#23B888` / `#087F5B` | The former emerald accent, kept as a state - a copy confirmation, a sent message |
+| Success | `#23B888` / `#087F5B` | A state only - a copy confirmation, a sent message |
 | Error | `#E5484D` / `#C4292E` | 5.2:1 on Carbon, 5.3:1 on Paper |
 | Warning | `#D97706` / `#B45309` | UI states only, never a brand accent |
 
@@ -212,10 +206,8 @@ would put a second design there while every other surface - home screen, app ico
 shows the face. A PNG base64'd inside an SVG wrapper satisfies the checker and nothing else.
 
 > [!WARNING]
-> **The logo files still show the v2 lockup.** `logo/lockup-*.svg` and `logo/mark-*.svg` draw
-> `dileepadev /.` with the emerald mark, and the social covers and banners in `covers/` and
-> `banners/` use the v2.0 palette. They need redrawing to v2.1 before they are used again. `og.png`
-> is being replaced by a code-generated card on `dileepa.dev`.
+> **The logo SVGs, covers and banners in this folder are out of date.** `logo/`, `covers/` and
+> `banners/` must be redrawn to this guide before they are used. `og.png` is current.
 
 ### 3.3 Custom mark, if commissioned later
 
@@ -257,9 +249,6 @@ from it (LinkedIn, GitHub, Facebook, X, YouTube). This section covers the field 
 | `portrait-field` | `#D2D2D2` | Default background for every portrait crop. Reuses `paper-300` (§1.2) - no new token. |
 | `portrait-on-dark` | `#F1F1F1` | Swap-in field on Carbon surfaces. Reuses `ink-100` (§1.2). |
 | `portrait-on-light` | `#6A6A6A` | Swap-in field on Paper surfaces. Reuses `paper-400` (§1.2). |
-
-Supersedes any earlier portrait background of `#7E7E7E` or `#757575` - wherever those appear,
-`portrait-field` is the current value.
 
 **The favicon and app-icon set is the exception: it ships with a transparent field.** A browser
 tab, a home screen and an installed app each draw their own background, and a filled `#D2D2D2`

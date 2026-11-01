@@ -2,37 +2,11 @@
 
 The component and token contract every frontend in the platform implements.
 
-**Canonical token sheet:** [`brand-tokens.css`](brand-tokens.css) (brand tokens v2.1)
+**Canonical token sheet:** [`brand-tokens.css`](brand-tokens.css) (brand tokens v2.1.0)
 **Brand guide:** [`brand-guide.md`](brand-guide.md)
 
 Applies to `dileepa-dev`, `admin-dileepa-dev`, `links-dileepa-dev`, and the static page in
 `dileepadev.github.io`.
-
-## 0. Provenance - what v2.1 changed
-
-v2.0 was the emerald system, reconciled after launch against what the site actually shipped.
-**v2.1 is a redesign.** It was built on `dileepa-dev` first, in that site's v2.1.0 release
-(dileepa-dev#27), and written down here only once it had settled on real content - designing the
-guideline first and building to it locks decisions in before anyone has seen them.
-
-What moved, and why:
-
-| Area | v2.0 | v2.1 | Why |
-| --- | --- | --- | --- |
-| Accent | Emerald Bright / Emerald Deep | The text colour - `ink-100` on Carbon, `paper-900` on Paper | One hue, spent everywhere a signal was needed, had stopped signalling. Contrast and weight carry emphasis without a colour to dilute. |
-| Lockup | `dileepadev /.` (emerald `/.`) | `@dileepadev` (`@` one step muted) | The handle is what people search, tag and type - it is the identity everywhere else. |
-| Emerald | The accent and the success colour | `--success` only, a state like `--error` | Kept for the one thing it says well: done. |
-| Text steps | `--fg`, `--fg-muted` | `--fg`, **`--fg-body`**, `--fg-muted` | Paragraphs at full contrast competed with their headings; at muted they read as metadata. |
-| Type scale | Fixed, 44px display, 16px body | Fluid display and H1, 28px H2, a new lead step, 17px body, 13px floor | The site is mostly reading, and 16px muted grey on Carbon was the main reason it felt small. |
-| Weights | 700 on display, H1, H2 | 500 on every heading; 700 on the display and `<strong>` only | Size carries rank now; 700 at the top separates the display from the H1. |
-| Shape | Four radii and a pill | Fixed / capsule / concentric (§4.2) | Every corner now follows one of three rules instead of a menu of values. |
-| Edges | One border on most things | Edges mark what you can press (§2.2) | An outlined badge looked like a button. |
-| Layout | One 1020px container | A profile rail beside rounded panels (§10) | Identity and navigation stay on screen while content scrolls past. |
-| Focus | Border plus a 3px halo on every field | One 2px edge on fields; the halo only where there is no edge to change (§9) | A field read as two lines. |
-| Motion | 160ms colour transitions | The same timing for every state change, plus page cross-fades and a few confirmations (§9.1) | One rhythm everywhere. |
-
-`--radius` and `--radius-xl` are deprecated, not removed - a consumer that has not migrated still
-renders - and go in the next major.
 
 ## 1. The one rule about tokens
 
@@ -43,7 +17,7 @@ this document exists to prevent. Every colour comes from a semantic variable - `
 `--fg-body`, `--fg-muted`, `--brand`, `--brand-fill`, `--on-brand`, `--bg-surface`, `--bg-raised`,
 `--border`, `--border-strong`, `--border-input`, `--success`, `--error`, `--warning`, plus the
 derived interaction tokens (`--surface-hover`, `--raised-hover`, `--brand-fill-hover`,
-`--brand-fill-active`, `--ring`). The raw palette (`--ink-700`, `--paper-200`, `--emerald-bright`,
+`--brand-fill-active`, `--ring`). The raw palette (`--ink-700`, `--paper-200`,
 …) exists so the semantic layer can be defined once; components never reference it directly.
 
 This matters because the semantic layer is what flips between themes. `--brand` is near-white in
@@ -142,7 +116,7 @@ Interface states, not brand. Never in content, graphics or decoration.
 
 | State | Hex (dark / light) | Note |
 | --- | --- | --- |
-| Success | `#23B888` / `#087F5B` | The former emerald accent. A copy confirmation's tick, a sent message |
+| Success | `#23B888` / `#087F5B` | A copy confirmation's tick, a sent message |
 | Error | `#E5484D` / `#C4292E` | 5.2:1 / 5.3:1. Field errors, failed actions |
 | Warning | `#D97706` / `#B45309` | UI states only, never a brand accent |
 
@@ -342,8 +316,8 @@ paragraph. Nothing else: no extra label repeating the page name between the path
 ### Badges, chips and pills
 
 All capsules, at `--text-label` weight 500. **A chip or badge that only labels has no edge;** one
-that acts - a tag link, a filter - takes `--border-strong`, hovers like a secondary button and
-steps its text to `--fg`. One filled badge per surface, at most. Inside a card, chips sit on
+that acts - a tag link, a filter - takes `--border-strong`; on hover it lifts to `--surface-hover`, its
+edge turns `--brand` and its text steps to `--fg`. One filled badge per surface, at most. Inside a card, chips sit on
 `--bg-surface`; on a panel, on `--bg`.
 
 ### Status dots
@@ -482,7 +456,7 @@ bubbles for Contact.
 inline SVGs (24×24, `fill="currentColor"`), `--fg-muted` at rest, `--fg` on hover.
 
 **Pillar marks** (`docs/brand/icons/`): the six marks drawn for the former About cards. No surface
-uses them since those cards were removed in v2.1; they stay in the repository as assets, recoloured
+uses them; they stay in the repository as assets, recoloured
 through `currentColor` if they are ever used again.
 
 **Every decorative icon carries `aria-hidden="true"`;** the accessible name comes from the visible
@@ -571,7 +545,7 @@ instant under reduced motion. **Two exceptions always use Paper:** the resume an
 ## 12. Admin-specific patterns
 
 `admin-dileepa-dev` carries surfaces the public site doesn't. They are recorded here so the
-platform keeps one contract; apply the v2.1 tokens when they are next touched.
+platform keeps one contract; apply the v2.1.0 tokens when they are next touched.
 
 **Tables.** Header cells mono, weight 400, `--fg-muted`, sentence case. Body cells `--fg`,
 top-aligned. Rows separate with a `--border` rule and hover to `--bg-raised`. A wide table scrolls
@@ -596,7 +570,7 @@ you sure?" The confirm button names the action and takes `--error`. Focus opens 
 
 A change that violates any of these is a bug, not a style preference.
 
-1. **No brand hue.** The accent is the text colour. Emerald is `--success` only.
+1. **No brand hue.** The accent is the text colour. Colour appears only as a state.
 2. **No hard-coded hex in components.**
 3. **Weights 400, 500, 700 only** - 700 for the display and `<strong>`.
 4. **Two families only** - Manrope and JetBrains Mono.
