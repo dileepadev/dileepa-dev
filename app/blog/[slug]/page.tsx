@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { MDXRemote } from "next-mdx-remote/rsc";
 import { Calendar, Clock } from "lucide-react";
 import {
   pickReadNext,
@@ -11,14 +10,16 @@ import {
   TableOfContents,
 } from "@/components/blog";
 import { mdxComponents } from "@/components/mdx";
+import { RailContents } from "@/components/providers/RailContents";
 import { Badge, Container, PagePath, Section } from "@/components/ui";
 import { api } from "@/lib/api";
 import type { BlogPost } from "@/lib/api-types";
-import { getPostContent } from "@/lib/content";
+import { getAllContent, getPostContent } from "@/lib/content";
 import { SITE_CONFIG } from "@/lib/constants";
 import { pageMetadata } from "@/lib/metadata";
 import { jsonLd } from "@/lib/utils";
-import { extractHeadings, mdxOptions } from "@/lib/mdx";
+import { extractHeadings } from "@/lib/mdx";
+import { PostBody } from "@/lib/post-body";
 import {
   formatDate,
   postUrl,
@@ -52,6 +53,11 @@ interface Params {
 export const dynamicParams = true;
 
 export async function generateStaticParams() {
+  // The build's one full listing of the post bodies. It is what runs
+  // `assertNotEmpty`, so a ref without the posts directory fails the build
+  // here rather than prerendering a 404 for every post; a post page itself
+  // reads only its own file (`getPostContent`).
+  await getAllContent();
   const posts = await api.getAllBlogs();
   return (posts ?? []).map((post) => ({ slug: post.slug }));
 }
@@ -156,8 +162,6 @@ export default async function BlogPostPage({ params }: Params) {
           <div className="mb-2">
             <PagePath path={`/blog/${post.slug}`} />
           </div>
-          <div className="section-label">Blog</div>
-
           <h1>{post.title}</h1>
           {post.description && (
             <p className="section-intro mb-3!">{post.description}</p>
@@ -205,12 +209,14 @@ export default async function BlogPostPage({ params }: Params) {
           </div>
         </header>
 
-        <div className="mt-8 sm:mt-10 gap-12 lg:grid lg:grid-cols-[1fr_220px]">
-          {/* `min-w-0`: a grid track's automatic minimum is its content's
-              min-content width, so a wide table or code block in the article
-              pushed this column - and the rail beside it - past the container
-              rather than scrolling inside itself. */}
-          <article className="w-full max-w-3xl min-w-0">
+        {/* The contents live in the profile rail on a wide screen. */}
+        <RailContents headings={headings} />
+
+        <div className="mt-8 sm:mt-10">
+          {/* Wider than the 68ch paragraphs inside it, so code blocks,
+              tables and diagrams get the room the contents column used to
+              take. `min-w-0` keeps a wide table scrolling inside itself. */}
+          <article className="w-full max-w-4xl min-w-0">
             <div className="mb-8 lg:hidden">
               <TableOfContents headings={headings} />
             </div>
@@ -222,11 +228,7 @@ export default async function BlogPostPage({ params }: Params) {
             )}
 
             <div className="prose">
-              <MDXRemote
-                source={content.body}
-                components={mdxComponents}
-                options={mdxOptions}
-              />
+              <PostBody source={content.body} components={mdxComponents} />
             </div>
 
             {(post.tags ?? []).length > 0 && (
@@ -259,10 +261,6 @@ export default async function BlogPostPage({ params }: Params) {
               <ReadNext posts={readNext} />
             </div>
           </article>
-
-          <aside className="hidden lg:block">
-            <TableOfContents headings={headings} />
-          </aside>
         </div>
       </Container>
     </Section>

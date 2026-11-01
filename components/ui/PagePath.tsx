@@ -28,15 +28,16 @@ export function PagePath({ path, className }: PagePathProps) {
     <nav
       aria-label="Breadcrumb path"
       className={cn(
-        "inline-flex flex-wrap items-center gap-1.5 font-mono text-label normal-case tracking-normal text-fg-muted",
+        // One line: the last segment (a post's slug can run to sixty
+        // characters) gives way with an ellipsis instead of wrapping. A
+        // filled capsule, so the path reads as its own row rather than one
+        // more line of muted text above the page label.
+        "page-path font-mono text-label normal-case tracking-normal text-fg-muted",
         className,
       )}
     >
       {/* Root link to home */}
-      <Link
-        href="/"
-        className="transition-colors duration-150 hover:text-brand hover:underline underline-offset-4 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand"
-      >
+      <Link href="/" className="shrink-0 transition-colors hover:text-brand">
         home
       </Link>
 
@@ -51,15 +52,19 @@ export function PagePath({ path, className }: PagePathProps) {
         return (
           <span
             key={index}
-            className="inline-flex items-center gap-1.5 break-all"
+            className={cn(
+              "inline-flex items-center gap-1.5",
+              isLast ? "min-w-0" : "shrink-0",
+            )}
           >
-            <span className="text-fg-muted/40 select-none" aria-hidden="true">
+            <span className="page-path-sep select-none" aria-hidden="true">
               /
             </span>
             <Link
               href={href}
               {...(isLast ? { "aria-current": "page" as const } : {})}
-              className="transition-colors duration-150 hover:text-brand hover:underline underline-offset-4 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand"
+              title={isLast ? segment : undefined}
+              className="min-w-0 truncate transition-colors hover:text-brand"
             >
               {segment}
             </Link>

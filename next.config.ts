@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { version } from "./package.json";
 
 /**
  * The origin the browser talks to the API on.
@@ -120,7 +121,7 @@ function securityHeaders() {
     "style-src 'self' 'unsafe-inline' https://vercel.live",
     // next/font self-hosts Manrope and JetBrains Mono, so no font CDN appears.
     "font-src 'self' data: https://vercel.live https://assets.vercel.com",
-    `img-src 'self' data: blob: https://res.cloudinary.com ${analyticsImages.join(" ")} ${vercelImages.join(" ")}`,
+    `img-src 'self' data: blob: https://res.cloudinary.com https://i.ytimg.com ${analyticsImages.join(" ")} ${vercelImages.join(" ")}`,
     `connect-src 'self'${devConnect} ${api} ${analyticsConnect.join(" ")} ${vercelConnect.join(" ")}`
       .replace(/\s+/g, " ")
       .trim(),
@@ -149,6 +150,12 @@ function securityHeaders() {
 }
 
 const nextConfig: NextConfig = {
+  // The release the footer and the terminal profile print. Read from
+  // package.json at build time so it cannot drift from the release again - it
+  // sat at a hardcoded 2.0.0 through v2.0.1 and v2.0.2.
+  env: {
+    APP_VERSION: version,
+  },
   // Turbopack infers the project root from the nearest lockfile and walks up
   // to find one. There is a stray `package-lock.json` in the home directory
   // above this repository, so the inference reached outside the repo, warned

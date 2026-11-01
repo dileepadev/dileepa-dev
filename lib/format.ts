@@ -45,6 +45,34 @@ export function formatDate(
 }
 
 /**
+ * A date split for a date block: `{ day: "14", month: "Aug", year: "2026" }`.
+ * Same locale and timezone rules as `formatDate`, so the block and any full
+ * date beside it never disagree. `null` when the value does not parse.
+ */
+export function dateParts(
+  value: string | null | undefined,
+  timezone?: string | null,
+): { day: string; month: string; year: string } | null {
+  const date = parse(value);
+  if (!date) return null;
+  let tz = timezone?.trim() || TIME_ZONE;
+  try {
+    new Intl.DateTimeFormat(undefined, { timeZone: tz });
+  } catch {
+    tz = TIME_ZONE;
+  }
+  const parts = new Intl.DateTimeFormat(LOCALE, {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: tz,
+  }).formatToParts(date);
+  const get = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((part) => part.type === type)?.value ?? "";
+  return { day: get("day"), month: get("month"), year: get("year") };
+}
+
+/**
  * The canonical URL for a post - always on this site.
  *
  * `canonicalUrl` is a stored field rather than a computed one: the API returns
@@ -187,6 +215,35 @@ export function videoDuration(seconds: number | null | undefined): string {
   return `${Math.max(1, minutes)} min watch`;
 }
 
+/** Words a series slug keeps in capitals. */
+const SERIES_ACRONYMS = new Set([
+  "ai",
+  "api",
+  "cli",
+  "llm",
+  "mcp",
+  "rag",
+  "sdk",
+]);
+
+/**
+ * A series' display name from its slug: `microsoft-foundry` → "Microsoft
+ * Foundry". The posts carry only the slug, and a series is a proper name, so
+ * it is title-cased rather than sentence-cased the way `humanise` would.
+ */
+export function seriesTitle(slug: string | null | undefined): string {
+  if (!slug) return "";
+  return slug
+    .split(/[-_\s]+/)
+    .filter(Boolean)
+    .map((word) =>
+      SERIES_ACRONYMS.has(word.toLowerCase())
+        ? word.toUpperCase()
+        : word.charAt(0).toUpperCase() + word.slice(1),
+    )
+    .join(" ");
+}
+
 /** Sentence-cases an enum value: `in_person` → "In person". */
 export function humanise(value: string | null | undefined): string {
   if (!value) return "";
@@ -235,4 +292,22 @@ export function portrait(
 ): string | null {
   if (!images) return null;
   return images.profileWebp || images.profileJpg || images.profilePng || null;
+}
+
+/**
+ * A video's thumbnail, at a size that fills a 16:9 frame.
+ *
+ * The API stores YouTube's `0.jpg`, a 4:3 frame with the video letterboxed in
+ * it. `hqdefault` is the same 4:3 shape at 480px; cropped to 16:9 with
+ * `object-fit: cover`, the bars fall exactly outside the frame and what is
+ * left is the full 480x270 picture. Anything that is not a YouTube link keeps
+ * the stored thumbnail.
+ */
+export function videoThumbnail(link: string, stored?: string | null): string {
+  const id =
+    /(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/.exec(
+      link,
+    )?.[1] ?? /img\.youtube\.com\/vi\/([\w-]{11})\//.exec(stored ?? "")?.[1];
+  if (id) return `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+  return stored ?? "";
 }

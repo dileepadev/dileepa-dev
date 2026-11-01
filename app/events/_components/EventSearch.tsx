@@ -1,33 +1,22 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { History, Sparkles } from "lucide-react";
 import {
-  Calendar,
-  Globe,
-  History,
-  Layers,
-  MapPin,
-  PlayCircle,
-  Sparkles,
-} from "lucide-react";
-import {
-  Badge,
   Button,
-  Chip,
   EmptyState,
+  EventCard,
   FilterSelect,
   type FilterOption,
-  Item,
-  ItemList,
   ListingControls,
   type ActiveFilterItem,
   LoadMore,
-  StatusBadge,
   Subsection,
+  TileGrid,
   type SortOption,
 } from "@/components/ui";
 import type { EventRecord } from "@/lib/api-types";
-import { formatDate, humanise } from "@/lib/format";
+import { humanise } from "@/lib/format";
 import {
   buildFacets,
   compareDate,
@@ -387,74 +376,10 @@ export function EventSearch({
 
 function EventItems({ events }: { events: EventRecord[] }) {
   return (
-    <ItemList>
+    <TileGrid>
       {events.map((event) => (
-        <Item
-          key={event.id}
-          headingLevel={2}
-          title={event.title}
-          href={`/events/${event.slug}`}
-          description={event.summary}
-          meta={
-            <>
-              {event.status === "upcoming" ? (
-                <StatusBadge>Upcoming</StatusBadge>
-              ) : event.status === "cancelled" ? (
-                <Chip className="text-error border-error/30 bg-error/10">
-                  Cancelled
-                </Chip>
-              ) : (
-                <Chip>Past event</Chip>
-              )}
-              <span className="inline-flex items-center gap-1.5 text-fg font-medium">
-                <Calendar
-                  className="h-3 w-3 shrink-0 text-fg-muted"
-                  aria-hidden="true"
-                />
-                <span>{formatDate(event.startAt)}</span>
-              </span>
-              <span className="inline-flex items-center gap-1.5 text-fg-muted">
-                {event.format === "in_person" ? (
-                  <MapPin
-                    className="h-3 w-3 shrink-0 text-fg-muted"
-                    aria-hidden="true"
-                  />
-                ) : event.format === "online" ? (
-                  <Globe
-                    className="h-3 w-3 shrink-0 text-fg-muted"
-                    aria-hidden="true"
-                  />
-                ) : (
-                  <Layers
-                    className="h-3 w-3 shrink-0 text-fg-muted"
-                    aria-hidden="true"
-                  />
-                )}
-                <span>{humanise(event.format)}</span>
-              </span>
-              {(event.recordings ?? []).length > 0 && (
-                <span className="inline-flex items-center gap-1 text-xs text-brand font-medium">
-                  <PlayCircle className="h-3 w-3 shrink-0" aria-hidden="true" />
-                  <span>Recording</span>
-                </span>
-              )}
-            </>
-          }
-        >
-          <div className="flex flex-wrap items-center gap-2">
-            <Badge>{humanise(event.type)}</Badge>
-            {event.location?.venue && (
-              <Badge className="inline-flex items-center gap-1">
-                <MapPin
-                  className="h-3 w-3 shrink-0 text-fg-muted"
-                  aria-hidden="true"
-                />
-                <span>{event.location.venue}</span>
-              </Badge>
-            )}
-          </div>
-        </Item>
+        <EventCard key={event.id} event={event} headingLevel={2} showDetails />
       ))}
-    </ItemList>
+    </TileGrid>
   );
 }

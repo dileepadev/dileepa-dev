@@ -1,14 +1,24 @@
 "use client";
 
+import { Fragment } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { GitBranch } from "lucide-react";
+import { Tag } from "lucide-react";
 import { FaGithub } from "@/components/icons/SocialIcons";
 import { Container, CurlHint, Lockup } from "@/components/ui";
 import { FOOTER_LINKS, SITE_CONFIG } from "@/lib/constants";
 import { SOCIAL_ICONS } from "@/lib/social-icons";
 import type { About } from "@/lib/api-types";
 import { cn } from "@/lib/utils";
+
+/** The small links in the footer's bottom row. The current page is marked. */
+const META_LINKS = [
+  { href: "/profile", label: "Profile" },
+  { href: "/brand", label: "Brand" },
+  { href: "/privacy", label: "Privacy" },
+  { href: "/terms", label: "Terms" },
+  { href: "/sitemap", label: "Sitemap" },
+];
 
 export function Footer({ about }: { about?: About | null }) {
   const pathname = usePathname();
@@ -48,7 +58,7 @@ export function Footer({ about }: { about?: About | null }) {
                       rel="noopener noreferrer"
                       aria-label={item.label}
                     >
-                      <Icon className="h-4.5 w-4.5" aria-hidden="true" />
+                      <Icon className="h-4 w-4" aria-hidden="true" />
                     </a>
                   );
                 })}
@@ -98,51 +108,19 @@ export function Footer({ about }: { about?: About | null }) {
             <CurlHint />
           </div>
           <div className="footer-meta">
-            <Link
-              href="/profile"
-              className={cn(isLinkActive("/profile") && "is-active text-brand")}
-            >
-              Profile
-            </Link>
-            <span className="text-border-strong" aria-hidden="true">
-              /
-            </span>
-            <Link
-              href="/brand"
-              className={cn(isLinkActive("/brand") && "is-active text-brand")}
-            >
-              Brand
-            </Link>
-            <span className="text-border-strong" aria-hidden="true">
-              /
-            </span>
-            <Link
-              href="/privacy"
-              className={cn(isLinkActive("/privacy") && "is-active text-brand")}
-            >
-              Privacy
-            </Link>
-            <span className="text-border-strong" aria-hidden="true">
-              /
-            </span>
-            <Link
-              href="/terms"
-              className={cn(isLinkActive("/terms") && "is-active text-brand")}
-            >
-              Terms
-            </Link>
-            <span className="text-border-strong" aria-hidden="true">
-              /
-            </span>
-            <Link
-              href="/sitemap"
-              className={cn(isLinkActive("/sitemap") && "is-active text-brand")}
-            >
-              Sitemap
-            </Link>
-            <span className="text-border-strong" aria-hidden="true">
-              /
-            </span>
+            {META_LINKS.map((link) => (
+              <Fragment key={link.href}>
+                <Link
+                  href={link.href}
+                  aria-current={isLinkActive(link.href) ? "page" : undefined}
+                >
+                  {link.label}
+                </Link>
+                <span className="text-border-strong" aria-hidden="true">
+                  /
+                </span>
+              </Fragment>
+            ))}
             <a
               href={SITE_CONFIG.repository}
               target="_blank"
@@ -157,17 +135,16 @@ export function Footer({ about }: { about?: About | null }) {
               /
             </span>
             <a
-              href={`${SITE_CONFIG.repository}/tree/${SITE_CONFIG.branch}`}
+              // This version's own release, not "latest": the label is the
+              // version the site is running, and a deploy can lead or trail
+              // the newest release on GitHub.
+              href={`${SITE_CONFIG.repository}/releases/tag/v${SITE_CONFIG.version}`}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label={`View branch ${SITE_CONFIG.branch} on GitHub`}
+              aria-label={`Version ${SITE_CONFIG.version}: view this release on GitHub`}
               className="inline-flex items-center gap-1.5"
             >
-              <GitBranch
-                className="h-3.5 w-3.5 shrink-0"
-                strokeWidth={1.75}
-                aria-hidden="true"
-              />
+              <Tag className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
               <span>v{SITE_CONFIG.version}</span>
             </a>
           </div>

@@ -38,6 +38,7 @@ import type {
   Tool,
   Video,
 } from "./api-types";
+import { compareRecency } from "./listing";
 import { getYouTubeDuration } from "./youtube";
 
 /**
@@ -220,6 +221,30 @@ export function getApiHost(): string {
  * `checkApiHealth`.
  */
 const HEALTH_REVALIDATE = 30;
+
+/**
+ * Keeps the last good render when the API is down during a regeneration
+ * (issue #31).
+ *
+ * An index page whose list comes back empty checks the API's health, and on
+ * an outage renders `ApiOfflinePage`. At build that is right - a deploy should
+ * not fail because the API blinked. At runtime it was wrong: ISR stored the
+ * offline page and served it for the whole day-long window, though the page
+ * it replaced was fine. Throwing during a regeneration makes Next discard the
+ * attempt and go on serving the last successful render; a request that has no
+ * render to fall back to reaches `app/error.tsx`, which shows the same offline
+ * screen.
+ */
+export function keepLastGoodRender(path: string): void {
+  if (
+    process.env.NODE_ENV === "production" &&
+    process.env.NEXT_PHASE !== "phase-production-build"
+  ) {
+    throw new Error(
+      `[api] ${path}: API unavailable while regenerating; keeping the last good render`,
+    );
+  }
+}
 
 /**
  * Checks whether the upstream API is reachable and healthy.
@@ -457,16 +482,31 @@ export const api = {
   getAbout: () =>
     degrade<About | null>("/about", null, { revalidate: REVALIDATE.profile }),
 
-  getExperiences: () =>
-    degradePage<Experience>("/experiences", { revalidate: REVALIDATE.profile }),
+  // Newest first by period (`compareRecency`), like the communities: a role
+  // added in the admin leads as soon as it is current, whatever `order` it was
+  // given. The API sorts by `order`, and a new record arrives with 0 - last.
+  getExperiences: async () =>
+    (
+      await degradePage<Experience>("/experiences", {
+        revalidate: REVALIDATE.profile,
+      })
+    ).sort(compareRecency),
 
-  getEducations: () =>
-    degradePage<Education>("/educations", { revalidate: REVALIDATE.profile }),
+  getEducations: async () =>
+    (
+      await degradePage<Education>("/educations", {
+        revalidate: REVALIDATE.profile,
+      })
+    ).sort(compareRecency),
 
   getTools: () =>
     degradePage<Tool>("/tools", { revalidate: REVALIDATE.profile }),
 
-  getCommunities: () => degradePage<Community>("/communities"),
+  // Current roles first, then by the most recent end date (`compareRecency`),
+  // so every list of communities - the homepage, /communities, the terminal,
+  // llms.txt - reads newest first rather than in the admin's manual order.
+  getCommunities: async () =>
+    (await degradePage<Community>("/communities")).sort(compareRecency),
 
   getPillars: () =>
     degradePage<Pillar>("/pillars", { revalidate: REVALIDATE.profile }),
@@ -486,6 +526,13 @@ export const api = {
       }),
     );
   },
+
+  /**
+   * The video records as stored, without `getVideos`' YouTube lookups - for
+   * a surface that counts and lists videos but prints no durations (the
+   * terminal profile), so it does not spend a YouTube call per video.
+   */
+  getVideoRecords: () => degradePage<Video>("/videos"),
 
   // --- Projects ------------------------------------------------------------
 
@@ -704,44 +751,20 @@ export async function getGallery(limit = 24): Promise<GalleryPhoto[]> {
 /**
  * Everything the homepage needs, in one round of requests.
  *
+ * The hero, About and Contact: roles, courses, communities and
+ * projects moved to their own pages, so they are no longer fetched here. The
+ * hero's "now" cards need only the newest post, talk and video.
+ *
  * Every call here degrades, so one dead endpoint costs one section rather than
  * the page. The console will say which.
  */
 export async function getHomepageData() {
-  const [
-    about,
-    experiences,
-    educations,
-    tools,
-    communities,
-    pillars,
-    projects,
-    events,
-    posts,
-    videos,
-  ] = await Promise.all([
+  const [about, events, posts, videos] = await Promise.all([
     api.getAbout(),
-    api.getExperiences(),
-    api.getEducations(),
-    api.getTools(),
-    api.getCommunities(),
-    api.getPillars(),
-    api.getProjects({ featured: true, limit: 3 }),
-    api.getEvents({ limit: 4 }),
-    api.getBlogs({ limit: 4 }),
+    api.getEvents({ limit: 1 }),
+    api.getBlogs({ limit: 1 }),
     api.getVideos(),
   ]);
 
-  return {
-    about,
-    experiences,
-    educations,
-    tools,
-    communities,
-    pillars,
-    projects,
-    events,
-    posts,
-    videos,
-  };
+  return { about, events, posts, videos };
 }

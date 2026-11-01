@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Check, Eye, Link2, MessageSquare, Share2 } from "lucide-react";
+import { useCopy } from "@/components/ui/useCopy";
 import { FaLinkedin, FaXTwitter } from "@/components/icons/SocialIcons";
 import { api } from "@/lib/api";
 import type { BlogEngagement, ReactionKind } from "@/lib/api-types";
@@ -20,25 +21,14 @@ import { ReactionPicker, ReactionSummary, totalReactions } from "./reactions";
  * stopped by a counter being down.
  */
 
-const actionClasses =
-  "inline-flex min-h-[var(--control-h)] items-center gap-2 rounded-sm px-2 " +
-  "font-mono text-small text-fg-muted no-underline transition-colors " +
-  "hover:text-brand";
+// The post's share control: the shared action button.
+const actionClasses = "btn btn--secondary btn--sm";
 
 function ShareActions({ url, title }: { url: string; title: string }) {
   const [open, setOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
-
-  async function copy() {
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // Clipboard access can be refused; the two share links still work, so
-      // there is nothing useful to say here.
-    }
-  }
+  // The site's one copy behaviour: a tick and "Copied" on the item for two
+  // seconds, a toast only if the copy fails.
+  const { copied, copy } = useCopy();
 
   const encodedUrl = encodeURIComponent(url);
   const encodedTitle = encodeURIComponent(title);
@@ -52,11 +42,7 @@ function ShareActions({ url, title }: { url: string; title: string }) {
         aria-haspopup="true"
         className={actionClasses}
       >
-        <Share2
-          className="h-4 w-4 shrink-0"
-          strokeWidth={1.75}
-          aria-hidden="true"
-        />
+        <Share2 className="h-4 w-4 shrink-0" aria-hidden="true" />
         <span>Share</span>
       </button>
 
@@ -64,14 +50,14 @@ function ShareActions({ url, title }: { url: string; title: string }) {
         <div
           role="menu"
           aria-label="Share this post"
-          className="absolute right-0 bottom-full z-20 mb-2 flex flex-col gap-1 rounded-sm border border-border-strong bg-bg-surface p-1 shadow-lg"
+          className="absolute right-0 bottom-full z-20 mb-2 popover flex flex-col gap-1 p-1.5"
         >
           <a
             href={`https://x.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`}
             target="_blank"
             rel="noopener noreferrer"
             role="menuitem"
-            className="inline-flex items-center gap-2 rounded-sm px-3 py-2 font-mono text-small text-fg-muted no-underline transition-colors hover:bg-surface-hover hover:text-fg"
+            className="inline-flex items-center gap-2 rounded-row px-3 py-2 font-mono text-small text-fg-muted no-underline transition-colors hover:bg-surface-hover hover:text-fg"
           >
             <FaXTwitter className="h-4 w-4 shrink-0" aria-hidden="true" />
             <span>X</span>
@@ -81,7 +67,7 @@ function ShareActions({ url, title }: { url: string; title: string }) {
             target="_blank"
             rel="noopener noreferrer"
             role="menuitem"
-            className="inline-flex items-center gap-2 rounded-sm px-3 py-2 font-mono text-small text-fg-muted no-underline transition-colors hover:bg-surface-hover hover:text-fg"
+            className="inline-flex items-center gap-2 rounded-row px-3 py-2 font-mono text-small text-fg-muted no-underline transition-colors hover:bg-surface-hover hover:text-fg"
           >
             <FaLinkedin className="h-4 w-4 shrink-0" aria-hidden="true" />
             <span>LinkedIn</span>
@@ -89,23 +75,21 @@ function ShareActions({ url, title }: { url: string; title: string }) {
           <button
             type="button"
             role="menuitem"
-            onClick={copy}
-            className="inline-flex items-center gap-2 rounded-sm px-3 py-2 font-mono text-small text-fg-muted transition-colors hover:bg-surface-hover hover:text-fg"
+            onClick={() => copy(url)}
+            className="inline-flex items-center gap-2 rounded-row px-3 py-2 font-mono text-small text-fg-muted transition-colors hover:bg-surface-hover hover:text-fg"
           >
             {copied ? (
               <Check
-                className="h-4 w-4 shrink-0 text-brand"
-                strokeWidth={1.75}
+                className="copy-tick h-4 w-4 shrink-0"
                 aria-hidden="true"
               />
             ) : (
               <Link2
-                className="h-4 w-4 shrink-0"
-                strokeWidth={1.75}
+                className="copy-icon h-4 w-4 shrink-0"
                 aria-hidden="true"
               />
             )}
-            <span>{copied ? "Link copied" : "Copy link"}</span>
+            <span>{copied ? "Copied" : "Copy link"}</span>
           </button>
         </div>
       )}
@@ -211,11 +195,7 @@ export function Engagement({
             )}
             {data && data.views > 0 && (
               <span className="inline-flex items-center gap-1.5">
-                <Eye
-                  className="h-4 w-4 shrink-0"
-                  strokeWidth={1.75}
-                  aria-hidden="true"
-                />
+                <Eye className="h-4 w-4 shrink-0" aria-hidden="true" />
                 <span className="tabular-nums">
                   {data.views.toLocaleString()}
                 </span>
@@ -226,7 +206,7 @@ export function Engagement({
         </div>
       )}
 
-      <div className="flex flex-wrap items-center gap-1 border-t border-border-hairline pt-2">
+      <div className="flex flex-wrap items-center gap-2 border-t border-border-hairline pt-3">
         {/* Only rendered once the counts are known: a React button that cannot
             report what it did is worse than no button. Share does not depend on
             the API, so it is never withheld. */}
@@ -240,11 +220,7 @@ export function Engagement({
 
         {onComment && (
           <button type="button" onClick={onComment} className={actionClasses}>
-            <MessageSquare
-              className="h-4 w-4 shrink-0"
-              strokeWidth={1.75}
-              aria-hidden="true"
-            />
+            <MessageSquare className="h-4 w-4 shrink-0" aria-hidden="true" />
             <span>Comment</span>
           </button>
         )}

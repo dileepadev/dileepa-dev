@@ -1,48 +1,33 @@
-import { FolderGit2, Terminal } from "lucide-react";
-import {
-  Chip,
-  Container,
-  Entry,
-  EntryList,
-  Item,
-  ItemList,
-  Section,
-  SectionHeading,
-  StatusBadge,
-  Subsection,
-  ViewAll,
-} from "@/components/ui";
-import type { Education, Experience, Project, Tool } from "@/lib/api-types";
-import { SECTIONS, SUBSECTIONS } from "@/lib/constants";
-import { humanise } from "@/lib/format";
+import { Terminal } from "lucide-react";
+import { Entry, EntryList } from "@/components/ui";
+import type { Education, Experience, Tool } from "@/lib/api-types";
+import { SUBSECTIONS } from "@/lib/constants";
 
 /**
- * Work - roles, then the stack, then the open source.
+ * The /work page's body - roles, then the stack beside them.
  *
- * All three are the same question ("what does this person actually do?") asked
- * at three scales, so they share a section rather than each claiming one.
+ * The open source projects that used to close it have their own page at
+ * /projects, so they are not repeated here. It was
+ * the homepage's Work section until the homepage became the front door rather
+ * than the whole site; `app/work/page.tsx` gives it its heading,
+ * so the headings in here start at `h2`.
  */
-export function Work({
+export function WorkContent({
   experiences,
   tools,
-  projects,
 }: {
   experiences: Experience[];
   tools: Tool[];
-  projects: Project[];
 }) {
-  const hasContent =
-    experiences.length > 0 || tools.length > 0 || projects.length > 0;
+  const hasContent = experiences.length > 0 || tools.length > 0;
 
   if (!hasContent) return null;
 
   return (
-    <Section id="work">
-      <Container>
-        <SectionHeading {...SECTIONS.work} />
-
+    <>
+      <div className="work-grid mt-10 sm:mt-12">
         {experiences.length > 0 && (
-          <EntryList>
+          <EntryList className="timeline">
             {experiences.map((item) => (
               <Entry
                 key={item.id}
@@ -51,95 +36,52 @@ export function Work({
                 org={item.company}
                 orgUrl={item.url || undefined}
                 description={item.description}
+                // `period` is free text; "Present" is the only signal.
+                current={/present/i.test(item.period)}
               />
             ))}
           </EntryList>
         )}
 
         {tools.length > 0 && (
-          <div className="mt-12">
-            <Subsection
-              {...SUBSECTIONS.tools}
-              icon={<Terminal className="h-4 w-4" />}
-            >
-              <div className="stack">
-                {tools.map((tool) => (
-                  <Chip key={tool.id}>{tool.name}</Chip>
-                ))}
-              </div>
-            </Subsection>
-          </div>
+          <aside className="tools-panel" aria-labelledby="tools-title">
+            <div className="tools-panel-head">
+              <Terminal className="h-4 w-4" aria-hidden="true" />
+              <h2 id="tools-title">{SUBSECTIONS.tools.title}</h2>
+            </div>
+            {SUBSECTIONS.tools.note && (
+              <p className="tools-panel-note">{SUBSECTIONS.tools.note}</p>
+            )}
+            <ul className="tools-list">
+              {tools.map((tool) => (
+                <li key={tool.id}>{tool.name}</li>
+              ))}
+            </ul>
+          </aside>
         )}
-
-        {projects.length > 0 && (
-          <div className="mt-12">
-            <Subsection
-              {...SUBSECTIONS.projects}
-              icon={<FolderGit2 className="h-4 w-4" />}
-            >
-              <ItemList>
-                {projects.map((project) => (
-                  <Item
-                    key={project.id}
-                    title={project.name}
-                    href={`/projects/${project.slug}`}
-                    description={project.tagline || project.description}
-                    meta={
-                      <>
-                        {project.status === "active" ? (
-                          <StatusBadge>Active</StatusBadge>
-                        ) : (
-                          <Chip>{humanise(project.status)}</Chip>
-                        )}
-                        {project.role && (
-                          <span className="font-medium text-fg">
-                            {project.role}
-                          </span>
-                        )}
-                      </>
-                    }
-                  >
-                    {(project.stack ?? []).length > 0 && (
-                      <ul className="flex flex-wrap gap-1.5 mt-2">
-                        {(project.stack ?? []).slice(0, 4).map((tech) => (
-                          <li key={tech}>
-                            <Chip>{tech}</Chip>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </Item>
-                ))}
-              </ItemList>
-              <ViewAll href="/projects">All projects</ViewAll>
-            </Subsection>
-          </div>
-        )}
-      </Container>
-    </Section>
+      </div>
+    </>
   );
 }
 
-export function EducationSection({ educations }: { educations: Education[] }) {
+/** The /education page's body: one tile per course. Was the homepage section. */
+export function EducationContent({ educations }: { educations: Education[] }) {
   if (educations.length === 0) return null;
 
   return (
-    <Section id="education">
-      <Container>
-        <SectionHeading {...SECTIONS.education} />
-        <EntryList>
-          {educations.map((item) => (
-            <Entry
-              key={item.id}
-              date={item.period}
-              title={item.course}
-              org={item.institution}
-              orgUrl={item.url || undefined}
-              description={item.description}
-            />
-          ))}
-        </EntryList>
-      </Container>
-    </Section>
+    <div className="mt-10 sm:mt-12">
+      <EntryList className="entry-grid">
+        {educations.map((item) => (
+          <Entry
+            key={item.id}
+            date={item.period}
+            title={item.course}
+            org={item.institution}
+            orgUrl={item.url || undefined}
+            description={item.description}
+          />
+        ))}
+      </EntryList>
+    </div>
   );
 }

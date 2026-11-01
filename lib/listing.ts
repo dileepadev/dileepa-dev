@@ -77,6 +77,63 @@ export function compareNumber(
   return direction === "asc" ? a - b : b - a;
 }
 
+const MONTHS = [
+  "jan",
+  "feb",
+  "mar",
+  "apr",
+  "may",
+  "jun",
+  "jul",
+  "aug",
+  "sep",
+  "oct",
+  "nov",
+  "dec",
+];
+
+/** "Oct 2022" as a month count (2022 × 12 + 9), a bare "2021" as its January. */
+function monthOf(text: string): number | null {
+  const match = text.match(/(?:([A-Za-z]{3})[a-z]*\.?\s+)?(\d{4})/);
+  if (!match) return null;
+  const month = match[1] ? MONTHS.indexOf(match[1].toLowerCase()) : 0;
+  return Number(match[2]) * 12 + Math.max(month, 0);
+}
+
+/**
+ * Most recent first, for records whose dates are a free-text period such as
+ * "Oct 2022 - Feb 2026" or "Jan 2024 - Present".
+ *
+ * Anything still going leads - `current`, or a period that ends "Present" -
+ * then the latest end date, then the latest start for two that ended in the
+ * same month, then the author's `order`. A period with no readable year sorts
+ * last rather than first.
+ */
+export function compareRecency(
+  a: {
+    current?: boolean | null;
+    period?: string | null;
+    order?: number | null;
+  },
+  b: {
+    current?: boolean | null;
+    period?: string | null;
+    order?: number | null;
+  },
+): number {
+  const ongoing = (item: typeof a) =>
+    Boolean(item.current) || /present/i.test(item.period ?? "");
+  if (ongoing(a) !== ongoing(b)) return ongoing(a) ? -1 : 1;
+
+  const [startA = "", endA = startA] = (a.period ?? "").split(/\s+[-–]\s+/);
+  const [startB = "", endB = startB] = (b.period ?? "").split(/\s+[-–]\s+/);
+  return (
+    compareNumber(monthOf(endA), monthOf(endB), "desc") ||
+    compareNumber(monthOf(startA), monthOf(startB), "desc") ||
+    compareNumber(a.order, b.order, "desc")
+  );
+}
+
 /**
  * The year a row is filed under, as a string, or null if it has no usable date.
  *

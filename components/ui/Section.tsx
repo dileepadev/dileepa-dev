@@ -1,5 +1,7 @@
 import { ReactNode } from "react";
+import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { SectionArt } from "./SectionArt";
 
 /**
  * A page section.
@@ -25,10 +27,57 @@ export function Section({
 }
 
 /**
+ * A homepage section.
+ *
+ * The header borrows the terminal profile's section rule - `▍ About ────` in
+ * `curl -L dileepa.dev` - as a marker line: the section's name in mono, then a
+ * hairline to the edge, then an optional count. Under it the section's own
+ * sentence is the H2, set large. The marker is the same word the nav uses, so
+ * "Work" in the nav lands on a line that says Work.
+ */
+export function IndexSection({
+  id,
+  label,
+  title,
+  intro,
+  meta,
+  art,
+  children,
+}: {
+  id: string;
+  label: string;
+  title?: string;
+  intro?: string;
+  /** A count or note at the end of the marker rule, e.g. "4 roles". */
+  meta?: string;
+  /** The section's icon, drawn as its corner mark. */
+  art?: LucideIcon;
+  children?: ReactNode;
+}) {
+  return (
+    <Section id={id}>
+      <div className="container">
+        {art && <SectionArt icon={art} />}
+        <header className="section-head">
+          <p className="section-marker">
+            <span className="section-marker-name">{label}</span>
+            <span className="section-marker-rule" aria-hidden="true" />
+            {meta && <span className="section-marker-meta">{meta}</span>}
+          </p>
+          {title && <h2 className="section-title">{title}</h2>}
+          {intro && <p className="section-intro">{intro}</p>}
+        </header>
+        {children}
+      </div>
+    </Section>
+  );
+}
+
+/**
  * A mono `--brand` label, an H2, and an intro in `--fg-muted`.
  *
  * The label carries the accent and the heading stays `--fg` - design system §6.
- * Colouring the heading too would put two emerald elements in one block, which
+ * Accenting the heading too would put two accented elements in one block, which
  * is what stops the accent reading as a signal.
  */
 export function SectionHeading({
@@ -53,7 +102,7 @@ export function SectionHeading({
  * A subsection inside a section - communities, events, posts, videos.
  *
  * The title is `--text-small` at weight 700, sentence case, marked with a 2px
- * emerald rule that the accent is spent on rather than the text - the words
+ * rule in the accent, which is spent on the rule rather than the text - the words
  * stay `--fg`, so the block has one accented element and it is the rule.
  *
  * It is a `<span>`, not a heading, on purpose. A section that groups several

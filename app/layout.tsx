@@ -1,7 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { JetBrains_Mono, Manrope } from "next/font/google";
+import { RailContentsProvider } from "@/components/providers/RailContents";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
-import { Footer, Navbar } from "@/components/sections";
+import { Footer, Navbar, ProfileRail } from "@/components/sections";
 import { BackToTop } from "@/components/ui";
 import { api } from "@/lib/api";
 import { Toaster } from "react-hot-toast";
@@ -26,10 +27,16 @@ const manrope = Manrope({
   display: "swap",
 });
 
+// No `weight` list: JetBrains Mono is a variable font, so the one face
+// covers the 400 and 500 the site uses. Asking for those two by name made
+// Google Fonts answer, at times, with dynamic `/l/font?kit=...&skey=...`
+// URLs, which Turbopack's next/font cannot parse (the `&` is not escaped in
+// its internal query) - every route then failed to build with "next/font/
+// google queries have exactly one entry" (vercel/next.js#99114). Requesting
+// the variable axis gets the static `/s/...woff2` files.
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains-mono",
   subsets: ["latin"],
-  weight: ["400", "500"],
   display: "swap",
 });
 
@@ -236,9 +243,14 @@ export default async function RootLayout({
     // --font-sans out of them at :root, and a custom property that is only
     // declared on <body> is undefined there - which makes the whole
     // declaration invalid and drops the site to a system font.
+    // `data-scroll-behavior`: the stylesheet scrolls smoothly for in-page
+    // anchors, and this tells Next to switch that off while it changes
+    // routes, so a new page starts at the top instead of gliding there
+    // under the page transition.
     <html
       lang="en"
       className={`${manrope.variable} ${jetbrainsMono.variable}`}
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
       <head>
@@ -265,13 +277,23 @@ export default async function RootLayout({
         <ThemeProvider>
           <a
             href="#main"
-            className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-60 focus:rounded focus:bg-bg-surface focus:px-4 focus:py-2 focus:text-fg"
+            className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-60 focus:rounded-full focus:bg-bg-surface focus:px-4 focus:py-2 focus:text-fg"
           >
             Skip to content
           </a>
           <Navbar />
-          <main id="main">{children}</main>
-          <Footer about={about} />
+          {/* The profile rail beside every page on a wide
+              screen. Below that width the rail hides and the nav above
+              takes over, as before. */}
+          <RailContentsProvider>
+            <div className="shell">
+              <ProfileRail about={about} />
+              <div className="shell-main">
+                <main id="main">{children}</main>
+                <Footer about={about} />
+              </div>
+            </div>
+          </RailContentsProvider>
           <Toaster
             position="bottom-center"
             reverseOrder={false}
@@ -280,7 +302,7 @@ export default async function RootLayout({
                 background: "var(--bg-surface)",
                 color: "var(--fg)",
                 border: "var(--hairline) solid var(--border)",
-                borderRadius: "var(--radius)",
+                borderRadius: "var(--radius-tile)",
                 fontSize: "var(--text-small)",
               },
             }}

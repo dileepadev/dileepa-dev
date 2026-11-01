@@ -8,7 +8,7 @@ import { Container, Lockup, ThemeToggle } from "@/components/ui";
 import { NAV_LINKS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
-const MORE_LINKS = [
+export const MORE_LINKS = [
   { label: "Projects", href: "/projects" },
   { label: "Blog", href: "/blog" },
   { label: "Events", href: "/events" },
@@ -110,17 +110,16 @@ export function Navbar() {
 
             <div className="nav-right">
               {/* Desktop links */}
-              <nav className="nav-links" aria-label="Sections">
+              <nav className="nav-links" aria-label="Main">
                 {NAV_LINKS.map((link) => {
-                  const hash = hashOf(link.href);
-                  const isCurrent = pathname === "/" && hash === active;
+                  const isCurrent = isNavCurrent(link.href, pathname, active);
 
                   return (
                     <Link
                       key={link.href}
                       href={link.href}
                       className={cn("nav-link", isCurrent && "is-active")}
-                      aria-current={isCurrent ? "true" : undefined}
+                      aria-current={currentAs(link.href, isCurrent)}
                     >
                       {link.label}
                     </Link>
@@ -143,10 +142,9 @@ export function Navbar() {
                     <span>Explore</span>
                     <ChevronDown
                       className={cn(
-                        "h-3.5 w-3.5 transition-transform duration-150",
+                        "h-3.5 w-3.5 transition-transform",
                         exploreOpen && "rotate-180",
                       )}
-                      strokeWidth={2}
                       aria-hidden="true"
                     />
                   </button>
@@ -155,7 +153,7 @@ export function Navbar() {
                     <div
                       role="menu"
                       aria-label="Explore pages"
-                      className="absolute right-0 top-full mt-2 w-48 rounded-lg border border-border-strong bg-bg-surface p-1.5 shadow-lg z-50 animate-in fade-in zoom-in-95 duration-150"
+                      className="absolute right-0 top-full mt-2 popover w-48 p-1.5 z-50"
                     >
                       {MORE_LINKS.map((item) => {
                         const isCurrent = pathname.startsWith(item.href);
@@ -166,7 +164,7 @@ export function Navbar() {
                             role="menuitem"
                             onClick={() => setExploreOpen(false)}
                             className={cn(
-                              "flex items-center justify-between rounded-sm px-3 py-2 text-small font-medium text-fg-muted transition-colors hover:bg-surface-hover hover:text-fg",
+                              "flex items-center justify-between rounded-row px-3 py-2 text-small font-medium text-fg-muted transition-colors hover:bg-surface-hover hover:text-fg",
                               isCurrent &&
                                 "text-brand bg-surface-hover font-medium",
                             )}
@@ -203,13 +201,9 @@ export function Navbar() {
                   }
                 >
                   {mobileOpen ? (
-                    <X className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
+                    <X className="h-4 w-4" aria-hidden="true" />
                   ) : (
-                    <Menu
-                      className="h-4 w-4"
-                      strokeWidth={2}
-                      aria-hidden="true"
-                    />
+                    <Menu className="h-4 w-4" aria-hidden="true" />
                   )}
                 </button>
               </div>
@@ -220,11 +214,12 @@ export function Navbar() {
           {mobileOpen && (
             <div className="nav-mobile-menu">
               <nav aria-label="Mobile navigation">
-                <div className="nav-mobile-section-label">Sections</div>
+                {/* The footer's names for the same two groups - see
+                    FOOTER_LINKS. */}
+                <div className="nav-mobile-section-label">About me</div>
                 <div className="nav-mobile-links">
                   {NAV_LINKS.map((link) => {
-                    const hash = hashOf(link.href);
-                    const isCurrent = pathname === "/" && hash === active;
+                    const isCurrent = isNavCurrent(link.href, pathname, active);
 
                     return (
                       <Link
@@ -235,7 +230,7 @@ export function Navbar() {
                           "nav-mobile-link",
                           isCurrent && "is-active",
                         )}
-                        aria-current={isCurrent ? "true" : undefined}
+                        aria-current={currentAs(link.href, isCurrent)}
                       >
                         <span>{link.label}</span>
                         {isCurrent && (
@@ -282,8 +277,40 @@ export function Navbar() {
 }
 
 /** `/#work` → `work`. */
-function hashOf(href: string): string {
+export function hashOf(href: string): string {
   return href.slice(href.indexOf("#") + 1);
+}
+
+/**
+ * `aria-current` for a primary nav link: "true" for a section in view, "page"
+ * for the page that is open.
+ */
+export function currentAs(
+  href: string,
+  isCurrent: boolean,
+): "true" | "page" | undefined {
+  if (!isCurrent) return undefined;
+  return isSectionLink(href) ? "true" : "page";
+}
+
+/** A link to a homepage section ("/#about") rather than to a page ("/work"). */
+export function isSectionLink(href: string): boolean {
+  return href.startsWith("/#");
+}
+
+/**
+ * Whether a primary nav link is where the reader is: a
+ * homepage section while it is scrolled into view, a page while it - or a
+ * page under it - is open. The nav holds both kinds since Work and Education
+ * became pages.
+ */
+export function isNavCurrent(
+  href: string,
+  pathname: string,
+  active: string | null,
+): boolean {
+  if (isSectionLink(href)) return pathname === "/" && hashOf(href) === active;
+  return pathname === href || pathname.startsWith(`${href}/`);
 }
 
 /**
@@ -292,13 +319,15 @@ function hashOf(href: string): string {
  * Tracks scroll position against each section boundary with a top offset to clear the sticky navbar.
  * When the user is at the top of the page (Hero / #top), clears all active section highlights.
  */
-function useScrollSpy(enabled: boolean): string | null {
+export function useScrollSpy(enabled: boolean): string | null {
   const [active, setActive] = useState<string | null>(null);
 
   useEffect(() => {
     if (!enabled) return;
 
-    const sectionIds = NAV_LINKS.map((link) => hashOf(link.href));
+    const sectionIds = NAV_LINKS.filter((link) => isSectionLink(link.href)).map(
+      (link) => hashOf(link.href),
+    );
 
     function updateActiveSection() {
       const scrollY = window.scrollY;

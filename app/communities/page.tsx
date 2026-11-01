@@ -6,7 +6,7 @@ import {
   PagePath,
   Section,
 } from "@/components/ui";
-import { api, checkApiHealth } from "@/lib/api";
+import { api, checkApiHealth, keepLastGoodRender } from "@/lib/api";
 import { EMPTY_STATES, PAGES } from "@/lib/constants";
 import { pageMetadata } from "@/lib/metadata";
 import { CommunitySearch } from "./_components/CommunitySearch";
@@ -24,6 +24,7 @@ export default async function CommunitiesPage() {
   if (total === 0) {
     const health = await checkApiHealth();
     if (!health.ok) {
+      keepLastGoodRender("/communities");
       return <ApiOfflinePage path="/communities" />;
     }
   }
@@ -36,11 +37,10 @@ export default async function CommunitiesPage() {
             <div className="mb-2">
               <PagePath path="/communities" />
             </div>
-            <div className="section-label">{PAGES.communities.label}</div>
             <h1>{PAGES.communities.title}</h1>
           </div>
           {total > 0 && (
-            <div className="inline-flex items-center gap-1.5 font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1 transition-colors duration-150 hover:border-brand hover:bg-surface-hover hover:text-fg cursor-default">
+            <div className="count-badge inline-flex items-center gap-1.5 font-mono text-small text-fg-muted px-2.5 py-1 shrink-0 mt-1">
               <span className="font-medium text-fg">{total}</span>
               <span>{total === 1 ? "Community" : "Communities"}</span>
             </div>

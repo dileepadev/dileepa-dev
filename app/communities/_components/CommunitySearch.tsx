@@ -1,25 +1,22 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Calendar } from "lucide-react";
 import {
   Button,
-  Chip,
+  CommunityCard,
   EmptyState,
   FilterSelect,
   type FilterOption,
-  Item,
-  ItemList,
   ListingControls,
   type ActiveFilterItem,
   LoadMore,
-  StatusBadge,
+  TileGrid,
   type SortOption,
 } from "@/components/ui";
 import type { Community } from "@/lib/api-types";
 import {
   buildFacets,
-  compareNumber,
+  compareRecency,
   compareText,
   type FacetSpec,
   matchesTokens,
@@ -27,11 +24,13 @@ import {
   toOptions,
 } from "@/lib/listing";
 
-type CommunitySortKey = "default" | "current-first" | "name-asc" | "name-desc";
+type CommunitySortKey = "default" | "name-asc" | "name-desc";
 
+// "Most recent" - current roles first, then the latest end date, the order
+// `api.getCommunities` returns too - is the default. It replaces "Current
+// roles first", which it now includes.
 const SORT_OPTIONS: SortOption<CommunitySortKey>[] = [
-  { value: "default", label: "Default order" },
-  { value: "current-first", label: "Current roles first" },
+  { value: "default", label: "Most recent" },
   { value: "name-asc", label: "Name (A–Z)" },
   { value: "name-desc", label: "Name (Z–A)" },
 ];
@@ -116,22 +115,13 @@ export function CommunitySearch({ communities }: { communities: Community[] }) {
 
     return list.sort((a, b) => {
       switch (sortBy) {
-        case "current-first":
-          if (a.current !== b.current) return a.current ? -1 : 1;
-          return (
-            compareNumber(a.order, b.order, "desc") ||
-            compareText(a.name, b.name)
-          );
         case "name-asc":
           return compareText(a.name, b.name);
         case "name-desc":
           return compareText(b.name, a.name);
         case "default":
         default:
-          return (
-            compareNumber(a.order, b.order, "desc") ||
-            compareText(a.name, b.name)
-          );
+          return compareRecency(a, b);
       }
     });
   }, [filteredCommunities, sortBy]);
@@ -209,40 +199,15 @@ export function CommunitySearch({ communities }: { communities: Community[] }) {
         </div>
       ) : (
         <div className="mt-6">
-          <ItemList>
+          <TileGrid>
             {paginatedCommunities.map((community) => (
-              <Item
+              <CommunityCard
                 key={community.id}
+                community={community}
                 headingLevel={2}
-                title={community.name}
-                href={community.communityUrl || undefined}
-                description={community.description}
-                meta={
-                  <>
-                    {community.current ? (
-                      <StatusBadge>Current</StatusBadge>
-                    ) : (
-                      <Chip>Past role</Chip>
-                    )}
-                    {community.role && (
-                      <span className="font-medium text-fg">
-                        {community.role}
-                      </span>
-                    )}
-                    {community.period && (
-                      <span className="inline-flex items-center gap-1.5 text-fg-muted">
-                        <Calendar
-                          className="h-3 w-3 shrink-0 text-fg-muted"
-                          aria-hidden="true"
-                        />
-                        <span>{community.period}</span>
-                      </span>
-                    )}
-                  </>
-                }
               />
             ))}
-          </ItemList>
+          </TileGrid>
 
           {hasMore && (
             <LoadMore

@@ -10,7 +10,6 @@ import {
   Mail,
   MapPin,
   Share2,
-  ZoomIn,
   Briefcase,
   Building2,
   Globe,
@@ -31,9 +30,12 @@ import {
   ImageLightbox,
   LinkButton,
   StatusBadge,
+  buttonClasses,
 } from "@/components/ui";
+import { useCopy } from "@/components/ui/useCopy";
 import type { About, Experience, SpeakingTopic } from "@/lib/api-types";
 import { SITE_CONFIG } from "@/lib/constants";
+import { ZoomHint } from "@/components/ui/ZoomHint";
 
 interface ProfilePhoto {
   id: string;
@@ -139,7 +141,9 @@ export function ProfileClient({
   experiences,
   speakingTopics = [],
 }: ProfileClientProps) {
-  const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  // The site's one copy behaviour, keyed so one hook drives every copy
+  // button here: a tick and "Copied" on the button pressed, for two seconds.
+  const { copied: copiedKey, copy } = useCopy();
   const [lightboxPhoto, setLightboxPhoto] = useState<ProfilePhoto | null>(null);
 
   // The API's copy wins wherever it has any, so the page is edited from the
@@ -164,11 +168,10 @@ export function ProfileClient({
   const currentCompany = experiences[0]?.company || "AI Systems & Engineering";
   const location = about?.location || "Sri Lanka";
 
-  const handleCopy = useCallback((key: string, text: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedKey(key);
-    setTimeout(() => setCopiedKey(null), 2000);
-  }, []);
+  const handleCopy = useCallback(
+    (key: string, text: string) => copy(text, key),
+    [copy],
+  );
 
   const handleShare = useCallback(
     async (photo: ProfilePhoto) => {
@@ -279,10 +282,10 @@ export function ProfileClient({
   return (
     <div className="space-y-16">
       {/* Speaker Identity Summary Card */}
-      <div className="p-6 sm:p-8 rounded-lg border border-border-strong bg-bg-surface">
+      <div className="tile p-6 sm:p-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-center">
-            <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-lg border border-border-strong overflow-hidden bg-bg shrink-0">
+            <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-block overflow-hidden bg-bg-surface shrink-0">
               <Image
                 src="/profile/v2.webp"
                 alt="Dileepa Bandara"
@@ -295,7 +298,7 @@ export function ProfileClient({
 
             <div className="space-y-1.5 min-w-0">
               <div className="flex items-center gap-2.5 flex-wrap">
-                <h2 className="text-xl sm:text-2xl font-bold text-fg">
+                <h2 className="text-h3 sm:text-h2 font-medium text-fg">
                   Dileepa Bandara
                 </h2>
                 {about?.status ? (
@@ -310,12 +313,16 @@ export function ProfileClient({
                   <Briefcase className="h-3.5 w-3.5 text-brand shrink-0" />
                   <span>{currentRole}</span>
                 </span>
-                <span className="text-border-strong">·</span>
+                <span className="text-fg-muted" aria-hidden="true">
+                  ·
+                </span>
                 <span className="inline-flex items-center gap-1.5">
                   <Building2 className="h-3.5 w-3.5 text-fg-muted shrink-0" />
                   <span>{currentCompany}</span>
                 </span>
-                <span className="text-border-strong">·</span>
+                <span className="text-fg-muted" aria-hidden="true">
+                  ·
+                </span>
                 <span className="inline-flex items-center gap-1 text-fg-muted font-normal">
                   <MapPin className="h-3.5 w-3.5 text-fg-muted shrink-0" />
                   <span>{location}</span>
@@ -342,12 +349,12 @@ export function ProfileClient({
             >
               {copiedKey === "email" ? (
                 <>
-                  <Check className="h-4 w-4 text-brand" />
-                  <span>Copied email!</span>
+                  <Check className="h-4 w-4 copy-tick" />
+                  <span>Copied</span>
                 </>
               ) : (
                 <>
-                  <Copy className="h-4 w-4" />
+                  <Copy className="copy-icon h-4 w-4" />
                   <span>Copy email</span>
                 </>
               )}
@@ -361,29 +368,29 @@ export function ProfileClient({
         <div>
           <div className="section-label">Copyable copy</div>
           <h2>Speaker biographies</h2>
-          <p className="mt-2 text-fg-muted">
+          <p className="mt-2 text-fg-body">
             Pre-approved biographies in two lengths for event schedules,
             introduction notes, and speaker listings.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 @4xl/section:grid-cols-2 gap-6">
           {/* Short Bio */}
           <Card className="flex flex-col justify-between p-6">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="font-mono text-xs font-medium text-brand uppercase tracking-wider">
+                <span className="font-mono text-label font-medium text-brand uppercase tracking-wider">
                   Short bio (~50 words)
                 </span>
-                <span className="font-mono text-xs text-fg-muted">
+                <span className="font-mono text-label text-fg-muted">
                   For announcements &amp; social flyers
                 </span>
               </div>
-              <p className="text-fg text-small leading-relaxed">{shortBio}</p>
+              <p className="text-fg-body text-body">{shortBio}</p>
             </div>
 
             <div className="pt-5 mt-4 border-t border-border-strong/60 flex items-center justify-between">
-              <span className="font-mono text-xs text-fg-muted">
+              <span className="font-mono text-label text-fg-muted">
                 Word count: ~40 words
               </span>
               <Button
@@ -392,12 +399,12 @@ export function ProfileClient({
               >
                 {copiedKey === "short-bio" ? (
                   <>
-                    <Check className="h-3.5 w-3.5 text-brand" />
-                    <span>Copied!</span>
+                    <Check className="h-3.5 w-3.5 copy-tick" />
+                    <span>Copied</span>
                   </>
                 ) : (
                   <>
-                    <Copy className="h-3.5 w-3.5" />
+                    <Copy className="copy-icon h-3.5 w-3.5" />
                     <span>Copy short bio</span>
                   </>
                 )}
@@ -409,18 +416,18 @@ export function ProfileClient({
           <Card className="flex flex-col justify-between p-6">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="font-mono text-xs font-medium text-brand uppercase tracking-wider">
+                <span className="font-mono text-label font-medium text-brand uppercase tracking-wider">
                   Standard bio (~100 words)
                 </span>
-                <span className="font-mono text-xs text-fg-muted">
+                <span className="font-mono text-label text-fg-muted">
                   For conference agendas &amp; programs
                 </span>
               </div>
-              <p className="text-fg text-small leading-relaxed">{fullBio}</p>
+              <p className="text-fg-body text-body">{fullBio}</p>
             </div>
 
             <div className="pt-5 mt-4 border-t border-border-strong/60 flex items-center justify-between">
-              <span className="font-mono text-xs text-fg-muted">
+              <span className="font-mono text-label text-fg-muted">
                 Word count: ~90 words
               </span>
               <Button
@@ -429,12 +436,12 @@ export function ProfileClient({
               >
                 {copiedKey === "full-bio" ? (
                   <>
-                    <Check className="h-3.5 w-3.5 text-brand" />
-                    <span>Copied!</span>
+                    <Check className="h-3.5 w-3.5 copy-tick" />
+                    <span>Copied</span>
                   </>
                 ) : (
                   <>
-                    <Copy className="h-3.5 w-3.5" />
+                    <Copy className="copy-icon h-3.5 w-3.5" />
                     <span>Copy standard bio</span>
                   </>
                 )}
@@ -449,25 +456,30 @@ export function ProfileClient({
         <div>
           <div className="section-label">Media kit</div>
           <h2>Official headshots &amp; portraits</h2>
-          <p className="mt-2 text-fg-muted">
+          <p className="mt-2 text-fg-body">
             High-resolution assets for print and digital media. Hover over any
             photo to inspect details, click to view in full screen, download in
             your preferred format, or copy the direct asset URL.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Four across only where a card still fits its chip and both
+            actions - beside the rail, "large" is not wide enough. */}
+        <div className="grid grid-cols-1 @xl/section:grid-cols-2 @5xl/section:grid-cols-4 gap-6">
           {PROFILE_PHOTOS.map((photo) => (
             <div
               key={photo.id}
-              className="rounded-lg border border-border-strong bg-bg-surface overflow-hidden flex flex-col justify-between shadow-xs transition-colors hover:border-brand/50"
+              className="tile overflow-hidden flex flex-col justify-between"
             >
-              {/* Photo Viewport with Hover Zoom */}
-              <div
-                className="group relative aspect-square w-full cursor-zoom-in overflow-hidden bg-bg"
+              {/* Photo viewport - a button, so the viewer opens from the
+                  keyboard too */}
+              <button
+                type="button"
+                className="group relative block aspect-square w-full cursor-zoom-in overflow-hidden bg-bg text-left"
                 onClick={() => setLightboxPhoto(photo)}
+                aria-label={`View ${photo.title} full size`}
               >
-                <div
+                <span
                   className={
                     photo.isTransparent
                       ? "absolute inset-0 bg-[repeating-conic-gradient(var(--border-strong)_0%_25%,transparent_0%_50%)] bg-[length:16px_16px] opacity-15"
@@ -479,61 +491,58 @@ export function ProfileClient({
                   alt={`Dileepa Bandara - ${photo.title}`}
                   width={300}
                   height={300}
-                  className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-108"
+                  className="w-full h-full object-cover"
                 />
+                <ZoomHint />
 
-                {/* Hover Zoom Overlay */}
-                <div className="absolute inset-0 bg-black/45 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-bg text-fg font-mono text-xs font-medium shadow-md">
-                    <ZoomIn className="h-3.5 w-3.5 text-brand" />
-                    <span>Click to zoom</span>
-                  </div>
-                </div>
-
-                {/* Format Pill */}
-                <div className="absolute top-2.5 left-2.5 pointer-events-none">
-                  <span className="inline-flex items-center px-2 py-0.5 rounded text-label font-mono font-medium bg-bg/90 backdrop-blur-sm text-fg border border-border-strong">
-                    {photo.format}
-                  </span>
-                </div>
-              </div>
+                {/* Format pill */}
+                <span className="absolute top-2.5 left-2.5 pointer-events-none">
+                  <span className="chip backdrop-blur-sm">{photo.format}</span>
+                </span>
+              </button>
 
               {/* Photo Information & Actions */}
               <div className="p-4 flex flex-col justify-between flex-1 space-y-4">
                 <div className="space-y-1.5">
                   <div className="flex items-baseline justify-between gap-2">
-                    <h3 className="text-sm font-bold text-fg">{photo.title}</h3>
+                    <h3 className="text-body font-medium text-fg">
+                      {photo.title}
+                    </h3>
                     <span className="font-mono text-label text-fg-muted shrink-0">
                       {photo.size}
                     </span>
                   </div>
-                  <p className="text-xs text-fg-muted line-clamp-2">
+                  <p className="text-small text-fg-body line-clamp-2">
                     {photo.description}
                   </p>
                 </div>
 
-                <div className="pt-3 border-t border-border-strong/60 flex items-center gap-2">
+                <div className="pt-3 border-t border-border-hairline flex flex-wrap items-center gap-2">
                   <a
                     href={photo.src}
                     download={photo.filename}
-                    className="btn btn--primary flex-1 !h-8 text-xs inline-flex items-center justify-center gap-1.5"
+                    className={buttonClasses({
+                      variant: "primary",
+                      size: "sm",
+                      className: "flex-1",
+                    })}
                     title={`Download ${photo.title}`}
                   >
-                    <Download className="h-3.5 w-3.5 shrink-0" />
+                    <Download aria-hidden="true" />
                     <span>Download</span>
                   </a>
 
                   <button
                     type="button"
                     onClick={() => handleShare(photo)}
-                    className="btn btn--secondary !h-8 !px-2.5 text-xs inline-flex items-center justify-center gap-1"
+                    className={buttonClasses({ size: "sm" })}
                     title="Share or copy direct link"
                     aria-label={`Share ${photo.title}`}
                   >
                     {copiedKey === photo.id ? (
-                      <Check className="h-3.5 w-3.5 text-brand" />
+                      <Check className="copy-tick" aria-hidden="true" />
                     ) : (
-                      <Share2 className="h-3.5 w-3.5" />
+                      <Share2 className="copy-icon" aria-hidden="true" />
                     )}
                   </button>
                 </div>
@@ -548,25 +557,23 @@ export function ProfileClient({
         <div>
           <div className="section-label">Sessions &amp; talks</div>
           <h2>Keynote topics &amp; workshops</h2>
-          <p className="mt-2 text-fg-muted">
+          <p className="mt-2 text-fg-body">
             Popular technical talk themes and hands-on workshops Dileepa
             regularly delivers for engineering conferences and meetups.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 @xl/section:grid-cols-2 gap-4">
           {topics.map((topic, index) => (
             <Card key={topic.key} className="p-5 flex flex-col justify-between">
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-full bg-brand/10 text-brand border border-brand/30 inline-flex items-center justify-center font-mono text-xs font-bold">
+                  <span className="w-6 h-6 rounded-full bg-bg-surface text-fg border border-border-strong inline-flex items-center justify-center font-mono text-label font-medium">
                     0{index + 1}
                   </span>
-                  <h3 className="text-sm sm:text-base font-bold text-fg">
-                    {topic.title}
-                  </h3>
+                  <h3 className="text-h3 font-medium text-fg">{topic.title}</h3>
                 </div>
-                <p className="text-small text-fg-muted pl-8">{topic.summary}</p>
+                <p className="text-body text-fg-body pl-8">{topic.summary}</p>
               </div>
             </Card>
           ))}
@@ -578,13 +585,13 @@ export function ProfileClient({
         <div>
           <div className="section-label">Verification</div>
           <h2>Connect &amp; verify credentials</h2>
-          <p className="mt-2 text-fg-muted">
+          <p className="mt-2 text-fg-body">
             Official profiles, code repositories, recorded walkthroughs, and bio
             links to cite in your event material.
           </p>
         </div>
 
-        <div className="rounded-lg border border-border-strong bg-bg-surface overflow-hidden divide-y divide-border-strong/60 shadow-xs">
+        <div className="tile overflow-hidden divide-y divide-border-hairline">
           {verificationChannels.map((item) => {
             const Icon = item.icon;
             const isCopied = copiedKey === item.key;
@@ -592,26 +599,22 @@ export function ProfileClient({
             return (
               <div
                 key={item.key}
-                className="p-4 sm:px-6 sm:py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-surface-hover/40 transition-colors"
+                className="p-4 sm:px-6 sm:py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
               >
                 {/* Left: Icon, Platform Name, Handler / Link */}
                 <div className="flex items-center gap-3.5 min-w-0">
-                  <div className="w-9 h-9 rounded-md border border-border-strong bg-bg flex items-center justify-center text-fg shrink-0">
-                    <Icon className="h-4.5 w-4.5 text-fg" aria-hidden="true" />
+                  <div className="w-9 h-9 rounded-block bg-bg-surface flex items-center justify-center text-fg shrink-0">
+                    <Icon className="h-4 w-4 text-fg" aria-hidden="true" />
                   </div>
 
                   <div className="min-w-0 space-y-0.5">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-sm font-bold text-fg">
+                      <span className="text-body font-medium text-fg">
                         {item.name}
                       </span>
-                      {item.badge && (
-                        <span className="text-label font-mono px-1.5 py-0.5 rounded bg-brand/10 text-brand border border-brand/20">
-                          {item.badge}
-                        </span>
-                      )}
+                      {item.badge && <span className="chip">{item.badge}</span>}
                     </div>
-                    <div className="font-mono text-xs text-fg-muted truncate">
+                    <div className="font-mono text-label text-fg-muted truncate">
                       {item.handler}
                     </div>
                   </div>
@@ -623,36 +626,27 @@ export function ProfileClient({
                     href={item.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="btn btn--secondary !h-8 !px-3 text-xs inline-flex items-center gap-1.5"
+                    className={buttonClasses({ size: "sm" })}
                     title={`Open ${item.name} in new tab`}
                   >
                     <span>Open</span>
-                    <ExternalLink
-                      className="h-3 w-3 text-fg-muted"
-                      aria-hidden="true"
-                    />
+                    <ExternalLink aria-hidden="true" />
                   </a>
 
                   <button
                     type="button"
                     onClick={() => handleCopy(item.key, item.copyValue)}
-                    className="btn btn--secondary !h-8 !px-3 text-xs inline-flex items-center gap-1.5"
+                    className={buttonClasses({ size: "sm" })}
                     title={`Copy ${item.name} link`}
                   >
                     {isCopied ? (
                       <>
-                        <Check
-                          className="h-3 w-3 text-brand"
-                          aria-hidden="true"
-                        />
-                        <span className="text-brand">Copied</span>
+                        <Check className="copy-tick" aria-hidden="true" />
+                        <span>Copied</span>
                       </>
                     ) : (
                       <>
-                        <Copy
-                          className="h-3 w-3 text-fg-muted"
-                          aria-hidden="true"
-                        />
+                        <Copy className="copy-icon" aria-hidden="true" />
                         <span>Copy</span>
                       </>
                     )}

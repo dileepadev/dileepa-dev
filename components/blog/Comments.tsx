@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { MessageSquare, Reply } from "lucide-react";
+import { useFormErrors } from "@/components/ui";
 import { api } from "@/lib/api";
 import type {
   CommentThread,
@@ -63,11 +64,7 @@ function CommentCard({
           {initials(comment.author)}
         </span>
         <span className="font-medium">{comment.author}</span>
-        {comment.authorIsOwner && (
-          <span className="rounded-sm border border-brand px-1.5 font-mono text-label text-brand">
-            Author
-          </span>
-        )}
+        {comment.authorIsOwner && <span className="chip">Author</span>}
         {comment.createdAt && (
           <time
             dateTime={comment.createdAt}
@@ -96,11 +93,7 @@ function CommentCard({
             onClick={onReply}
             className="inline-flex items-center gap-2 font-mono text-small text-fg-muted transition-colors hover:text-brand"
           >
-            <Reply
-              className="h-4 w-4 shrink-0"
-              strokeWidth={1.75}
-              aria-hidden="true"
-            />
+            <Reply className="h-4 w-4 shrink-0" aria-hidden="true" />
             Reply
           </button>
         )}
@@ -109,6 +102,21 @@ function CommentCard({
     </article>
   );
 }
+
+/** The comment form's validation copy - see `useFormErrors`. */
+const COMMENT_MESSAGES = {
+  author: { missing: "Enter your name." },
+  email: {
+    missing: "",
+    invalid: "Enter an email address like jane@example.com.",
+  },
+  comment: { missing: "Write your comment." },
+};
+
+const REPLY_MESSAGES = {
+  ...COMMENT_MESSAGES,
+  comment: { missing: "Write your reply." },
+};
 
 function CommentForm({
   slug,
@@ -131,10 +139,14 @@ function CommentForm({
   const [honeypot, setHoneypot] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { validate, fieldProps, errorFor } = useFormErrors(
+    parentId ? REPLY_MESSAGES : COMMENT_MESSAGES,
+  );
 
-  async function submit(event: React.FormEvent) {
+  async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (sending) return;
+    if (!validate(event.currentTarget)) return;
     setSending(true);
     setError(null);
     try {
@@ -161,10 +173,16 @@ function CommentForm({
 
   const nameField = (
     <label>
-      <span>Name</span>
+      <span>
+        Name{" "}
+        <span className="req" aria-hidden="true">
+          *
+        </span>
+      </span>
       <input
         type="text"
         name="author"
+        {...fieldProps("author")}
         value={author}
         onChange={(e) => setAuthor(e.target.value)}
         placeholder="Jane Doe"
@@ -173,11 +191,12 @@ function CommentForm({
         disabled={sending}
         required
       />
+      {errorFor("author")}
     </label>
   );
 
   return (
-    <form className="field flex flex-col gap-4" onSubmit={submit}>
+    <form className="field flex flex-col gap-4" onSubmit={submit} noValidate>
       {compact ? (
         nameField
       ) : (
@@ -193,6 +212,7 @@ function CommentForm({
             <input
               type="email"
               name="email"
+              {...fieldProps("email")}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="jane@example.com"
@@ -200,15 +220,22 @@ function CommentForm({
               autoComplete="email"
               disabled={sending}
             />
+            {errorFor("email")}
           </label>
         </div>
       )}
 
       <label>
-        <span>{parentId ? "Reply" : "Comment"}</span>
+        <span>
+          {parentId ? "Reply" : "Comment"}{" "}
+          <span className="req" aria-hidden="true">
+            *
+          </span>
+        </span>
         <textarea
           ref={formRef}
           name="comment"
+          {...fieldProps("comment")}
           value={body}
           onChange={(e) => setBody(e.target.value)}
           rows={compact ? 3 : 4}
@@ -219,6 +246,7 @@ function CommentForm({
           disabled={sending}
           required
         />
+        {errorFor("comment")}
       </label>
 
       {/* The honeypot. Hidden from sight and from assistive technology, and
@@ -253,11 +281,7 @@ function CommentForm({
           className="btn btn--primary inline-flex items-center gap-2"
           disabled={sending}
         >
-          <MessageSquare
-            className="h-4 w-4 shrink-0"
-            strokeWidth={1.75}
-            aria-hidden="true"
-          />
+          <MessageSquare className="h-4 w-4 shrink-0" aria-hidden="true" />
           <span>
             {sending ? "Posting…" : parentId ? "Post reply" : "Post comment"}
           </span>
@@ -297,11 +321,7 @@ export function Comments({
   return (
     <section aria-labelledby="comments-heading" className="flex flex-col gap-8">
       <h2 id="comments-heading" className="flex items-center gap-2 text-h3">
-        <MessageSquare
-          className="h-5 w-5 shrink-0"
-          strokeWidth={1.75}
-          aria-hidden="true"
-        />
+        <MessageSquare className="h-4 w-4 shrink-0" aria-hidden="true" />
         {total === 0
           ? "Comments"
           : `${total} ${total === 1 ? "comment" : "comments"}`}

@@ -6,7 +6,7 @@ import {
   PagePath,
   Section,
 } from "@/components/ui";
-import { api, checkApiHealth } from "@/lib/api";
+import { api, checkApiHealth, keepLastGoodRender } from "@/lib/api";
 import { EMPTY_STATES, PAGES } from "@/lib/constants";
 import { pageMetadata } from "@/lib/metadata";
 import { VideoSearch } from "./_components/VideoSearch";
@@ -18,11 +18,9 @@ export const metadata: Metadata = pageMetadata({
 });
 
 /**
- * Videos, as a list rather than a grid of thumbnails.
- *
- * Photographs appear in two places on this site - the hero portrait and the
- * event gallery - and a wall of YouTube thumbnails is not either of them. The
- * title and the date are what a reader is choosing between anyway.
+ * Videos, as a list of rows: a thumbnail beside the title, date and
+ * description. A list rather than a wall of thumbnails, so the title and date
+ * still lead, and the picture says what the video looks like.
  */
 export default async function VideosPage() {
   const videos = await api.getVideos();
@@ -31,6 +29,7 @@ export default async function VideosPage() {
   if (total === 0) {
     const health = await checkApiHealth();
     if (!health.ok) {
+      keepLastGoodRender("/videos");
       return <ApiOfflinePage path="/videos" />;
     }
   }
@@ -43,11 +42,10 @@ export default async function VideosPage() {
             <div className="mb-2">
               <PagePath path="/videos" />
             </div>
-            <div className="section-label">{PAGES.videos.label}</div>
             <h1>{PAGES.videos.title}</h1>
           </div>
           {total > 0 && (
-            <div className="inline-flex items-center gap-1.5 font-mono text-small text-fg-muted border border-border-strong rounded-sm px-2.5 py-1 bg-bg-surface shrink-0 mt-1 transition-colors duration-150 hover:border-brand hover:bg-surface-hover hover:text-fg cursor-default">
+            <div className="count-badge inline-flex items-center gap-1.5 font-mono text-small text-fg-muted px-2.5 py-1 shrink-0 mt-1">
               <span className="font-medium text-fg">{total}</span>
               <span>{total === 1 ? "Video" : "Videos"}</span>
             </div>

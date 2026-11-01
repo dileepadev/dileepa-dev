@@ -85,8 +85,21 @@ function wantsIntro(request: Request, params: URLSearchParams): boolean {
   return isTerminalClient(request.headers);
 }
 
+/**
+ * The request's flags. Its own query first; when that arrived empty, the copy
+ * `proxy.ts` puts in a header, because on Vercel a rewritten request reaches
+ * this handler without its query string (issue #30). The header only ever
+ * carries flags a reader could pass on the URL anyway, so trusting it widens
+ * nothing.
+ */
+function requestParams(request: Request): URLSearchParams {
+  const own = new URL(request.url).searchParams;
+  if (own.size > 0) return own;
+  return new URLSearchParams(request.headers.get(TERMINAL.queryHeader) ?? "");
+}
+
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
+  const searchParams = requestParams(request);
   const mode: ColorMode = wantsPlainText(searchParams) ? "plain" : "ansi";
 
   // The animated form. Returned as a stream so the pauses between chunks reach

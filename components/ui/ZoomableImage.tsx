@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { ZoomIn } from "lucide-react";
 import { ImageLightbox } from "./ImageLightbox";
+import { ZoomHint } from "./ZoomHint";
 
 interface ZoomableImageProps {
   src: string;
@@ -39,7 +39,7 @@ export function ZoomableImage({
         aria-label={
           altText ? `Click to zoom: ${altText}` : "Click to zoom image"
         }
-        className={`group relative block w-full cursor-zoom-in overflow-hidden rounded-lg border border-border-strong bg-bg-surface text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand ${className}`}
+        className={`group relative block w-full cursor-zoom-in overflow-hidden rounded-block bg-bg text-left ${className}`}
       >
         <div className={`relative w-full ${aspectRatio} overflow-hidden`}>
           <Image
@@ -48,16 +48,9 @@ export function ZoomableImage({
             fill
             sizes={sizes}
             preload={preload}
-            className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+            className="object-cover"
           />
-
-          {/* Hover Zoom Overlay */}
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/45 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-bg px-3 py-1.5 font-mono text-xs font-medium text-fg shadow-md">
-              <ZoomIn className="h-3.5 w-3.5 text-brand" aria-hidden="true" />
-              <span>Click to zoom</span>
-            </div>
-          </div>
+          <ZoomHint />
         </div>
       </button>
 
