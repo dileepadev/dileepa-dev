@@ -5,8 +5,8 @@ interface BadgeProps {
   children: ReactNode;
   /**
    * `filled` is the one full-contrast fill and is reserved - one per surface.
-   * Everything else shares a single treatment, because with a single accent
-   * colour badges are told apart by their label, not by hue.
+   * Everything else shares a single treatment, because with no hue in the
+   * palette, badges are told apart by their label.
    */
   variant?: "default" | "filled";
   /**

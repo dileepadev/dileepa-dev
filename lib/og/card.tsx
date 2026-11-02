@@ -137,7 +137,7 @@ export function ogCard({ label, title, path, meta }: OgCard) {
             fontFamily: "JetBrains Mono",
           }}
         >
-          {/* The terminal window. Same chrome as the cover artwork. */}
+          {/* The terminal window. */}
           <div
             style={{
               display: "flex",

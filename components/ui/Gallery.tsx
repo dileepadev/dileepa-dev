@@ -6,10 +6,10 @@ import { formatMonth } from "@/lib/format";
 /**
  * The event gallery.
  *
- * Photographs appear in exactly two places on this site: the hero portrait and
- * here. That is the whole image budget, and keeping it that small is what makes
- * a page of photographs read as a deliberate section rather than decoration
- * sprayed across the site.
+ * Photographs appear in exactly three places on this site: the portrait, the
+ * video thumbnails and here. That is the whole image budget, and keeping it that
+ * small is what makes a page of photographs read as a deliberate section rather
+ * than decoration sprayed across the site.
  *
  * Each tile links to the event the photo was taken at, because a photo of a
  * room full of people is only worth showing if a reader can find out what was
@@ -33,8 +33,8 @@ export function Gallery({ photos }: { photos: GalleryPhoto[] }) {
               alt={photo.alt || `${photo.eventTitle}`}
               width={photo.width ?? 800}
               height={photo.height ?? 600}
-              // Three columns inside the 1020px measure, less two 12px gaps,
-              // is a 332px tile - not 240px. Understating it made the browser
+              // Three columns in the content measure, less two 12px gaps, is
+              // about a 340px tile - not 240px. Understating it made the browser
               // pick a variant a third too small for the slot it renders in,
               // which is a soft image on every desktop screen and a worse one
               // on a retina display.
