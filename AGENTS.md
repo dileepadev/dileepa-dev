@@ -98,18 +98,21 @@ versions - version drift between the two apps is the thing v2.0.0 exists to end.
   `https://dileepa.dev/og.png` while production was still v1 and had no such file.
 - **Three icon conventions, and they do not mix.** Lucide for interface controls, `SocialIcons.tsx`
   for third-party brand marks, `PillarIcons.tsx` for the six About-card marks. The pillar marks are
-  brand assets: the source is `docs/brand/icons/`, and the app ports the `-symbol.svg` variant
+  brand assets: the source is `docs/brand/icons/` in the `dileepadev` repository (this repo keeps
+  no copy), and the app ports the `-symbol.svg` variant
   because it strokes `currentColor` and therefore follows the theme.
 - **There is no `og:logo`.** Open Graph defines twenty-three properties and that is not one of
   them; audit tools ask for it anyway. The logo a search engine reads is `Person.image` in the
   JSON-LD in `app/layout.tsx`, which is the portrait - the same image the favicon is. Do not add
   the tag to satisfy a checker.
-- **One social card design.** The terminal window in `docs/brand/covers/source-1584x396.svg` is it -
-  `public/og.png`, every uploaded profile cover, and the per-record cards that `lib/og/card.tsx`
-  generates all carry it. A second design is not a variant, it is a fork.
+- **The social cards.** `public/og.png` (1200x630) and `og2.png` (1600x900) are the v2.1.0 flat
+  split card: `@dileepadev`, the name, "AI Engineer" and `dileepa.dev` beside the colour portrait.
+  The source artwork and the social covers live in `dileepadev`'s `docs/brand/`; this repo keeps
+  no copy. The per-record cards that `lib/og/card.tsx` generates still draw the earlier terminal
+  window, in the v2.1.0 palette - bringing them onto the split card is open work.
 - **The favicon is the portrait at every size, and there is no SVG one.** Audit tools flag the
   missing SVG favicon; leave it flagged. The identity is a photograph, so a vector would have to
-  be the `/.` mark - a second design in the tab while every other surface shows the face - and an
+  be the `@` mark - a second design in the tab while every other surface shows the face - and an
   SVG wrapping a base64 PNG is the same pixels a third larger with none of SVG's benefits. Brand
   guide §3.2 records both, so it does not get re-litigated. The set is vendored from
   `dileepadev/docs/brand/favicon/`.

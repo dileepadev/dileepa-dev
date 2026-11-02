@@ -6,9 +6,9 @@ import type { SVGProps } from "react";
  * A third icon convention, and a deliberate one. Lucide draws interface
  * controls, `SocialIcons.tsx` draws third-party brand marks, and these draw the
  * six things the About section says Dileepa does. They are brand assets rather
- * than UI furniture: the source of truth is `docs/brand/icons/`, where each one
- * also ships as a standalone `.svg`, a `-badge.svg` on a Carbon field, and a
- * `.png` for surfaces that cannot take a vector.
+ * than UI furniture: the source of truth is `docs/brand/icons/` in the
+ * `dileepadev` repository, where each one also ships as a standalone `.svg`, a
+ * `-badge.svg` and a `.png` for surfaces that cannot take a vector.
  *
  * These components are ported from the `-symbol.svg` variant, which is the one
  * that strokes `currentColor` rather than a literal colour. That matters:

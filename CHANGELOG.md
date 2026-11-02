@@ -207,9 +207,19 @@ Unreleased changes go here.
 ### Removed - v2.1.0
 
 - Emerald as an accent, the `dileepadev /.` lockup, and the text-on-emerald tokens.
+- The outdated copies of the social covers and pillar icons under `docs/brand/`. Their sources live
+  in `dileepadev`'s `docs/brand/`; this repo keeps the brand guide, design system and token sheet
+  only.
 - The page label that repeated the path and the title over every page.
 - Unused styles: the profile window, the hero readout, project cards, `.card`, view tabs and
   series cards, along with leftover draft markers and old-palette comments.
+
+### Documentation - v2.1.0
+
+- `README.md` describes the site as it is now: the design system and where it lives, the pages,
+  on-demand revalidation, the terminal portrait and neofetch panel, the flags on `/`, and the two
+  optional server-only variables (`YOUTUBE_API_KEY`, `REVALIDATE_SECRET`). `AGENTS.md` and two
+  code comments stop pointing at the removed asset copies.
 
 ### Brand tokens - v2.1.0
 
