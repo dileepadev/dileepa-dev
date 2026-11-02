@@ -5,10 +5,10 @@ import { ImageResponse } from "next/og";
 /**
  * The social card, generated per record, in the official design.
  *
- * There is one card design on this platform and this is it - the terminal
- * window from `docs/brand/covers/source-1584x396.svg`, which is also what
- * `public/og.png` and every uploaded profile cover carry. What varies here is
- * the record: the command line names the path, and the title is the record's.
+ * The terminal window, in the v2.1.0 palette. `public/og.png` has since moved
+ * to the flat split card (portrait beside the name); this per-record card has
+ * not yet. What varies here is the record: the command line names the path,
+ * and the title is the record's.
  *
  * Satori, not a browser. Flexbox only, every multi-child node needs an explicit
  * `display: flex`, and the colours are literal because there is no cascade out
@@ -137,7 +137,7 @@ export function ogCard({ label, title, path, meta }: OgCard) {
             fontFamily: "JetBrains Mono",
           }}
         >
-          {/* The terminal window. Same chrome as the cover artwork. */}
+          {/* The terminal window. */}
           <div
             style={{
               display: "flex",

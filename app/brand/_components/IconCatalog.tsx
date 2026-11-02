@@ -1,6 +1,5 @@
 import type { LucideIcon } from "lucide-react";
 import {
-  AlertCircle,
   ArrowDown,
   ArrowLeft,
   ArrowRight,
@@ -8,11 +7,11 @@ import {
   ArrowUpDown,
   ArrowUpRight,
   Briefcase,
-  BriefcaseBusiness,
   Building2,
   Calendar,
   Check,
   CheckCircle2,
+  CircleAlert,
   ChevronDown,
   ChevronRight,
   Clock,
@@ -24,16 +23,13 @@ import {
   FileCode,
   FileText,
   Folder,
-  FolderGit2,
   FolderOpen,
   FolderSearch,
   Globe,
-  GraduationCap,
   Hash,
   History,
   House,
   ImageIcon,
-  Layers,
   Link2,
   List,
   Mail,
@@ -42,10 +38,8 @@ import {
   Menu,
   MessageSquare,
   MessagesSquare,
-  Mic,
   Moon,
-  Network,
-  PenLine,
+  Play,
   Presentation,
   RefreshCw,
   Reply,
@@ -62,6 +56,7 @@ import {
   Tag,
   Terminal,
   Ticket,
+  UserRound,
   Users,
   Video,
   X,
@@ -141,13 +136,11 @@ const INTERFACE_ICONS: { title: string; icons: Entry[] }[] = [
       [Megaphone, "Megaphone", "Event type"],
       [Presentation, "Presentation", "Slides"],
       [Video, "Video", "Videos, recordings"],
-      [Mic, "Mic", "Talks"],
-      [PenLine, "PenLine", "Writing"],
+      [Play, "Play", "Video play cue"],
       [Users, "Users", "Communities, audience"],
       [Building2, "Building2", "Host, organisation"],
       [MapPin, "MapPin", "Location"],
       [Briefcase, "Briefcase", "Work, role"],
-      [FolderGit2, "FolderGit2", "Projects"],
       [Globe, "Globe", "Website"],
       [Eye, "Eye", "Views"],
       [MessageSquare, "MessageSquare", "Comments"],
@@ -162,10 +155,7 @@ const INTERFACE_ICONS: { title: string; icons: Entry[] }[] = [
       [Tag, "Tag", "Release, tags"],
       [Rss, "Rss", "Feed"],
       [List, "List", "Table of contents"],
-      [Layers, "Layers", "The About section mark"],
-      [BriefcaseBusiness, "BriefcaseBusiness", "The Work section mark"],
-      [GraduationCap, "GraduationCap", "The Education section mark"],
-      [Network, "Network", "The Community section mark"],
+      [UserRound, "UserRound", "The About section mark"],
       [MessagesSquare, "MessagesSquare", "The Contact section mark"],
       [ImageIcon, "ImageIcon", "Image placeholder"],
     ],
@@ -175,7 +165,7 @@ const INTERFACE_ICONS: { title: string; icons: Entry[] }[] = [
     icons: [
       [CheckCircle2, "CheckCircle2", "Do"],
       [XCircle, "XCircle", "Don't"],
-      [AlertCircle, "AlertCircle", "Error"],
+      [CircleAlert, "CircleAlert", "Error, field error"],
       [ShieldCheck, "ShieldCheck", "Fallback active"],
     ],
   },
@@ -183,14 +173,11 @@ const INTERFACE_ICONS: { title: string; icons: Entry[] }[] = [
 
 /**
  * The homepage's section marks, in page order: each section's icon on a tile,
- * like an app icon, on the hero's dot grid in the panel's top-right corner. Angular
- * shapes only, and never an icon the section already uses.
+ * like an app icon, on the hero's dot grid in the panel's top-right corner,
+ * and never an icon the section already uses.
  */
 const SECTION_MARKS: [LucideIcon, string, string][] = [
-  [Layers, "About", "Layers - systems across the stack"],
-  [BriefcaseBusiness, "Work", "BriefcaseBusiness - where I have worked"],
-  [GraduationCap, "Education", "GraduationCap - academic background"],
-  [Network, "Community", "Network - bringing developers together"],
+  [UserRound, "About", "UserRound - the person behind the work"],
   [MessagesSquare, "Contact", "MessagesSquare - let us talk"],
 ];
 
@@ -300,7 +287,7 @@ export function IconCatalog() {
           {PILLAR_ICONS.map(([Icon, name]) => (
             <li key={name} className={tile}>
               <Icon className="h-6 w-6 shrink-0 text-fg" aria-hidden="true" />
-              <Caption name={name} use="About, pillar cards" />
+              <Caption name={name} use="Brand asset, not used on the site" />
             </li>
           ))}
         </ul>

@@ -158,12 +158,12 @@ function getClientApiUrl(): string {
  * deploy anyway - `BLOG_CONTENT_REF` is a pinned SHA, bumped when publishing
  * (see the standing rule in `TODO.md`) - and a deploy rebuilds every page, so
  * blog content is never waiting on a window at all. Only records edited in the
- * admin without a deploy (projects, events, the about record) can lag, and for
- * those a day is the price until on-demand `revalidatePath` lands in v2.1.0.
+ * admin without a deploy (projects, events, the about record) can lag, and
+ * `POST /api/revalidate` purges those on demand instead of waiting a day.
  *
  * The names stay per-resource rather than collapsing to one constant: they
- * record *why* each one may lag, and they are what the v2.1.0 work will move
- * apart again once a publish can purge its own paths.
+ * record *why* each one may lag, so a resource can be given its own window
+ * again without touching the rest.
  */
 const REVALIDATE = {
   /** Rarely changes and is edited deliberately. */

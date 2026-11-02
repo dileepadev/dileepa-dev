@@ -7,8 +7,10 @@ Welcome to my personal website project, hosted at [dileepa.dev](https://dileepa.
 - [dileepa.dev](#dileepadev)
   - [Table of Contents](#table-of-contents)
   - [Tools and Technologies](#tools-and-technologies)
-  - [Sections](#sections)
+  - [Design system](#design-system)
+  - [Pages](#pages)
     - [Blog posts](#blog-posts)
+    - [Keeping pages fresh](#keeping-pages-fresh)
   - [The terminal rendering](#the-terminal-rendering)
     - [The boot sequence](#the-boot-sequence)
   - [Getting Started](#getting-started)
@@ -44,24 +46,36 @@ Welcome to my personal website project, hosted at [dileepa.dev](https://dileepa.
 - **API Communication:** [api.dileepa.dev](https://api.dileepa.dev/)
 - **Icons:** [Lucide](https://lucide.dev/) for interface icons; hand-authored inline SVG for
   brand and social marks
-- **Markdown:** [next-mdx-remote](https://github.com/hashicorp/next-mdx-remote) with
+- **Markdown:** [@mdx-js/mdx](https://mdxjs.com/) with
   [remark-gfm](https://github.com/remarkjs/remark-gfm) and
-  [rehype](https://github.com/rehypejs/rehype), highlighted at build time by
-  [Shiki](https://shiki.style/)
+  [rehype](https://github.com/rehypejs/rehype), highlighted by [Shiki](https://shiki.style/) and
+  compiled once per post (the compiled result is cached by a hash of the source)
 - **Notifications:** [react-hot-toast](https://react-hot-toast.com/)
 
-## Sections
+## Design system
 
-- **Hero:** Introduction and call to action.
-- **About:** General profile information and biography.
-- **Work:** Roles, the tools behind them, and open-source projects.
-- **Education:** Academic background and qualifications.
-- **Community:**
-  - **Communities:** Tech communities I am part of.
-  - **Events:** Events I have attended or spoken at.
-  - **Videos:** Walkthroughs and talks, each with a short description, linking out to YouTube.
-  - **Blog:** Articles and thoughts on technology.
-- **Connect:** Social media links and contact information.
+The site follows **design system v2.1.0**, which it was designed on first. The written system -
+the brand guide, the design system and the canonical token sheet - lives in
+[`dileepadev`](https://github.com/dileepadev/dileepadev), and copies sit in [`docs/`](docs).
+[`app/brand-tokens.css`](app/brand-tokens.css) is a vendored copy of that token sheet; re-copy it
+from the source rather than editing it here. The live reference is [`/brand`](https://dileepa.dev/brand).
+
+- **Black and white, no hue.** The accent is the text colour; green appears only as the success
+  state, such as a copy tick.
+- **The logo is `@dileepadev`** - the `@` one step muted, the wordmark at full contrast.
+- **Manrope and JetBrains Mono**, type set by role, nothing smaller than 13px.
+- **A profile rail and panels** from 1024px, and a floating nav below it.
+
+## Pages
+
+- **Home:** the hero (with the newest post, talk and video), About and Contact.
+- **Work** and **Education:** roles and courses, newest first by date.
+- **Projects, Blog, Events, Communities:** searchable, filterable index pages and detail pages.
+- **Videos:** walkthroughs and talks, each with its thumbnail, length and description, linking out
+  to YouTube.
+- **Gallery:** event photographs.
+- **Profile:** a speaker profile and media kit - bios, photos and contact details for organisers.
+- **Brand:** the design system as it is built, from the tokens.
 
 ### Blog posts
 
@@ -74,8 +88,7 @@ Three things on a post are not static, and are fetched in the browser instead:
 
 - **Reactions** - four of them (liked, insightful, useful, learned), one per reader, changeable by
   pressing the same one again. Rendered as emoji rather than a custom icon set, deliberately: the
-  brand guide allows one accent hue and no second, and emoji carry colour as *content* without
-  entering the palette.
+  palette has no hue, and emoji carry colour as *content* without entering it.
 - **Views** - counted once per reader per 24 hours. The de-duplication is the API's, not the
   browser's; the client guard only avoids a request already known to be a no-op.
 - **Comments** - one level of replies, each comment and reply carrying the same four reactions.
@@ -84,6 +97,21 @@ Three things on a post are not static, and are fetched in the browser instead:
 React, Comment and Share sit in one action bar under the article, with the counts summarised above
 it. If the API is unreachable the counts and the React button do not render - but **Share still
 does**, because it needs nothing from the API.
+
+### Keeping pages fresh
+
+Pages regenerate on a day-long window, which keeps rendering inside the Vercel Hobby allowance.
+To show an edit straight away, purge pages on demand:
+
+```bash
+curl -X POST https://dileepa.dev/api/revalidate \
+  -H "Authorization: Bearer $REVALIDATE_SECRET" \
+  -H "Content-Type: application/json" \
+  -d '{"paths": ["/blog"]}'
+```
+
+With no body it purges every page. `REVALIDATE_SECRET` is server-only; without it the endpoint is
+off. If the API is down while a page regenerates, the last good page keeps being served.
 
 ## The terminal rendering
 
@@ -111,31 +139,20 @@ byte-for-byte what they got before the feature existed. HTTP libraries such as `
 are deliberately *not* matched: they are scripts rather than a person at a prompt, and serving them
 a different body than a browser gets is indistinguishable from cloaking.
 
-The masthead is the wordmark drawn large in block characters by
-[`lib/wordmark.ts`](lib/wordmark.ts), and the brand rule survives the change of scale: the wordmark
-takes the neutral foreground, the `/.` takes emerald, and the two never swap - which is why
-`renderWordmark` returns the two halves separately rather than one joined string. The font is
-hand-built on a 6-row body at proportional widths rather than borrowed from ANSI Shadow, for two
-reasons. Its 8-to-9-column glyphs put "dileepadev" past 75 columns before the mark, and widening
-the document to fit a banner would be letting the decoration set the measure for the content. And
-it is an uppercase font: the six rows here are an ascender zone for `d`, `l` and the dot of the
-`i`, four rows of x-height, and a descender for the `p`, because the lockup is lowercase everywhere
-else on the platform and setting it in caps would render the wrong word.
-
-Glyphs are proportional rather than monospaced, and that is load-bearing. `i` is one column of ink
-and `d` is four, so padding both into a fixed cell leaves the `i` with dead columns on its right
-and the word renders as `di leepadev` - two blank columns between `d` and `i`, four between `i` and
-`l`, from a glyph table that looks perfectly regular in the source. Each glyph is now exactly as
-wide as its own ink and `GAP` is the only space between letters, so all nine inter-letter gaps are
-two columns by construction. The `/.` is one glyph rather than two,
-because composing it from a slash and a full stop puts the inter-letter gap between them and it
-reads `/ .` - one of the six conflicts the brand repo calls out in the reference HTML.
+The masthead is a portrait beside a `neofetch`-style panel - name, role, location, work, links.
+The portrait is the site's photo drawn in quadrant-block characters on the 256-colour grey ramp,
+with the studio backdrop cut out so it sits on the reader's own terminal background. It is built
+once by [`scripts/portrait-ascii.mjs`](scripts/portrait-ascii.mjs) into
+[`lib/portrait-ascii.ts`](lib/portrait-ascii.ts) and committed, rather than computed per request;
+run the script again when the photo changes. `?nocolor` shades the same picture in plain
+characters.
 
 The content is composed in [`lib/terminal.ts`](lib/terminal.ts) from the same `api.*` calls the
 homepage uses, through the same data cache - there is no second copy of the profile to keep in
-sync. [`lib/ansi.ts`](lib/ansi.ts) holds the colour and the fixed-width layout, and keeps the one
-brand rule that survives the trip: emerald is the only accent, at the Emerald Bright stop, because
-a terminal is a dark surface and its background cannot be detected over HTTP.
+sync. [`lib/ansi.ts`](lib/ansi.ts) holds the colour, the fixed-width layout and the links (OSC 8, where
+the terminal supports them), and keeps the brand rule across the trip: the palette is black and
+white, so the accent is weight - bold in the terminal's own foreground, legible on a dark or a
+light terminal, since its background cannot be detected over HTTP.
 
 | URL | What it does |
 | --- | --- |
@@ -147,7 +164,9 @@ a terminal is a dark surface and its background cannot be detected over HTTP.
 | `?terminal` | Forces the terminal rendering in a browser |
 | `?html` | Forces the website in a terminal. Also `?browser`, `?web` |
 
-Quote the query string in a shell - `?` is a glob character:
+The flags work on `/` as well as `/terminal`: `proxy.ts` carries the query across its rewrite in
+a request header, because on Vercel the route behind a rewrite does not see it. Quote the query
+string in a shell - `?` is a glob character:
 
 ```bash
 curl -L "dileepa.dev?nocolor"
@@ -275,6 +294,8 @@ To get a copy of this project up and running on your local machine, follow these
    Each file is complete on its own - there is no shared base file and no
    `.env.local` override, so the value you read in a file is the value in
    effect. Both are gitignored; only the `*.example` templates are committed.
+   Two variables are optional and server-only: `YOUTUBE_API_KEY` (video lengths on `/videos`)
+   and `REVALIDATE_SECRET` (on-demand revalidation).
 
 ## Deployment on Vercel
 
