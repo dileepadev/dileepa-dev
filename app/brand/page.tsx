@@ -374,7 +374,7 @@ export default async function BrandPage() {
   /* Text roles - dark values; light in comments */
   --fg: var(--ink-100);       /* titles, 18.0:1 - light #131313, 17.3:1 */
   --fg-body: #a8a8a8;         /* paragraphs, 8.6:1 - light #4f4f4f, 7.6:1 */
-  --fg-muted: var(--ink-400); /* dates, names, labels, 6.1:1 - light #6a6a6a, 5.1:1 */
+  --fg-muted: var(--ink-400); /* dates, names, labels, 6.1:1 - light #6a6a6a, 5.0:1 */
 
   /* Typography */
   --font-sans: "Manrope", system-ui, -apple-system, sans-serif;
@@ -773,7 +773,7 @@ export default async function BrandPage() {
                   name="Paper Muted"
                   token="--paper-400 / --fg-muted"
                   hex="#6A6A6A"
-                  role="Dates, names, labels, captions (5.1:1)."
+                  role="Dates, names, labels, captions (5.0:1)."
                   contrastBadge="WCAG AA"
                   bgHex="#6A6A6A"
                   textHex="#ffffff"
@@ -1018,7 +1018,7 @@ export default async function BrandPage() {
           <SectionHeading
             label="Media"
             title="Portrait and photography guidelines"
-            intro="The image budget is strictly two locations: the hero portrait and the event gallery. That is the entire image budget for the platform."
+            intro="Photographs appear in three places: the portrait, the event gallery and the video thumbnails on /videos. That is the entire image budget for the platform."
           />
 
           {/* Portrait fields */}
@@ -1102,8 +1102,9 @@ export default async function BrandPage() {
             {galleryPhotos.length > 0 && (
               <Subsection title="Event gallery photography">
                 <p className="text-small text-fg-muted mb-4">
-                  The only other photograph surface on the website. Authentic,
-                  documentary captures from delivered workshops and talks.
+                  Authentic, documentary captures from delivered workshops and
+                  talks. The third surface is the video thumbnails on /videos,
+                  16:9 beside each title in a list.
                 </p>
                 <div className="grid grid-cols-2 @xl/section:grid-cols-4 gap-3">
                   {galleryPhotos.map((photo, i) => (

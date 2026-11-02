@@ -14,8 +14,8 @@ import { SOCIAL_ICONS } from "@/lib/social-icons";
  * the useful thing to read first; the name belongs beside the portrait, where
  * it identifies the face rather than announcing itself.
  *
- * The portrait is one of only two places a photograph appears on this site -
- * the other is the event gallery.
+ * The portrait is one of three places a photograph appears on this site - the
+ * others are the event gallery and the video thumbnails.
  */
 /**
  * The newest record of each kind the homepage already fetched - one post, one

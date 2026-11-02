@@ -12,25 +12,24 @@ Canonical instructions for AI coding agents working in this repository.
 `dileepa-dev` is the main website at **[dileepa.dev](https://dileepa.dev)** - a Next.js App
 Router site that renders portfolio content pulled from `api.dileepa.dev`.
 
-As of v2.0.0 it becomes the **central platform**. It absorbs the blog from `blog.dileepa.dev`,
-gains Projects and an event gallery, and adopts the new brand. Whatever ships here is what
-`admin-dileepa-dev` and `links-dileepa-dev` follow - this repo is the design reference for the
-whole platform, so a shortcut taken here propagates to three applications.
+It is the **central platform**: the blog, Projects, events and the gallery all live here, and
+it is the design reference for the whole platform. **Design system v2.1.0 was designed here
+first** and then written down in `dileepadev`; `admin-dileepa-dev`, `links-dileepa-dev` and
+`dileepadev.github.io` adopt it from there. A shortcut taken here propagates to every app.
 
-v2.0.0 is shipped, tagged and deployed; issue **#15** is closed. `package.json` is at `2.0.1`,
-which is the patch being readied on `fix/v2.0.1-fluid-cpu-overage` - see issue **#21**.
+v2.1.0 is the current release (issue **#27**). `package.json` is at `2.1.0`. Release checklists
+live in the release's GitHub issue, not in a file.
 
 [TODO.md](TODO.md) holds this repo's current slice. The cross-repository roadmap lives in
 `dileepadev/TODO.md`.
 
 **Caching is load-bearing here, and the numbers are not arbitrary.** Every ISR window on the
-site is an hour: `REVALIDATE` in `lib/api.ts`, `CONTENT_REVALIDATE` in `lib/content.ts`, and the
-four route segments that state their own. They were 300 and 900, which is shorter than the gap
-between two visits to a personal site - so every request found an expired entry, was served the
-stale body *and* spawned a background regeneration. ISR saved nothing, the site rendered ~1,500
-pages a day to serve ~4 human pageviews, and the project went over its Vercel Hobby Fluid Active
-CPU allowance. **Do not shorten a revalidate window without a reason that survives that
-arithmetic.** Freshness is coming back through on-demand `revalidatePath` in v2.1.0, not through
+site is a day: `REVALIDATE` in `lib/api.ts`, `CONTENT_REVALIDATE` in `lib/content.ts`, and the
+route segments that state their own. Shorter windows than the gap between two visits make every
+request find an expired entry and spawn a regeneration; at 300-900s the site rendered ~1,500 pages
+a day for ~4 human pageviews and went over its Vercel Hobby Fluid Active CPU allowance. **Do not
+shorten a revalidate window without a reason that survives that arithmetic.** Freshness comes
+from on-demand revalidation (`POST /api/revalidate`, authorised by `REVALIDATE_SECRET`), not from
 smaller numbers.
 
 ## Layout
@@ -98,18 +97,21 @@ versions - version drift between the two apps is the thing v2.0.0 exists to end.
   `https://dileepa.dev/og.png` while production was still v1 and had no such file.
 - **Three icon conventions, and they do not mix.** Lucide for interface controls, `SocialIcons.tsx`
   for third-party brand marks, `PillarIcons.tsx` for the six About-card marks. The pillar marks are
-  brand assets: the source is `docs/brand/icons/`, and the app ports the `-symbol.svg` variant
+  brand assets: the source is `docs/brand/icons/` in the `dileepadev` repository (this repo keeps
+  no copy), and the app ports the `-symbol.svg` variant
   because it strokes `currentColor` and therefore follows the theme.
 - **There is no `og:logo`.** Open Graph defines twenty-three properties and that is not one of
   them; audit tools ask for it anyway. The logo a search engine reads is `Person.image` in the
   JSON-LD in `app/layout.tsx`, which is the portrait - the same image the favicon is. Do not add
   the tag to satisfy a checker.
-- **One social card design.** The terminal window in `docs/brand/covers/source-1584x396.svg` is it -
-  `public/og.png`, every uploaded profile cover, and the per-record cards that `lib/og/card.tsx`
-  generates all carry it. A second design is not a variant, it is a fork.
+- **The social cards.** `public/og.png` (1200x630) and `og2.png` (1600x900) are the v2.1.0 flat
+  split card: `@dileepadev`, the name, "AI Engineer" and `dileepa.dev` beside the colour portrait.
+  The source artwork and the social covers live in `dileepadev`'s `docs/brand/`; this repo keeps
+  no copy. The per-record cards that `lib/og/card.tsx` generates still draw the earlier terminal
+  window, in the v2.1.0 palette - bringing them onto the split card is open work.
 - **The favicon is the portrait at every size, and there is no SVG one.** Audit tools flag the
   missing SVG favicon; leave it flagged. The identity is a photograph, so a vector would have to
-  be the `/.` mark - a second design in the tab while every other surface shows the face - and an
+  be the `@` mark - a second design in the tab while every other surface shows the face - and an
   SVG wrapping a base64 PNG is the same pixels a third larger with none of SVG's benefits. Brand
   guide §3.2 records both, so it does not get re-litigated. The set is vendored from
   `dileepadev/docs/brand/favicon/`.
@@ -121,32 +123,33 @@ versions - version drift between the two apps is the thing v2.0.0 exists to end.
   ellipsis through the middle of a shared link reads worse than an unused half-line in a search
   result. Under about 100 and Google discards it and composes its own from the page.
 
-## Brand rules - v2.0.0
+## Brand rules - v2.1.0
 
 Tokens come from `dileepadev/docs/brand/brand-tokens.css`, vendored here as
 `app/brand-tokens.css` and mirrored for the doc set as `docs/brand-tokens.css`. Import them;
 never re-declare values.
 
 > [!IMPORTANT]
-> The sheet is at **brand tokens v2.1**, which reconciled it against this site after the
-> post-launch visual pass - where the draft and the shipped result disagreed, the shipped result
-> won. `app/globals.css` therefore overrides only four font variables, the two `--on-emerald-*`
-> stops and `--track-wide`; it used to restore around a hundred declarations that the v2.0 sheet
-> had wrong, and every one of those is now a duplicate waiting to drift. If you find yourself
+> The sheet is **brand tokens v2.1.0**, written from what this site ships. This site is the
+> reference: when the `dileepadev` docs and the shipped CSS disagree, check the site first, then
+> fix the docs there and re-copy. Never patch the vendored copy in place. If you find yourself
 > re-declaring a token in `globals.css`, the sheet is the thing to change.
->
-> The v1.0 HTML design reference (`index.html` in the `dileepadev` repo) no longer exists. Do
-> not reintroduce a dependency on it.
 
-- Emerald is the only accent. No second hue.
-- Never Emerald Deep on Carbon. Never Emerald Bright on Paper.
+- **No brand hue.** The accent is the text colour (`--brand`). Colour appears only as a state:
+  `--success` (the copy tick, a sent message), `--error`, `--warning`.
+- Three text steps: `--fg` titles, `--fg-body` running text, `--fg-muted` dates, names, labels.
+- Corners are fixed (panel, tile, block, inline), capsule (every control and field) or
+  concentric. An edge means it acts: fields `--border-input`, buttons and acting chips
+  `--border-strong`, labels none.
+- The logo is `@dileepadev`: the `@` in `--fg-muted`, the wordmark in `--fg`, both Manrope 500.
 - Manrope (display + UI) and JetBrains Mono (code, dates, metadata) via `next/font`.
-- Weights **400, 500, 700 only**. No 600.
+- Weights **400, 500, 700 only**. No 600. Every heading is 500; 700 is the display line and
+  `<strong>` only. Nothing below 13px.
 - Sentence case everywhere - headings, buttons, nav, labels. Proper nouns keep their case, and
   **the role is one: `AI Engineer`**, wherever it is a label (the site title, `jobTitle`, the
   hero role line, the terminal profile). The discipline stays lowercase: "AI engineering", and
   "an AI engineer" in prose. A blanket find-and-replace over this distinction breaks it.
-- Emerald appears **once per surface** as a deliberate accent, not scattered.
+- Every text link carries an arrow: → on the site, ↗ off it.
 - No hard-coded hex in components. If you're typing `#`, you're doing it wrong.
 - Banned in copy, without exception: *passionate about, leveraging, cutting-edge, revolutionize,
   game-changing, unlock, seamless, AI enthusiast, thought leader, journey, humbled to announce,
@@ -237,17 +240,19 @@ There is no test suite. Before calling a change done:
   nothing, so the bar renders without it. A reader who typed a paragraph and pressed a button is
   owed an answer, so a failed comment says so and keeps the text. Share is never withheld - it
   needs nothing from the API.
-- **Reaction glyphs are emoji, and that is a brand decision.** §1 of the brand guide allows one
-  accent hue and no second. Emoji carry colour as *content*, like a photograph, without entering
-  the palette; a custom colour icon set would mean inventing four brand hues and hard-coding hex.
+- **Reaction glyphs are emoji, and that is a brand decision.** The palette has no hue. Emoji
+  carry colour as *content*, like a photograph, without entering the palette; a custom colour icon
+  set would mean inventing four brand hues and hard-coding hex.
   If you change one, check it on the **dark** theme - that is how 🎓 was caught rendering
   near-black and replaced with 📚.
 - **`remotePatterns` is Cloudinary and nothing else.** Every image the platform serves goes
   through `POST /uploads`, so a second host would mean an image had bypassed the one path holding
   the credentials. The consequence is that anything *not* from Cloudinary - a Markdown image in a
-  post, a preview of a URL someone just typed - must use a plain `<img>`, not `next/image`.
-- **Photographs appear in exactly two places**: the hero portrait and the event gallery. That is
-  the whole image budget. Adding a third is a design-system change, not a component change.
+  post, a preview of a URL someone just typed, a YouTube thumbnail on `/videos` - must use a plain
+  `<img>`, not `next/image`, and its host needs a place in the CSP's `img-src`.
+- **Photographs appear in exactly three places**: the portrait, the event gallery and the video
+  thumbnails on `/videos`. That is the whole image budget. Adding a fourth is a design-system
+  change, not a component change.
 - **`/events`, not `/sessions`.** The resource was briefly renamed on this branch and the rename
   is reverted; `/sessions` redirects for links shared from a preview deployment.
 - **Failure is a decision, not a default.** `degrade` returns a fallback and logs which endpoint

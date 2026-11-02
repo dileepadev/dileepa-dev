@@ -26,7 +26,6 @@ export function About({ about }: { about: AboutData | null }) {
     <IndexSection
       id="about"
       art={UserRound}
-      label={SECTIONS.about.label}
       title={copy[0] ?? SECTIONS.about.title}
     >
       {paragraphs.length > 0 && (

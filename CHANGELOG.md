@@ -67,9 +67,9 @@ Unreleased changes go here.
   - The open-source section left the Work page.
 - **The hero** carries the tagline, the lead and three "latest" tiles: the newest post, talk and
   video, each with its date. On a phone the face and name sit above the headline.
-- **Section marks.** Each section has an app-icon tile in its top-right corner: the section's
-  Lucide icon at 4rem, on a top-lit gradient tile over the hero's dot grid. The icons are a person
-  for About, a briefcase for Work, a graduation cap for Education and speech bubbles for Contact.
+- **Section marks.** The two homepage sections carry an app-icon tile in their top-right corner:
+  the section's Lucide icon at 4rem, on a top-lit gradient tile over the hero's dot grid - a person
+  for About, speech bubbles for Contact.
 
 #### Type
 
@@ -207,9 +207,33 @@ Unreleased changes go here.
 ### Removed - v2.1.0
 
 - Emerald as an accent, the `dileepadev /.` lockup, and the text-on-emerald tokens.
+- The outdated copies of the social covers and pillar icons under `docs/brand/`. Their sources live
+  in `dileepadev`'s `docs/brand/`; this repo keeps the brand guide, design system and token sheet
+  only.
 - The page label that repeated the path and the title over every page.
-- Unused styles: the profile window, the hero readout, project cards, `.card`, view tabs and
-  series cards, along with leftover draft markers and old-palette comments.
+- Unused styles: the profile window, the hero readout, project cards, `.card`, view tabs, series
+  cards, the old event rows, list toolbar, filter status, two-up card grid and project grid, along
+  with leftover draft markers and old-palette comments.
+- The homepage's terminal-style section marker (`▍ About ────`), hidden on every page since the
+  rail layout, with its markup and the `label` and `meta` props that fed it.
+- Code nothing used: twenty v1 types in `lib/types.ts`, six subsection copy entries from the old
+  Community section, and an unused curl command constant.
+
+### Documentation - v2.1.0
+
+- `README.md` describes the site as it is now: the design system and where it lives, the pages,
+  on-demand revalidation, the terminal portrait and neofetch panel, the flags on `/`, and the two
+  optional server-only variables (`YOUTUBE_API_KEY`, `REVALIDATE_SECRET`).
+- `DESIGN.md` is the v2.1.0 synthesis copied from `dileepadev`; it was still the v2.0 emerald
+  contract. `AGENTS.md` carries the v2.1.0 brand rules, the current release, day-long cache windows
+  and the three-place photography budget, and stops pointing at the removed asset copies.
+- `/brand` matches the site: the photography budget names three places, the icon catalog lists
+  the icons the site draws (UserRound and MessagesSquare as the only section marks, Play for the
+  video cue), the pillar marks are labelled as assets the site does not use, and light-theme muted
+  text reads 5.0:1 like the token sheet.
+- Comments describing the v2.0 layout - a 1020px measure, a single accent colour, photographs in
+  two places, a design reference file that never existed - now state what the code does. The env
+  templates and the commit prompt drop their v2.0.0 and v1.3.0 references.
 
 ### Brand tokens - v2.1.0
 

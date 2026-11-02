@@ -27,29 +27,19 @@ export function Section({
 }
 
 /**
- * A homepage section.
- *
- * The header borrows the terminal profile's section rule - `▍ About ────` in
- * `curl -L dileepa.dev` - as a marker line: the section's name in mono, then a
- * hairline to the edge, then an optional count. Under it the section's own
- * sentence is the H2, set large. The marker is the same word the nav uses, so
- * "Work" in the nav lands on a line that says Work.
+ * A homepage section: its own sentence as the H2, set large, an optional intro,
+ * and an optional corner mark - the section's icon on an app-icon tile.
  */
 export function IndexSection({
   id,
-  label,
   title,
   intro,
-  meta,
   art,
   children,
 }: {
   id: string;
-  label: string;
   title?: string;
   intro?: string;
-  /** A count or note at the end of the marker rule, e.g. "4 roles". */
-  meta?: string;
   /** The section's icon, drawn as its corner mark. */
   art?: LucideIcon;
   children?: ReactNode;
@@ -59,11 +49,6 @@ export function IndexSection({
       <div className="container">
         {art && <SectionArt icon={art} />}
         <header className="section-head">
-          <p className="section-marker">
-            <span className="section-marker-name">{label}</span>
-            <span className="section-marker-rule" aria-hidden="true" />
-            {meta && <span className="section-marker-meta">{meta}</span>}
-          </p>
           {title && <h2 className="section-title">{title}</h2>}
           {intro && <p className="section-intro">{intro}</p>}
         </header>
@@ -74,11 +59,8 @@ export function IndexSection({
 }
 
 /**
- * A mono `--brand` label, an H2, and an intro in `--fg-muted`.
- *
- * The label carries the accent and the heading stays `--fg` - design system §6.
- * Accenting the heading too would put two accented elements in one block, which
- * is what stops the accent reading as a signal.
+ * A mono label in `--fg-muted`, an H2, and an intro in `--fg-muted`. The label
+ * is the least important text over the heading, so it takes the muted step.
  */
 export function SectionHeading({
   label,
@@ -101,9 +83,8 @@ export function SectionHeading({
 /**
  * A subsection inside a section - communities, events, posts, videos.
  *
- * The title is `--text-small` at weight 700, sentence case, marked with a 2px
- * rule in the accent, which is spent on the rule rather than the text - the words
- * stay `--fg`, so the block has one accented element and it is the rule.
+ * The title is set at the H3 size, weight 500, in `--fg`, with an optional
+ * 16px icon before it.
  *
  * It is a `<span>`, not a heading, on purpose. A section that groups several
  * lists would otherwise put an `h3` between its `h2` and the item titles that
