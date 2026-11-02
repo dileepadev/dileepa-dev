@@ -63,7 +63,6 @@ export function Contact({ about }: { about: About | null }) {
     <IndexSection
       id="contact"
       art={MessagesSquare}
-      label={SECTIONS.contact.label}
       title={SECTIONS.contact.title}
       intro={intro}
     >

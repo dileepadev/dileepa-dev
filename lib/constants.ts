@@ -101,12 +101,9 @@ export const TERMINAL = {
    * to, so the bare command prints Vercel's two-word `Redirecting...` body and
    * exits 0. There is no application-level fix: the redirect is not ours to
    * remove. So the advertised command carries the flag that makes it work in
-   * one shot, and `TERMINAL.commandHttps` is the equally short alternative for
-   * anyone who would rather type the scheme than the flag.
+   * one shot; `curl https://dileepa.dev` is the equally short alternative.
    */
   command: "curl -L dileepa.dev",
-  /** The other one-shot form. Reaches HTTPS directly, so it needs no `-L`. */
-  commandHttps: "curl https://dileepa.dev",
   /**
    * Content width inside the two-space gutter.
    *
@@ -229,36 +226,11 @@ export const SECTIONS = {
   },
 } as const;
 
-/** Subsection copy, inside Work and Community. */
+/** Subsection copy, inside Work. */
 export const SUBSECTIONS = {
   tools: {
     title: "Tools I reach for",
     note: "The tools behind the systems, experiments, and products I build.",
-  },
-  projects: {
-    title: "Open source projects",
-    note: "Projects I build, maintain, and contribute to.",
-  },
-  communities: {
-    title: "Communities",
-    note: "Communities I organise with, contribute to, or volunteer for.",
-  },
-  events: {
-    title: "Events",
-    note: "Talks and workshops I've delivered, with the most recent first.",
-  },
-  gallery: {
-    title: "Event gallery",
-    note: "Moments from events, talks, and workshops I've joined.",
-  },
-
-  blogs: {
-    title: "Blog",
-    note: "Notes I write on AI systems, engineering, and production.",
-  },
-  videos: {
-    title: "Videos",
-    note: "Walkthroughs I create on AI systems and software engineering.",
   },
 } as const;
 
@@ -305,7 +277,7 @@ export const PAGES = {
     meta: {
       title: "Work and experience",
       description:
-        "Roles in AI engineering and software development, the tools behind them, and the open source projects alongside.",
+        "Roles in AI engineering and software development, and the tools behind them.",
     },
     label: "Work",
     title: "Where I have worked",

@@ -171,9 +171,8 @@ html {
   border: 2px solid var(--bg);
 }
 
-/* Not full contrast. The accent is a signal, and a scrollbar is not signalling
-   anything - spending the one accent here is part of why it stopped reading as
-   deliberate where it is spent deliberately. */
+/* Not full contrast. Full contrast is the accent, and a scrollbar is not
+   signalling anything. */
 ::-webkit-scrollbar-thumb:hover {
   background: var(--fg-muted);
 }
@@ -346,8 +345,7 @@ textarea:disabled {
 /* Badges and chips: atomic UI tokens with clean default arrow cursor */
 .badge,
 .chip,
-.stack span,
-.hero-status-pill {
+.stack span {
   cursor: default;
 }
 
@@ -395,10 +393,8 @@ button:hover .chip,
 }
 
 /* An external link takes a small arrow. Social icons and elements with their
-   own explicit icons (.item a, .entry-org a, .view-all, .btn, .no-external) are excluded to prevent duplicate icons. */
-a[target="_blank"]:not(.socials a):not(.view-all):not(.btn):not(
-    .no-external
-  )::after {
+   own explicit icons (.view-all, .btn) are excluded to prevent duplicate icons. */
+a[target="_blank"]:not(.socials a):not(.view-all):not(.btn)::after {
   content: "";
   display: inline-block;
   width: 0.85em;
@@ -416,9 +412,7 @@ a[target="_blank"]:not(.socials a):not(.view-all):not(.btn):not(
     transform var(--dur) var(--ease);
 }
 
-a[target="_blank"]:not(.socials a):not(.view-all):not(.btn):not(
-    .no-external
-  ):hover::after {
+a[target="_blank"]:not(.socials a):not(.view-all):not(.btn):hover::after {
   opacity: 1;
 }
 
@@ -435,36 +429,20 @@ pre {
 }
 
 /* ============================================================
-   Layout - the reference implementation
+   Layout
 
-   `docs/design/reference/index.html` in the platform repo is the structural
-   contract for this site: container measure, section rhythm, the floating nav,
-   the entry and item grids, the subsection rule. It is reproduced here rather
-   than approximated in utility classes, because "the same layout" is a thing
-   that has to keep being true after the next edit.
-
-   Every value below is the reference's, resolved through the semantic token
-   names rather than copied as a literal. The reference declares `--cyan` and
-   `--gold` but references neither, so no hue reaches the page beyond the
-   state colours.
+   The container measure, section rhythm, the floating nav, the entry and item
+   grids and the subsection rule, written out here rather than approximated in
+   utility classes, because "the same layout" has to keep being true after the
+   next edit. Every value resolves through the semantic token names; no hue
+   reaches the page beyond the state colours.
    ============================================================ */
 
-/* One measure, everywhere: nav, footer, every section, every page. This used
-   to be 760px, with a wider 1020px variant reserved for the blog reader (760px
-   of article plus its 220px table-of-contents rail). That made the reader the
-   one page whose content didn't line up with the nav above it or the footer
-   below it - the exact "two sites" mismatch a single shared container exists
-   to prevent. 1020px is the reader's already-tuned figure, adopted as the
-   one width rather than inventing a third number: it's what the two-column
-   reader needs at minimum, and everything else has the same 68ch caps on
-   running text (`p { max-width: 68ch }`) regardless of the container around
-   it, so widening them costs nothing but unused text width - the flexible
-   grids (pillar cards, gallery, the contact form) simply get more room. */
+/* One measure for the content inside every panel: 1200px, with a 20px gutter a
+   side on a phone. Running text keeps its own 68ch cap, so prose does not get
+   wider; the flexible grids simply get more room. The page shell around the
+   rail and panels is 1320px (`.shell`). */
 .container {
-  /* 1200px with a 20px gutter a side on a phone. The homepage
-     sections are two columns now - a 13rem rail and the content - and 1020px
-     left the content column narrower than the single column it replaced.
-     Running text keeps its own 68ch cap, so prose does not get wider. */
   width: min(100% - var(--space-10), 1200px);
   /* Tailwind 4 also generates a `container` utility whose breakpoint
      max-widths would otherwise apply on top of this one. */
@@ -837,13 +815,10 @@ pre {
 /* ============================================================
    - the homepage, second pass
 
-   The terminal profile (`curl -L dileepa.dev`) and the social card are the
-   brand's one signature visual, so the page borrows from them with restraint:
-   the section marker is the terminal's `▍ About ────` rule, the hero's ID card
-   is a terminal window, and data (dates, keys, counts) is set in JetBrains
-   Mono. Everything else is Manrope on calm surfaces. The accent is the text
-   colour at full contrast: the primary action, the one "now" signal per
-   surface, links in prose and focus.
+   Data (dates, keys, counts) is set in JetBrains Mono; everything else is
+   Manrope on calm surfaces. The accent is the text colour at full contrast:
+   the primary action, the one "now" signal per surface, links in prose and
+   focus.
    ============================================================ */
 
 /* --- Section header ----------------------------------------------------- */
@@ -859,40 +834,6 @@ pre {
 
 #about .section-copy {
   margin-top: 0;
-}
-
-/* `▍ About ──────────── 4 roles` */
-.section-marker {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-  max-width: none;
-  margin-bottom: var(--space-6);
-  font-family: var(--font-code);
-  font-size: var(--text-label);
-  line-height: 1;
-  color: var(--fg-muted);
-}
-
-.section-marker-name {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-3);
-  color: var(--fg);
-}
-
-.section-marker-name::before {
-  content: "";
-  width: 3px;
-  height: 1em;
-  border-radius: 1px;
-  background: currentColor;
-}
-
-.section-marker-rule {
-  flex: 1 1 auto;
-  height: var(--hairline);
-  background: var(--border);
 }
 
 .section-title {
@@ -1175,14 +1116,6 @@ pre {
   color: var(--fg-muted);
 }
 
-/* --- Projects ------------------------------------------------------------ */
-
-.project-grid {
-  display: grid;
-  gap: var(--space-4);
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
-}
-
 /* --- Education: four cards ----------------------------------------------- */
 
 /* Two up, not auto-fit: four records on a three-column grid left the
@@ -1250,69 +1183,6 @@ pre {
   text-align: left;
   font-family: var(--font-code);
   font-size: var(--text-label);
-}
-
-/* --- Events: date-block rows --------------------------------------------- */
-
-.event-list {
-  border-top: var(--hairline) solid var(--border);
-}
-
-.event-row {
-  display: grid;
-  grid-template-columns: 5rem minmax(0, 1fr);
-  gap: var(--space-3) var(--space-6);
-  align-items: start;
-  padding-block: var(--space-6);
-  border-bottom: var(--hairline) solid var(--border);
-}
-
-@container section (min-width: 40rem) {
-  .event-row {
-    grid-template-columns: 6.5rem minmax(0, 1fr) 13rem;
-    column-gap: var(--space-8);
-  }
-}
-
-.event-title {
-  font-size: var(--text-h3);
-  line-height: var(--lh-h3);
-  font-weight: 500;
-  letter-spacing: var(--track-tight);
-  transition: color var(--dur) var(--ease);
-}
-
-.event-row:hover .event-title {
-  color: var(--fg-muted);
-}
-
-.event-summary {
-  display: block;
-  margin-top: var(--space-2);
-  max-width: 62ch;
-  color: var(--fg-body);
-  font-size: var(--text-body);
-  line-height: var(--lh-body);
-}
-
-.event-where {
-  grid-column: 2;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-2) var(--space-3);
-  font-size: var(--text-small);
-  line-height: var(--lh-small);
-  color: var(--fg-muted);
-}
-
-@media (min-width: 768px) {
-  .event-where {
-    grid-column: 3;
-    flex-direction: column;
-    align-items: flex-end;
-    text-align: right;
-  }
 }
 
 /* --- Keep exploring: where to go next ------------------------------------- */
@@ -1894,11 +1764,6 @@ pre {
 .shell-main .chip,
 .shell-main .badge:not(.badge-filled) {
   background: var(--bg-surface);
-}
-
-/* The section marker line is the terminal style; F is headings only. */
-.shell-main .section-marker {
-  display: none;
 }
 
 /* Work: one rounded tile per role instead of the line and nodes. */
@@ -2689,17 +2554,6 @@ a.chip:hover {
   line-height: var(--lh-body);
 }
 
-/* --- Card grid ---------------------------------------------------------- */
-
-/* A 12px gutter between cards carrying 24px of padding read as a seam rather
-   than a gap. Half the padding is the proportion the rest of the page uses. */
-.grid-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-4);
-  margin-top: var(--space-10);
-}
-
 /* --- Subsections and item lists ------------------------- */
 
 .subsection {
@@ -3270,7 +3124,7 @@ a.chip:hover {
 
    Colour is the platform's, not the palette's - see --font-emoji. What this
    controls is *how much* of it shows: an unreacted row should read as calm, and
-   a chosen reaction should be unmistakable without a second accent hue
+   a chosen reaction should be unmistakable without any hue
    appearing anywhere in the chrome. */
 .emoji {
   font-family: var(--font-emoji);
@@ -3308,23 +3162,6 @@ a.chip:hover {
   .emoji-btn:hover .emoji,
   .emoji-btn:focus-visible .emoji {
     transform: none;
-  }
-}
-
-/* --- List toolbar (search + sort) --------------------------------------- */
-
-.list-toolbar {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  margin-top: var(--space-8);
-}
-
-@media (min-width: 640px) {
-  .list-toolbar {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
   }
 }
 
@@ -3574,19 +3411,6 @@ a.chip:hover {
   height: 14px;
   color: var(--brand);
   flex-shrink: 0;
-}
-
-/* --- Filter status & reset ---------------------------------------------- */
-
-.filter-status {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: var(--space-3);
-  font-family: var(--font-mono);
-  font-size: var(--text-label);
-  line-height: var(--lh-label);
-  color: var(--fg-muted);
 }
 
 /* --- Back to top -------------------------------------------------------- */
@@ -3916,7 +3740,6 @@ a.chip:hover {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .grid-2,
   .form,
   .footer-grid {
     grid-template-columns: 1fr;
